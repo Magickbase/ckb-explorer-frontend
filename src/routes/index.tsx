@@ -376,6 +376,16 @@ class PageErrorBoundary extends Component<
 
   componentDidCatch(error: Error | null, info: object) {
     this.setState({ error, info })
+
+    if (!window.requestAnimationFrame) {
+      setTimeout(() => {
+        this.setState({ error: undefined, info: { componentStack: '' } })
+      }, 100)
+    } else {
+      requestAnimationFrame(() => {
+        this.setState({ error: undefined, info: { componentStack: '' } })
+      })
+    }
   }
 
   render() {
