@@ -4,6 +4,7 @@ import { Popover, Tooltip } from 'antd'
 import classNames from 'classnames'
 import NervosDAOCellIcon from '../../../assets/nervos_dao_cell.png'
 import NervosDAOWithdrawingIcon from '../../../assets/nervos_dao_withdrawing.png'
+import CurrentAddressIcon from '../../../assets/current_address.png'
 import UDTTokenIcon from '../../../assets/udt_token.png'
 import i18n from '../../../utils/i18n'
 import { localeNumberString, parseUDTAmount } from '../../../utils/number'
@@ -248,6 +249,11 @@ const TransactionCell = ({ cell, address, cellType }: { cell: State.Cell; addres
         {cellType === CellType.Input && <TransactionCellArrow cell={cell} cellType={cellType} />}
         <AddressTextWithAlias address={addressText} to={highLight ? `/address/${cell.addressHash}` : undefined} />
         {cellType === CellType.Output && <TransactionCellArrow cell={cell} cellType={cellType} />}
+        {!highLight && (
+          <Tooltip placement="top" title={`${i18n.t('address.currentAddress')} `}>
+            <img className={styles.currentAddressIcon} src={CurrentAddressIcon} alt="current Address" />
+          </Tooltip>
+        )}
       </div>
       <TransactionCellCapacityPanel>
         <TransactionCellCapacity cell={cell} cellType={cellType} />
