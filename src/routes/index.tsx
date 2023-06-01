@@ -354,17 +354,17 @@ const RouterComp = ({ container, routeProps }: { container: CustomRouter.Route; 
   return <container.comp {...routeProps} />
 }
 
-class PageErrorBoundary extends Component<
-  {},
-  {
-    error?: Error | null
-    info: {
-      componentStack?: string
-    }
-    shouldReset: boolean
+type PageErrorBoundaryState = {
+  error?: Error | null
+  info: {
+    componentStack?: string
   }
-> {
-  constructor(props: {}) {
+}
+
+type PageErrorBoundaryProps = {}
+
+class PageErrorBoundary extends Component<PageErrorBoundaryProps, PageErrorBoundaryState> {
+  constructor(props: PageErrorBoundaryProps) {
     super(props)
 
     this.state = {
@@ -372,27 +372,32 @@ class PageErrorBoundary extends Component<
       info: {
         componentStack: '',
       },
-      shouldReset: false,
     }
   }
 
-  componentDidUpdate() {
-    const { shouldReset } = this.state
-    if (shouldReset) {
-      this.setState({ error: null, info: { componentStack: '' }, shouldReset: false })
+  static getDerivedStateFromError(error: Error) {
+    return { error }
+  }
+
+  componentDidUpdate(prevProps: PageErrorBoundaryProps) {
+    if (prevProps !== this.props) {
+      this.setState({ error: null, info: { componentStack: '' } })
     }
   }
 
-  componentDidCatch(error: Error | null, info: object) {
-    this.setState({ error, info, shouldReset: true })
+  componentDidCatch(error: Error | null, info: React.ErrorInfo) {
+    this.setState({ error, info })
   }
 
   render() {
-    const { children } = this.props
     const { error, info } = this.state
-    if (!error) return children
+    const { children } = this.props
 
-    return <NotFoundPage errorMessage={error.toString()} errorDescription={info.componentStack} />
+    if (error) {
+      return <NotFoundPage errorMessage={error.toString()} errorDescription={info.componentStack} />
+    }
+
+    return children
   }
 }
 
