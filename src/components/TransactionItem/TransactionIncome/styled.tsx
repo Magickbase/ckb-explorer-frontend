@@ -33,6 +33,7 @@ export const TransactionCapacityValuePanel = styled.div`
     img {
       width: 13px;
       margin-right: 6px;
+      margin-bottom: 0;
     }
   }
 `
