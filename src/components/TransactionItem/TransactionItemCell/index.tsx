@@ -232,6 +232,7 @@ const TransactionCellCapacity = ({ cell, cellType }: { cell: State.Cell; cellTyp
 }
 
 const TransactionCell = ({ cell, address, cellType }: { cell: State.Cell; address?: string; cellType: CellType }) => {
+  const isMobile = useIsMobile()
   if (cell.fromCellbase) {
     return <Cellbase cell={cell} cellType={cellType} />
   }
@@ -249,13 +250,18 @@ const TransactionCell = ({ cell, address, cellType }: { cell: State.Cell; addres
         {cellType === CellType.Input && <TransactionCellArrow cell={cell} cellType={cellType} />}
         <AddressTextWithAlias address={addressText} to={highLight ? `/address/${cell.addressHash}` : undefined} />
         {cellType === CellType.Output && <TransactionCellArrow cell={cell} cellType={cellType} />}
-        {!highLight && (
+        {!highLight && !isMobile && (
           <Tooltip placement="top" title={`${i18n.t('address.currentAddress')} `}>
             <img className={styles.currentAddressIcon} src={CurrentAddressIcon} alt="current Address" />
           </Tooltip>
         )}
       </div>
       <TransactionCellCapacityPanel>
+        {!highLight && isMobile && (
+          <Tooltip placement="top" title={`${i18n.t('address.currentAddress')} `}>
+            <img className={styles.currentAddressIcon} src={CurrentAddressIcon} alt="current Address" />
+          </Tooltip>
+        )}
         <TransactionCellCapacity cell={cell} cellType={cellType} />
       </TransactionCellCapacityPanel>
     </TransactionCellPanel>

@@ -52,20 +52,23 @@ export const TransactionCellCapacityPanel = styled.div`
   max-height: 40px;
   align-items: center;
 
+  .transaction__cell__without__icon {
+    margin-right: 21px;
+  }
+
   @media (max-width: 750px) {
     margin-left: 0px;
     margin-top: 5px;
     height: 16px;
     width: 100%;
     justify-content: flex-end;
+    .transaction__cell__without__icon {
+      margin: 0 6px;
+    }
   }
 
   > span {
     margin-left: 5px;
-  }
-
-  .transaction__cell__without__icon {
-    margin-right: 21px;
   }
 `
 
