@@ -69,7 +69,7 @@ const handleFetchCellInfo = async (
       const wrapper: Response.Wrapper<State.Script> | null = await fetchScript('lock_scripts', `${cell.id}`)
       return wrapper ? wrapper.attributes : initScriptContent.lock
     }
-    return cell.cellInfo.lock || initScriptContent.lock
+    return initScriptContent.lock
   }
 
   const fetchType = async () => {
