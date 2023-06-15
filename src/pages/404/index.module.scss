@@ -7,3 +7,22 @@
   width: 800px;
   margin: 16px auto 0 auto;
 }
+
+.backHomeButton {
+  width: 152px;
+  height: 48px;
+  display: block;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 48px;
+  text-align: center;
+  text-transform: capitalize;
+  color: #ffffff;
+  background: #333333;
+  border-radius: 4px;
+  margin: 40px auto;
+  border: none;
+  cursor: pointer;
+}
