@@ -6,7 +6,7 @@ import { shannonToCkb } from '../../../utils/util'
 import { localeNumberString } from '../../../utils/number'
 import DecimalCapacity from '../../DecimalCapacity'
 import { useIsMobile } from '../../../utils/hook'
-import CurrentAddressIcon from '../../../assets/current_address.png'
+import CurrentAddressIcon from '../../../assets/current_address.svg'
 
 export default ({ income }: { income: string }) => {
   const isMobile = useIsMobile()
