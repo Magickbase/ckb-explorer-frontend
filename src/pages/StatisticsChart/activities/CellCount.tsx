@@ -10,14 +10,14 @@ import { fetchStatisticCellCount } from '../../../service/http/fetcher'
 const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 125 : 80)
 
 const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: [string, string, string, string] }): string => {
-  if (seriesName === i18n.t('statistic.live_cell')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.live_cell'))} ${handleAxis(data[2], 2)}</div>`
-  }
   if (seriesName === i18n.t('statistic.dead_cell')) {
     return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.dead_cell'))} ${handleAxis(data[3], 2)}</div>`
   }
   if (seriesName === i18n.t('statistic.all_cells')) {
     return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.all_cells'))} ${handleAxis(data[1], 2)}</div>`
+  }
+  if (seriesName === i18n.t('statistic.live_cell')) {
+    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.live_cell'))} ${handleAxis(data[2], 2)}</div>`
   }
   return ''
 }
@@ -89,6 +89,7 @@ const getOption = (
       {
         position: 'left',
         type: 'value',
+        scale: true,
         axisLine: {
           lineStyle: {
             color: chartColor.colors[0],
@@ -106,13 +107,8 @@ const getOption = (
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
-        stack: 'sum',
         areaStyle: {
           color: chartColor.colors[0],
-        },
-        encode: {
-          x: 'timestamp',
-          y: 'circulating',
         },
       },
       {
@@ -121,13 +117,8 @@ const getOption = (
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
-        stack: 'sum',
         areaStyle: {
-          color: chartColor.totalSupplyColors[1],
-        },
-        encode: {
-          x: 'timestamp',
-          y: 'live_cell',
+          color: chartColor.colors[1],
         },
       },
       {
@@ -136,13 +127,8 @@ const getOption = (
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
-        stack: 'sum',
         areaStyle: {
-          color: chartColor.totalSupplyColors[2],
-        },
-        encode: {
-          x: 'timestamp',
-          y: 'dead_cell',
+          color: chartColor.colors[2],
         },
       },
     ],
