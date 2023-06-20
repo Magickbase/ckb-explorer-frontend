@@ -11,13 +11,13 @@ const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === '
 
 const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: [string, string, string, string] }): string => {
   if (seriesName === i18n.t('statistic.dead_cell')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.dead_cell'))} ${handleAxis(data[3], 2)}</div>`
+    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.dead_cell'))} ${handleAxis(data[2], 2)}</div>`
   }
   if (seriesName === i18n.t('statistic.all_cells')) {
     return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.all_cells'))} ${handleAxis(data[1], 2)}</div>`
   }
   if (seriesName === i18n.t('statistic.live_cell')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.live_cell'))} ${handleAxis(data[2], 2)}</div>`
+    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.live_cell'))} ${handleAxis(data[3], 2)}</div>`
   }
   return ''
 }
@@ -112,8 +112,9 @@ const getOption = (
         },
       },
       {
-        name: i18n.t('statistic.live_cell'),
+        name: i18n.t('statistic.dead_cell'),
         type: 'line',
+        stack: 'sum',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
@@ -122,10 +123,11 @@ const getOption = (
         },
       },
       {
-        name: i18n.t('statistic.dead_cell'),
+        name: i18n.t('statistic.live_cell'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
+        stack: 'sum',
         symbolSize: 3,
         areaStyle: {
           color: chartColor.colors[2],
@@ -136,8 +138,8 @@ const getOption = (
       source: statisticCellCounts.map(data => [
         parseDateNoTime(data.createdAtUnixtimestamp),
         new BigNumber(data.allCellsCount).toFixed(0),
-        new BigNumber(data.liveCellsCount).toFixed(0),
         new BigNumber(data.deadCellsCount).toFixed(0),
+        new BigNumber(data.liveCellsCount).toFixed(0),
       ]),
       dimensions: ['timestamp', 'all', 'live', 'dead'],
     },
