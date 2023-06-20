@@ -1,6 +1,8 @@
 import type { AxiosResponse } from 'axios'
 import { useParams, useHistory, Link } from 'react-router-dom'
 import { useQuery } from 'react-query'
+import classNames from 'classnames'
+import { Popover } from 'antd'
 import Content from '../../components/Content'
 import Pagination from '../../components/Pagination'
 import NftHolderList from '../../components/NftHolderList'
@@ -10,7 +12,13 @@ import { v2AxiosIns } from '../../service/http/fetcher'
 import i18n from '../../utils/i18n'
 import styles from './styles.module.scss'
 import NftCollectionInventory from '../../components/NftCollectionInventory'
-import { useSearchParams } from '../../utils/hook'
+import { useIsMobile, useSearchParams, useSortParam, useUpdateSearchParams } from '../../utils/hook'
+import { ReactComponent as SortIcon } from '../../assets/sort_icon.svg'
+import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
+import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
+import { omit } from '../../utils/object'
+
+export type NftHolderSortByType = 'quantity'
 
 export interface InventoryRes {
   data: Array<{
@@ -69,10 +77,22 @@ export interface HolderListRes {
 
 const tabs = ['transfers', 'holders', 'inventory']
 const PAGE_SIZE = 50
+
+export type TxTypeType = 'mint' | 'transfer' | 'burn' | undefined
+
+function isTxFilterType(s?: string): s is TxTypeType {
+  return s ? ['mint', 'transfer', 'burn'].includes(s) : false
+}
+
 const NftCollectionInfo = () => {
+  const isMobile = useIsMobile()
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
-  const { tab = tabs[0], page = '1' } = useSearchParams('tab', 'page')
+  const { tab = tabs[0], page = '1', tx_type: txTypeFilterParam } = useSearchParams('tab', 'page', 'tx_type')
+
+  const { sortBy, orderBy, sort, handleSortClick } = useSortParam<NftHolderSortByType>(s => s === 'quantity')
+
+  const txTypeFilter = isTxFilterType(txTypeFilterParam) ? txTypeFilterParam : undefined
 
   const { isLoading: isTransferListLoading, data: transferListRes } = useQuery<AxiosResponse<TransferListRes>>(
     ['nft-collection-transfer-list', id, page],
@@ -88,11 +108,12 @@ const NftCollectionInfo = () => {
     },
   )
   const { isLoading: isHolderListLoading, data: rawHolderList } = useQuery<AxiosResponse<HolderListRes>>(
-    ['nft-collection-holder-list', id, page],
+    ['nft-collection-holder-list', id, page, sort],
     () =>
       v2AxiosIns(`/nft/collections/${id}/holders`, {
         params: {
           page,
+          sort,
         },
       }),
     {
@@ -156,6 +177,43 @@ const NftCollectionInfo = () => {
     totalPages: pageSource?.data.pagination.last ?? 1,
   }
 
+  const sortButton = (sortRule: NftHolderSortByType) => (
+    <button
+      type="button"
+      className={classNames(styles.sortIcon, {
+        [styles.sortAsc]: sortRule === sortBy && orderBy === 'asc',
+        [styles.sortDesc]: sortRule === sortBy && orderBy === 'desc',
+      })}
+      onClick={() => handleSortClick(sortRule)}
+    >
+      <SortIcon />
+    </button>
+  )
+
+  const filterList: { value: TxTypeType; title: string }[] = [
+    {
+      value: 'mint',
+      title: i18n.t('udt.view_mint_txns'),
+    },
+    {
+      value: 'transfer',
+      title: i18n.t('udt.view_transfer_txns'),
+    },
+    {
+      value: 'burn',
+      title: i18n.t('udt.view_burn_txns'),
+    },
+  ]
+
+  const updateSearchParams = useUpdateSearchParams<'tx_type'>()
+
+  const handleFilterClick = (filterType: TxTypeType) => {
+    updateSearchParams(
+      params => (filterType === txTypeFilter ? omit(params, ['tx_type']) : { ...params, tx_type: filterType }),
+      true,
+    )
+  }
+
   return (
     <Content>
       <NftCollectionOverview id={id} />
@@ -170,6 +228,27 @@ const NftCollectionInfo = () => {
           <Link to={`/nft-collections/${id}?tab=${tabs[2]}`} data-active={tab === tabs[2]}>
             {i18n.t(`nft.inventory`)}
           </Link>
+          {tab === tabs[0] && (
+            <div className={classNames({ [styles.activeIcon]: txTypeFilter }, styles.buttonIcon)}>
+              <Popover
+                placement={isMobile ? 'bottomRight' : 'bottomLeft'}
+                trigger={isMobile ? 'click' : 'hover'}
+                overlayClassName={styles.filterPop}
+                content={
+                  <div>
+                    {filterList.map(f => (
+                      <button type="button" onClick={() => handleFilterClick(f.value)}>
+                        <div>{f.title}</div>
+                        <div>{f.value === txTypeFilter && <SelectedCheckIcon />}</div>
+                      </button>
+                    ))}
+                  </div>
+                }
+              >
+                <FilterIcon />
+              </Popover>
+            </div>
+          )}
         </div>
         {tab === tabs[0] ? (
           <>
@@ -190,6 +269,7 @@ const NftCollectionInfo = () => {
             <NftHolderList
               list={holderList?.slice((+page - 1) * PAGE_SIZE, +page * PAGE_SIZE) ?? []}
               isLoading={isHolderListLoading}
+              sortButton={sortButton}
             />
             <Pagination
               currentPage={+page}

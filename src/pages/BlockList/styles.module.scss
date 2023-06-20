@@ -1,15 +1,5 @@
-.name {
-  margin-left: 0.25rem;
-  font-size: smaller;
-  color: #aaa;
-}
-
 .sortIcon {
-  border: none;
-  outline: none;
-  background-color: transparent;
-  display: inline-block;
-  vertical-align: text-top;
+  display: flex;
   margin-left: 8px;
   cursor: pointer;
 }
@@ -25,4 +15,3 @@
     fill: var(--primary-color);
   }
 }
-

@@ -616,6 +616,8 @@ declare namespace State {
       endAt: string
     }
   }
+
+  type SortOrderTypes = 'asc' | 'desc'
 }
 
 declare namespace CustomRouter {

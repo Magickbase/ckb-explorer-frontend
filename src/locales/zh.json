@@ -234,7 +234,10 @@
       "view-new-address": "查看新地址",
       "visit-deprecated-address": "查看废弃地址格式",
       "view-deprecated-address": "展示旧地址格式",
-      "displaying-deprecated-address": "正在以旧格式地址展示"
+      "displaying-deprecated-address": "正在以旧格式地址展示",
+      "view_outgoing_txns": "查看支出交易",
+      "view_incoming_txns": "查看收入交易",
+      "view_customised_cell_included_txns": "查看包含定制Cell的交易"
     },
     "transaction": {
       "transaction": "交易",
@@ -355,7 +358,8 @@
       "compared_to_the_max_size_in_chain": "相较链上最大交易体积块的占比",
       "cycles": "Cycles",
       "compared_to_the_max_cycles_in_epoch": "相较Epoch中最大Cycles的占比",
-      "compared_to_the_max_cycles_in_chain": "相较链上最大Cycles的占比"
+      "compared_to_the_max_cycles_in_chain": "相较链上最大Cycles的占比",
+      "address_or_hash": "地址/哈希"
     },
     "nervos_dao": {
       "nervos_dao": "Nervos DAO",
@@ -431,13 +435,15 @@
       "created_time": "创建时间",
       "tokens_empty": "目前没有代币。",
       "unverified": "未验证",
-      "view-deprecated-address": "查看旧地址"
+      "view-deprecated-address": "查看旧地址",
+      "view_mint_txns": "查看铸币交易",
+      "view_transfer_txns": "查看转帐交易",
+      "view_burn_txns": "查看销币交易"
     },
     "nft": {
       "nft_collection": "NFT 藏品",
       "collection_name": "藏品名称",
       "standard": "类型",
-      "holder_and_mint_count": "持有人/发行数",
       "minter_address": "发行人",
       "no_record": "没有记录",
       "mnft": "M-NFT",
@@ -453,7 +459,9 @@
       "to": "接收方",
       "transfer-list": "转让记录",
       "holder-list": "持有人列表",
+      "transactions": "24小时交易数",
       "holder": "持有人",
+      "minted": "发行数",
       "quantity": "数量",
       "inventory": "目录",
       "action": "操作",
@@ -464,7 +472,8 @@
       },
       "owner": "持有人",
       "activity": "活动",
-      "toggle-age": "切换时间格式"
+      "toggle-age": "切换时间格式",
+      "all_type": "所有类型"
     },
     "script_list": {
       "title": "脚本",
