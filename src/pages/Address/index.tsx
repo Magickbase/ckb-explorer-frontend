@@ -8,7 +8,7 @@ import { AddressTransactions, AddressOverview } from './AddressComp'
 import { fetchAddressInfo, fetchTransactionsByAddress } from '../../service/http/fetcher'
 import { QueryResult } from '../../components/QueryResult'
 import { defaultAddressInfo } from './state'
-import { usePaginationParamsInPage, useSearchParams, useSortParam } from '../../utils/hook'
+import { usePaginationParamsInListPage, useSearchParams, useSortParam } from '../../utils/hook'
 import { isAxiosError } from '../../utils/error'
 
 export type TxTypeType = 'outgoing' | 'incoming' | 'customised' | undefined
@@ -19,7 +19,7 @@ function isTxFilterType(s?: string): s is TxTypeType {
 
 export const Address = () => {
   const { address } = useParams<{ address: string }>()
-  const { currentPage, pageSize } = usePaginationParamsInPage()
+  const { currentPage, pageSize } = usePaginationParamsInListPage()
 
   const { tx_type: txTypeFilterParam } = useSearchParams('tx_type')
 
