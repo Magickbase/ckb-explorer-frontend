@@ -110,6 +110,9 @@ const getOption = (
         areaStyle: {
           color: chartColor.colors[0],
         },
+        lineStyle: {
+          width: 4,
+        },
       },
       {
         name: i18n.t('statistic.dead_cell'),
