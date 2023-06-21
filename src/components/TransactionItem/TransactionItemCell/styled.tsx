@@ -77,6 +77,10 @@ export const TransactionCellWithdraw = styled.div`
   align-items: center;
   margin-top: 2px;
 
+  span {
+    margin-left: 6px;
+  }
+
   img {
     margin-left: 5px;
     width: 16px;
@@ -91,6 +95,10 @@ export const TransactionCellWithdraw = styled.div`
 `
 
 export const TransactionCellUDTPanel = styled.div`
+  span {
+    margin-left: 6px;
+  }
+
   .transaction__cell__udt__icon {
     margin-left: 5px;
     width: 16px;
