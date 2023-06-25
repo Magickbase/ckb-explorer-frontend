@@ -13,7 +13,7 @@
   margin: 16px auto 0 auto;
 }
 
-.backHomeButton {
+.backHome {
   width: 152px;
   height: 48px;
   display: block;
@@ -24,12 +24,16 @@
   line-height: 48px;
   text-align: center;
   text-transform: capitalize;
-  color: #ffffff;
+  color: #fff;
   background: #333333;
   border-radius: 4px;
   margin: 40px auto;
   border: none;
   cursor: pointer;
+
+  &:hover {
+    color: #fff;
+  }
 }
 
 .notErrorImage {

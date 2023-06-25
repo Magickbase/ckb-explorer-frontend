@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router'
 import Content from '../../components/Content'
 import PC404mage from '../../assets/pc_404.png'
 import Mobile404Image from '../../assets/mobile_404.png'
@@ -21,7 +20,6 @@ const get404Image = (isMobile: boolean) => {
 export default ({ errorMessage, errorDescription }: { errorMessage?: string; errorDescription?: string }) => {
   const isMobile = useIsMobile()
   const [t] = useTranslation()
-  const history = useHistory()
 
   const isProduction = process.env.NODE_ENV === 'production'
 
@@ -32,25 +30,18 @@ export default ({ errorMessage, errorDescription }: { errorMessage?: string; err
           <>
             <img className={styles.notErrorImage} src={isMobile ? MobileErrorImage : PCErrorImage} alt="error" />
             <div className={styles.pageCrashedTip}>{t('error.page_crashed_tip')}</div>
-            <button
-              type="button"
-              className={styles.backHomeButton}
-              onClick={() => {
-                history.push('/')
-              }}
-            >
+            <a className={styles.backHome} href="/" rel="noopener noreferrer">
               {t('error.back_home')}
-            </button>
+            </a>
+            {!isProduction && (
+              <pre className={styles.pageCrashedError}>
+                {errorMessage}
+                {errorDescription}
+              </pre>
+            )}
           </>
         ) : (
           <img className={styles.notFoundImage} src={get404Image(isMobile)} alt="404" />
-        )}
-
-        {!isProduction && (
-          <pre className={styles.pageCrashedError}>
-            {errorMessage}
-            {errorDescription}
-          </pre>
         )}
       </div>
     </Content>
