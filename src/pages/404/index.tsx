@@ -1,4 +1,3 @@
-import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router'
 import Content from '../../components/Content'
@@ -11,37 +10,6 @@ import MobileBlue404Image from '../../assets/blue_mobile_404.png'
 import { useIsMobile } from '../../utils/hook'
 import { isMainnet } from '../../utils/chain'
 import styles from './index.module.scss'
-
-const NotFoundPanel = styled.div`
-  margin-top: 120px;
-  margin-bottom: 140px;
-`
-
-const NotFoundImage = styled.img`
-  width: 1038px;
-  height: 480px;
-  margin: 0 auto;
-  display: block;
-
-  @media (max-width: 750px) {
-    width: 282px;
-    height: 130px;
-  }
-`
-
-const NotErrorImage = styled.img`
-  width: 602px;
-  height: 273px;
-  margin: 90px auto;
-  display: block;
-  border: 1px dashed #9c9c9c;
-  padding: 6px;
-
-  @media (max-width: 750px) {
-    width: 228px;
-    height: 108px;
-  }
-`
 
 const get404Image = (isMobile: boolean) => {
   if (isMainnet()) {
@@ -59,10 +27,10 @@ export default ({ errorMessage, errorDescription }: { errorMessage?: string; err
 
   return (
     <Content>
-      <NotFoundPanel className="container">
+      <div className={styles.container}>
         {errorMessage || errorDescription ? (
           <>
-            <NotErrorImage src={isMobile ? MobileErrorImage : PCErrorImage} alt="error" />
+            <img className={styles.notErrorImage} src={isMobile ? MobileErrorImage : PCErrorImage} alt="error" />
             <div className={styles.pageCrashedTip}>{t('error.page_crashed_tip')}</div>
             <button
               type="button"
@@ -71,11 +39,11 @@ export default ({ errorMessage, errorDescription }: { errorMessage?: string; err
                 history.push('/')
               }}
             >
-              BACK HOME
+              {t('error.back_home')}
             </button>
           </>
         ) : (
-          <NotFoundImage src={get404Image(isMobile)} alt="404" />
+          <img className={styles.notFoundImage} src={get404Image(isMobile)} alt="404" />
         )}
 
         {!isProduction && (
@@ -84,7 +52,7 @@ export default ({ errorMessage, errorDescription }: { errorMessage?: string; err
             {errorDescription}
           </pre>
         )}
-      </NotFoundPanel>
+      </div>
     </Content>
   )
 }
