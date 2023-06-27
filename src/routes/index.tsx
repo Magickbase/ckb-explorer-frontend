@@ -24,6 +24,7 @@ const NftCollectionInfo = lazy(() => import('../pages/NftCollectionInfo'))
 const NftInfo = lazy(() => import('../pages/NftInfo'))
 const NervosDao = lazy(() => import('../pages/NervosDao'))
 const NotFoundPage = lazy(() => import('../pages/404'))
+const ErrorPage = lazy(() => import('../pages/Error'))
 const SearchFail = lazy(() => import('../pages/SearchFail'))
 const StatisticsChart = lazy(() => import('../pages/StatisticsChart'))
 const Tokens = lazy(() => import('../pages/Tokens'))
@@ -292,12 +293,6 @@ const Containers: CustomRouter.Route[] = [
     comp: SearchFail,
   },
   {
-    name: '404',
-    path: '/404',
-    exact: true,
-    comp: NotFoundPage,
-  },
-  {
     name: 'ScriptList',
     path: '/scripts',
     exact: true,
@@ -308,6 +303,18 @@ const Containers: CustomRouter.Route[] = [
     path: '/fee-rate-tracker',
     exact: true,
     comp: FeeRateTracker,
+  },
+  {
+    name: '404',
+    path: '/404',
+    exact: true,
+    comp: NotFoundPage,
+  },
+  {
+    name: 'Error',
+    path: '/error',
+    exact: true,
+    comp: ErrorPage,
   },
 ]
 
@@ -379,6 +386,7 @@ class PageErrorBoundary extends Component<PageErrorBoundaryProps, PageErrorBound
     return { error }
   }
 
+  // TODO Take note that it is possible for components outside the PageErrorBoundary to trigger a change in children, resulting in unknown issues.
   componentDidUpdate(prevProps: PageErrorBoundaryProps) {
     if (prevProps !== this.props) {
       this.setState({ error: null, info: { componentStack: '' } })
@@ -394,7 +402,7 @@ class PageErrorBoundary extends Component<PageErrorBoundaryProps, PageErrorBound
     const { children } = this.props
 
     if (error) {
-      return <NotFoundPage errorMessage={error.toString()} errorDescription={info.componentStack} />
+      return <ErrorPage errorMessage={error.toString()} errorDescription={info.componentStack} />
     }
 
     return children
