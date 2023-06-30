@@ -60,8 +60,9 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "husky": "^7.0.1",
     "jest-styled-components": "^7.0.5",
+    "lint-staged": ">=10",
     "mockdate": "^2.0.5",
-    "prettier": "2.3.2",
+    "prettier": "^2.8.8",
     "react-app-rewired": "2.2.1",
     "react-test-renderer": "^17.0.2",
     "rxjs": "7.8.1",
@@ -81,7 +82,8 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --watchAll=false",
     "eject": "react-app-rewired eject",
-    "husky:init": "husky install"
+    "husky:init": "husky install",
+    "prepare": "husky install"
   },
   "jest": {
     "displayName": "Unit Test"
@@ -97,5 +99,9 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --cache --fix",
+    "*.{ts,tsx,json,html,scss}": "prettier --write"
+  }
 }
