@@ -88,6 +88,7 @@
       "new_dao_withdraw": "每日新增解锁",
       "circulation_ratio": "锁定量占当前流通量比率",
       "live_cell": "未花费 Cell",
+      "dead_cell": "已消费 Cell",
       "archived_cell": "已花费 Cell",
       "all_cells": "所有的 Cell",
       "cell_count": "Cell 数量",
@@ -235,6 +236,7 @@
       "visit-deprecated-address": "查看废弃地址格式",
       "view-deprecated-address": "展示旧地址格式",
       "displaying-deprecated-address": "正在以旧格式地址展示",
+      "currentAddress": "当前地址",
       "view_outgoing_txns": "查看支出交易",
       "view_incoming_txns": "查看收入交易",
       "view_customised_cell_included_txns": "查看包含定制Cell的交易"
@@ -401,7 +403,8 @@
     },
     "error": {
       "maintain": "网络维护中，请稍后再试",
-      "page_crashed_tip": "遇到了一些错误"
+      "page_crashed_tip": "遇到了一些错误",
+      "back_home": "前往首页"
     },
     "pagination": {
       "first": "首页",
