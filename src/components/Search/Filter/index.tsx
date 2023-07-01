@@ -5,11 +5,13 @@ import ClearLogo from '../../../assets/clear.png'
 import { FilterImage, FilterPanel, ResetButtonPanel, FilterInputPanel } from './styled'
 
 const Filter = ({
+  defaultValue = '',
   placeholder,
   onFilter,
   onReset,
   showReset,
 }: {
+  defaultValue?: string
   placeholder?: string
   onFilter: (query: string) => void
   onReset: () => void
@@ -17,7 +19,7 @@ const Filter = ({
 }) => {
   const [t] = useTranslation()
 
-  const [filterValue, setFilterValue] = useState('')
+  const [filterValue, setFilterValue] = useState(defaultValue)
   const showClear = !!filterValue
   const inputElement = useRef<HTMLInputElement>(null)
 

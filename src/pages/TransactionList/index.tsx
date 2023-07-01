@@ -128,6 +128,7 @@ const TransactionTable: FC<{
   const [t] = useTranslation()
 
   const colHash: Column<State.Transaction> = {
+    key: 'hash',
     title: t('transaction.transaction_hash'),
     className: styles.colHash,
     width: '40%',
@@ -138,6 +139,7 @@ const TransactionTable: FC<{
   const confirmedColumns: Column<State.Transaction>[] = [
     colHash,
     {
+      key: 'height',
       title: (
         <>
           <div>{t('transaction.height')}</div>
@@ -149,6 +151,7 @@ const TransactionTable: FC<{
       render: transaction => localeNumberString(transaction.blockNumber),
     },
     {
+      key: 'capacity',
       title: (
         <>
           <div>{t('transaction.capacity')}</div>
@@ -161,6 +164,7 @@ const TransactionTable: FC<{
       ),
     },
     {
+      key: 'time',
       title: t('transaction.time'),
       width: '15%',
       render: transaction => parseSimpleDate(transaction.blockTimestamp),
@@ -170,6 +174,7 @@ const TransactionTable: FC<{
   const pendingColumns: Column<State.Transaction>[] = [
     colHash,
     {
+      key: 'capacity',
       title: (
         <>
           <div>{t('transaction.capacity')}</div>
@@ -182,6 +187,7 @@ const TransactionTable: FC<{
       ),
     },
     {
+      key: 'time',
       title: (
         <>
           <div>{t('transaction.time')}</div>
@@ -195,6 +201,7 @@ const TransactionTable: FC<{
       },
     },
     {
+      key: 'fee',
       title: (
         <>
           <div>{t('transaction.transaction_fee')}</div>

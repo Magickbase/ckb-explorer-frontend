@@ -48,6 +48,20 @@
   }
 }
 
+.sortAndFilter {
+  display: flex;
+  align-items: center;
+  padding-right: 2.6rem;
+  svg {
+    cursor: pointer;
+  }
+  .AscendByTime {
+    path {
+      fill: var(--primary-color);
+    }
+  }
+}
+
 .layoutButtons {
   > label {
     height: 40px;

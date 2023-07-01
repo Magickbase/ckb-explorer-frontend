@@ -5,7 +5,7 @@ import Content from '../../components/Content'
 import i18n from '../../utils/i18n'
 import { BlockDetailPanel } from './styled'
 import { BlockComp, BlockOverview } from './BlockComp'
-import { usePaginationParamsInPage } from '../../utils/hook'
+import { usePaginationParamsInPage, useSearchParams } from '../../utils/hook'
 import { fetchBlock, fetchTransactionsByBlockHash } from '../../service/http/fetcher'
 import { assert } from '../../utils/error'
 import { QueryResult } from '../../components/QueryResult'
@@ -14,6 +14,7 @@ import { defaultBlockInfo } from './state'
 export default () => {
   const { param: blockHeightOrHash } = useParams<{ param: string }>()
   const { currentPage, pageSize, setPage } = usePaginationParamsInPage()
+  const { filter } = useSearchParams('filter')
 
   const queryBlock = useQuery(['block', blockHeightOrHash], async () => {
     const wrapper = await fetchBlock(blockHeightOrHash)
@@ -24,10 +25,14 @@ export default () => {
   const block = queryBlock.data ?? defaultBlockInfo
 
   const queryBlockTransactions = useQuery(
-    ['block-transactions', blockHash, currentPage, pageSize],
+    ['block-transactions', blockHash, currentPage, pageSize, filter],
     async () => {
       assert(blockHash != null)
-      const { data, meta } = await fetchTransactionsByBlockHash(blockHash, currentPage, pageSize)
+      const { data, meta } = await fetchTransactionsByBlockHash(blockHash, {
+        page: currentPage,
+        size: pageSize,
+        filter,
+      })
       return {
         transactions: data.map(wrapper => wrapper.attributes),
         total: meta?.total ?? 0,

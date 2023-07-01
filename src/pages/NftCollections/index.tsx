@@ -14,6 +14,7 @@ import { getPrimaryColor } from '../../constants/common'
 import { useIsMobile, useSearchParams, useSortParam, useUpdateSearchParams } from '../../utils/hook'
 import { omit } from '../../utils/object'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
+import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
 import { ReactComponent as SortIcon } from '../../assets/sort_icon.svg'
 
 const primaryColor = getPrimaryColor()
@@ -146,6 +147,7 @@ const NftCollections = () => {
                 <th>{i18n.t('nft.collection_name')}</th>
                 <th>
                   <div className={classNames({ [styles.activeIcon]: txTypeFilter }, styles.buttonIcon)}>
+                    {i18n.t('nft.standard')}
                     <Popover
                       placement={isMobile ? 'bottomRight' : 'bottomLeft'}
                       trigger={isMobile ? 'click' : 'hover'}
@@ -161,7 +163,7 @@ const NftCollections = () => {
                         </div>
                       }
                     >
-                      {i18n.t('nft.standard')}
+                      <FilterIcon className={styles.filter} />
                     </Popover>
                   </div>
                 </th>

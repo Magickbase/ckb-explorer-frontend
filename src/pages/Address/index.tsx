@@ -8,24 +8,16 @@ import { AddressTransactions, AddressOverview } from './AddressComp'
 import { fetchAddressInfo, fetchTransactionsByAddress } from '../../service/http/fetcher'
 import { QueryResult } from '../../components/QueryResult'
 import { defaultAddressInfo } from './state'
-import { usePaginationParamsInListPage, useSearchParams, useSortParam } from '../../utils/hook'
+import { usePaginationParamsInListPage, useSortParam } from '../../utils/hook'
 import { isAxiosError } from '../../utils/error'
 
 export type TxTypeType = 'outgoing' | 'incoming' | 'customised' | undefined
-
-function isTxFilterType(s?: string): s is TxTypeType {
-  return s ? ['outgoing', 'incoming', 'customised'].includes(s) : false
-}
 
 export const Address = () => {
   const { address } = useParams<{ address: string }>()
   const { currentPage, pageSize } = usePaginationParamsInListPage()
 
-  const { tx_type: txTypeFilterParam } = useSearchParams('tx_type')
-
   const { sortBy, orderBy, sort } = useSortParam<'time'>(s => s === 'time')
-
-  const txTypeFilter = isTxFilterType(txTypeFilterParam) ? txTypeFilterParam : undefined
 
   const addressInfoQuery = useQuery(['address_info', address], async () => {
     const wrapper = await fetchAddressInfo(address)
@@ -37,10 +29,10 @@ export const Address = () => {
   })
 
   const addressTransactionsQuery = useQuery(
-    ['address_transactions', address, currentPage, pageSize, sort, txTypeFilter],
+    ['address_transactions', address, currentPage, pageSize, sort],
     async () => {
       try {
-        const { data, meta } = await fetchTransactionsByAddress(address, currentPage, pageSize, sort, txTypeFilter)
+        const { data, meta } = await fetchTransactionsByAddress(address, currentPage, pageSize, sort)
         return {
           transactions: data.map(wrapper => wrapper.attributes),
           total: meta ? meta.total : 0,
@@ -80,7 +72,6 @@ export const Address = () => {
               transactionsTotal={data.total}
               addressInfo={addressInfoQuery.data ?? defaultAddressInfo}
               timeOrderBy={sortBy === 'time' ? orderBy : 'desc'}
-              txTypeFilter={txTypeFilter}
             />
           )}
         </QueryResult>

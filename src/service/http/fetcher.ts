@@ -91,12 +91,25 @@ export const fetchPendingTransactions = (page: number, size: number, sort?: stri
 
 export const fetchPendingTransactionsCount = () => fetchPendingTransactions(1, 1).then(resp => resp.meta?.total)
 
-export const fetchTransactionsByBlockHash = (blockHash: string, page: number, size: number) =>
+export const fetchTransactionsByBlockHash = (
+  blockHash: string,
+  {
+    page,
+    size: page_size,
+    filter,
+  }: Partial<{
+    page: number
+    size: number
+    filter: string
+  }>,
+) =>
   axiosIns
     .get(`/block_transactions/${blockHash}`, {
       params: {
         page,
-        page_size: size,
+        page_size,
+        address_hash: filter?.startsWith('ck') ? filter : null,
+        tx_hash: filter?.startsWith('0x') ? filter : null,
       },
     })
     .then((res: AxiosResponse) => toCamelcase<Response.Response<Response.Wrapper<State.Transaction>[]>>(res.data))

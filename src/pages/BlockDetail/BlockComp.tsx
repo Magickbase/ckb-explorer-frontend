@@ -1,5 +1,5 @@
 import { useState, ReactNode, FC } from 'react'
-import { Link, useHistory, useLocation } from 'react-router-dom'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { Tooltip } from 'antd'
 import Pagination from '../../components/Pagination'
@@ -13,7 +13,7 @@ import { useAppState } from '../../contexts/providers'
 import { parseSimpleDate } from '../../utils/date'
 import i18n from '../../utils/i18n'
 import { localeNumberString, handleDifficulty } from '../../utils/number'
-import { useIsMobile } from '../../utils/hook'
+import { useIsMobile, useSearchParams } from '../../utils/hook'
 import { hexToUtf8 } from '../../utils/string'
 import { deprecatedAddrToNewAddr, shannonToCkb } from '../../utils/util'
 import {
@@ -297,9 +297,11 @@ export const BlockComp = ({
   total: number
 }) => {
   const totalPages = Math.ceil(total / pageSize)
+  const { push } = useHistory()
   const { hash } = useLocation()
+  const { param: blockId } = useParams<{ param: string }>()
 
-  const [txHashFilterText, setTxHashFilterText] = useState<string | undefined>(undefined)
+  const { filter } = useSearchParams('filter')
 
   return (
     <>
@@ -309,45 +311,42 @@ export const BlockComp = ({
         isSingle
         rear={
           <Filter
-            showReset={!!txHashFilterText}
+            showReset={!!filter}
+            defaultValue={filter}
             placeholder={i18n.t('block.address_or_hash')}
-            onFilter={query => {
-              setTxHashFilterText(query)
+            onFilter={filter => {
+              push(`/block/${blockId}?${new URLSearchParams({ filter }).toString()}`)
             }}
             onReset={() => {
-              setTxHashFilterText(undefined)
+              push(`/block/${blockId}`)
             }}
           />
         }
       />
-      {transactions
-        .filter(transaction =>
-          txHashFilterText ? transaction.transactionHash.toLowerCase().includes(txHashFilterText.toLowerCase()) : true,
-        )
-        .map(
-          (transaction, index) =>
-            transaction && (
-              <TransactionItem
-                key={transaction.transactionHash}
-                scrollIntoViewOnMount={transaction.isCellbase && hash === `#${CELL_BASE_ANCHOR}`}
-                transaction={{
-                  ...transaction,
-                  displayInputs: transaction.displayInputs.map(input => ({
-                    ...input,
-                    addressHash: deprecatedAddrToNewAddr(input.addressHash),
-                  })),
-                  displayOutputs: transaction.displayOutputs.map(output => ({
-                    ...output,
-                    addressHash: deprecatedAddrToNewAddr(output.addressHash),
-                  })),
-                }}
-                circleCorner={{
-                  bottom: index === transactions.length - 1 && totalPages === 1,
-                }}
-                isBlock
-              />
-            ),
-        )}
+      {transactions.map(
+        (transaction, index) =>
+          transaction && (
+            <TransactionItem
+              key={transaction.transactionHash}
+              scrollIntoViewOnMount={transaction.isCellbase && hash === `#${CELL_BASE_ANCHOR}`}
+              transaction={{
+                ...transaction,
+                displayInputs: transaction.displayInputs.map(input => ({
+                  ...input,
+                  addressHash: deprecatedAddrToNewAddr(input.addressHash),
+                })),
+                displayOutputs: transaction.displayOutputs.map(output => ({
+                  ...output,
+                  addressHash: deprecatedAddrToNewAddr(output.addressHash),
+                })),
+              }}
+              circleCorner={{
+                bottom: index === transactions.length - 1 && totalPages === 1,
+              }}
+              isBlock
+            />
+          ),
+      )}
       {totalPages > 1 && (
         <BlockTransactionsPagination>
           <Pagination currentPage={currentPage} totalPages={totalPages} onChange={onPageChange} />

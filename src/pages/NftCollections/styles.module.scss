@@ -110,10 +110,20 @@
 
   .buttonIcon {
     cursor: pointer;
+    display: flex;
+    align-items: center;
   }
 
   .activeIcon {
     color: var(--primary-color);
+    svg {
+      path {
+        fill: var(--primary-color);
+      }
+    }
+  }
+  .filter {
+    height: 1rem;
   }
 }
 

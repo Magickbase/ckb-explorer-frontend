@@ -439,9 +439,9 @@
       "tokens_empty": "There are no tokens at this time.",
       "unverified": "Unverified",
       "view-deprecated-address": "View deprecated address",
-      "view_mint_txns": "view Mint Txns",
-      "view_transfer_txns": "view Transfer Txns",
-      "view_burn_txns": "view Burn Txns"
+      "view_mint_txns": "View Mint Txns",
+      "view_transfer_txns": "View Transfer Txns",
+      "view_burn_txns": "View Burn Txns"
     },
     "nft": {
       "nft_collection": "NFT Collection",
