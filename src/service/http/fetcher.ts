@@ -426,20 +426,13 @@ export const fetchFlushChartCache = () =>
 export const fetchSimpleUDT = (typeHash: string) =>
   axiosIns(`/udts/${typeHash}`).then((res: AxiosResponse) => toCamelcase<Response.Wrapper<State.UDT>>(res.data.data))
 
-export const fetchSimpleUDTTransactions = (typeHash: string, page: number, size: number) =>
+export const fetchSimpleUDTTransactions = (typeHash: string, page: number, size: number, filter?: string) =>
   axiosIns(`/udt_transactions/${typeHash}`, {
     params: {
       page,
       page_size: size,
-    },
-  }).then((res: AxiosResponse) => toCamelcase<Response.Response<Response.Wrapper<State.Transaction>[]>>(res.data))
-
-export const fetchSimpleUDTTransactionsWithAddress = (address: string, typeHash: string, page: number, size: number) =>
-  axiosIns(`/address_udt_transactions/${address}`, {
-    params: {
-      type_hash: typeHash,
-      page,
-      page_size: size,
+      address_hash: filter?.startsWith('0x') ? undefined : filter,
+      tx_hash: filter?.startsWith('0x') ? filter : undefined,
     },
   }).then((res: AxiosResponse) => toCamelcase<Response.Response<Response.Wrapper<State.Transaction>[]>>(res.data))
 

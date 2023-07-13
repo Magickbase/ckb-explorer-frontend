@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import classNames from 'classnames'
@@ -21,22 +21,14 @@ import { isMainnet } from '../../utils/chain'
 import Filter from '../../components/Search/Filter'
 import { localeNumberString } from '../../utils/number'
 import Script from '../../components/Script'
-import { containSpecialChar } from '../../utils/string'
-import {
-  fetchSimpleUDT,
-  fetchSimpleUDTTransactions,
-  fetchSimpleUDTTransactionsWithAddress,
-} from '../../service/http/fetcher'
+import { fetchSimpleUDT, fetchSimpleUDTTransactions } from '../../service/http/fetcher'
 import { deprecatedAddrToNewAddr } from '../../utils/util'
 import { QueryResult } from '../../components/QueryResult'
-import { PageParams } from '../../constants/common'
 import { defaultUDTInfo } from './state'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
 import styles from './styles.module.scss'
 import { omit } from '../../utils/object'
-
-const FILTER_COUNT = 100
 
 const typeScriptIcon = (show: boolean) => {
   if (show) {
@@ -54,10 +46,12 @@ function isTxFilterType(s?: string): s is TxTypeType {
 export const SimpleUDT = () => {
   const isMobile = useIsMobile()
   const dispatch = useDispatch()
+  const { push } = useHistory()
   const [t] = useTranslation()
   const [showType, setShowType] = useState(false)
   const { hash: typeHash } = useParams<{ hash: string }>()
-  const { currentPage, pageSize: _pageSize, setPage, setPageSize } = usePaginationParamsInPage()
+  const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
+  const { filter } = useSearchParams('filter')
 
   const { tx_type: txTypeFilterParam } = useSearchParams('tx_type')
 
@@ -75,27 +69,10 @@ export const SimpleUDT = () => {
   const udt = querySimpleUDT.data ?? defaultUDTInfo
   const { iconFile, typeScript, symbol, uan } = udt
 
-  const [filterText, setFilterText] = useState<string>()
-  const filtering = filterText != null
-  const isInvalidFilter = filtering && containSpecialChar(filterText)
-
   const querySimpleUDTTransactions = useQuery(
-    ['simple-udt-transactions', typeHash, currentPage, _pageSize, filterText, isInvalidFilter],
+    ['simple-udt-transactions', typeHash, currentPage, _pageSize, filter],
     async () => {
-      if (filterText != null) {
-        if (isInvalidFilter) {
-          return { transactions: [], total: 0 }
-        }
-
-        const { data, meta } = await fetchSimpleUDTTransactionsWithAddress(filterText, typeHash, currentPage, pageSize)
-        return {
-          transactions: data.map(wrapper => wrapper.attributes),
-          total: meta?.total ?? 0,
-          pageSize: meta?.pageSize,
-        }
-      }
-
-      const { data, meta } = await fetchSimpleUDTTransactions(typeHash, currentPage, pageSize)
+      const { data, meta } = await fetchSimpleUDTTransactions(typeHash, currentPage, pageSize, filter)
       return {
         transactions:
           data.map(wrapper => ({
@@ -110,11 +87,12 @@ export const SimpleUDT = () => {
             })),
           })) || [],
         total: meta?.total ?? 0,
+        pageSize: meta?.pageSize,
       }
     },
   )
   const total = querySimpleUDTTransactions.data?.total ?? 0
-  const filterNoResult = filtering && (isInvalidFilter || querySimpleUDTTransactions.isError)
+  const filterNoResult = !!filter && querySimpleUDTTransactions.isError
   const pageSize: number = querySimpleUDTTransactions.data?.pageSize ?? _pageSize
 
   const filterList: { value: TxTypeType; title: string }[] = [
@@ -165,17 +143,14 @@ export const SimpleUDT = () => {
             </div>
             <div className={styles.searchAndfilter}>
               <Filter
-                showReset={filtering}
+                defaultValue={filter}
+                showReset={!!filter}
                 placeholder={t('udt.search_placeholder')}
-                onFilter={query => {
-                  setPage(1)
-                  setPageSize(FILTER_COUNT)
-                  setFilterText(query)
+                onFilter={filter => {
+                  push(`/sudt/${typeHash}?${new URLSearchParams({ filter }).toString()}`)
                 }}
                 onReset={() => {
-                  setPage(1)
-                  setPageSize(PageParams.PageSize)
-                  setFilterText(undefined)
+                  push(`/sudt/${typeHash}`)
                 }}
               />
               <div className={classNames({ [styles.activeIcon]: txTypeFilter })}>
