@@ -313,6 +313,7 @@ export function usePaginationParamsFromSearch(opts: {
   }
 }
 
+// TODO: refactor this hook
 export const usePaginationParamsInPage = () =>
   usePaginationParamsFromSearch({
     defaultPage: PageParams.PageNo,

@@ -57,7 +57,7 @@ export const SimpleUDT = () => {
   const [t] = useTranslation()
   const [showType, setShowType] = useState(false)
   const { hash: typeHash } = useParams<{ hash: string }>()
-  const { currentPage, pageSize, setPage, setPageSize } = usePaginationParamsInPage()
+  const { currentPage, pageSize: _pageSize, setPage, setPageSize } = usePaginationParamsInPage()
 
   const { tx_type: txTypeFilterParam } = useSearchParams('tx_type')
 
@@ -80,7 +80,7 @@ export const SimpleUDT = () => {
   const isInvalidFilter = filtering && containSpecialChar(filterText)
 
   const querySimpleUDTTransactions = useQuery(
-    ['simple-udt-transactions', typeHash, currentPage, pageSize, filterText, isInvalidFilter],
+    ['simple-udt-transactions', typeHash, currentPage, _pageSize, filterText, isInvalidFilter],
     async () => {
       if (filterText != null) {
         if (isInvalidFilter) {
@@ -91,6 +91,7 @@ export const SimpleUDT = () => {
         return {
           transactions: data.map(wrapper => wrapper.attributes),
           total: meta?.total ?? 0,
+          pageSize: meta?.pageSize,
         }
       }
 
@@ -114,6 +115,7 @@ export const SimpleUDT = () => {
   )
   const total = querySimpleUDTTransactions.data?.total ?? 0
   const filterNoResult = filtering && (isInvalidFilter || querySimpleUDTTransactions.isError)
+  const pageSize: number = querySimpleUDTTransactions.data?.pageSize ?? _pageSize
 
   const filterList: { value: TxTypeType; title: string }[] = [
     {

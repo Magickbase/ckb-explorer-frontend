@@ -98,23 +98,25 @@ const TokenItem = ({ token, isLast }: { token: State.UDT; isLast?: boolean }) =>
 
 export default () => {
   const isMobile = useIsMobile()
-  const { currentPage, pageSize, setPage } = usePaginationParamsInPage()
+  const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
 
   const { sortBy, orderBy, sort, handleSortClick } = useSortParam<TokensSortByType>(
     s => s === 'transactions' || s === 'addresses_count' || s === 'created_time',
   )
 
-  const query = useQuery(['tokens', currentPage, pageSize, sort], async () => {
-    const { data, meta } = await fetchTokens(currentPage, pageSize, sort)
+  const query = useQuery(['tokens', currentPage, _pageSize, sort], async () => {
+    const { data, meta } = await fetchTokens(currentPage, _pageSize, sort)
     if (data == null || data.length === 0) {
       throw new Error('Tokens empty')
     }
     return {
       total: meta?.total ?? 0,
       tokens: data.map(wrapper => wrapper.attributes),
+      pageSize: meta?.pageSize,
     }
   })
   const total = query.data?.total ?? 0
+  const pageSize = query.data?.pageSize ?? _pageSize
   const totalPages = Math.ceil(total / pageSize)
 
   const sortButton = (sortRule: TokensSortByType) => (
