@@ -10,6 +10,15 @@
   }
 }
 
+.loadingSection {
+  height: 3.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4px;
+  background: #fff;
+}
+
 .sortDesc {
   svg > path:last-child {
     fill: var(--primary-color);

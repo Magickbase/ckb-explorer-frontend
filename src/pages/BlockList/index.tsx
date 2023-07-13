@@ -44,6 +44,8 @@ interface TableContentData {
   content: string
 }
 
+const LoadingSection = () => <div className={styles.loadingSection}>Loading...</div>
+
 const getTableContentDataList = (block: State.Block, index: number, page: number, isMaxW: boolean) => {
   const blockReward =
     index < DELAY_BLOCK_NUMBER && page === 1 ? (
@@ -187,8 +189,9 @@ export default () => {
           : undefined,
     },
   )
-  const blocks = query.data?.blocks ?? []
-  const total = query.data?.total ?? 0
+  const { data, isLoading } = query
+  const blocks = data?.blocks ?? []
+  const total = data?.total ?? 0
   const totalPages = Math.ceil(total / pageSize)
 
   const blockList = blocks.map(b => ({
@@ -219,7 +222,7 @@ export default () => {
                 </TableTitleRowItem>
               ))}
             </TableTitleRow>
-            <BlockCardGroup blocks={blockList} isFirstPage={currentPage === 1} />
+            {isLoading ? <LoadingSection /> : <BlockCardGroup blocks={blockList} isFirstPage={currentPage === 1} />}
           </ContentTable>
         ) : (
           <ContentTable>
@@ -242,26 +245,30 @@ export default () => {
                 </TableTitleRowItem>
               ))}
             </TableTitleRow>
-            {blockList.map(
-              (block: State.Block, blockIndex: number) =>
-                block && (
-                  <TableContentRow key={block.number}>
-                    {getTableContentDataList(block, blockIndex, currentPage, isMaxW).map(
-                      (data: TableContentData, index: number) => {
-                        const key = index
-                        return (
-                          <Fragment key={key}>
-                            {data.content === block.minerHash ? (
-                              <TableMinerContentItem width={data.width} content={data.content} textCenter />
-                            ) : (
-                              <TableContentItem width={data.width} content={data.content} to={data.to} />
-                            )}
-                          </Fragment>
-                        )
-                      },
-                    )}
-                  </TableContentRow>
-                ),
+            {isLoading ? (
+              <LoadingSection />
+            ) : (
+              blockList.map(
+                (block: State.Block, blockIndex: number) =>
+                  block && (
+                    <TableContentRow key={block.number}>
+                      {getTableContentDataList(block, blockIndex, currentPage, isMaxW).map(
+                        (data: TableContentData, index: number) => {
+                          const key = index
+                          return (
+                            <Fragment key={key}>
+                              {data.content === block.minerHash ? (
+                                <TableMinerContentItem width={data.width} content={data.content} textCenter />
+                              ) : (
+                                <TableContentItem width={data.width} content={data.content} to={data.to} />
+                              )}
+                            </Fragment>
+                          )
+                        },
+                      )}
+                    </TableContentRow>
+                  ),
+              )
             )}
           </ContentTable>
         )}
