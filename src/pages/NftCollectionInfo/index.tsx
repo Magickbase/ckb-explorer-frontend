@@ -127,6 +127,7 @@ const NftCollectionInfo = () => {
       enabled: tab === tabs[1],
     },
   )
+
   const { isLoading: isInventoryLoading, data: inventoryList } = useQuery<AxiosResponse<InventoryRes>>(
     ['nft-collection-inventory', id, page],
     () =>
@@ -154,7 +155,12 @@ const NftCollectionInfo = () => {
           addr,
           quantity: rawHolderList.data.data[addr],
         }))
-        .sort((h1, h2) => h2.quantity - h1.quantity)
+        .sort((h1, h2) => {
+          if (sort === 'quantity.asc') {
+            return h1.quantity - h2.quantity
+          }
+          return h2.quantity - h1.quantity
+        })
     : []
 
   // TODO: enable pagination of holder list

@@ -1,6 +1,5 @@
 .list {
   background: #fff;
-  border-top-right-radius: 6px;
 
   table {
     position: relative;
@@ -49,10 +48,20 @@
     padding-right: 25px;
     max-width: 0.25vw;
 
+    &:last-child {
+      @media screen and (max-width: 750px) {
+        text-align: right;
+      }
+    }
+
     &:first-child,
     &:last-child {
       padding-left: 40px;
       padding-right: 40px;
+      @media screen and (max-width: 750px) {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
     }
   }
 
