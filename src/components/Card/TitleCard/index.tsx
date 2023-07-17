@@ -7,7 +7,7 @@ export default ({
   className,
   rear,
 }: {
-  title: string
+  title: string | React.ReactElement
   isSingle?: boolean
   className?: string
   rear?: ReactNode

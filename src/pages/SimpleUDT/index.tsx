@@ -147,7 +147,7 @@ export const SimpleUDT = () => {
                 showReset={!!filter}
                 placeholder={t('udt.search_placeholder')}
                 onFilter={filter => {
-                  push(`/sudt/${typeHash}?${new URLSearchParams({ filter }).toString()}`)
+                  push(`/sudt/${typeHash}?${new URLSearchParams({ filter })}`)
                 }}
                 onReset={() => {
                   push(`/sudt/${typeHash}`)
@@ -161,7 +161,7 @@ export const SimpleUDT = () => {
                   content={
                     <div>
                       {filterList.map(f => (
-                        <button type="button" onClick={() => handleFilterClick(f.value)}>
+                        <button key={f.value} type="button" onClick={() => handleFilterClick(f.value)}>
                           <div>{f.title}</div>
                           <div>{f.value === txTypeFilter && <SelectedCheckIcon />}</div>
                         </button>

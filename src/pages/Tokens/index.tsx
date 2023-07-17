@@ -1,9 +1,9 @@
 import { Tooltip } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useQuery } from 'react-query'
-import classNames from 'classnames'
 import Content from '../../components/Content'
 import Pagination from '../../components/Pagination'
+import SortButton from '../../components/SortButton'
 import {
   TokensPanel,
   TokensTableTitle,
@@ -24,12 +24,9 @@ import Loading from '../../components/Loading'
 import { udtSubmitEmail } from '../../utils/util'
 import SmallLoading from '../../components/Loading/SmallLoading'
 import styles from './styles.module.scss'
-import { useIsMobile, usePaginationParamsInPage, useSortParam } from '../../utils/hook'
+import { useIsMobile, usePaginationParamsInPage } from '../../utils/hook'
 import { fetchTokens } from '../../service/http/fetcher'
 import { QueryResult } from '../../components/QueryResult'
-import { ReactComponent as SortIcon } from '../../assets/sort_icon.svg'
-
-type TokensSortByType = 'transactions' | 'addresses_count' | 'created_time'
 
 const TokenItem = ({ token, isLast }: { token: State.UDT; isLast?: boolean }) => {
   const { displayName, fullName, uan } = token
@@ -100,12 +97,11 @@ export default () => {
   const isMobile = useIsMobile()
   const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
 
-  const { sortBy, orderBy, sort, handleSortClick } = useSortParam<TokensSortByType>(
-    s => s === 'transactions' || s === 'addresses_count' || s === 'created_time',
-  )
+  const { location } = useHistory()
+  const sort = new URLSearchParams(location.search).get('sort')
 
   const query = useQuery(['tokens', currentPage, _pageSize, sort], async () => {
-    const { data, meta } = await fetchTokens(currentPage, _pageSize, sort)
+    const { data, meta } = await fetchTokens(currentPage, _pageSize, sort ?? undefined)
     if (data == null || data.length === 0) {
       throw new Error('Tokens empty')
     }
@@ -119,19 +115,6 @@ export default () => {
   const pageSize = query.data?.pageSize ?? _pageSize
   const totalPages = Math.ceil(total / pageSize)
 
-  const sortButton = (sortRule: TokensSortByType) => (
-    <button
-      type="button"
-      className={classNames(styles.sortIcon, {
-        [styles.sortAsc]: sortRule === sortBy && orderBy === 'asc',
-        [styles.sortDesc]: sortRule === sortBy && orderBy === 'desc',
-      })}
-      onClick={() => handleSortClick(sortRule)}
-    >
-      <SortIcon />
-    </button>
-  )
-
   return (
     <Content>
       <TokensPanel className="container">
@@ -144,13 +127,16 @@ export default () => {
         <TokensTableTitle>
           {!isMobile && <span>{i18n.t('udt.uan_name')}</span>}
           <span>
-            {i18n.t('udt.transactions')} {sortButton('transactions')}
+            {i18n.t('udt.transactions')}
+            <SortButton field="transactions" />
           </span>
           <span>
-            {i18n.t('udt.address_count')} {sortButton('addresses_count')}
+            {i18n.t('udt.address_count')}
+            <SortButton field="addresses_count" />
           </span>
           <span>
-            {i18n.t('udt.created_time')} {sortButton('created_time')}
+            {i18n.t('udt.created_time')}
+            <SortButton field="created_time" />
           </span>
         </TokensTableTitle>
 

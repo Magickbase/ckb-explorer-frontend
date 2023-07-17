@@ -2,19 +2,18 @@ import { Link } from 'react-router-dom'
 import { scriptToHash } from '@nervosnetwork/ckb-sdk-utils'
 import { Popover, Tooltip } from 'antd'
 import classNames from 'classnames'
+import SortButton from '../../components/SortButton'
 import i18n from '../../utils/i18n'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
-import { ReactComponent as SortIcon } from '../../assets/sort_icon.svg'
 import { getPrimaryColor } from '../../constants/common'
 import { useIsMobile, useSearchParams, useSortParam } from '../../utils/hook'
 import styles from './styles.module.scss'
 
-type TxTypeType = 'all' | 'm_nft' | 'nrc721' | 'cota' | undefined
 type NftSortField = 'transactions' | 'holder' | 'minted'
 const primaryColor = getPrimaryColor()
-const filterList: { value: TxTypeType; title: string }[] = [
+const filterList: Array<Record<'title' | 'value', string>> = [
   {
     value: 'all',
     title: i18n.t('nft.all_type'),
@@ -33,7 +32,7 @@ const filterList: { value: TxTypeType; title: string }[] = [
   },
 ]
 
-export const isTxFilterType = (s?: string): s is TxTypeType => {
+export const isTxFilterType = (s?: string): boolean => {
   return s ? ['all', 'm_nft', 'nrc721', 'cota'].includes(s) : false
 }
 
@@ -50,23 +49,6 @@ export interface NFTCollection {
   type_script: { code_hash: string; hash_type: 'data' | 'type'; args: string } | null
 }
 
-const SortButton: React.FC<{
-  isActive: boolean
-  order: string
-  onClick: React.MouseEventHandler<HTMLButtonElement>
-}> = ({ isActive, order, onClick }) => (
-  <button
-    type="button"
-    className={classNames(styles.sortIcon, {
-      [styles.sortAsc]: isActive && order === 'asc',
-      [styles.sortDesc]: isActive && order === 'desc',
-    })}
-    onClick={onClick}
-  >
-    <SortIcon />
-  </button>
-)
-
 const TypeFilter = () => {
   const isMobile = useIsMobile()
   const { type } = useSearchParams('type')
@@ -82,7 +64,11 @@ const TypeFilter = () => {
         content={
           <div className={styles.filterItems}>
             {filterList.map(f => (
-              <Link to={`/nft-collections?type=${f.value}`} data-is-active={f.value === type}>
+              <Link
+                key={f.value}
+                to={`/nft-collections?${new URLSearchParams({ type: f.value })}`}
+                data-is-active={f.value === type}
+              >
                 {f.title}
                 <SelectedCheckIcon />
               </Link>
@@ -97,11 +83,9 @@ const TypeFilter = () => {
 }
 
 const HolderMinterSort = () => {
-  const {
-    sortBy = 'holder',
-    orderBy,
-    handleSortClick,
-  } = useSortParam<NftSortField>(s => s === 'transactions' || s === 'holder' || s === 'minted')
+  const { sortBy = 'holder', handleSortClick } = useSortParam<NftSortField>(
+    s => s === 'transactions' || s === 'holder' || s === 'minted',
+  )
 
   return (
     <div className={styles.holderMinted}>
@@ -112,7 +96,6 @@ const HolderMinterSort = () => {
         onClick={() => handleSortClick('holder')}
         aria-hidden
       >
-        <SortButton isActive={sortBy === 'holder'} order={orderBy} onClick={() => handleSortClick('holder')} />
         {i18n.t('nft.holder')}
       </div>
       &nbsp;/&nbsp;
@@ -124,19 +107,12 @@ const HolderMinterSort = () => {
         aria-hidden
       >
         {i18n.t('nft.minted')}
-        <SortButton isActive={sortBy === 'minted'} order={orderBy} onClick={() => handleSortClick('minted')} />
       </div>
     </div>
   )
 }
 
 export const ListOnDesktop: React.FC<{ isLoading: boolean; list: Array<NFTCollection> }> = ({ list, isLoading }) => {
-  const {
-    sortBy = 'holder',
-    orderBy,
-    handleSortClick,
-  } = useSortParam<NftSortField>(s => s === 'transactions' || s === 'holder' || s === 'minted')
-
   return (
     <table data-role="desktop-list">
       <thead>
@@ -148,11 +124,7 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: Array<NFTCollec
           <th className={styles.transactionsHeader}>
             <span>
               {i18n.t('nft.transactions')}
-              <SortButton
-                isActive={sortBy === 'transactions'}
-                order={orderBy}
-                onClick={() => handleSortClick('transactions')}
-              />
+              <SortButton field="transactions" />
             </span>
           </th>
           <th>

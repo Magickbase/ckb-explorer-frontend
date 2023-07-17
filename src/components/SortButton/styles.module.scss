@@ -1,0 +1,20 @@
+.container {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  display: inline-block;
+  vertical-align: text-top;
+  margin-left: 8px;
+  margin-right: 8px;
+  cursor: pointer;
+  &[data-is-desc='true'] {
+    svg > path:first-child {
+      fill: var(--primary-color);
+    }
+  }
+  &[data-is-asc='true'] {
+    svg > path:last-child {
+      fill: var(--primary-color);
+    }
+  }
+}

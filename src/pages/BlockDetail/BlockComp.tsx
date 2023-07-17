@@ -315,7 +315,7 @@ export const BlockComp = ({
             defaultValue={filter}
             placeholder={i18n.t('block.address_or_hash')}
             onFilter={filter => {
-              push(`/block/${blockId}?${new URLSearchParams({ filter }).toString()}`)
+              push(`/block/${blockId}?${new URLSearchParams({ filter })}`)
             }}
             onReset={() => {
               push(`/block/${blockId}`)

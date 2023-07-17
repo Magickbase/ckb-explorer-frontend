@@ -441,7 +441,9 @@
       "view-deprecated-address": "查看旧地址",
       "view_mint_txns": "查看铸币交易",
       "view_transfer_txns": "查看转帐交易",
-      "view_burn_txns": "查看销币交易"
+      "view_burn_txns": "查看销币交易",
+      "address_or_hash": "地址/交易哈希",
+      "address": "地址"
     },
     "nft": {
       "nft_collection": "NFT 藏品",

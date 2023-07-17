@@ -441,7 +441,9 @@
       "view-deprecated-address": "View deprecated address",
       "view_mint_txns": "View Mint Txns",
       "view_transfer_txns": "View Transfer Txns",
-      "view_burn_txns": "View Burn Txns"
+      "view_burn_txns": "View Burn Txns",
+      "address_or_hash": "Address/TxHash",
+      "address": "Address"
     },
     "nft": {
       "nft_collection": "NFT Collection",
