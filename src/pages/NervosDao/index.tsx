@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
@@ -10,13 +9,10 @@ import DepositorRank from './DepositorRank'
 import { usePaginationParamsInPage, useSearchParams } from '../../utils/hook'
 import DaoOverview from './DaoOverview'
 import SimpleButton from '../../components/SimpleButton'
-import { addPrefixForHash, containSpecialChar } from '../../utils/string'
 import {
   fetchNervosDao,
   fetchNervosDaoDepositors,
-  fetchNervosDaoTransactions,
-  fetchNervosDaoTransactionsByAddress,
-  fetchNervosDaoTransactionsByHash,
+  fetchNervosDaoTransactionsByFilter,
 } from '../../service/http/fetcher'
 import { QueryResult } from '../../components/QueryResult'
 import { defaultNervosDaoInfo } from './state'
@@ -26,7 +22,7 @@ export const NervosDao = () => {
   const [t] = useTranslation()
 
   const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
-  const params = useSearchParams('tab')
+  const params = useSearchParams('tab', 'filter')
   const tab = params.tab as 'transactions' | 'depositors'
   const daoTab = tab || 'transactions'
 
@@ -36,38 +32,15 @@ export const NervosDao = () => {
     return nervosDao
   })
 
-  const [filterText, setFilterText] = useState<string>()
-  const filtering = filterText != null
-  const isInvalidFilter = filtering && containSpecialChar(filterText)
-
   const queryNervosDaoTransactions = useQuery(
-    ['nervos-dao-transactions', currentPage, _pageSize, filterText, isInvalidFilter],
+    ['nervos-dao-transactions', currentPage, _pageSize, params.filter],
     async () => {
-      if (filterText != null) {
-        if (isInvalidFilter) {
-          return { transactions: [], total: 0 }
-        }
+      const { data, meta } = await fetchNervosDaoTransactionsByFilter({
+        filter: params.filter,
+        page: currentPage,
+        size: _pageSize,
+      })
 
-        // search address
-        if (filterText.startsWith('ckt') || filterText.startsWith('ckb')) {
-          const { data, meta } = await fetchNervosDaoTransactionsByAddress(filterText, currentPage, _pageSize)
-          const transactions = data.map(wrapper => wrapper.attributes)
-          return {
-            transactions,
-            total: meta?.total ?? transactions.length,
-          }
-        }
-
-        // search transaction
-        const wrapper = await fetchNervosDaoTransactionsByHash(addPrefixForHash(filterText))
-        const transactions = [wrapper.attributes]
-        return {
-          transactions,
-          total: transactions.length,
-        }
-      }
-
-      const { data, meta } = await fetchNervosDaoTransactions(currentPage, _pageSize)
       const transactions = data.map(wrapper => wrapper.attributes)
       return {
         transactions,
@@ -75,13 +48,19 @@ export const NervosDao = () => {
         pageSize: meta?.pageSize,
       }
     },
+    { enabled: !params.tab || params.tab === 'transactions' },
   )
-  const filterNoResult = filtering && (isInvalidFilter || queryNervosDaoTransactions.isError)
 
-  const queryNervosDaoDepositors = useQuery(['nervos-dao-depositors'], async () => {
-    const { data } = await fetchNervosDaoDepositors()
-    return { depositors: data.map(wrapper => wrapper.attributes) }
-  })
+  const queryNervosDaoDepositors = useQuery(
+    ['nervos-dao-depositors'],
+    async () => {
+      const { data } = await fetchNervosDaoDepositors()
+      return { depositors: data.map(wrapper => wrapper.attributes) }
+    },
+    {
+      enabled: params.tab === 'depositors',
+    },
+  )
 
   const pageSize = queryNervosDaoTransactions.data?.pageSize ?? _pageSize
 
@@ -106,15 +85,17 @@ export const NervosDao = () => {
           </div>
           {daoTab === 'transactions' && (
             <Filter
-              showReset={filtering}
+              defaultValue={params.filter}
+              showReset={!!params.filter}
               placeholder={t('nervos_dao.dao_search_placeholder')}
-              onFilter={query => {
+              onFilter={filter => {
                 setPage(1)
-                setFilterText(query)
+                // setFilterText(query)
+                push(`/nervosdao?${new URLSearchParams({ filter })}`)
               }}
               onReset={() => {
                 setPage(1)
-                setFilterText(undefined)
+                push(`/nervosdao`)
               }}
             />
           )}
@@ -129,7 +110,7 @@ export const NervosDao = () => {
                 transactions={data.transactions}
                 total={data.total}
                 onPageChange={setPage}
-                filterNoResult={filterNoResult}
+                // filterNoResult={filterNoResult}
               />
             )}
           </QueryResult>

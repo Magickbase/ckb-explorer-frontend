@@ -185,6 +185,24 @@ export const fetchNervosDaoTransactionsByAddress = (address: string, page: numbe
     },
   }).then((res: AxiosResponse) => toCamelcase<Response.Response<Response.Wrapper<State.Transaction>[]>>(res.data))
 
+export const fetchNervosDaoTransactionsByFilter = ({
+  page,
+  size,
+  filter,
+}: {
+  page: number
+  size: number
+  filter?: string
+}) =>
+  axiosIns(`/contract_transactions/nervos_dao`, {
+    params: {
+      page,
+      page_size: size,
+      tx_hash: filter?.startsWith('0x') ? filter : null,
+      address_hash: filter?.startsWith('0x') ? null : filter,
+    },
+  }).then((res: AxiosResponse) => toCamelcase<Response.Response<Response.Wrapper<State.Transaction>[]>>(res.data))
+
 export const fetchNervosDaoDepositors = () =>
   axiosIns(`/dao_depositors`).then((res: AxiosResponse) =>
     toCamelcase<Response.Response<Response.Wrapper<State.NervosDaoDepositor>[]>>(res.data),
