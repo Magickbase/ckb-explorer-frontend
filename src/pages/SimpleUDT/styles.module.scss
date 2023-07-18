@@ -38,56 +38,55 @@
   }
 }
 
-.activeIcon {
-  path {
+.typeFilter {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding-left: 0.8rem;
+  svg {
+    height: 1rem;
+    width: 1rem;
+  }
+  &[data-is-active='true'] {
+    svg path {
+      fill: var(--primary-color);
+    }
+  }
+}
+
+.filterItems {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  a {
+    display: flex;
+    justify-content: space-between;
+    color: var(--primary-color);
+    padding: 10px 0px 10px 10px;
+    margin-right: 8px;
+    border-radius: 8px;
+    &:hover {
+      background: var(--primary-hover-bg-color);
+      color: var(--primary-color);
+      cursor: pointer;
+    }
+    &[data-is-active='false'] {
+      color: #000;
+      svg {
+        display: none;
+      }
+    }
+  }
+  svg path {
     fill: var(--primary-color);
   }
 }
 
-.filterPop {
+.antPopover {
   :global {
-    .ant-popover-content {
-      .ant-popover-arrow {
-        display: none;
-      }
-    }
-    .ant-popover-inner-content {
+    .ant-popover-inner {
       border-radius: 8px;
-      padding: 14px 15px 14px 16px;
-
-      @media (max-width: 750px) {
-        padding: 14px 15px 14px 8px !important;
-      }
-
-      > div {
-        width: 200px;
-        > button {
-          margin: 0;
-          border: none;
-          outline: none;
-          width: 100%;
-          background-color: transparent;
-          padding: 10px 0 10px 8px;
-          border-radius: 8px;
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-          &:hover {
-            background: var(--primary-hover-bg-color);
-            color: var(--primary-color);
-            cursor: pointer;
-          }
-          > div:last-child {
-            height: 16px;
-            width: 16px;
-            margin-left: 10px;
-            path {
-              fill: var(--primary-color);
-            }
-          }
-        }
-      }
+      box-shadow: 0px 2px 10px 0px #eeeeee;
     }
   }
 }

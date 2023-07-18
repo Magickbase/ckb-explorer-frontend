@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
-import classNames from 'classnames'
 import { Popover } from 'antd'
 import SimpleUDTHashCard from '../../components/Card/HashCard'
 import Content from '../../components/Content'
@@ -11,7 +10,7 @@ import { getTipBlockNumber } from '../../service/app/address'
 import i18n from '../../utils/i18n'
 import { SimpleUDTContentPanel, UDTTransactionTitlePanel, TypeScriptController } from './styled'
 import SimpleUDTComp, { SimpleUDTOverview } from './SimpleUDTComp'
-import { useIsMobile, usePaginationParamsInPage, useSearchParams, useUpdateSearchParams } from '../../utils/hook'
+import { useIsMobile, usePaginationParamsInPage } from '../../utils/hook'
 import SUDTTokenIcon from '../../assets/sudt_token.png'
 import ArrowUpIcon from '../../assets/arrow_up.png'
 import ArrowDownIcon from '../../assets/arrow_down.png'
@@ -28,7 +27,6 @@ import { defaultUDTInfo } from './state'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
 import styles from './styles.module.scss'
-import { omit } from '../../utils/object'
 
 const typeScriptIcon = (show: boolean) => {
   if (show) {
@@ -37,25 +35,25 @@ const typeScriptIcon = (show: boolean) => {
   return isMainnet() ? ArrowDownIcon : ArrowDownBlueIcon
 }
 
-export type TxTypeType = 'mint' | 'transfer' | 'burn' | undefined
-
-function isTxFilterType(s?: string): s is TxTypeType {
-  return s ? ['mint', 'transfer', 'burn'].includes(s) : false
+enum TransactionType {
+  Mint = 'mint',
+  Transfer = 'transfer',
+  Burn = 'burn',
 }
 
 export const SimpleUDT = () => {
   const isMobile = useIsMobile()
   const dispatch = useDispatch()
   const { push } = useHistory()
+  const { search } = useLocation()
   const [t] = useTranslation()
   const [showType, setShowType] = useState(false)
   const { hash: typeHash } = useParams<{ hash: string }>()
   const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
-  const { filter } = useSearchParams('filter')
 
-  const { tx_type: txTypeFilterParam } = useSearchParams('tx_type')
-
-  const txTypeFilter = isTxFilterType(txTypeFilterParam) ? txTypeFilterParam : undefined
+  const query = new URLSearchParams(search)
+  const filter = query.get('filter')
+  const type = query.get('type')
 
   useEffect(() => {
     getTipBlockNumber(dispatch)
@@ -70,9 +68,15 @@ export const SimpleUDT = () => {
   const { iconFile, typeScript, symbol, uan } = udt
 
   const querySimpleUDTTransactions = useQuery(
-    ['simple-udt-transactions', typeHash, currentPage, _pageSize, filter],
+    ['simple-udt-transactions', typeHash, currentPage, _pageSize, filter, type],
     async () => {
-      const { data, meta } = await fetchSimpleUDTTransactions(typeHash, currentPage, pageSize, filter)
+      const { data, meta } = await fetchSimpleUDTTransactions({
+        typeHash,
+        page: currentPage,
+        size: pageSize,
+        filter,
+        type,
+      })
       return {
         transactions:
           data.map(wrapper => ({
@@ -95,29 +99,22 @@ export const SimpleUDT = () => {
   const filterNoResult = !!filter && querySimpleUDTTransactions.isError
   const pageSize: number = querySimpleUDTTransactions.data?.pageSize ?? _pageSize
 
-  const filterList: { value: TxTypeType; title: string }[] = [
+  const filterList: { value: TransactionType; title: string }[] = [
     {
-      value: 'mint',
-      title: i18n.t('udt.view_mint_txns'),
+      value: TransactionType.Mint,
+      title: i18n.t('udt.view-mint-txns'),
     },
     {
-      value: 'transfer',
-      title: i18n.t('udt.view_transfer_txns'),
+      value: TransactionType.Transfer,
+      title: i18n.t('udt.view-transfer-txns'),
     },
     {
-      value: 'burn',
-      title: i18n.t('udt.view_burn_txns'),
+      value: TransactionType.Burn,
+      title: i18n.t('udt.view-burn-txns'),
     },
   ]
 
-  const updateSearchParams = useUpdateSearchParams<'tx_type'>()
-
-  const handleFilterClick = (filterType: TxTypeType) => {
-    updateSearchParams(
-      params => (filterType === txTypeFilter ? omit(params, ['tx_type']) : { ...params, tx_type: filterType }),
-      true,
-    )
-  }
+  const isFilteredByType = filterList.some(f => f.value === type)
 
   return (
     <Content>
@@ -143,7 +140,7 @@ export const SimpleUDT = () => {
             </div>
             <div className={styles.searchAndfilter}>
               <Filter
-                defaultValue={filter}
+                defaultValue={filter ?? ''}
                 showReset={!!filter}
                 placeholder={t('udt.search_placeholder')}
                 onFilter={filter => {
@@ -153,18 +150,22 @@ export const SimpleUDT = () => {
                   push(`/sudt/${typeHash}`)
                 }}
               />
-              <div className={classNames({ [styles.activeIcon]: txTypeFilter })}>
+              <div className={styles.typeFilter} data-is-active={isFilteredByType}>
                 <Popover
-                  placement={isMobile ? 'bottomRight' : 'bottomLeft'}
+                  placement="bottomRight"
                   trigger={isMobile ? 'click' : 'hover'}
-                  overlayClassName={styles.filterPop}
+                  overlayClassName={styles.antPopover}
                   content={
-                    <div>
+                    <div className={styles.filterItems}>
                       {filterList.map(f => (
-                        <button key={f.value} type="button" onClick={() => handleFilterClick(f.value)}>
-                          <div>{f.title}</div>
-                          <div>{f.value === txTypeFilter && <SelectedCheckIcon />}</div>
-                        </button>
+                        <Link
+                          key={f.value}
+                          to={`/sudt/${typeHash}?${new URLSearchParams({ type: f.value })}`}
+                          data-is-active={f.value === type}
+                        >
+                          {f.title}
+                          <SelectedCheckIcon />
+                        </Link>
                       ))}
                     </div>
                   }

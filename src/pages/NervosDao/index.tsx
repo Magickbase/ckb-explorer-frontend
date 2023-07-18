@@ -89,12 +89,9 @@ export const NervosDao = () => {
               showReset={!!params.filter}
               placeholder={t('nervos_dao.dao_search_placeholder')}
               onFilter={filter => {
-                setPage(1)
-                // setFilterText(query)
                 push(`/nervosdao?${new URLSearchParams({ filter })}`)
               }}
               onReset={() => {
-                setPage(1)
                 push(`/nervosdao`)
               }}
             />
@@ -110,7 +107,7 @@ export const NervosDao = () => {
                 transactions={data.transactions}
                 total={data.total}
                 onPageChange={setPage}
-                // filterNoResult={filterNoResult}
+                filterNoResult={!!params.filter && data.total === 0}
               />
             )}
           </QueryResult>

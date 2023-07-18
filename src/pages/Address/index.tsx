@@ -11,12 +11,11 @@ import { defaultAddressInfo } from './state'
 import { usePaginationParamsInListPage, useSortParam } from '../../utils/hook'
 import { isAxiosError } from '../../utils/error'
 
-export type TxTypeType = 'outgoing' | 'incoming' | 'customised' | undefined
-
 export const Address = () => {
   const { address } = useParams<{ address: string }>()
   const { currentPage, pageSize } = usePaginationParamsInListPage()
 
+  // REFACTOR: avoid using useSortParam
   const { sortBy, orderBy, sort } = useSortParam<'time'>(s => s === 'time')
 
   const addressInfoQuery = useQuery(['address_info', address], async () => {

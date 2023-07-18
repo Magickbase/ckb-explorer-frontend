@@ -180,6 +180,7 @@ export function useSearchParams<T extends string>(...names: T[]): Partial<Record
   return useMemo(() => getSearchParams(location.search, names), [location.search, names])
 }
 
+// REFACTOR: remove useSearchParams
 export function useSortParam<T extends string>(
   isSortBy: (s?: string) => boolean,
 ): {

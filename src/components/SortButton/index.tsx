@@ -10,31 +10,25 @@ enum SortOrder {
 const SortButton: React.FC<{
   field: string
 }> = ({ field }) => {
-  const { push, location } = useHistory()
-  const { pathname } = useLocation()
-  const query = new URLSearchParams(location.search)
-  const sort = query.get('sort')
-  const [sortKey, sortOrder] = sort?.split('.') ?? []
+  const { push } = useHistory()
+  const { search, pathname } = useLocation()
+
+  const query = new URLSearchParams(search)
+
+  const [sortKey, sortOrder] = query.get('sort')?.split('.') ?? []
 
   const isActive = sortKey === field
 
   const handleClick = () => {
-    if (sortKey === field) {
-      push(
-        `${pathname}?${new URLSearchParams({
-          ...Object.fromEntries(query),
-          sort: sortOrder === SortOrder.Asc ? `${field}.${SortOrder.Desc}` : `${field}.${SortOrder.Asc}`,
-        })}`,
-      )
-      return
-    }
+    const shouldAsc = isActive && sortOrder === SortOrder.Desc
     push(
       `${pathname}?${new URLSearchParams({
         ...Object.fromEntries(query),
-        sort: `${field}.${SortOrder.Desc}`,
+        sort: shouldAsc ? `${field}.${SortOrder.Asc}` : `${field}.${SortOrder.Desc}`,
       })}`,
     )
   }
+
   return (
     <button
       type="button"

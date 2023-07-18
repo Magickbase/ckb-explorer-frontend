@@ -100,7 +100,7 @@ export const fetchTransactionsByBlockHash = (
   }: Partial<{
     page: number
     size: number
-    filter: string
+    filter: string | null
   }>,
 ) =>
   axiosIns
@@ -444,13 +444,26 @@ export const fetchFlushChartCache = () =>
 export const fetchSimpleUDT = (typeHash: string) =>
   axiosIns(`/udts/${typeHash}`).then((res: AxiosResponse) => toCamelcase<Response.Wrapper<State.UDT>>(res.data.data))
 
-export const fetchSimpleUDTTransactions = (typeHash: string, page: number, size: number, filter?: string) =>
+export const fetchSimpleUDTTransactions = ({
+  typeHash,
+  page,
+  size,
+  filter,
+  type,
+}: {
+  typeHash: string
+  page: number
+  size: number
+  filter?: string | null
+  type?: string | null
+}) =>
   axiosIns(`/udt_transactions/${typeHash}`, {
     params: {
       page,
       page_size: size,
       address_hash: filter?.startsWith('0x') ? undefined : filter,
       tx_hash: filter?.startsWith('0x') ? filter : undefined,
+      transfer_action: type,
     },
   }).then((res: AxiosResponse) => toCamelcase<Response.Response<Response.Wrapper<State.Transaction>[]>>(res.data))
 

@@ -75,15 +75,15 @@ const tabs = ['transfers', 'holders', 'inventory']
 const filterList: Array<Record<'title' | 'value', string>> = [
   {
     value: 'mint',
-    title: i18n.t('udt.view_mint_txns'),
+    title: i18n.t('udt.view-mint-txns'),
   },
   {
     value: 'normal',
-    title: i18n.t('udt.view_transfer_txns'),
+    title: i18n.t('udt.view-transfer-txns'),
   },
   {
     value: 'desctruction',
-    title: i18n.t('udt.view_burn_txns'),
+    title: i18n.t('udt.view-burn-txns'),
   },
 ]
 const PAGE_SIZE = 50
@@ -213,7 +213,7 @@ const NftCollectionInfo = () => {
               <Filter
                 defaultValue={filter}
                 showReset={!!filter}
-                placeholder={i18n.t(tab === tab[0] ? 'udt.address_or_hash' : 'udt.address')}
+                placeholder={i18n.t(tab === tabs[0] ? 'udt.address-or-hash' : 'udt.address')}
                 onFilter={filter => {
                   history.push(`/nft-collections/${id}?${new URLSearchParams({ tab, filter })}`)
                 }}

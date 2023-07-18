@@ -16,7 +16,7 @@ const primaryColor = getPrimaryColor()
 const filterList: Array<Record<'title' | 'value', string>> = [
   {
     value: 'all',
-    title: i18n.t('nft.all_type'),
+    title: i18n.t('nft.all-type'),
   },
   {
     value: 'm_nft',

@@ -237,10 +237,7 @@
       "visit-deprecated-address": "View in deprecated address format",
       "view-deprecated-address": "Display deprecated addresses",
       "displaying-deprecated-address": "Displaying in deprecated address format",
-      "currentAddress": "Current Address",
-      "view_outgoing_txns": "View Outgoing Txns",
-      "view_incoming_txns": "View Incoming Txns",
-      "view_customised_cell_included_txns": "View Customised Cell included Txns"
+      "current-address": "Current Address"
     },
     "transaction": {
       "transaction": "Transaction",
@@ -427,7 +424,7 @@
       "type_script": "Type Script",
       "holder_addresses": "Holder Addresses",
       "decimal": "Decimal",
-      "search_placeholder": "Address",
+      "search_placeholder": "Transaction / Address",
       "unknown_token": "Unknown Token",
       "submit_token_info": "Submit Token Info",
       "unknown_token_description": "The token’s information is incomplete. If you are the owner of this token, please submit token info.",
@@ -439,10 +436,10 @@
       "tokens_empty": "There are no tokens at this time.",
       "unverified": "Unverified",
       "view-deprecated-address": "View deprecated address",
-      "view_mint_txns": "View Mint Txns",
-      "view_transfer_txns": "View Transfer Txns",
-      "view_burn_txns": "View Burn Txns",
-      "address_or_hash": "Address/TxHash",
+      "view-mint-txns": "View Mint Txns",
+      "view-transfer-txns": "View Transfer Txns",
+      "view-burn-txns": "View Burn Txns",
+      "address-or-hash": "Transaction Hash / Address",
       "address": "Address"
     },
     "nft": {
@@ -478,7 +475,7 @@
       },
       "activity": "Activity",
       "toggle-age": "Switch time format",
-      "all_type": "All Type"
+      "all-type": "All Type"
     },
     "script_list": {
       "title": "Scripts",

@@ -1,20 +1,22 @@
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import BlockHashCard from '../../components/Card/HashCard'
 import Content from '../../components/Content'
 import i18n from '../../utils/i18n'
 import { BlockDetailPanel } from './styled'
 import { BlockComp, BlockOverview } from './BlockComp'
-import { usePaginationParamsInPage, useSearchParams } from '../../utils/hook'
+import { usePaginationParamsInPage } from '../../utils/hook'
 import { fetchBlock, fetchTransactionsByBlockHash } from '../../service/http/fetcher'
 import { assert } from '../../utils/error'
 import { QueryResult } from '../../components/QueryResult'
 import { defaultBlockInfo } from './state'
 
 export default () => {
+  const { search } = useLocation()
   const { param: blockHeightOrHash } = useParams<{ param: string }>()
-  const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
-  const { filter } = useSearchParams('filter')
+  const { currentPage, pageSize: pageSizeParam, setPage } = usePaginationParamsInPage()
+
+  const filter = new URLSearchParams(search).get('filter')
 
   const queryBlock = useQuery(['block', blockHeightOrHash], async () => {
     const wrapper = await fetchBlock(blockHeightOrHash)
@@ -25,12 +27,12 @@ export default () => {
   const block = queryBlock.data ?? defaultBlockInfo
 
   const queryBlockTransactions = useQuery(
-    ['block-transactions', blockHash, currentPage, _pageSize, filter],
+    ['block-transactions', blockHash, currentPage, pageSizeParam, filter],
     async () => {
       assert(blockHash != null)
       const { data, meta } = await fetchTransactionsByBlockHash(blockHash, {
         page: currentPage,
-        size: _pageSize,
+        size: pageSizeParam,
         filter,
       })
       return {
@@ -44,7 +46,7 @@ export default () => {
     },
   )
 
-  const pageSize = queryBlockTransactions.data?.pageSize ?? _pageSize
+  const pageSize = queryBlockTransactions.data?.pageSize ?? pageSizeParam
 
   return (
     <Content>

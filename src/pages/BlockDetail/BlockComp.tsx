@@ -13,7 +13,7 @@ import { useAppState } from '../../contexts/providers'
 import { parseSimpleDate } from '../../utils/date'
 import i18n from '../../utils/i18n'
 import { localeNumberString, handleDifficulty } from '../../utils/number'
-import { useIsMobile, useSearchParams } from '../../utils/hook'
+import { useIsMobile } from '../../utils/hook'
 import { hexToUtf8 } from '../../utils/string'
 import { deprecatedAddrToNewAddr, shannonToCkb } from '../../utils/util'
 import {
@@ -298,10 +298,10 @@ export const BlockComp = ({
 }) => {
   const totalPages = Math.ceil(total / pageSize)
   const { push } = useHistory()
-  const { hash } = useLocation()
+  const { hash, search } = useLocation()
   const { param: blockId } = useParams<{ param: string }>()
 
-  const { filter } = useSearchParams('filter')
+  const filter = new URLSearchParams(search).get('filter')
 
   return (
     <>
@@ -312,7 +312,7 @@ export const BlockComp = ({
         rear={
           <Filter
             showReset={!!filter}
-            defaultValue={filter}
+            defaultValue={filter ?? ''}
             placeholder={i18n.t('block.address_or_hash')}
             onFilter={filter => {
               push(`/block/${blockId}?${new URLSearchParams({ filter })}`)

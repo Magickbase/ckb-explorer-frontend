@@ -328,6 +328,7 @@ export const AddressTransactions = ({
     updateSearchParams(params => (lo === defaultLayout ? omit(params, ['layout']) : { ...params, layout: lo }))
   }
 
+  // REFACTOR: could be an independent component
   const handleTimeSort = () => {
     updateSearchParams(
       params =>
@@ -364,7 +365,7 @@ export const AddressTransactions = ({
               {timeOrderBy === 'asc' ? (
                 <TimeDownIcon onClick={handleTimeSort} />
               ) : (
-                <TimeUpIcon onClick={handleTimeSort} className={styles.AscendByTime} />
+                <TimeUpIcon onClick={handleTimeSort} className={styles.asc} />
               )}
             </div>
             <Radio.Group
