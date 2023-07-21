@@ -13,7 +13,7 @@ import { useAppState } from '../../contexts/providers'
 import { parseSimpleDate } from '../../utils/date'
 import i18n from '../../utils/i18n'
 import { localeNumberString, handleDifficulty } from '../../utils/number'
-import { useIsMobile } from '../../utils/hook'
+import { useIsMobile, useSearchParams } from '../../utils/hook'
 import { hexToUtf8 } from '../../utils/string'
 import { deprecatedAddrToNewAddr, shannonToCkb } from '../../utils/util'
 import {
@@ -298,10 +298,10 @@ export const BlockComp = ({
 }) => {
   const totalPages = Math.ceil(total / pageSize)
   const { push } = useHistory()
-  const { hash, search } = useLocation()
+  const { hash } = useLocation()
   const { param: blockId } = useParams<{ param: string }>()
 
-  const filter = new URLSearchParams(search).get('filter')
+  const { filter } = useSearchParams('filter')
 
   return (
     <>
