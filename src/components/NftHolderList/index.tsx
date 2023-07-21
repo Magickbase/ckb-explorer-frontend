@@ -7,8 +7,6 @@ import styles from './styles.module.scss'
 
 const primaryColor = getPrimaryColor()
 
-export type NftHolderSortByType = 'quantity'
-
 const NftHolderList: React.FC<{
   list: Array<{ addr: string; quantity: number }>
   isLoading: boolean
