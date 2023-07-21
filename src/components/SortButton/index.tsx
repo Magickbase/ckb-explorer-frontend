@@ -7,6 +7,9 @@ enum SortOrder {
   Desc = 'desc',
 }
 
+/*
+ * REFACTOR: could be refactored for https://github.com/Magickbase/ckb-explorer-frontend/pull/8#discussion_r1267484265
+ */
 const SortButton: React.FC<{
   field: string
 }> = ({ field }) => {
