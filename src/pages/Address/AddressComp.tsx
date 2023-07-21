@@ -361,11 +361,11 @@ export const AddressTransactions = ({
         isSingle
         rear={
           <>
-            <div className={styles.sortAndFilter}>
+            <div className={styles.sortAndFilter} data-is-active={timeOrderBy === 'asc'}>
               {timeOrderBy === 'asc' ? (
                 <TimeDownIcon onClick={handleTimeSort} />
               ) : (
-                <TimeUpIcon onClick={handleTimeSort} className={styles.asc} />
+                <TimeUpIcon onClick={handleTimeSort} />
               )}
             </div>
             <Radio.Group
