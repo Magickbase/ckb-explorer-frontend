@@ -33,13 +33,7 @@ const SortButton: React.FC<{
   }
 
   return (
-    <button
-      type="button"
-      className={styles.container}
-      data-is-asc={isActive && sortOrder === SortOrder.Asc}
-      data-is-desc={isActive && sortOrder === SortOrder.Desc}
-      onClick={handleClick}
-    >
+    <button type="button" className={styles.container} data-order={isActive ? sortOrder : null} onClick={handleClick}>
       <SortIcon />
     </button>
   )

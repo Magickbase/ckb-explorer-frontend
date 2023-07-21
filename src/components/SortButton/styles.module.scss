@@ -8,12 +8,12 @@
   margin: 0 8px;
   cursor: pointer;
 
-  &[data-is-desc='true'] {
+  &[data-order='desc'] {
     svg > path:first-child {
       fill: var(--primary-color);
     }
   }
-  &[data-is-asc='true'] {
+  &[data-order='asc'] {
     svg > path:last-child {
       fill: var(--primary-color);
     }
