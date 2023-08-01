@@ -1,5 +1,5 @@
 import type { AxiosResponse } from 'axios'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import Content from '../../components/Content'
 import { NFTCollection, ListOnDesktop, ListOnMobile, isTxFilterType } from './List'
@@ -30,6 +30,7 @@ const submitTokenInfoUrl = udtSubmitEmail()
 
 const NftCollections = () => {
   const history = useHistory()
+  const { search } = useLocation()
   const { page = '1', type } = useSearchParams('page', 'type')
 
   const { sort = 'holder' } = useSortParam<NftSortByType>(s => s === 'transactions' || s === 'holder' || s === 'minted')
@@ -52,7 +53,8 @@ const NftCollections = () => {
     if (pageNo === +page) {
       return
     }
-    history.push(`/nft-collections?page=${pageNo}`)
+    const query = new URLSearchParams(search)
+    history.push(`/nft-collections?${new URLSearchParams({ ...Object.fromEntries(query), page: pageNo.toString() })}`)
   }
 
   return (
