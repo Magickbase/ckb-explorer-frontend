@@ -83,7 +83,7 @@ const TypeFilter = () => {
 }
 
 const HolderMinterSort = () => {
-  const { sortBy = 'holder', handleSortClick } = useSortParam<NftSortField>(
+  const { sortBy, handleSortClick } = useSortParam<NftSortField>(
     s => s === 'transactions' || s === 'holder' || s === 'minted',
   )
 
