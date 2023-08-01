@@ -108,10 +108,12 @@
   }
 
   .typeFilter {
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: end;
+    svg {
+      cursor: pointer;
+    }
   }
 
   .activeIcon {
@@ -166,10 +168,12 @@
 
 .transactionsHeader {
   > span {
-    cursor: pointer;
     &.sortActive {
       color: var(--primary-color);
     }
+  }
+  svg {
+    cursor: pointer;
   }
 }
 
