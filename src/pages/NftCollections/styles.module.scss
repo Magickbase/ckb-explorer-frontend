@@ -118,6 +118,11 @@
     svg {
       cursor: pointer;
     }
+    &[data-is-active='true'] {
+      svg path {
+        fill: var(--primary-color);
+      }
+    }
   }
 
   .activeIcon {

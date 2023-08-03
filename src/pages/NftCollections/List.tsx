@@ -55,7 +55,7 @@ const TypeFilter = () => {
   const isActive = isTxFilterType(type)
 
   return (
-    <div className={classNames({ [styles.activeIcon]: isActive }, styles.typeFilter)}>
+    <div className={styles.typeFilter} data-is-active={isActive}>
       {i18n.t('nft.standard')}
       <Popover
         placement={isMobile ? 'bottomRight' : 'bottomLeft'}
