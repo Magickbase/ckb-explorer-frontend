@@ -30,10 +30,15 @@ const AddressTextCol = ({ address }: { address: string }) => {
 }
 
 const DepositorCardGroup: FC<{ depositors: State.NervosDaoDepositor[] }> = ({ depositors }) => {
-  const items: ItemCardData<State.NervosDaoDepositor>[] = [
+  const rankedDepositors = depositors.map((depositor, index) => ({
+    ...depositor,
+    rank: index + 1,
+  }))
+
+  const items: ItemCardData<State.NervosDaoDepositor & { rank: number }>[] = [
     {
       title: i18n.t('nervos_dao.dao_title_rank'),
-      render: (_, index) => index + 1,
+      render: depositor => depositor.rank,
     },
     {
       title: i18n.t('nervos_dao.dao_title_address'),
@@ -49,7 +54,7 @@ const DepositorCardGroup: FC<{ depositors: State.NervosDaoDepositor[] }> = ({ de
     },
   ]
 
-  return <ItemCardGroup items={items} dataSource={depositors} getDataKey={(_, idx) => idx} />
+  return <ItemCardGroup items={items} dataSource={rankedDepositors} getDataKey={(_, idx) => idx} />
 }
 
 export default ({ depositors }: { depositors: State.NervosDaoDepositor[] }) => {
