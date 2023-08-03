@@ -37,8 +37,8 @@ const typeScriptIcon = (show: boolean) => {
 
 enum TransactionType {
   Mint = 'mint',
-  Transfer = 'transfer',
-  Burn = 'burn',
+  Transfer = 'normal',
+  Burn = 'desctruction',
 }
 
 export const SimpleUDT = () => {

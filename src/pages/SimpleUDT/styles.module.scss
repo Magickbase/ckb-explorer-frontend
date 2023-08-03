@@ -36,6 +36,9 @@
   > div:last-child {
     margin-left: 8px;
   }
+  @media screen and (max-width: 750px) {
+    width: 100%;
+  }
 }
 
 .typeFilter {
