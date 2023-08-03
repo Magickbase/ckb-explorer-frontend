@@ -83,19 +83,18 @@ export const NervosDao = () => {
               {t('nervos_dao.dao_tab_depositors')}
             </SimpleButton>
           </div>
-          {daoTab === 'transactions' && (
-            <Filter
-              defaultValue={params.filter}
-              showReset={!!params.filter}
-              placeholder={t('nervos_dao.dao_search_placeholder')}
-              onFilter={filter => {
-                push(`/nervosdao?${new URLSearchParams({ filter })}`)
-              }}
-              onReset={() => {
-                push(`/nervosdao`)
-              }}
-            />
-          )}
+
+          <Filter
+            defaultValue={params.filter}
+            showReset={!!params.filter}
+            placeholder={t('nervos_dao.dao_search_placeholder')}
+            onFilter={filter => {
+              push(`/nervosdao?${new URLSearchParams({ filter, tab })}`)
+            }}
+            onReset={() => {
+              push(`/nervosdao?${new URLSearchParams({ tab })}`)
+            }}
+          />
         </DaoTabBarPanel>
 
         {daoTab === 'transactions' ? (
@@ -113,7 +112,13 @@ export const NervosDao = () => {
           </QueryResult>
         ) : (
           <QueryResult query={queryNervosDaoDepositors} delayLoading>
-            {data => <DepositorRank depositors={data.depositors} />}
+            {data => (
+              <DepositorRank
+                depositors={
+                  params.filter ? data.depositors.filter(item => item.addressHash === params.filter) : data.depositors
+                }
+              />
+            )}
           </QueryResult>
         )}
       </DaoContentPanel>

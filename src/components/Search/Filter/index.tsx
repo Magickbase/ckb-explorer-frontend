@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import SearchBlack from '../../../assets/search_black.png'
 import ClearLogo from '../../../assets/clear.png'
@@ -22,6 +22,10 @@ const Filter = ({
   const [filterValue, setFilterValue] = useState(defaultValue)
   const showClear = !!filterValue
   const inputElement = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    setFilterValue(defaultValue)
+  }, [defaultValue])
 
   const FilterIcon = ({ isClear }: { isClear?: boolean }) => (
     <FilterImage
