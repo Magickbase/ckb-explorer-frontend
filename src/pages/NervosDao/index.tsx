@@ -112,13 +112,7 @@ export const NervosDao = () => {
           </QueryResult>
         ) : (
           <QueryResult query={queryNervosDaoDepositors} delayLoading>
-            {data => (
-              <DepositorRank
-                depositors={
-                  params.filter ? data.depositors.filter(item => item.addressHash === params.filter) : data.depositors
-                }
-              />
-            )}
+            {data => <DepositorRank depositors={data.depositors} filter={params.filter} />}
           </QueryResult>
         )}
       </DaoContentPanel>

@@ -29,12 +29,7 @@ const AddressTextCol = ({ address }: { address: string }) => {
   )
 }
 
-const DepositorCardGroup: FC<{ depositors: State.NervosDaoDepositor[] }> = ({ depositors }) => {
-  const rankedDepositors = depositors.map((depositor, index) => ({
-    ...depositor,
-    rank: index + 1,
-  }))
-
+const DepositorCardGroup: FC<{ depositors: (State.NervosDaoDepositor & { rank: number })[] }> = ({ depositors }) => {
   const items: ItemCardData<State.NervosDaoDepositor & { rank: number }>[] = [
     {
       title: i18n.t('nervos_dao.dao_title_rank'),
@@ -54,13 +49,20 @@ const DepositorCardGroup: FC<{ depositors: State.NervosDaoDepositor[] }> = ({ de
     },
   ]
 
-  return <ItemCardGroup items={items} dataSource={rankedDepositors} getDataKey={(_, idx) => idx} />
+  return <ItemCardGroup items={items} dataSource={depositors} getDataKey={(_, idx) => idx} />
 }
 
-export default ({ depositors }: { depositors: State.NervosDaoDepositor[] }) => {
+export default ({ depositors, filter }: { depositors: State.NervosDaoDepositor[]; filter?: string }) => {
+  const rankedDepositors = depositors.map((depositor, index) => ({
+    ...depositor,
+    rank: index + 1,
+  }))
+
+  const filteredDepositors = filter ? rankedDepositors.filter(d => d.addressHash === filter) : rankedDepositors
+
   return useIsMobile() ? (
     <DepositorRankCardPanel>
-      <DepositorCardGroup depositors={depositors} />
+      <DepositorCardGroup depositors={filteredDepositors} />
     </DepositorRankCardPanel>
   ) : (
     <DepositorRankPanel>
@@ -71,9 +73,9 @@ export default ({ depositors }: { depositors: State.NervosDaoDepositor[] }) => {
         <div>{i18n.t('nervos_dao.dao_title_deposit_time')}</div>
       </DepositorRankTitle>
       <DepositorSeparate />
-      {depositors.map((depositor: State.NervosDaoDepositor, index: number) => (
+      {filteredDepositors.map(depositor => (
         <DepositorRankItem key={depositor.addressHash}>
-          <div>{index + 1}</div>
+          <div>{depositor.rank}</div>
           <AddressTextCol address={depositor.addressHash} />
           <div>
             <DecimalCapacity value={localeNumberString(shannonToCkb(depositor.daoDeposit))} />
