@@ -26,7 +26,8 @@
 }
 
 .searchAndfilter {
-  display: flex;
+  // hide the filter icon until the api is ready
+  display: none;
   align-items: center;
 
   > div {
