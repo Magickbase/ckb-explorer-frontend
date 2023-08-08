@@ -82,7 +82,7 @@ const filterList: Array<Record<'title' | 'value', string>> = [
     title: i18n.t('udt.view-transfer-txns'),
   },
   {
-    value: 'desctruction',
+    value: 'destruction',
     title: i18n.t('udt.view-burn-txns'),
   },
 ]
