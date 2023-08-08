@@ -443,15 +443,19 @@ export const exportTransactions = ({
   id?: string
   date?: Record<'start' | 'end', Dayjs | undefined>
   block?: Record<'from' | 'to', number>
-}) =>
-  axiosIns
-    .get(`/${type}/download_csv`, {
-      params: {
-        id,
-        start_time: date?.start?.format('YYYY-MM-DD'),
-        end_time: date?.end?.format('YYYY-MM-DD'),
-        start_number: block?.from,
-        end_number: block?.to,
-      },
-    })
+}) => {
+  const rangeParams = {
+    start_date: date?.start?.format('YYYY-MM-DD'),
+    end_date: date?.end?.format('YYYY-MM-DD'),
+    from_number: block?.from,
+    to_number: block?.to,
+  }
+  if (type === 'nft') {
+    return v2AxiosIns
+      .get(`/nft/transfers/download_csv`, { params: { ...rangeParams, collection_id: id } })
+      .then(res => toCamelcase<Response.Response<string>>(res.data))
+  }
+  return axiosIns
+    .get(`/${type}/download_csv`, { params: { ...rangeParams, id } })
     .then(res => toCamelcase<Response.Response<string>>(res.data))
+}
