@@ -31,7 +31,6 @@ const ExportTransactions = () => {
     'from-height': fromHeightStr,
     'to-height': toHeightStr,
   } = useSearchParams('type', 'id', 'tab', 'start-date', 'end-date', 'from-height', 'to-height')
-
   function isTransactionCsvExportType(s?: string): s is State.TransactionCsvExportType {
     return !!s && ['address_transactions', 'blocks', 'udts', 'nft'].includes(s)
   }
@@ -41,8 +40,8 @@ const ExportTransactions = () => {
   const startDate = tab === 'date' && startDateStr ? dayjs(startDateStr) : undefined
   const endDate = tab === 'date' && endDateStr ? dayjs(endDateStr) : undefined
 
-  const fromHeight = tab === 'height' && fromHeightStr ? parseInt(fromHeightStr, 10) : 0
-  const toHeight = tab === 'height' && toHeightStr ? parseInt(toHeightStr, 10) : 0
+  const fromHeight = tab === 'height' && fromHeightStr !== undefined ? parseInt(fromHeightStr, 10) : undefined
+  const toHeight = tab === 'height' && toHeightStr !== undefined ? parseInt(toHeightStr, 10) : undefined
 
   const updateSearchParams = useUpdateSearchParams<
     'type' | 'tab' | 'start-date' | 'end-date' | 'from-height' | 'to-height'
@@ -96,7 +95,7 @@ const ExportTransactions = () => {
       }
     }
     if (tab === 'height') {
-      if ((!fromHeight && fromHeight !== 0) || (!toHeight && toHeight !== 0)) {
+      if (fromHeight === undefined || toHeight === undefined) {
         setHint({ type: 'error', msg: 'please_input_block_number' })
         return
       }
@@ -118,7 +117,7 @@ const ExportTransactions = () => {
       type,
       id,
       date: tab === 'date' ? { start: startDate, end: endDate } : undefined,
-      block: tab === 'height' ? { from: fromHeight, to: toHeight } : undefined,
+      block: tab === 'height' ? { from: fromHeight!, to: toHeight! } : undefined,
     })
       .then((resp: Response.Response<string> | null) => {
         if (!resp) {

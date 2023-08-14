@@ -67,6 +67,7 @@
   background: white;
   @media screen and (max-width: 750px) {
     margin-top: 12px;
+    margin-bottom: 20px;
     width: calc(100% - 32px);
   }
 
@@ -95,8 +96,8 @@
 
     :global(div.ant-tabs-tab) {
       width: 120px;
-      margin-left: 60px;
-      margin-right: 60px;
+      margin-left: 90px;
+      margin-right: 90px;
       padding: 20px 0;
       justify-content: center;
       align-items: center;
@@ -251,9 +252,9 @@
       &.successHint,
       &.errorHint {
         width: 100%;
-        margin: 0 12px;
         border-radius: 8px;
         max-width: 560px;
+        font-size: 14px;
 
         @media screen and (max-width: 750px) {
           max-width: 312px;
