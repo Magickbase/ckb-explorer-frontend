@@ -447,8 +447,8 @@ export const exportTransactions = ({
   const rangeParams = {
     start_date: date?.start?.format('YYYY-MM-DD'),
     end_date: date?.end?.format('YYYY-MM-DD'),
-    from_number: block?.from,
-    to_number: block?.to,
+    start_number: block?.from,
+    end_number: block?.to,
   }
   if (type === 'nft') {
     return v2AxiosIns
