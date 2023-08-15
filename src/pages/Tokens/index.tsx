@@ -24,8 +24,7 @@ import styles from './styles.module.scss'
 import { useIsMobile, usePaginationParamsInPage } from '../../utils/hook'
 import { fetchTokens } from '../../service/http/fetcher'
 import { QueryResult } from '../../components/QueryResult'
-import { CsvExport } from '../../components/CsvExport'
-import PaginationWithRear from '../../components/PaginationWithRear'
+import Pagination from '../../components/Pagination'
 
 const TokenItem = ({ token, isLast }: { token: State.UDT; isLast?: boolean }) => {
   const { displayName, fullName, uan } = token
@@ -145,12 +144,7 @@ export default () => {
           )}
         </QueryResult>
 
-        <PaginationWithRear
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onChange={setPage}
-          rear={<CsvExport type="udts" id="" />}
-        />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onChange={setPage} />
       </TokensPanel>
     </Content>
   )
