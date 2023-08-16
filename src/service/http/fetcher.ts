@@ -453,9 +453,9 @@ export const exportTransactions = ({
   if (type === 'nft') {
     return v2AxiosIns
       .get(`/nft/transfers/download_csv`, { params: { ...rangeParams, collection_id: id } })
-      .then(res => toCamelcase<Response.Response<string>>(res.data))
+      .then(res => toCamelcase<string>(res.data))
   }
   return axiosIns
     .get(`/${type}/download_csv`, { params: { ...rangeParams, id } })
-    .then(res => toCamelcase<Response.Response<string>>(res.data))
+    .then(res => toCamelcase<string>(res.data))
 }

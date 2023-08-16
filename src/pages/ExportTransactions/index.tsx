@@ -119,7 +119,7 @@ const ExportTransactions = () => {
       date: tab === 'date' ? { start: startDate, end: endDate } : undefined,
       block: tab === 'height' ? { from: fromHeight!, to: toHeight! } : undefined,
     })
-      .then((resp: Response.Response<string> | null) => {
+      .then((resp: string | null) => {
         if (!resp) {
           setHint({
             type: 'error',
@@ -127,8 +127,9 @@ const ExportTransactions = () => {
           })
           return
         }
+
         const a = document.createElement('a')
-        a.href = `data:,${resp}`
+        a.href = encodeURI(`data:,${resp.replaceAll('#', '')}`)
         a.download = `exported-txs-${type}${type === 'blocks' ? '' : `-${id}`}-${
           tab === 'date' && startDate ? startDate.format('YYYY-MM-DD') : ''
         }${tab === 'height' ? fromHeight : ''}-${tab === 'date' && endDate ? endDate.format('YYYY-MM-DD') : ''}${
