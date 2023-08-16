@@ -205,7 +205,10 @@
       "address_type_mainnet_url": "mainnet explorer",
       "search": "Search",
       "dao_filter_no_result": "Filter result not found.\nPlease enter only complete Transaction Hash or Address",
-      "udt_filter_no_result": "Filter result not found.\nPlease enter only complete Address"
+      "udt_filter_no_result": "Filter result not found.\nPlease enter only complete Address",
+      "tx": "Transaction",
+      "addr": "Address",
+      "reset": "Reset"
     },
     "address": {
       "address": "Address",
@@ -371,8 +374,6 @@
       "locked_period": "Locked Period",
       "locked_time": "Locked Time",
       "deposit_capacity": "Deposit Capacity",
-      "dao_search_placeholder": "Transaction / Address",
-      "dao_search_reset": "Reset",
       "dao_tab_transactions": "Transactions",
       "dao_tab_depositors": "Depositors",
       "dao_title_rank": "Rank",

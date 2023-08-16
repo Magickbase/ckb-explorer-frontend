@@ -204,7 +204,10 @@
       "address_type_mainnet_url": "主网浏览器查询",
       "search": "搜索",
       "dao_filter_no_result": "搜索结果为空。\n请输入完整的交易哈希或地址",
-      "udt_filter_no_result": "搜索结果为空。\n请输入完整的地址"
+      "udt_filter_no_result": "搜索结果为空。\n请输入完整的地址",
+      "tx": "交易",
+      "addr": "地址",
+      "reset": "复位"
     },
     "address": {
       "address": "地址",
@@ -371,8 +374,6 @@
       "locked_period": "锁定周期",
       "locked_time": "锁定时间",
       "deposit_capacity": "锁定金额",
-      "dao_search_placeholder": "交易 / 地址",
-      "dao_search_reset": "复位",
       "dao_tab_transactions": "交易列表",
       "dao_tab_depositors": "锁定地址",
       "dao_title_rank": "排名",

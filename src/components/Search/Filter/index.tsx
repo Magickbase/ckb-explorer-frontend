@@ -48,7 +48,7 @@ const Filter = ({
           onReset()
         }}
       >
-        {t('nervos_dao.dao_search_reset')}
+        {t('search.reset')}
       </ResetButtonPanel>
     )
   }

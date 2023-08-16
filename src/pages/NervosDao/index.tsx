@@ -87,7 +87,7 @@ export const NervosDao = () => {
           <Filter
             defaultValue={params.filter}
             showReset={!!params.filter}
-            placeholder={t('nervos_dao.dao_search_placeholder')}
+            placeholder={daoTab === 'depositors' ? t('search.addr') : `${t('search.tx')} / ${t('search.addr')}`}
             onFilter={filter => {
               push(`/nervosdao?${new URLSearchParams({ filter, tab })}`)
             }}
