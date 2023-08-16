@@ -68,6 +68,7 @@
     :global(.title__card__rear > div) {
       // hack default style of TitleCard
       padding: 0 !important;
+      justify-content: space-between !important;
     }
 
     img {
