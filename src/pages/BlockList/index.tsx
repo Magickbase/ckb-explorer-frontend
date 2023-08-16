@@ -2,7 +2,6 @@ import { Fragment, useMemo, FC } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
-import classNames from 'classnames'
 import { parseSimpleDate } from '../../utils/date'
 import { BlockListPanel, ContentTable, HighLightValue, BlockRewardContainer, BlockRewardPanel } from './styled'
 import Content from '../../components/Content'
@@ -211,10 +210,8 @@ export default () => {
                   <div>{data.title}</div>
                   <button
                     type="button"
-                    className={classNames(styles.sortIcon, {
-                      [styles.sortAsc]: data.sortRule === sortBy && orderBy === 'asc',
-                      [styles.sortDesc]: data.sortRule === sortBy && orderBy === 'desc',
-                    })}
+                    className={styles.sortIcon}
+                    data-order={sortBy === data.sortRule ? orderBy : undefined}
                     onClick={() => handleSortClick(data.sortRule)}
                   >
                     <SortIcon />
@@ -233,10 +230,8 @@ export default () => {
                   {data.sortRule && (
                     <button
                       type="button"
-                      className={classNames(styles.sortIcon, {
-                        [styles.sortAsc]: data.sortRule === sortBy && orderBy === 'asc',
-                        [styles.sortDesc]: data.sortRule === sortBy && orderBy === 'desc',
-                      })}
+                      className={styles.sortIcon}
+                      data-order={sortBy === data.sortRule ? orderBy : undefined}
                       onClick={() => handleSortClick(data.sortRule)}
                     >
                       <SortIcon />

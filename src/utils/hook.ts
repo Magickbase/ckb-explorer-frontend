@@ -223,7 +223,7 @@ export function useSortParam<T extends string>(
   const handleSortClick = (sortRule?: SortType) => {
     if (sortBy === sortRule) {
       if (orderBy === 'desc') {
-        updateSearchParams(params => omit({ ...params, sort: sortRule }, ['page']), true)
+        updateSearchParams(params => omit({ ...params, sort: `${sortRule}.asc` }, ['page']), true)
       } else {
         updateSearchParams(params => omit({ ...params, sort: `${sortRule}.desc` }, ['page']), true)
       }
