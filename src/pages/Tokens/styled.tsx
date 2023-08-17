@@ -91,7 +91,7 @@ export const TokensTableTitle = styled.div`
     > span {
       display: inline-block;
       white-space: nowrap;
-      margin: 10px 40px 10px 0;
+      margin: 10px 0;
       flex: 0 !important;
     }
   }
