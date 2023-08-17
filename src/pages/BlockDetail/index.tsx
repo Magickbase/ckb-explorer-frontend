@@ -30,15 +30,23 @@ export default () => {
     ['block-transactions', blockHash, currentPage, pageSizeParam, filter],
     async () => {
       assert(blockHash != null)
-      const { data, meta } = await fetchTransactionsByBlockHash(blockHash, {
-        page: currentPage,
-        size: pageSizeParam,
-        filter,
-      })
-      return {
-        transactions: data.map(wrapper => wrapper.attributes),
-        total: meta?.total ?? 0,
-        pageSize: meta?.pageSize,
+      try {
+        const { data, meta } = await fetchTransactionsByBlockHash(blockHash, {
+          page: currentPage,
+          size: pageSizeParam,
+          filter,
+        })
+        return {
+          transactions: data.map(wrapper => wrapper.attributes),
+          total: meta?.total ?? 0,
+          pageSize: meta?.pageSize,
+        }
+      } catch (e) {
+        console.error(e)
+        return {
+          transactions: [],
+          total: 0,
+        }
       }
     },
     {
