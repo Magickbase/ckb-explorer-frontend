@@ -228,7 +228,7 @@ export function useSortParam<T extends string>(
         updateSearchParams(params => omit({ ...params, sort: `${sortRule}.desc` }, ['page']), true)
       }
     } else {
-      updateSearchParams(params => omit({ ...params, sort: sortRule }, ['page']), true)
+      updateSearchParams(params => omit({ ...params, sort: `${sortRule}.desc` }, ['page']), true)
     }
   }
 

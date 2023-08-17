@@ -2,7 +2,6 @@ import { FC, ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
-import classNames from 'classnames'
 import { parseSimpleDate } from '../../utils/date'
 import Content from '../../components/Content'
 import { shannonToCkb } from '../../utils/util'
@@ -237,7 +236,7 @@ const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
   )
 
   const query = useQuery(
-    [`${type}-transactions`, type, currentPage, pageSize, sort] as const,
+    [`${type}-transactions`, type, currentPage, pageSize, sortBy, orderBy] as const,
     async ({ queryKey }) => {
       const [, type] = queryKey
       switch (type) {
@@ -259,7 +258,6 @@ const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
       }
     },
     {
-      keepPreviousData: true,
       initialData:
         state?.type === 'TransactionListPage' && state.createTime + stateStaleTime > Date.now()
           ? state.transactionsDataWithFirstPage
@@ -270,10 +268,8 @@ const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
   const sortButton = (sortRule?: ConfirmedSortByType | PendingSortByType) => (
     <button
       type="button"
-      className={classNames(styles.sortIcon, {
-        [styles.sortAsc]: sortRule === sortBy && orderBy === 'asc',
-        [styles.sortDesc]: sortRule === sortBy && orderBy === 'desc',
-      })}
+      className={styles.sortIcon}
+      data-order={sortRule === sortBy ? orderBy : undefined}
       onClick={() => handleSortClick(sortRule)}
     >
       <SortIcon />
