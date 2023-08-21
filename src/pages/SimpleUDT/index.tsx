@@ -186,6 +186,7 @@ export const SimpleUDT = () => {
               total={data.total}
               onPageChange={setPage}
               filterNoResult={filterNoResult}
+              id={typeHash}
             />
           )}
         </QueryResult>

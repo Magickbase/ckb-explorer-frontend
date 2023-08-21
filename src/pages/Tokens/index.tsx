@@ -13,7 +13,6 @@ import {
   TokensLoadingPanel,
   TokensTitlePanel,
   TokensItemNamePanel,
-  TokensPagination,
 } from './styled'
 import HelpIcon from '../../assets/qa_help.png'
 import { parseDateNoTime } from '../../utils/date'
@@ -156,11 +155,7 @@ export default () => {
           )}
         </QueryResult>
 
-        {totalPages > 1 && (
-          <TokensPagination>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onChange={setPage} />
-          </TokensPagination>
-        )}
+        <Pagination currentPage={currentPage} totalPages={totalPages} onChange={setPage} />
       </TokensPanel>
     </Content>
   )

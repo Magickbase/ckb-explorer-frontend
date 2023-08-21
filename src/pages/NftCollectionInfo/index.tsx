@@ -15,6 +15,8 @@ import { v2AxiosIns } from '../../service/http/fetcher'
 import i18n from '../../utils/i18n'
 import { useSearchParams, useIsMobile } from '../../utils/hook'
 import styles from './styles.module.scss'
+import { CsvExport } from '../../components/CsvExport'
+import PaginationWithRear from '../../components/PaginationWithRear'
 
 export interface InventoryRes {
   data: Array<{
@@ -256,10 +258,11 @@ const NftCollectionInfo = () => {
               isLoading={isTransferListLoading}
               collection={id}
             />
-            <Pagination
+            <PaginationWithRear
               currentPage={transferListRes?.data.pagination.page ?? 1}
               totalPages={transferListRes?.data.pagination.last ?? 1}
               onChange={handlePageChange}
+              rear={<CsvExport type="nft" id={id} />}
             />
           </>
         ) : null}
