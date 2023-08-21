@@ -107,7 +107,7 @@ const ExportTransactions = () => {
         setHint({ type: 'error', msg: 'block_number_should_be_positive' })
         return
       }
-      if (toHeight > fromHeight + 5000) {
+      if (toHeight >= fromHeight + 5000) {
         setHint({ type: 'error', msg: 'too_many_blocks' })
         return
       }
