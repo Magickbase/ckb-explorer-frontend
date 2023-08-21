@@ -445,8 +445,8 @@ export const exportTransactions = ({
   block?: Record<'from' | 'to', number>
 }) => {
   const rangeParams = {
-    start_date: date?.start?.format('YYYY-MM-DD'),
-    end_date: date?.end?.format('YYYY-MM-DD'),
+    start_date: date?.start?.valueOf(),
+    end_date: date?.end?.valueOf(),
     start_number: block?.from,
     end_number: block?.to,
   }
