@@ -307,13 +307,11 @@ export const AddressTransactions = ({
   address,
   transactions,
   transactionsTotal: total,
-  addressInfo: { addressHash },
   timeOrderBy,
 }: {
   address: string
   transactions: State.Transaction[]
   transactionsTotal: number
-  addressInfo: State.Address
   timeOrderBy: State.SortOrderTypes
 }) => {
   const isMobile = useIsMobile()
@@ -395,13 +393,13 @@ export const AddressTransactions = ({
               </div>
             )}
             {txList.map((transaction: State.Transaction) => (
-              <TransactionLiteItem address={addressHash} transaction={transaction} key={transaction.transactionHash} />
+              <TransactionLiteItem address={address} transaction={transaction} key={transaction.transactionHash} />
             ))}
           </>
         ) : (
           txList.map((transaction: State.Transaction, index: number) => (
             <TransactionItem
-              address={addressHash}
+              address={address}
               transaction={transaction}
               key={transaction.transactionHash}
               circleCorner={{
@@ -415,7 +413,7 @@ export const AddressTransactions = ({
         currentPage={currentPage}
         totalPages={totalPages}
         onChange={setPage}
-        rear={<CsvExport type="address_transactions" id={addressHash} />}
+        rear={<CsvExport type="address_transactions" id={address} />}
       />
     </>
   )

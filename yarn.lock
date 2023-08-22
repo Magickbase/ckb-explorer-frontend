@@ -4691,10 +4691,10 @@ date-fns@2.x:
   dependencies:
     "@babel/runtime" "^7.21.0"
 
-dayjs@1.11.5:
-  version "1.11.5"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.5.tgz#00e8cc627f231f9499c19b38af49f56dc0ac5e93"
-  integrity sha512-CAdX5Q3YW3Gclyo5Vpqkgpj8fSdLQcRuzfX6mC6Phy0nfJ0eGYOeS7m4mt2plDWLAtA4TqTakvbboHvUxfe4iA==
+dayjs@1.11.9:
+  version "1.11.9"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.9.tgz#9ca491933fadd0a60a2c19f6c237c03517d71d1a"
+  integrity sha512-QvzAURSbQ0pKdIye2txOzNaHmxtUBXerpY0FJsFXUMKbIZeFm5ht1LS/jFsrncjnmtv8HsG0W2g6c0zUjZWmpA==
 
 dayjs@1.x:
   version "1.11.8"
@@ -4845,10 +4845,10 @@ destroy@1.2.0:
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.2.0.tgz#4803735509ad8be552934c67df614f94e66fa015"
   integrity sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==
 
-detect-gpu@5.0.29:
-  version "5.0.29"
-  resolved "https://registry.yarnpkg.com/detect-gpu/-/detect-gpu-5.0.29.tgz#87238cbea009ad5509025784f6cb64cb586a3df5"
-  integrity sha512-DEqWxHXAKaoIHxF0rtFPDdWWINGoketQ6fk64KbahK3IC0I0LiZR6NbWZo4pwf7UH8khBLY8w4wS+1MHi81LSQ==
+detect-gpu@5.0.37:
+  version "5.0.37"
+  resolved "https://registry.yarnpkg.com/detect-gpu/-/detect-gpu-5.0.37.tgz#27febe44d478ef4d35cd38007355da795ba075d5"
+  integrity sha512-EraWs84faI4iskB4qvE39bevMIazEvd1RpoyGLOBesRLbiz6eMeJqqRPHjEFClfRByYZzi9IzU35rBXIO76oDw==
   dependencies:
     webgl-constants "^1.1.1"
 
@@ -10284,10 +10284,10 @@ react-outside-click-handler@^1.3.0:
     object.values "^1.1.0"
     prop-types "^15.7.2"
 
-react-query@3.39.1:
-  version "3.39.1"
-  resolved "https://registry.npmjs.org/react-query/-/react-query-3.39.1.tgz#3876c0fdac7a3b5a84e195534e5fa8fbdd628847"
-  integrity sha512-qYKT1bavdDiQZbngWZyPotlBVzcBjDYEJg5RQLBa++5Ix5jjfbEYJmHSZRZD+USVHUSvl/ey9Hu+QfF1QAK80A==
+react-query@3.39.3:
+  version "3.39.3"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.39.3.tgz#4cea7127c6c26bdea2de5fb63e51044330b03f35"
+  integrity sha512-nLfLz7GiohKTJDuT4us4X3h/8unOh+00MLb2yJoGTPjxKs2bc1iDhkNx2bd5MKklXnOD3NrVZ+J2UXujA5In4g==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"
