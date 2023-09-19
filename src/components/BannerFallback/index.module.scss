@@ -1,6 +1,6 @@
 $backgroudColor: #232323;
 
-.Root {
+.root {
   width: 100%;
   background-color: $backgroudColor;
   height: 200px;
@@ -11,5 +11,45 @@ $backgroudColor: #232323;
   background-size: auto 100%;
   @media (max-width: 750px) {
     background-image: url('../../assets/ckb_explorer_banner_phone.svg');
+  }
+}
+
+.HalvingBannerShadow {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  height: 100%;
+}
+
+.HalvingBanner {
+  height: 100%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.HalvingBannerText {
+  align-items: baseline;
+  display: flex;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.HalvingBannerCount {
+  font-size: 36px;
+  margin-left: 24px;
+}
+
+.LearnMoreButton {
+  border: 1px solid white;
+  color: white;
+  transition: all 0.3s;
+  padding: 16px 24px;
+  margin-left: auto;
+  user-select: none;
+
+  &:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
   }
 }
