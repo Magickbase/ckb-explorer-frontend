@@ -2,6 +2,7 @@ import classnames from 'classnames'
 import styles from './index.module.scss'
 import halvingBanner from '../../assets/halving_banner.png'
 import halvingBannerSuccess from '../../assets/halving_banner_success.png'
+import halvingSuccessAni from '../../assets/halving_success_ani.gif'
 import SimpleButton from '../SimpleButton'
 import { useCountdown, useHalving } from '../../utils/hook'
 import i18n from '../../utils/i18n'
@@ -61,14 +62,19 @@ export const HalvingBanner = () => {
     >
       <div className={styles.halvingBannerShadow}>
         <div className={classnames(styles.halvingBanner, 'container')}>
+          {unreadLastedHaving && (
+            <img className={styles.halvingBannerAnimation} src={halvingSuccessAni} alt="animation" />
+          )}
           {unreadLastedHaving ? (
-            <div className={styles.halvingBannerText}>
-              {i18n.t('halving.banner_congratulation', {
-                times: i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount - 1)}`),
-              })}
+            <div className={classnames(styles.halvingBannerText, styles.success)}>
+              {i18n
+                .t('halving.banner_congratulation', {
+                  times: i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount - 1)}`),
+                })
+                .toUpperCase()}
             </div>
           ) : (
-            <div className={styles.halvingBannerText}>
+            <div className={classnames(styles.halvingBannerText, styles.linear)}>
               Nervos CKB Layer 1 {capitalizeFirstLetter(i18n.t('halving.halving'))}
             </div>
           )}
