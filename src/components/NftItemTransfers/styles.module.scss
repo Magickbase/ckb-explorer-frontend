@@ -3,11 +3,6 @@
   border-top-right-radius: 6px;
   padding: 0 15px;
 
-  ul {
-    margin: 0;
-    margin-bottom: 4px;
-  }
-
   table {
     position: relative;
     width: 100%;
@@ -94,6 +89,8 @@
 
   ul {
     display: none;
+    margin: 0;
+    margin-bottom: 4px;
   }
 
   ul,

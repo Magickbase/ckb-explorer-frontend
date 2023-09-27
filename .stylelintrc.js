@@ -9,6 +9,7 @@ module.exports = {
     // so these rules have been temporarily disabled.
     'selector-class-pattern': null,
     'selector-id-pattern': null,
+    'custom-property-pattern': null,
     // This rule provides little benefit relative to the cost of implementing it, so it has been disabled.
     'no-descending-specificity': null,
 
@@ -25,6 +26,9 @@ module.exports = {
     {
       files: ['*.scss', '**/*.scss'],
       extends: ['stylelint-config-standard-scss'],
+      rules: {
+        'scss/dollar-variable-pattern': null,
+      },
     },
     {
       files: ['*.tsx', '**/*.tsx'],
@@ -40,7 +44,17 @@ module.exports = {
           true,
           {
             browsers: package.browserslist,
-            ignore: ['css-nesting', 'css-sticky', 'css-variables'],
+            // TODO: Perhaps the browserslist should be adjusted to a more reasonable range, at least to a level that is compatible with CSS variables.
+            ignore: [
+              'css-nesting',
+              'css-sticky',
+              'css-variables',
+              'mdn-text-decoration-shorthand',
+              'css-unset-value',
+              'flexbox-gap',
+              'css-font-stretch',
+              'css-overscroll-behavior',
+            ],
             ignorePartialSupport: true,
           },
         ],
