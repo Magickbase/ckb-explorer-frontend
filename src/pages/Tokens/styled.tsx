@@ -197,7 +197,7 @@ export const TokensTableItem = styled.div`
     flex: 1.8;
     font-size: 12px;
     text-align: right;
-    color: #000000;
+    color: #000;
 
     @media (max-width: 1000px) {
       flex: 2;
