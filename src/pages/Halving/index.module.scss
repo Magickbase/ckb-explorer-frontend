@@ -16,21 +16,21 @@
   flex-direction: row;
 
   .digtialClockNumber {
-    border: 1px solid rgba(57, 21, 86, 1);
+    border: 1px solid #004938;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 64px;
     height: 72px;
-    background: linear-gradient(rgba(49, 24, 65, 1), rgba(18, 18, 18, 1), rgba(46, 30, 54, 1));
+    background: linear-gradient(#003a2d, #001d16, #003a2d);
     position: relative;
     margin-bottom: 4px;
     &::after {
       content: ' ';
       width: 100%;
       height: 1px;
-      background-color: rgba(69, 46, 87, 1);
+      background-color: #004938;
       position: absolute;
       z-index: 0;
     }
@@ -59,7 +59,7 @@
   .digtialClockText {
     font-size: 12px;
     font-weight: 500;
-    color: rgba(154, 44, 236, 1);
+    color: var(--primary-color);
     text-align: center;
   }
 
@@ -94,13 +94,13 @@
   :global {
     .ant-progress-inner {
       background-color: transparent;
-      border: 1px solid rgba(154, 44, 236, 1);
+      border: 1px solid var(--primary-color);
     }
   }
 }
 
 .halvingProgressMarks {
-  color: rgba(154, 44, 236, 1);
+  color: var(--primary-color);
   display: flex;
   justify-content: space-evenly;
   span {
@@ -114,7 +114,7 @@
       left: calc(50% - 1px);
       display: flex;
       align-items: center;
-      background-color: rgba(154, 44, 236, 1);
+      background-color: var(--primary-color);
     }
   }
 }
@@ -139,15 +139,15 @@
     display: table-header-group;
     vertical-align: middle;
     border-color: inherit;
-    background-color: rgba(47, 42, 49, 1);
+    background-color: #00291f;
   }
   tr {
     text-transform: capitalize;
     &:nth-child(1n) {
-      background-color: rgba(38, 33, 40, 1);
+      background-color: #003d2f;
     }
     &:nth-child(2n) {
-      background-color: rgba(47, 42, 49, 1);
+      background-color: #00291f;
     }
   }
   th {
@@ -165,7 +165,7 @@
   padding-top: 32px;
   padding-bottom: 128px;
   color: white;
-  background-color: rgba(32, 32, 32, 1);
+  background-color: rgba(5, 22, 6, 1);
   background-position: bottom;
   background-size: 100% auto;
   background-repeat: no-repeat;
@@ -214,7 +214,7 @@
     padding: 8px 16px;
     border-radius: 4px;
     border: 0;
-    background: linear-gradient(180deg, rgba(172, 54, 244, 1), rgba(138, 25, 207, 1));
+    background: linear-gradient(180deg, #00cc9b, #008365);
   }
 
   .halvingPanelTitle {
@@ -275,7 +275,7 @@
 
 .panel {
   color: rgba(240, 240, 240, 1);
-  background: rgba(34, 27, 40, 1);
+  background: #001d16;
   display: flex;
   flex-direction: column;
   border-radius: 12px;
@@ -297,7 +297,7 @@
 }
 
 .blockquote {
-  background-color: rgba(47, 42, 49, 1);
+  background-color: #00291f;
   padding: 16px;
   border-radius: 16px;
 }
@@ -343,7 +343,7 @@
 }
 
 .textPrimary {
-  color: rgba(154, 44, 236, 1);
+  color: var(--primary-color);
 }
 
 .textCenter {
