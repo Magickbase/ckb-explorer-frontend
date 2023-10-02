@@ -62,7 +62,7 @@
       "current_epoch": "Current Epoch",
       "target_epoch": "Target Epoch",
       "estimated_time": "Estimated Time",
-      "share_tooltip": "Share CKB Halving Event to Twitter",
+      "share_tooltip": "Share CKB Halving Event to X",
       "halving_event": "What is a Halving Event?",
       "halving_event_section_1": "In the Nervos ecosystem, mining is used to secure the network and distribute tokens in the form of block rewards. A total of 33.6 billion CKB tokens will be created through primary issuance over a period of approximately 84 years to incentivize the miners that secure the network.",
       "halving_event_section_2": "Every epoch, a period of approximately four hours, a fixed amount of 1,917,808 CKB is introduced. Every 8,760 epochs, a period of approximately four years, this amount is cut in half. This event is called a halving and it is the point where the mining rewards from primary issuance are permanently reduced by 50%. This halving process will continue every four years until the year 2103, after which point all block rewards from primary issuance will cease completely.",
@@ -93,7 +93,7 @@
       "table_launches": "Nervos launches",
       "genesis_epoch": "genesis epoch",
       "expected": "Expected",
-      "twitter_text": "📢 @NervosNetwork CKB Expected {{times}} halving on {{date}}🚀，\n\n📅There are {{countdown}} left in the countdown to the halving.\n\n🔗 Click 👉 https://explorer.nervos.org know more"
+      "share_text": "📢 @NervosNetwork CKB Expected {{times}} halving on {{date}}🚀，\n\n📅There are {{countdown}} left in the countdown to the halving.\n\n🔗 Click 👉 https://explorer.nervos.org know more"
     },
     "glossary": {
       "block_height": "Also known as Block Number. The block height, which indicates the length of the blockchain, increases after the addition of the new block.",
