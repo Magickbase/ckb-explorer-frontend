@@ -145,7 +145,3 @@ export const handleBigNumberFloor = (value: BigNumber | string | number, decimal
 }
 
 export const sliceNftName = (name?: string) => (name && name.length > 32 ? `${name.slice(0, 32)}...` : name)
-
-export function capitalizeFirstLetter(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}

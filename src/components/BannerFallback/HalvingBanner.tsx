@@ -6,7 +6,6 @@ import halvingSuccessAni from '../../assets/halving_success_ani.gif'
 import SimpleButton from '../SimpleButton'
 import { useCountdown, useHalving } from '../../utils/hook'
 import i18n from '../../utils/i18n'
-import { capitalizeFirstLetter } from '../../utils/string'
 import { fetchCachedData } from '../../utils/cache'
 
 function numberToOrdinal(number: number) {
@@ -39,18 +38,18 @@ export const HalvingBanner = () => {
 
   const shortCountdown = () => {
     if (days > 0) {
-      return `${days}${i18n.t('symbol.char_space')}${capitalizeFirstLetter(i18n.t('unit.days'))}`
+      return `${days}${i18n.t('symbol.char_space')}${i18n.t('unit.days')}`
     }
     if (hours > 0) {
-      return `${hours}${i18n.t('symbol.char_space')}${capitalizeFirstLetter(i18n.t('unit.hours'))}`
+      return `${hours}${i18n.t('symbol.char_space')}${i18n.t('unit.hours')}`
     }
     if (minutes > 0) {
-      return `${minutes}${i18n.t('symbol.char_space')}${capitalizeFirstLetter(i18n.t('unit.minutes'))}`
+      return `${minutes}${i18n.t('symbol.char_space')}${i18n.t('unit.minutes')}`
     }
     if (seconds > 0) {
-      return `${seconds}${i18n.t('symbol.char_space')}${capitalizeFirstLetter(i18n.t('unit.seconds'))}`
+      return `${seconds}${i18n.t('symbol.char_space')}${i18n.t('unit.seconds')}`
     }
-    return `${capitalizeFirstLetter(i18n.t('halving.halving'))}!`
+    return `${i18n.t('halving.halving')}!`
   }
 
   return (
@@ -75,7 +74,7 @@ export const HalvingBanner = () => {
             </div>
           ) : (
             <div className={classnames(styles.halvingBannerText, styles.linear)}>
-              Nervos CKB Layer 1 {capitalizeFirstLetter(i18n.t('halving.halving'))}
+              Nervos CKB Layer 1 {i18n.t('halving.halving')}
             </div>
           )}
           <a href="/halving">

@@ -17,7 +17,6 @@ import { useAppState } from '../../contexts/providers'
 import { HalvingCountdown } from './HalvingCountdown'
 import { useCountdown, useHalving, useIsMobile } from '../../utils/hook'
 import { fetchCachedData, storeCachedData } from '../../utils/cache'
-import { capitalizeFirstLetter } from '../../utils/string'
 import { getPrimaryColor } from '../../constants/common'
 import styles from './index.module.scss'
 
@@ -99,13 +98,13 @@ export const HalvingCountdownPage = () => {
         >
           <div className={classnames(styles.halvingSuccessText, styles.textCenter)}>
             {i18n.t('halving.congratulations')}!
-            <div>
-              {capitalizeFirstLetter(i18n.t('halving.the'))}
+            <div className={styles.textCapitalize}>
+              {i18n.t('halving.the')}
               {i18n.t('symbol.char_space')}
-              {capitalizeFirstLetter(i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount - 1)}`))}
+              {i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount - 1)}`)}
               {i18n.t('symbol.char_space')}
-              {capitalizeFirstLetter(i18n.t('halving.halving'))}
-              {capitalizeFirstLetter(i18n.t('halving.actived'))}{' '}
+              {i18n.t('halving.halving')}
+              {i18n.t('halving.actived')}{' '}
               <a className={styles.textPrimary} href={`/block/${getTargetBlockByHavingCount(nextHalvingCount - 1)}`}>
                 {new BigNumber(getTargetBlockByHavingCount(nextHalvingCount - 1)).toFormat()}.
               </a>
@@ -113,15 +112,15 @@ export const HalvingCountdownPage = () => {
           </div>
           <div className={styles.textCenter}>
             <button
-              className={styles.halvingSuccessBtn}
+              className={classnames(styles.halvingSuccessBtn, styles.textCapitalize)}
               type="button"
               onClick={() => {
                 storeCachedData(lastedHavingKey, true)
               }}
             >
-              {capitalizeFirstLetter(i18n.t('halving.next'))}
+              {i18n.t('halving.next')}
               {i18n.t('symbol.char_space')}
-              {capitalizeFirstLetter(i18n.t('halving.halving'))}
+              {i18n.t('halving.halving')}
             </button>
           </div>
         </div>
@@ -130,10 +129,10 @@ export const HalvingCountdownPage = () => {
 
     return (
       <div className={styles.halvingPanel}>
-        <div className={styles.halvingPanelTitle}>
-          {capitalizeFirstLetter(i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount)}`))}
+        <div className={classnames(styles.halvingPanelTitle, styles.textCapitalize)}>
+          {i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount)}`)}
           {i18n.t('symbol.char_space')}
-          {capitalizeFirstLetter(i18n.t('halving.halving'))}
+          {i18n.t('halving.halving')}
 
           {nextHalvingCount > 1 && (
             <Popover
@@ -142,14 +141,19 @@ export const HalvingCountdownPage = () => {
                   pagination={false}
                   dataSource={new Array(nextHalvingCount - 1).fill({}).map((_, index) => ({
                     key: index,
-                    event: `${capitalizeFirstLetter(i18n.t(`ordinal.${numberToOrdinal(index + 1)}`))}
+                    event: `${i18n.t(`ordinal.${numberToOrdinal(index + 1)}`)}
                   ${i18n.t('symbol.char_space')}
-                  ${capitalizeFirstLetter(i18n.t('halving.halving'))}`,
+                  ${i18n.t('halving.halving')}`,
                     epoch: new BigNumber(EPOCHS_PER_HALVING * (index + 1)).toFormat(),
                     height: getTargetBlockByHavingCount(index + 1),
                   }))}
                   columns={[
-                    { title: 'Event', dataIndex: 'event', key: 'event' },
+                    {
+                      title: 'Event',
+                      dataIndex: 'event',
+                      key: 'event',
+                      render: event => <span className={styles.textCapitalize}>{event}</span>,
+                    },
                     { title: 'Epoch', dataIndex: 'epoch', key: 'epoch' },
                     {
                       title: 'Height',

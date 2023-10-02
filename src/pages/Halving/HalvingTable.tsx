@@ -1,5 +1,4 @@
 import i18n from '../../utils/i18n'
-import { capitalizeFirstLetter } from '../../utils/string'
 import styles from './index.module.scss'
 
 export const HalvingTable = () => (
@@ -26,7 +25,7 @@ export const HalvingTable = () => (
       <tr>
         <td>
           <strong>
-            {capitalizeFirstLetter(i18n.t('ordinal.first'))}
+            {i18n.t('ordinal.first')}
             {i18n.t('symbol.char_space')}
             {i18n.t('halving.halving')}
           </strong>
@@ -52,7 +51,7 @@ export const HalvingTable = () => (
       </tr>
       <tr>
         <td>
-          {capitalizeFirstLetter(i18n.t('ordinal.second'))}
+          {i18n.t('ordinal.second')}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
         </td>
@@ -65,7 +64,7 @@ export const HalvingTable = () => (
       </tr>
       <tr>
         <td>
-          {capitalizeFirstLetter(i18n.t('ordinal.3rd'))}
+          {i18n.t('ordinal.3rd')}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
         </td>
@@ -78,7 +77,7 @@ export const HalvingTable = () => (
       </tr>
       <tr>
         <td>
-          {capitalizeFirstLetter(i18n.t('ordinal.4th'))}
+          {i18n.t('ordinal.4th')}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
         </td>
@@ -91,7 +90,7 @@ export const HalvingTable = () => (
       </tr>
       <tr>
         <td>
-          {capitalizeFirstLetter(i18n.t('ordinal.5th'))}
+          {i18n.t('ordinal.5th')}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
         </td>
@@ -104,7 +103,7 @@ export const HalvingTable = () => (
       </tr>
       <tr>
         <td>
-          {capitalizeFirstLetter(i18n.t('ordinal.6th'))}
+          {i18n.t('ordinal.6th')}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
         </td>
@@ -117,7 +116,7 @@ export const HalvingTable = () => (
       </tr>
       <tr>
         <td>
-          {capitalizeFirstLetter(i18n.t('ordinal.7th'))}
+          {i18n.t('ordinal.7th')}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
         </td>
@@ -130,7 +129,7 @@ export const HalvingTable = () => (
       </tr>
       <tr>
         <td>
-          {capitalizeFirstLetter(i18n.t('ordinal.8th'))}
+          {i18n.t('ordinal.8th')}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
         </td>
@@ -143,7 +142,7 @@ export const HalvingTable = () => (
       </tr>
       <tr>
         <td>
-          {capitalizeFirstLetter(i18n.t('ordinal.9th'))}
+          {i18n.t('ordinal.9th')}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
         </td>
@@ -156,7 +155,7 @@ export const HalvingTable = () => (
       </tr>
       <tr>
         <td>
-          {capitalizeFirstLetter(i18n.t('ordinal.10th'))}
+          {i18n.t('ordinal.10th')}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
         </td>

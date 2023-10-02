@@ -142,6 +142,7 @@
     background-color: rgba(47, 42, 49, 1);
   }
   tr {
+    text-transform: capitalize;
     &:nth-child(1n) {
       background-color: rgba(38, 33, 40, 1);
     }
@@ -347,4 +348,8 @@
 
 .textCenter {
   text-align: center;
+}
+
+.textCapitalize {
+  text-transform: capitalize;
 }
