@@ -75,7 +75,7 @@ export const HalvingCountdownPage = () => {
     return `${seconds}${i18n.t('symbol.char_space')}${i18n.t('unit.seconds')}`
   }
 
-  const shareText = i18n.t('halving.twitter_text', {
+  const shareText = i18n.t('halving.share_text', {
     times: i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount)}`),
     date: estimatedDate.toUTCString(),
     countdown: shortCountdown(),

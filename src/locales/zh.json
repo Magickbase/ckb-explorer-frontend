@@ -62,7 +62,7 @@
       "current_epoch": "当前 Epoch",
       "target_epoch": "目标 Epoch",
       "estimated_time": "预计时间",
-      "share_tooltip": "分享 CKB 减半事件到 Twitter",
+      "share_tooltip": "分享 CKB 减半事件到 X",
       "halving_event": "什么是减半事件?",
       "halving_event_section_1": "在 Nervos 生态系统中，挖矿用于确保网络安全，并以区块奖励的形式分配代币。在大约 84 年的时间里，将通过首次发行创造总计 336 亿个 CKB 代币，以奖励确保网络安全的矿工。",
       "halving_event_section_2": "每个 Epoch（约 4 个小时）推出 1,917,808 CKB 的固定金额。每 8,760 个 Epoch，即大约四年的时间，这一数额会减半。这一事件被称为减半，也就是初级发行的挖矿奖励永久减少 50%。这种减半过程将每四年持续一次，直到 2103 年。",
@@ -93,7 +93,7 @@
       "table_launches": "Nervos 主网上线",
       "genesis_epoch": "创世纪元",
       "expected": "预计",
-      "twitter_text": "📢 @NervosNetwork CKB 预计于 {{date}} 迎来{{times}}减半🚀，\n\n📅距离减半倒计时还有 {{countdown}}。\n\n🔗 访问👉 https://explorer.nervos.org 了解更多"
+      "share_text": "📢 @NervosNetwork CKB 预计于 {{date}} 迎来{{times}}减半🚀，\n\n📅距离减半倒计时还有 {{countdown}}。\n\n🔗 访问👉 https://explorer.nervos.org 了解更多"
     },
     "glossary": {
       "block_height": "区块高度，又称为区块编号，表示区块链的长度，在添加新区块后会增加。",
