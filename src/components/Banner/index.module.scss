@@ -17,11 +17,7 @@ $backgroudColor: #232323;
 
 .halvingBannerSuccess {
   background-size: cover;
-  background-position: center !important;
-
-  @media (min-width: 750px) {
-    background-size: 250% !important;
-  }
+  background-position: center;
 }
 
 .halvingBannerWrapper {
@@ -75,19 +71,19 @@ $backgroudColor: #232323;
   text-transform: capitalize;
 
   &.linear {
-    background: linear-gradient(45deg, rgb(183, 129, 219), rgba(133, 69, 178, 1), rgb(183, 129, 219));
+    background: linear-gradient(45deg, rgb(130, 203, 140), rgb(121, 122, 121), rgb(172, 221, 181));
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   &.success {
     transform: rotate(-2deg);
-    text-shadow: 1px 1px 1px rgba(172, 54, 244, 1), -0.5px -0.5px 1px white;
+    text-shadow: 1px 1px 1px var(--primary-color), -0.5px -0.5px 1px white;
     color: rgb(28, 28, 28);
     margin-top: -12px;
 
     @media (min-width: 750px) {
-      text-shadow: 1px 1px 1px rgba(172, 54, 244, 1), -1px -1px 1px white;
+      text-shadow: 1px 1px 1px var(--primary-color), -1px -1px 1px white;
     }
   }
 
@@ -108,7 +104,7 @@ $backgroudColor: #232323;
   padding: 8px 16px;
   user-select: none;
   text-transform: capitalize;
-  background: linear-gradient(180deg, rgba(172, 54, 244, 1), rgba(138, 25, 207, 1));
+  background: linear-gradient(180deg, #00cc9b, #008365);
 
   @media (min-width: 750px) {
     padding: 16px 24px;
