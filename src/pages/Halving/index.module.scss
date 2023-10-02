@@ -1,4 +1,4 @@
-.twitterShareWrapper {
+.shareWrapper {
   position: fixed;
   bottom: 10px;
   right: 18px;
@@ -119,9 +119,9 @@
   }
 }
 
-.twitterIconBg {
+.XIconBg {
   display: flex;
-  background: rgb(90, 169, 232);
+  background: black;
   box-shadow: rgba(77, 77, 77, 0.2) 0px 2px 6px 0px;
   border-radius: 6px;
   padding: 8px;
