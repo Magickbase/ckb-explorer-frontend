@@ -51,7 +51,7 @@
       "and": "and",
       "halving_countdown": "Halving Countdown",
       "learn_more": "Learn More",
-      "banner_congratulation": "The {{times}} CKB halving is atived.",
+      "banner_congratulation": "The {{times}} CKB halving is ative.",
       "countdown_tooltip_section1": "How is the countdown estimated?",
       "countdown_tooltip_section2": "[Target Epoch - Current Epoch]*Single Epoch Average Time - Current Epoch Used Time",
       "countdown_tooltip_section3": "*Single Epoch Average Time takes the average time of nearly 1000 epochs.",
