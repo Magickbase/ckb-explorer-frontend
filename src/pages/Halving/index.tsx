@@ -7,8 +7,8 @@ import blockRewards from '../../assets/block-rewards.png'
 import blockRewardsCN from '../../assets/block-rewards-cn.png'
 import halvingBg from '../../assets/halving_bg.png'
 import halvingSuccessBg from '../../assets/halving_success_bg.png'
-import { ReactComponent as TwitterIcon } from '../../assets/twitter.svg'
 import { ReactComponent as CalendarIcon } from '../../assets/calendar.svg'
+import { ReactComponent as XIcon } from '../../assets/X.svg'
 import { ReactComponent as WarningCircle } from '../../assets/warning_circle.svg'
 import i18n, { currentLanguage } from '../../utils/i18n'
 import { HalvingTable } from './HalvingTable'
@@ -288,9 +288,9 @@ export const HalvingCountdownPage = () => {
       </div>
 
       <Tooltip title={i18n.t('halving.share_tooltip')}>
-        <a className={styles.twitterShareWrapper} href={shareUrl} target="_blank" rel="noreferrer">
-          <div className={styles.twitterIconBg}>
-            <TwitterIcon fill="white" height={40} width={40} />
+        <a className={styles.shareWrapper} href={shareUrl} target="_blank" rel="noreferrer">
+          <div className={styles.XIconBg}>
+            <XIcon fill="white" height={40} width={40} />
           </div>
         </a>
       </Tooltip>
