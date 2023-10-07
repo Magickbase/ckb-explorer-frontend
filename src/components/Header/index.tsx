@@ -10,7 +10,7 @@ import { LanguageDropdown } from './LanguageComp'
 import BlockchainComp from './BlockchainComp'
 import { useElementSize, useIsMobile } from '../../utils/hook'
 import styles from './index.module.scss'
-import Alert from '../Alert'
+import MaintainAlert from '../MaintainAlert'
 import Sheet from '../Sheet'
 import { createGlobalState, useGlobalState } from '../../utils/state'
 import MobileMenu from './MobileMenu'
@@ -112,7 +112,7 @@ export default () => {
         [styles.expanded]: mobileMenuVisible,
       })}
     >
-      <Alert />
+      <MaintainAlert />
       <HeaderPanel>
         <LogoComp />
         {!isMobile && (
