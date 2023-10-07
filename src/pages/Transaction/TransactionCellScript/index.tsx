@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import { useEffect, useState, ReactNode, useRef } from 'react'
 import BigNumber from 'bignumber.js'
-import { explorerService } from '../../../services/ExplorerService'
+import { explorerService, Response } from '../../../services/ExplorerService'
 import { CellState } from '../../../constants/common'
 import { hexToUtf8 } from '../../../utils/string'
 import {

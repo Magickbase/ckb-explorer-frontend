@@ -1,4 +1,4 @@
-import { explorerService } from '../../services/ExplorerService'
+import { explorerService, Response } from '../../services/ExplorerService'
 import { setChainAlerts } from '../../components/Sheet'
 
 const alertNotEmpty = (wrapper: Response.Wrapper<State.BlockchainInfo> | null): boolean =>

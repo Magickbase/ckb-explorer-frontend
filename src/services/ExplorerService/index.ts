@@ -67,3 +67,4 @@ class ExplorerService {
 export const explorerService = new ExplorerService()
 
 export * from './hooks'
+export * from './types'

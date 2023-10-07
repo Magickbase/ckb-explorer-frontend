@@ -1,4 +1,4 @@
-import { explorerService } from '../../../services/ExplorerService'
+import { explorerService, Response } from '../../../services/ExplorerService'
 import { removeCachedData, fetchCachedData } from '../../../utils/cache'
 import { ChartCachedKeys } from '../../../constants/cache'
 

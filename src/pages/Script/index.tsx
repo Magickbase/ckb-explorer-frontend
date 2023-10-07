@@ -18,7 +18,7 @@ import { shannonToCkb, toCamelcase } from '../../utils/util'
 import DecimalCapacity from '../../components/DecimalCapacity'
 import { ScriptInfo, ScriptTabType } from './types'
 import styles from './styles.module.scss'
-import { explorerService } from '../../services/ExplorerService'
+import { explorerService, Response } from '../../services/ExplorerService'
 
 const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
 

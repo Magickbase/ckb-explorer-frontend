@@ -4,6 +4,7 @@ import { Dayjs } from 'dayjs'
 import { pick } from '../../utils/object'
 import { toCamelcase } from '../../utils/util'
 import { requesterV1, requesterV2 } from './requester'
+import { Response } from './types'
 
 // TODO: Temporarily compatible with old code, it exists in the form of `explorerService.api.requesterV2`,
 // and in the future, the `requester` should be hidden from the outside.
