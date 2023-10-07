@@ -58,7 +58,7 @@ const getScriptInfo = (scriptInfo: ScriptInfo) => {
     },
     {
       title: i18n.t('scripts.type_id'),
-      content: <span className={styles.typeId}>{id || '-'}</span>,
+      content: id ? <CodeHashMessage codeHash={id} /> : '-',
     },
     {
       title: i18n.t('scripts.code_hash'),
