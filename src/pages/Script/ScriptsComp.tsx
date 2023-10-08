@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import Pagination from '../../components/Pagination'
 import TransactionItem from '../../components/TransactionItem/index'
 import { v2AxiosIns } from '../../service/http/fetcher'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { TransactionCellDetailModal, TransactionCellInfoPanel } from '../Transaction/TransactionCell/styled'
 import SimpleButton from '../../components/SimpleButton'
 import SimpleModal from '../../components/Modal'
@@ -120,6 +120,7 @@ export const ScriptCells = ({
   size: number
   cellType: 'deployed_cells' | 'referring_cells'
 }) => {
+  const { i18n } = useI18n()
   const history = useHistory()
   const { codeHash, hashType } = useParams<{ codeHash: string; hashType: string }>()
 
@@ -213,6 +214,7 @@ export const ScriptCells = ({
 
 export const CodeHashMessage = ({ codeHash }: { codeHash: string }) => {
   const setToast = useSetToast()
+  const { i18n } = useI18n()
   return (
     <div className={styles.codeHashMessagePanel}>
       <AddressText className={styles.codeHash}>{codeHash}</AddressText>

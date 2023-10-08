@@ -10,7 +10,7 @@ import { TableTitleRow, TableContentRow, TableTitleRowItem } from '../../compone
 import { deprecatedAddrToNewAddr, shannonToCkb } from '../../utils/util'
 import { DELAY_BLOCK_NUMBER } from '../../constants/common'
 import { localeNumberString } from '../../utils/number'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import DecimalCapacity from '../../components/DecimalCapacity'
 import { ItemCardData, ItemCardGroup } from '../../components/Card/ItemCard'
 import AddressText from '../../components/AddressText'
@@ -84,6 +84,7 @@ const getTableContentDataList = (block: State.Block, index: number, page: number
 }
 
 const BlockCardGroup: FC<{ blocks: State.Block[]; isFirstPage: boolean }> = ({ blocks, isFirstPage }) => {
+  const { i18n } = useI18n()
   const items: ItemCardData<State.Block>[] = [
     {
       title: i18n.t('home.height'),

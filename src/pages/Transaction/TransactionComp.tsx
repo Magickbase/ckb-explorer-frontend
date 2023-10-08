@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js'
 import { Trans } from 'react-i18next'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import { parseSimpleDate } from '../../utils/date'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { localeNumberString } from '../../utils/number'
 import { formatConfirmation, shannonToCkb, matchTxHash } from '../../utils/util'
 import {
@@ -126,7 +126,7 @@ export const TransactionOverview: FC<{ transaction: State.Transaction }> = ({ tr
     maxCyclesInEpoch,
     maxCycles,
   } = transaction
-
+  const { i18n } = useI18n()
   let confirmation = 0
   if (tipBlockNumber && blockNumber) {
     confirmation = tipBlockNumber - blockNumber
@@ -176,7 +176,7 @@ export const TransactionOverview: FC<{ transaction: State.Transaction }> = ({ tr
         {
           title: i18n.t('transaction.status'),
           tooltip: i18n.t('glossary.transaction_status'),
-          content: formatConfirmation(confirmation),
+          content: formatConfirmation(confirmation, i18n),
         },
       )
     }

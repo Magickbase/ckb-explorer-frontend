@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import 'default-passive-events'
 import Content from '../../components/Content'
-import i18n from '../../utils/i18n'
+import { I18nType, useI18n } from '../../utils/i18n'
 import { DifficultyHashRateChart } from './mining/DifficultyHashRate'
 import { DifficultyUncleRateEpochChart } from './mining/DifficultyUncleRateEpoch'
 import { TransactionCountChart } from './activities/TransactionCount'
@@ -65,7 +65,7 @@ const ChartCard = ({ chartData }: { chartData: ChartData }) => {
   )
 }
 
-const chartsData = (): ChartCategory[] => [
+const chartsData = (i18n: I18nType): ChartCategory[] => [
   {
     category: i18n.t('statistic.category_block'),
     charts: [
@@ -229,11 +229,12 @@ const chartsData = (): ChartCategory[] => [
 ]
 
 export default () => {
+  const { i18n } = useI18n()
   return (
     <Content>
       <ChartsContent className="container">
         <ChartsTitle>{i18n.t('statistic.charts_title')}</ChartsTitle>
-        {chartsData().map(chartData => (
+        {chartsData(i18n).map(chartData => (
           <ChartsPanel key={chartData.category}>
             <div className="charts__category__title">{chartData.category}</div>
             <div className="charts__category__panel">

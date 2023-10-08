@@ -19,7 +19,6 @@ import {
 import DaoUpIcon from '../../../assets/dao_up.png'
 import DaoDownIcon from '../../../assets/dao_down.png'
 import DaoBalanceIcon from '../../../assets/dao_balance.png'
-import i18n from '../../../utils/i18n'
 import { handleBigNumber, handleBigNumberFloor } from '../../../utils/string'
 import { localeNumberString } from '../../../utils/number'
 import { shannonToCkbDecimal, shannonToCkb } from '../../../utils/util'
@@ -28,6 +27,7 @@ import { useIsLGScreen, useIsMobile } from '../../../utils/hook'
 import { ReactChartCore } from '../../StatisticsChart/common'
 import { HelpTip } from '../../../components/HelpTip'
 import { ChartColor } from '../../../constants/common'
+import { I18nType, useI18n } from '../../../utils/i18n'
 
 interface NervosDaoItemContent {
   title: string
@@ -66,7 +66,7 @@ const daoIcon = (symbol: 'positive' | 'negative' | 'zero' | undefined) => {
   }
 }
 
-const nervosDaoItemContents = (nervosDao: State.NervosDao): NervosDaoItemContent[] => [
+const nervosDaoItemContents = (nervosDao: State.NervosDao, i18n: I18nType): NervosDaoItemContent[] => [
   {
     title: i18n.t('nervos_dao.deposit'),
     change: handleBigNumberFloor(shannonToCkbDecimal(nervosDao.depositChanges, 2), 2),
@@ -135,8 +135,8 @@ const NervosDaoLeftItem = ({ item, firstLine }: { item: NervosDaoItemContent; fi
 
 const NervosDaoOverviewLeftComp: FC<{ nervosDao: State.NervosDao }> = ({ nervosDao }) => {
   const isMobile = useIsMobile()
-
-  const leftItems = nervosDaoItemContents(nervosDao)
+  const { i18n } = useI18n()
+  const leftItems = nervosDaoItemContents(nervosDao, i18n)
 
   if (isMobile) {
     return (
@@ -184,7 +184,12 @@ const NervosDaoOverviewLeftComp: FC<{ nervosDao: State.NervosDao }> = ({ nervosD
   )
 }
 
-const getOption = (nervosDao: State.NervosDao, colors: string[], isMobile: boolean): echarts.EChartOption => {
+const getOption = (
+  nervosDao: State.NervosDao,
+  colors: string[],
+  isMobile: boolean,
+  i18n: I18nType,
+): echarts.EChartOption => {
   const { miningReward, depositCompensation, treasuryAmount } = nervosDao
   const sum =
     shannonToCkbDecimal(miningReward) + shannonToCkbDecimal(depositCompensation) + shannonToCkbDecimal(treasuryAmount)
@@ -287,6 +292,7 @@ const NervosDaoPieItem = ({ item }: { item: NervosDaoPieItemContent }) => (
 
 export default ({ nervosDao }: { nervosDao: State.NervosDao }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const isExactLG = useIsLGScreen(true)
 
   const nervosDaoPieItemContents = useCallback(
@@ -321,7 +327,7 @@ export default ({ nervosDao }: { nervosDao: State.NervosDao }) => {
             <HelpTip title={i18n.t('glossary.secondary_issuance')} />
           </div>
           <ReactChartCore
-            option={getOption(nervosDao, ChartColor.daoColors, isMobile)}
+            option={getOption(nervosDao, ChartColor.daoColors, isMobile, i18n)}
             notMerge
             lazyUpdate
             style={{

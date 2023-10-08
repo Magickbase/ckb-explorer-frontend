@@ -6,7 +6,7 @@ import { useQuery } from 'react-query'
 import { AxiosResponse } from 'axios'
 import Content from '../../components/Content'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
-import i18n from '../../utils/i18n'
+import { I18nType, useI18n } from '../../utils/i18n'
 import { HashCardPanel } from '../../components/Card/HashCard/styled'
 import { localeNumberString } from '../../utils/number'
 import { CodeHashMessage, ScriptCells, ScriptTransactions } from './ScriptsComp'
@@ -22,23 +22,25 @@ import { v2AxiosIns } from '../../service/http/fetcher'
 
 const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
 
-const scriptHashNameMap = new Map<string, string>(
-  scriptDataList
-    .map(scriptData =>
-      scriptData.codeHashes.map(
-        codeHash =>
-          [
-            `${codeHash}_${scriptData.hashType}`,
-            scriptNameList.has(scriptData.tag)
-              ? scriptNameList.get(scriptData.tag)!.name
-              : i18n.t('scripts.unnamed_script'),
-          ] as [string, string],
-      ),
-    )
-    .flat(),
-)
+const scriptHashNameMap = (i18n: I18nType): Map<string, string> => {
+  return new Map(
+    scriptDataList
+      .map(scriptData =>
+        scriptData.codeHashes.map(
+          codeHash =>
+            [
+              `${codeHash}_${scriptData.hashType}`,
+              scriptNameList.has(scriptData.tag)
+                ? scriptNameList.get(scriptData.tag)!.name
+                : i18n.t('scripts.unnamed_script'),
+            ] as [string, string],
+        ),
+      )
+      .flat(),
+  )
+}
 
-const getScriptInfo = (scriptInfo: ScriptInfo) => {
+const getScriptInfo = (scriptInfo: ScriptInfo, i18n: I18nType) => {
   const { scriptName, scriptType, id, codeHash, hashType, capacityOfDeployedCells, capacityOfReferringCells } =
     scriptInfo
   const items: OverviewItemData[] = [
@@ -84,20 +86,26 @@ const getScriptInfo = (scriptInfo: ScriptInfo) => {
 }
 
 const ScriptsTitleOverview = ({ scriptInfo }: { scriptInfo: ScriptInfo }) => {
+  const { i18n } = useI18n()
+
   return (
     <div className={styles.scriptsTitleOverviewPanel}>
-      <OverviewCard items={getScriptInfo(scriptInfo)} hideShadow />
+      <OverviewCard items={getScriptInfo(scriptInfo, i18n)} hideShadow />
     </div>
   )
 }
 
-const seekScriptName = (codeHash: string, hashType: string): string =>
-  scriptHashNameMap.has(`${codeHash}_${hashType}`)
-    ? scriptHashNameMap.get(`${codeHash}_${hashType}`)!
+const seekScriptName = (codeHash: string, hashType: string, i18n: I18nType): string => {
+  const nameMap = scriptHashNameMap(i18n)
+  return nameMap.has(`${codeHash}_${hashType}`)
+    ? nameMap.get(`${codeHash}_${hashType}`)!
     : i18n.t('scripts.unnamed_script')
+}
 
 export const ScriptPage = () => {
   const history = useHistory()
+  const { i18n } = useI18n()
+
   const { codeHash, hashType, tab } = useParams<{ codeHash: string; hashType: string; tab: ScriptTabType }>()
   const { currentPage, pageSize } = usePaginationParamsInPage()
 
@@ -133,7 +141,7 @@ export const ScriptPage = () => {
           countOfDeployedCells: 0,
           countOfReferringCells: 0,
         } as ScriptInfo)
-  scriptInfo.scriptName = seekScriptName(scriptInfo.codeHash, scriptInfo.hashType)
+  scriptInfo.scriptName = seekScriptName(scriptInfo.codeHash, scriptInfo.hashType, i18n)
 
   useEffect(() => {
     setCountOfTransactions(scriptInfo.countOfTransactions)

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { memo } from 'react'
 import { useIsMobile } from '../../../utils/hook'
-import i18n from '../../../utils/i18n'
+import { I18nType, useI18n } from '../../../utils/i18n'
 import { MobileMenuItem, MobileMenuLink, HeaderMenuPanel } from './styled'
 import { isMainnet } from '../../../utils/chain'
 
@@ -10,7 +10,7 @@ export enum LinkType {
   Outer,
 }
 
-const menuDataList = () => [
+const menuDataList = (i18n: I18nType) => [
   {
     type: LinkType.Inner,
     name: i18n.t('navbar.home'),
@@ -59,10 +59,11 @@ const MenuItemLink = ({ menu }: { menu: any }) => {
   )
 }
 
-export default memo(() =>
-  useIsMobile() ? (
+export default memo(() => {
+  const { i18n } = useI18n()
+  return useIsMobile() ? (
     <MobileMenuItem>
-      {menuDataList()
+      {menuDataList(i18n)
         .filter(menu => menu.name !== undefined)
         .map(menu => (
           <MenuItemLink menu={menu} key={menu.name} />
@@ -70,7 +71,7 @@ export default memo(() =>
     </MobileMenuItem>
   ) : (
     <HeaderMenuPanel>
-      {menuDataList()
+      {menuDataList(i18n)
         .filter(menu => menu.name !== undefined)
         .map(menu =>
           menu.type === LinkType.Inner ? (
@@ -90,5 +91,5 @@ export default memo(() =>
           ),
         )}
     </HeaderMenuPanel>
-  ),
-)
+  )
+})

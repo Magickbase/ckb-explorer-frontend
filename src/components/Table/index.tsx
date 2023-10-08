@@ -1,6 +1,6 @@
 import { memo, ReactNode } from 'react'
 import { Col, Row } from 'antd'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { TableTitleRowItem, TableContentRowItem, HighlightLink, TableMinerContentPanel } from './styled'
 import AddressText from '../AddressText'
 
@@ -31,6 +31,7 @@ export const TableMinerContentItem = memo(
     textCenter?: boolean
     fontSize?: string
   }) => {
+    const { i18n } = useI18n()
     return (
       <TableMinerContentPanel width={width} fontSize={fontSize}>
         {content ? (

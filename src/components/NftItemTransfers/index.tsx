@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Tooltip } from 'antd'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { getPrimaryColor } from '../../constants/common'
 import { dayjs, parseDate } from '../../utils/date'
 import styles from './styles.module.scss'
@@ -40,6 +40,8 @@ export interface TransferListRes {
 }
 const NftItemTransfers: React.FC<{ list: TransferListRes['data']; isLoading: boolean }> = ({ list, isLoading }) => {
   const [isShowInAge, setIsShowInAge] = useState(false)
+  const { i18n } = useI18n()
+
   dayjs.locale(i18n.language === 'zh' ? 'zh-cn' : 'en')
 
   return (
@@ -91,7 +93,7 @@ const NftItemTransfers: React.FC<{ list: TransferListRes['data']; isLoading: boo
                   <td>
                     {isShowInAge
                       ? dayjs(item.transaction.block_timestamp).fromNow()
-                      : parseDate(item.transaction.block_timestamp)}
+                      : parseDate(item.transaction.block_timestamp, i18n)}
                   </td>
                   <td>
                     {item.from ? (
@@ -169,7 +171,7 @@ const NftItemTransfers: React.FC<{ list: TransferListRes['data']; isLoading: boo
                 </div>
                 <div>
                   <dt>{i18n.t('nft.age')}</dt>
-                  <dd>{parseDate(item.transaction.block_timestamp)}</dd>
+                  <dd>{parseDate(item.transaction.block_timestamp, i18n)}</dd>
                 </div>
                 <div>
                   <dt>{i18n.t('nft.from')}</dt>

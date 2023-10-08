@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { Tooltip } from 'antd'
-import i18n from '../../../utils/i18n'
+import { useI18n } from '../../../utils/i18n'
 import { TransactionIncomePanel, TransactionCapacityValuePanel } from './styled'
 import { shannonToCkb } from '../../../utils/util'
 import { localeNumberString } from '../../../utils/number'
@@ -10,6 +10,7 @@ import CurrentAddressIcon from '../../../assets/current_address.svg'
 
 export default ({ income }: { income: string }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   let bigIncome = new BigNumber(income)
   if (bigIncome.isNaN()) {
     bigIncome = new BigNumber(0)

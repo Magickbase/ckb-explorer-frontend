@@ -16,7 +16,7 @@ import {
   TransactionCellScriptContentPanel,
   TransactionDetailScriptButton,
 } from './styled'
-import i18n from '../../../utils/i18n'
+import { I18nType, useI18n } from '../../../utils/i18n'
 import SmallLoading from '../../../components/Loading/SmallLoading'
 import CloseIcon from '../../../assets/modal_close.png'
 import { getContractHashTag } from '../../../utils/util'
@@ -59,6 +59,7 @@ const handleFetchCellInfo = async (
   setScriptFetchStatus: (val: boolean) => void,
   setContent: Function,
   setToast: ReturnType<typeof useSetToast>,
+  i18n: I18nType,
 ) => {
   setScriptFetchStatus(false)
 
@@ -176,6 +177,7 @@ const ScriptContent = ({
   content: State.Script | State.Data | CapacityUsage | undefined
   state: CellState
 }) => {
+  const { i18n } = useI18n()
   const hashTag = getContractHashTag(content as State.Script)
   const data = content as State.Data
   const script = content as State.Script
@@ -240,6 +242,7 @@ const ScriptContentJson = ({
 
 export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
   const setToast = useSetToast()
+  const { i18n } = useI18n()
   const [scriptFetched, setScriptFetched] = useState(false)
   const [content, setContent] = useState(null as State.Script | State.Data | CapacityUsage | null)
   const [state, setState] = useState(CellState.LOCK as CellState)
@@ -250,7 +253,7 @@ export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
   }
 
   useEffect(() => {
-    handleFetchCellInfo(cell, state, setScriptFetched, setContent, setToast)
+    handleFetchCellInfo(cell, state, setScriptFetched, setContent, setToast, i18n)
   }, [cell, state, setToast])
 
   const onClickCopy = () => {

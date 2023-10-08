@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
 import { useHistory } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SmartChartPage, SmartChartPageProps } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { fetchStatisticMinerAddressDistribution } from '../../../service/http/fetcher'
 import { useAdaptMobileEllipsis, useAdaptPCEllipsis, useIsMobile } from '../../../utils/hook'
+import { I18nInfoType } from '../../../utils/i18n'
 
 const Colors = [
   '#069ECD',
@@ -24,9 +24,12 @@ const getOption = (
   statisticMinerAddresses: State.StatisticMinerAddress[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
   getAdaptAddressText: (address: string) => string,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -47,7 +50,7 @@ const getOption = (
     tooltip: !isThumbnail
       ? {
           formatter: (data: any) => {
-            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 60 : 65)
+            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 60 : 65)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(
               i18n.t('statistic.address'),
             )} ${getAdaptAddressText(data.data.title)}</div>`

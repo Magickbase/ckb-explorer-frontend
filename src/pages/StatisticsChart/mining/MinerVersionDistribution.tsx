@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import { EChartOption } from 'echarts'
-import i18n, { currentLanguage } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { fetchStatisticMinerVersionDistribution } from '../../../service/http/fetcher'
+import { I18nInfoType } from '../../../utils/i18n'
 
 const Colors = [
   '#069ECD',
@@ -27,8 +27,11 @@ const getOption = (
   list: Array<VersionRecord>,
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -48,7 +51,7 @@ const getOption = (
     ? {
         formatter: data => {
           const item = Array.isArray(data) ? data[0] : data
-          const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 80 : 60)
+          const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 80 : 60)
           let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.version'))} ${
             item.data.title
           }</div>`

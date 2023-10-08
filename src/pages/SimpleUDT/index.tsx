@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import { Popover } from 'antd'
 import SimpleUDTHashCard from '../../components/Card/HashCard'
 import Content from '../../components/Content'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { SimpleUDTContentPanel, UDTTransactionTitlePanel, TypeScriptController } from './styled'
 import SimpleUDTComp, { SimpleUDTOverview } from './SimpleUDTComp'
 import { useIsMobile, usePaginationParamsInPage } from '../../utils/hook'
@@ -40,6 +40,7 @@ enum TransactionType {
 }
 
 export const SimpleUDT = () => {
+  const { i18n } = useI18n()
   const isMobile = useIsMobile()
   const { push } = useHistory()
   const { search } = useLocation()

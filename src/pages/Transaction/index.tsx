@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import TransactionHashCard from '../../components/Card/HashCard'
 import Content from '../../components/Content'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { TransactionDiv as TransactionPanel } from './styled'
 import TransactionComp, { TransactionOverview } from './TransactionComp'
 import { fetchTransactionByHash } from '../../service/http/fetcher'
@@ -10,6 +10,7 @@ import { QueryResult } from '../../components/QueryResult'
 import { defaultTransactionInfo } from './state'
 
 export default () => {
+  const { i18n } = useI18n()
   const { hash: txHash } = useParams<{ hash: string }>()
 
   const query = useQuery(['transaction', txHash], async () => {

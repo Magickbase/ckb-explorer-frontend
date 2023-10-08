@@ -4,7 +4,7 @@ import { useQuery } from 'react-query'
 import { Tooltip } from 'antd'
 import { Base64 } from 'js-base64'
 import { hexToBytes } from '@nervosnetwork/ckb-sdk-utils'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import NftItemTransfers, { TransferListRes } from '../../components/NftItemTransfers'
 import Pagination from '../../components/Pagination'
 import { ReactComponent as Cover } from '../../assets/nft_cover.svg'
@@ -20,6 +20,7 @@ const primaryColor = getPrimaryColor()
 const NftInfo = () => {
   const { id, collection } = useParams<Record<'collection' | 'id', string>>()
   const history = useHistory()
+  const { i18n } = useI18n()
   const { page = '1' } = useSearchParams('page')
   const { data } = useQuery<
     AxiosResponse<{

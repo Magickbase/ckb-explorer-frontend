@@ -1,7 +1,7 @@
 import { Tooltip } from 'antd'
 import { Link } from 'react-router-dom'
 import SortButton from '../SortButton'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { getPrimaryColor } from '../../constants/common'
 import styles from './styles.module.scss'
 
@@ -11,6 +11,8 @@ const NftHolderList: React.FC<{
   list: Array<{ addr: string; quantity: number }>
   isLoading: boolean
 }> = ({ list, isLoading }) => {
+  const { i18n } = useI18n()
+
   return (
     <div className={styles.list}>
       <table>

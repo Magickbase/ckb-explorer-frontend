@@ -1,18 +1,20 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
 import { parseDateNoTime, parseSimpleDate, parseSimpleDateNoSecond } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
 import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
 import { fetchStatisticAverageBlockTimes } from '../../../service/http/fetcher'
 import { ChartCachedKeys } from '../../../constants/cache'
+import { I18nInfoType } from '../../../utils/i18n'
 
 const getOption = (
   statisticAverageBlockTimes: State.StatisticAverageBlockTime[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
   const gridThumbnail = {
     left: '3%',
     right: '3%',
@@ -36,7 +38,7 @@ const getOption = (
     }
   }
 
-  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 180 : 100)
+  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 180 : 100)
 
   const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: string }): string => {
     if (seriesName === i18n.t('statistic.daily_moving_average')) {

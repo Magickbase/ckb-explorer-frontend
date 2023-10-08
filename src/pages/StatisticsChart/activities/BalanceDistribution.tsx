@@ -1,24 +1,31 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
+import { I18nInfoType, LanuageType } from '../../../utils/i18n'
 import { DATA_ZOOM_CONFIG, handleAxis, handleLogGroupAxis } from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { fetchStatisticBalanceDistribution } from '../../../service/http/fetcher'
 
-const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 270 : 110)
+const widthSpan = (value: string, currentLanguage: string) => tooltipWidth(value, currentLanguage === 'en' ? 270 : 110)
 
-const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: string }): string => {
-  return `<div>${tooltipColor(color)}${widthSpan(seriesName)} ${localeNumberString(data)}</div>`
+const parseTooltip = ({
+  seriesName,
+  data,
+  color,
+  currentLanguage,
+}: SeriesItem & { data: string; currentLanguage: LanuageType }): string => {
+  return `<div>${tooltipColor(color)}${widthSpan(seriesName, currentLanguage)} ${localeNumberString(data)}</div>`
 }
 
 const getOption = (
   statisticBalanceDistributions: State.StatisticBalanceDistribution[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
   const gridThumbnail = {
     left: '4%',
     right: '4%',
@@ -42,12 +49,13 @@ const getOption = (
             const list = dataList as (SeriesItem & { data: string })[]
             let result = `<div>${tooltipColor('#333333')}${widthSpan(
               i18n.t('statistic.addresses_balance'),
+              currentLanguage,
             )} ${handleLogGroupAxis(
               new BigNumber(list[0].name),
               list[0].dataIndex === statisticBalanceDistributions.length - 1 ? '+' : '',
             )} ${i18n.t('common.ckb_unit')}</div>`
             list.forEach(data => {
-              result += parseTooltip(data)
+              result += parseTooltip({ ...data, currentLanguage })
             })
             return result
           },

@@ -1,11 +1,11 @@
 import { shannonToCkb } from '../../../utils/util'
 import { localeNumberString } from '../../../utils/number'
-import i18n from '../../../utils/i18n'
+import { I18nType, useI18n } from '../../../utils/i18n'
 import DecimalCapacity from '../../../components/DecimalCapacity'
 import { RewardPenal, RewardItemPenal } from './styled'
 import { useIsMobile } from '../../../utils/hook'
 
-const Rewards = (cell: State.Cell, isMobile: boolean) => [
+const Rewards = (cell: State.Cell, isMobile: boolean, i18n: I18nType) => [
   {
     name: isMobile ? i18n.t('transaction.base') : i18n.t('transaction.base_reward'),
     capacity: cell.baseReward,
@@ -26,13 +26,14 @@ const Rewards = (cell: State.Cell, isMobile: boolean) => [
 
 const TransactionReward = ({ cell, showReward }: { cell: State.Cell; showReward?: boolean }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   // [0, 11] block doesn't show block reward and only cellbase show block reward
   const showBlockReward = showReward && cell.targetBlockNumber > 0
 
   return showBlockReward ? (
     <RewardPenal>
       <div className="transaction__reward__title">{i18n.t('transaction.reward_info')}</div>
-      {Rewards(cell, isMobile).map(reward => (
+      {Rewards(cell, isMobile, i18n).map(reward => (
         <RewardItemPenal key={reward.name}>
           <div className="reward__name">{reward.name}</div>
           <div className="reward__capacity">

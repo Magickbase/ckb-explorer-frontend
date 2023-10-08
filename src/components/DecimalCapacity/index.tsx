@@ -1,4 +1,4 @@
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { DecimalPanel, DecimalPartPanel, DecimalZerosPanel } from './styled'
 
 export default ({
@@ -16,6 +16,7 @@ export default ({
   hideZero?: boolean
   marginBottom?: string
 }) => {
+  const { i18n } = useI18n()
   const integer = value.split('.')[0] || '0'
   let decimal = value.split('.')[1] || ''
   let zeros = ''

@@ -18,7 +18,7 @@ import HelpIcon from '../../assets/qa_help.png'
 import { parseDateNoTime } from '../../utils/date'
 import { localeNumberString } from '../../utils/number'
 import SUDTTokenIcon from '../../assets/sudt_token.png'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import Loading from '../../components/Loading'
 import { udtSubmitEmail } from '../../utils/util'
 import SmallLoading from '../../components/Loading/SmallLoading'
@@ -29,6 +29,7 @@ import { QueryResult } from '../../components/QueryResult'
 
 const TokenItem = ({ token, isLast }: { token: State.UDT; isLast?: boolean }) => {
   const { displayName, fullName, uan } = token
+  const { i18n } = useI18n()
 
   const name = displayName || fullName
   const symbol = uan || token.symbol || `#${token.typeHash.substring(token.typeHash.length - 4)}`
@@ -96,6 +97,7 @@ const TokenItem = ({ token, isLast }: { token: State.UDT; isLast?: boolean }) =>
 
 export default () => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
 
   const { location } = useHistory()

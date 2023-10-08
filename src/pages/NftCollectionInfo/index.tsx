@@ -12,7 +12,7 @@ import Filter from '../../components/Search/Filter'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
 import { v2AxiosIns } from '../../service/http/fetcher'
-import i18n from '../../utils/i18n'
+import { I18nType, useI18n } from '../../utils/i18n'
 import { useSearchParams, useIsMobile } from '../../utils/hook'
 import styles from './styles.module.scss'
 import { CsvExport } from '../../components/CsvExport'
@@ -88,30 +88,34 @@ export interface HolderListRes {
 }
 
 const tabs = ['transfers', 'holders', 'inventory']
-const filterList: Array<Record<'title' | 'value', string>> = [
-  {
-    value: 'mint',
-    title: i18n.t('udt.view-mint-txns'),
-  },
-  {
-    value: 'normal',
-    title: i18n.t('udt.view-transfer-txns'),
-  },
-  {
-    value: 'destruction',
-    title: i18n.t('udt.view-burn-txns'),
-  },
-]
+function filterList(i18n: I18nType): Array<Record<'title' | 'value', string>> {
+  return [
+    {
+      value: 'mint',
+      title: i18n.t('udt.view-mint-txns'),
+    },
+    {
+      value: 'normal',
+      title: i18n.t('udt.view-transfer-txns'),
+    },
+    {
+      value: 'destruction',
+      title: i18n.t('udt.view-burn-txns'),
+    },
+  ]
+}
 const PAGE_SIZE = 50
 
 const NftCollectionInfo = () => {
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
+  const { i18n } = useI18n()
   const { tab = tabs[0], page = '1' } = useSearchParams('tab', 'page', 'tx_type')
   const { type, filter, sort } = useSearchParams('type', 'filter', 'sort')
   const isMobile = useIsMobile()
 
-  const isFilteredByType = filterList.some(f => f.value === type)
+  const filteredList = filterList(i18n)
+  const isFilteredByType = filteredList.some(f => f.value === type)
 
   const { isLoading: isTransferListLoading, data: transferListRes } = useQuery<AxiosResponse<TransferListRes>>(
     ['nft-collection-transfer-list', id, page, filter, type],
@@ -246,7 +250,7 @@ const NftCollectionInfo = () => {
                   overlayClassName={styles.antPopover}
                   content={
                     <div className={styles.filterItems}>
-                      {filterList.map(f => (
+                      {filteredList.map(f => (
                         <Link
                           key={f.value}
                           to={`/nft-collections/${id}?${new URLSearchParams({ type: f.value })}`}

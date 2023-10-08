@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { ScriptItemPanel, ScriptPanel } from './styled'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import HashTag from '../HashTag'
 import { getContractHashTag } from '../../utils/util'
 import { HelpTip } from '../HelpTip'
@@ -18,6 +18,8 @@ const ScriptItem = ({ title, tooltip, children }: { title: string; tooltip?: str
 
 const Script = ({ script }: { script: State.Script }) => {
   const contractHashTag = getContractHashTag(script)
+  const { i18n } = useI18n()
+
   return (
     <ScriptPanel>
       <ScriptItem title={i18n.t('address.code_hash')}>

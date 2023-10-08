@@ -1,10 +1,12 @@
-import i18n from '../../../utils/i18n'
+import { useI18n } from '../../../utils/i18n'
 import { copyElementValue } from '../../../utils/util'
 import SimpleButton from '../../SimpleButton'
 import { useSetToast } from '../../Toast'
 
 export default ({ content }: { content: string }) => {
   const setToast = useSetToast()
+  const { i18n } = useI18n()
+
   return (
     <SimpleButton
       id={`copy__content__${content}`}

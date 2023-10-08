@@ -6,7 +6,7 @@ import RightBlueArrow from '../../../assets/right_blue_arrow.png'
 import LiveCellIcon from '../../../assets/live_cell.png'
 import LiveCellBlueIcon from '../../../assets/live_cell_blue.png'
 import { isMainnet } from '../../../utils/chain'
-import i18n from '../../../utils/i18n'
+import { useI18n } from '../../../utils/i18n'
 import { RightArrowImage, LeftArrowImage } from './styled'
 
 const CellInputIcon = ({ cell }: { cell: State.Cell }) =>
@@ -21,6 +21,8 @@ const CellInputIcon = ({ cell }: { cell: State.Cell }) =>
   ) : null
 
 const CellOutputIcon = ({ cell }: { cell: State.Cell }) => {
+  const { i18n } = useI18n()
+
   if (cell.status === 'dead') {
     return (
       <Link to={`/transaction/${cell.consumedTxHash}`}>

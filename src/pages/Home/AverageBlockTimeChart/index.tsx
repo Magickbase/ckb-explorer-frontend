@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/title'
 import echarts from 'echarts/lib/echarts'
-import i18n from '../../../utils/i18n'
+import { useI18n, I18nType } from '../../../utils/i18n'
 import { parseDateNoTime } from '../../../utils/date'
 import { localeNumberString } from '../../../utils/number'
 import SmallLoading from '../../../components/Loading/SmallLoading'
@@ -16,6 +16,7 @@ import { ReactChartCore } from '../../StatisticsChart/common'
 const getOption = (
   statisticAverageBlockTimes: State.StatisticAverageBlockTime[],
   useMiniStyle: boolean,
+  i18n: I18nType,
 ): echarts.EChartOption => ({
   color: ['#ffffff'],
   title: {
@@ -105,6 +106,7 @@ const getOption = (
 
 export default memo(() => {
   const isLG = useIsLGScreen()
+  const { i18n } = useI18n()
 
   const query = useChartQueryWithCache(fetchStatisticAverageBlockTimes, ChartCachedKeys.AverageBlockTime, 'date')
   const fullStatisticAverageBlockTimes = useMemo(() => query.data ?? [], [query.data])
@@ -128,7 +130,7 @@ export default memo(() => {
   return (
     <HomeChartLink to="/charts/average-block-time">
       <ReactChartCore
-        option={getOption(statisticAverageBlockTimes, isLG)}
+        option={getOption(statisticAverageBlockTimes, isLG, i18n)}
         notMerge
         lazyUpdate
         style={{

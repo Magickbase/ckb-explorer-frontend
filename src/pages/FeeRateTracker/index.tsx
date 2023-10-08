@@ -12,12 +12,13 @@ import {
   LastNDaysTransactionFeeRateChart,
 } from './FeeRateTrackerComp'
 import Loading from '../../components/Loading'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { localeNumberString } from '../../utils/number'
 import { getFeeRateSamples } from '../../utils/chart'
 import { useStatistics } from '../../services/ExplorerService'
 
 const FeeRateTracker = () => {
+  const { i18n } = useI18n()
   const lastFetchedTime = useRef(Number.MAX_SAFE_INTEGER)
   const deltaSecond = useRef(0)
   const [secondAfterUpdate, setSecondAfterUpdate] = useState<number>(0)

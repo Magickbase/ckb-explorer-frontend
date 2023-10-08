@@ -3,7 +3,7 @@ import { Tooltip } from 'antd'
 import { Link } from 'react-router-dom'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import TransactionItem from '../../components/TransactionItem/index'
-import i18n from '../../utils/i18n'
+import { I18nType, useI18n } from '../../utils/i18n'
 import { SimpleUDTTransactionsPagination, SimpleUDTTransactionsPanel, UDTNoResultPanel } from './styled'
 import { parseUDTAmount } from '../../utils/number'
 import { ReactComponent as OpenInNew } from '../../assets/open_in_new.svg'
@@ -13,7 +13,7 @@ import AddressText from '../../components/AddressText'
 import PaginationWithRear from '../../components/PaginationWithRear'
 import { CsvExport } from '../../components/CsvExport'
 
-const addressContent = (address: string) => {
+const addressContent = (address: string, i18n: I18nType) => {
   if (!address) {
     return i18n.t('address.unable_decode_address')
   }
@@ -40,7 +40,7 @@ const addressContent = (address: string) => {
   )
 }
 
-const simpleUDTInfo = (udt: State.UDT) => {
+const simpleUDTInfo = (udt: State.UDT, i18n: I18nType) => {
   const { displayName, uan, fullName, issuerAddress, symbol, addressesCount, decimal, totalAmount } = udt
   return [
     {
@@ -50,7 +50,7 @@ const simpleUDTInfo = (udt: State.UDT) => {
     {
       title: i18n.t('udt.issuer'),
       contentWrapperClass: styles.addressWidthModify,
-      content: addressContent(issuerAddress),
+      content: addressContent(issuerAddress, i18n),
     },
     {
       title: i18n.t('udt.holder_addresses'),
@@ -72,8 +72,10 @@ const simpleUDTInfo = (udt: State.UDT) => {
 }
 
 export const SimpleUDTOverview = ({ children, udt }: { children: ReactNode; udt: State.UDT }) => {
+  const { i18n } = useI18n()
+
   return (
-    <OverviewCard items={simpleUDTInfo(udt)} hideShadow>
+    <OverviewCard items={simpleUDTInfo(udt, i18n)} hideShadow>
       {children}
     </OverviewCard>
   )
@@ -96,6 +98,7 @@ export const SimpleUDTComp = ({
   filterNoResult?: boolean
   id: string
 }) => {
+  const { i18n } = useI18n()
   const totalPages = Math.ceil(total / pageSize)
 
   if (filterNoResult) {

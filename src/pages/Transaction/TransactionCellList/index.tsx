@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Tooltip } from 'antd'
 import { CellType, PAGE_CELL_COUNT } from '../../../constants/common'
-import i18n from '../../../utils/i18n'
+import { useI18n } from '../../../utils/i18n'
 import TransactionCell from '../TransactionCell'
 import { TransactionCellListPanel, TransactionCellListTitlePanel, TransactionCellsPanel } from './styled'
 import SmallLoading from '../../../components/Loading/SmallLoading'
@@ -29,6 +29,7 @@ export default ({
     setIsAddrNew: (is: boolean) => void
   }
 }) => {
+  const { i18n } = useI18n()
   const [offset, setOffset] = useState(PAGE_CELL_COUNT)
   const [isEnd, setIsEnd] = useState(false)
   const cells = inputs || outputs || []

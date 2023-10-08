@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Tooltip } from 'antd'
 import { v2AxiosIns } from '../../service/http/fetcher'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import styles from './styles.module.scss'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { getPrimaryColor } from '../../constants/common'
@@ -22,6 +22,7 @@ interface InfoRes {
 }
 
 const NftCollectionOverview = ({ id }: { id: string }) => {
+  const { i18n } = useI18n()
   const { isLoading, data } = useQuery<AxiosResponse<InfoRes>>(['collection-info', id], () =>
     v2AxiosIns(`nft/collections/${id}`),
   )

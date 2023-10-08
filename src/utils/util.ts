@@ -10,7 +10,7 @@ import {
   ScriptTagExtraRules,
   TestnetContractHashTags,
 } from '../constants/scripts'
-import i18n from './i18n'
+import { I18nType } from './i18n'
 import { isMainnet } from './chain'
 
 export const copyElementValue = (component: any) => {
@@ -74,7 +74,7 @@ export const toCamelcase = <T>(object: any): T => {
   ) as T
 }
 
-export const formatConfirmation = (confirmation: number) => {
+export const formatConfirmation = (confirmation: number, i18n: I18nType) => {
   if (confirmation > MAX_CONFIRMATION) {
     return `${MAX_CONFIRMATION}+ ${i18n.t('address.confirmations')}`
   }

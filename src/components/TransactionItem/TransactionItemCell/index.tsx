@@ -6,7 +6,7 @@ import NervosDAOCellIcon from '../../../assets/nervos_dao_cell.png'
 import NervosDAOWithdrawingIcon from '../../../assets/nervos_dao_withdrawing.png'
 import CurrentAddressIcon from '../../../assets/current_address.svg'
 import UDTTokenIcon from '../../../assets/udt_token.png'
-import i18n, { currentLanguage } from '../../../utils/i18n'
+import { I18nType, useI18n } from '../../../utils/i18n'
 import { localeNumberString, parseUDTAmount } from '../../../utils/number'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import {
@@ -70,7 +70,7 @@ const AddressTextWithAlias: FC<{
   )
 }
 
-const udtAmount = (udt: State.UDTInfo) =>
+const udtAmount = (udt: State.UDTInfo, i18n: I18nType) =>
   udt.published
     ? `${parseUDTAmount(udt.amount, udt.decimal)} ${udt.uan || udt.symbol}`
     : `${i18n.t('udt.unknown_token')} #${udt.typeHash.substring(udt.typeHash.length - 4)}`
@@ -92,8 +92,10 @@ const WithdrawPopoverItem = ({
 
 const WithdrawPopoverInfo = ({ cell }: { cell: State.Cell }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
+  const { currentLanguage } = useI18n()
   let width = 'short'
-  if (currentLanguage() === 'en') {
+  if (currentLanguage === 'en') {
     width = isDaoDepositCell(cell.cellType) ? 'long' : 'medium'
   }
   return (
@@ -171,6 +173,7 @@ const WithdrawPopoverInfo = ({ cell }: { cell: State.Cell }) => {
 
 const TransactionCellNervosDao = ({ cell, cellType }: { cell: State.Cell; cellType: CellType }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   return (
     <TransactionCellWithdraw>
       <DecimalCapacity value={localeNumberString(shannonToCkb(cell.capacity))} />
@@ -198,11 +201,12 @@ const TransactionCellNervosDao = ({ cell, cellType }: { cell: State.Cell; cellTy
 
 const TransactionCellUDT = ({ cell }: { cell: State.Cell$UDT }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const { extraInfo } = cell
 
   return (
     <TransactionCellUDTPanel>
-      <span>{udtAmount(extraInfo)}</span>
+      <span>{udtAmount(extraInfo, i18n)}</span>
       <Tooltip
         placement={isMobile ? 'topRight' : 'top'}
         title={`Capacity: ${localeNumberString(shannonToCkbDecimal(cell.capacity, 8))} CKB`}
@@ -235,6 +239,7 @@ const TransactionCellCapacity = ({ cell, cellType }: { cell: State.Cell; cellTyp
 
 const TransactionCell = ({ cell, address, cellType }: { cell: State.Cell; address?: string; cellType: CellType }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   if (cell.fromCellbase) {
     return <Cellbase cell={cell} cellType={cellType} />
   }

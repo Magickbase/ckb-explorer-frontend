@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { useLocation } from 'react-router'
 import Content from '../../components/Content'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import styles from './styles.module.scss'
 import { MainnetContractHashTags, TestnetContractHashTags } from '../../constants/scripts'
 import { isMainnet } from '../../utils/chain'
@@ -191,6 +191,7 @@ export const scripts = new Map<string, ScriptAttributes>([
 const keysWithLinkValueInScript: Array<keyof ScriptAttributes> = ['rfc', 'code', 'deprecated', 'website']
 
 const ScriptList: FC = () => {
+  const { i18n } = useI18n()
   const location = useLocation()
   const defaultOpenLabel = decodeURIComponent(location.hash.slice(1))
 

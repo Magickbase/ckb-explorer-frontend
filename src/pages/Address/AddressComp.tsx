@@ -7,7 +7,7 @@ import { hexToBytes } from '@nervosnetwork/ckb-sdk-utils'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import TransactionItem from '../../components/TransactionItem/index'
 import { v2AxiosIns } from '../../service/http/fetcher'
-import i18n from '../../utils/i18n'
+import { I18nType, useI18n } from '../../utils/i18n'
 import { parseSporeCellData } from '../../utils/spore'
 import { localeNumberString, parseUDTAmount } from '../../utils/number'
 import { shannonToCkb, deprecatedAddrToNewAddr, handleNftImgError, patchMibaoImg } from '../../utils/util'
@@ -47,7 +47,7 @@ import { omit } from '../../utils/object'
 import { CsvExport } from '../../components/CsvExport'
 import PaginationWithRear from '../../components/PaginationWithRear'
 
-const addressAssetInfo = (address: State.Address, useMiniStyle: boolean) => {
+const addressAssetInfo = (address: State.Address, useMiniStyle: boolean, i18n: I18nType) => {
   const items = [
     {
       title: '',
@@ -99,6 +99,7 @@ const UDT_LABEL: Record<State.UDTAccount['udtType'], string> = {
 }
 
 const AddressUDTItem = ({ udtAccount }: { udtAccount: State.UDTAccount }) => {
+  const { i18n } = useI18n()
   const { symbol, uan, amount, udtIconFile, typeHash, udtType, collection, cota } = udtAccount
   const isSudt = udtType === 'sudt'
   const isSpore = udtType === 'spore_cell'
@@ -210,7 +211,14 @@ const lockScriptIcon = (show: boolean) => {
   return isMainnet() ? ArrowDownIcon : ArrowDownBlueIcon
 }
 
-const getAddressInfo = ({ liveCellsCount, minedBlocksCount, type, addressHash, lockInfo }: State.Address) => {
+const getAddressInfo = ({
+  liveCellsCount,
+  minedBlocksCount,
+  type,
+  addressHash,
+  lockInfo,
+  i18n,
+}: State.Address & { i18n: I18nType }) => {
   const items: OverviewItemData[] = [
     {
       title: i18n.t('address.live_cells'),
@@ -252,10 +260,11 @@ const getAddressInfo = ({ liveCellsCount, minedBlocksCount, type, addressHash, l
 
 const AddressLockScript: FC<{ address: State.Address }> = ({ address }) => {
   const [showLock, setShowLock] = useState<boolean>(false)
+  const { i18n } = useI18n()
 
   return (
     <AddressLockScriptPanel>
-      <OverviewCard items={getAddressInfo(address)} hideShadow>
+      <OverviewCard items={getAddressInfo({ ...address, i18n })} hideShadow>
         <AddressLockScriptController onClick={() => setShowLock(!showLock)}>
           <div>{i18n.t('address.lock_script')}</div>
           <img alt="lock script" src={lockScriptIcon(showLock)} />
@@ -268,6 +277,7 @@ const AddressLockScript: FC<{ address: State.Address }> = ({ address }) => {
 
 export const AddressOverview: FC<{ address: State.Address }> = ({ address }) => {
   const isLG = useIsLGScreen()
+  const { i18n } = useI18n()
   const { udtAccounts = [] } = address
 
   const { data: initList } = useQuery<AxiosResponse<CoTAList>>(
@@ -289,7 +299,10 @@ export const AddressOverview: FC<{ address: State.Address }> = ({ address }) => 
   )
 
   return (
-    <OverviewCard items={addressAssetInfo(address, isLG)} titleCard={<TitleCard title={i18n.t('address.overview')} />}>
+    <OverviewCard
+      items={addressAssetInfo(address, isLG, i18n)}
+      titleCard={<TitleCard title={i18n.t('address.overview')} />}
+    >
       {udtAccounts.length || cotaList?.length ? (
         <AddressUDTAssetsPanel>
           <span>{i18n.t('address.user_defined_token')}</span>
@@ -335,6 +348,7 @@ export const AddressTransactions = ({
   timeOrderBy: State.SortOrderTypes
 }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const { currentPage, pageSize, setPage } = usePaginationParamsInListPage()
   const searchParams = useSearchParams('layout')
   const defaultLayout = 'professional'

@@ -1,11 +1,11 @@
 import { AxiosError } from 'axios'
 import { axiosIns } from './fetcher'
-import i18n from '../../utils/i18n'
+import { I18nType } from '../../utils/i18n'
 import { setNetworkErrMsgs } from '../../components/Sheet'
 
 let timeout: ReturnType<typeof setTimeout> | null
 
-const updateNetworkError = (errMessage = 'toast.invalid_network') => {
+const updateNetworkError = (i18n: I18nType, errMessage = 'toast.invalid_network') => {
   if (timeout) {
     clearTimeout(timeout)
   }
@@ -16,7 +16,7 @@ const updateNetworkError = (errMessage = 'toast.invalid_network') => {
   setNetworkErrMsgs([i18n.t(errMessage)])
 }
 
-export const initAxiosInterceptors = () => {
+export const initAxiosInterceptors = (i18n: I18nType) => {
   axiosIns.interceptors.request.use(
     config => {
       if (config.method === 'get') {
@@ -37,21 +37,21 @@ export const initAxiosInterceptors = () => {
         const { message }: { message: string } = error.response.data
         switch (error.response.status) {
           case 503:
-            updateNetworkError(message || undefined)
+            updateNetworkError(i18n, message || undefined)
             break
           case 422:
           case 404:
           case 400:
             break
           case 429:
-            updateNetworkError('toast.too_many_request')
+            updateNetworkError(i18n, 'toast.too_many_request')
             break
           default:
-            updateNetworkError()
+            updateNetworkError(i18n)
             break
         }
       } else {
-        updateNetworkError()
+        updateNetworkError(i18n)
       }
       return Promise.reject(error)
     },

@@ -25,6 +25,7 @@ import {
 } from './cache'
 import { parseDate } from './date'
 import { omit } from './object'
+import { useI18n } from './i18n'
 
 /**
  * Returns the value of the argument from the previous render
@@ -574,8 +575,9 @@ export function useTimestamp(): number {
 }
 
 export function useParsedDate(timestamp: number): string {
+  const { i18n } = useI18n()
   const now = useTimestamp()
-  return parseDate(timestamp, now)
+  return parseDate(timestamp, i18n, now)
 }
 
 export default {

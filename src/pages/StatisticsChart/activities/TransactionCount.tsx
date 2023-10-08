@@ -1,18 +1,21 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
 import { DATA_ZOOM_CONFIG, handleAxis } from '../../../utils/chart'
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { fetchStatisticTransactionCount } from '../../../service/http/fetcher'
+import { I18nInfoType } from '../../../utils/i18n'
 
 const getOption = (
   statisticTransactionCounts: State.StatisticTransactionCount[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -33,7 +36,7 @@ const getOption = (
       ? {
           trigger: 'axis',
           formatter: (dataList: any) => {
-            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 120 : 65)
+            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 120 : 65)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
               dataList[0].data[0]
             }</div>`

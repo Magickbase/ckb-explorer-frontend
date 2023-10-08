@@ -22,7 +22,7 @@ import {
 } from '../../constants/common'
 import { localeNumberString, handleHashRate, handleDifficulty } from '../../utils/number'
 import { handleBigNumber } from '../../utils/string'
-import i18n from '../../utils/i18n'
+import { I18nType, useI18n } from '../../utils/i18n'
 import LatestBlocksIcon from '../../assets/latest_blocks.png'
 import LatestTransactionsIcon from '../../assets/latest_transactions.png'
 import { BlockCardItem, TransactionCardItem } from './TableCard'
@@ -70,7 +70,12 @@ const parseHashRate = (hashRate: string | undefined) => (hashRate ? handleHashRa
 
 const parseBlockTime = (blockTime: string | undefined) => (blockTime ? parseTime(Number(blockTime)) : '- -')
 
-const getBlockchainDataList = (statistics: State.Statistics, isMobile: boolean, isLG: boolean): BlockchainData[] => [
+const getBlockchainDataList = (
+  statistics: State.Statistics,
+  isMobile: boolean,
+  isLG: boolean,
+  i18n: I18nType,
+): BlockchainData[] => [
   {
     name: i18n.t('blockchain.latest_block'),
     value: localeNumberString(statistics.tipBlockNumber),
@@ -116,7 +121,7 @@ const getBlockchainDataList = (statistics: State.Statistics, isMobile: boolean, 
 
 const HomeHeaderTopPanel: FC = memo(() => {
   const ref = useRef<HTMLDivElement>(null)
-
+  const { i18n } = useI18n()
   const { height: resizedHeight } = useResizeDetector({
     targetRef: ref,
     handleWidth: false,
@@ -184,6 +189,7 @@ const TransactionList: FC<{ transactions: State.Transaction[]; tipBlockNumber: n
 
 export default () => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const isLG = useIsLGScreen()
   const history = useHistory<RouteState>()
   const statistics = useStatistics()
@@ -232,7 +238,7 @@ export default () => {
     handleBlockchainAlert()
   }, BLOCKCHAIN_ALERT_POLLING_TIME)
 
-  const blockchainDataList = getBlockchainDataList(statistics, isMobile, isLG)
+  const blockchainDataList = getBlockchainDataList(statistics, isMobile, isLG, i18n)
 
   return (
     <Content>

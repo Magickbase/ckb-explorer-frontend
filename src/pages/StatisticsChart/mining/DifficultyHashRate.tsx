@@ -1,18 +1,20 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
 import { DATA_ZOOM_CONFIG, handleAxis } from '../../../utils/chart'
 import { handleDifficulty, handleHashRate } from '../../../utils/number'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { fetchStatisticDifficultyHashRate } from '../../../service/http/fetcher'
 import { ChartCachedKeys } from '../../../constants/cache'
+import { I18nInfoType } from '../../../utils/i18n'
 
 const getOption = (
   statisticDifficultyHashRates: State.StatisticDifficultyHashRate[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
   const gridThumbnail = {
     left: '4%',
     right: '4%',
@@ -28,7 +30,7 @@ const getOption = (
     containLabel: true,
   })
 
-  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 70 : 50)
+  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 70 : 50)
 
   const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: string }): string => {
     if (seriesName === i18n.t('block.uncle_rate')) {

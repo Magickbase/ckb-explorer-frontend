@@ -4,7 +4,7 @@ import LeftBlack from '../../assets/pagination_black_left.png'
 import RightBlack from '../../assets/pagination_black_right.png'
 import LeftGrey from '../../assets/pagination_grey_left.png'
 import RightGrey from '../../assets/pagination_grey_right.png'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { useIsMobile } from '../../utils/hook'
 import SimpleButton from '../SimpleButton'
 import { HelpTip } from '../HelpTip'
@@ -25,6 +25,7 @@ const Pagination = ({
   annotation?: string
 }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const [inputPage, setInputPage] = useState(gotoPage)
 
   const total = Math.max(totalPages, 1)

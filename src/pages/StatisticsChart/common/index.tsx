@@ -18,7 +18,7 @@ import ChartNoDataImage from '../../../assets/chart_no_data.png'
 import ChartNoDataAggronImage from '../../../assets/chart_no_data_aggron.png'
 import { isMainnet } from '../../../utils/chain'
 import SmallLoading from '../../../components/Loading/SmallLoading'
-import i18n from '../../../utils/i18n'
+import { I18nInfoType, I18nType, useI18n } from '../../../utils/i18n'
 import Content from '../../../components/Content'
 import { useChartQueryWithCache, useIsMobile, usePrevious, useWindowResize } from '../../../utils/hook'
 import { isDeepEqual } from '../../../utils/util'
@@ -27,7 +27,15 @@ import { ChartColor } from '../../../constants/common'
 
 const LoadingComp = ({ isThumbnail }: { isThumbnail?: boolean }) => (isThumbnail ? <SmallLoading /> : <Loading show />)
 
-const ChartLoading = ({ show, isThumbnail = false }: { show: boolean; isThumbnail?: boolean }) => (
+const ChartLoading = ({
+  show,
+  i18n,
+  isThumbnail = false,
+}: {
+  show: boolean
+  i18n: I18nType
+  isThumbnail?: boolean
+}) => (
   <LoadingPanel isThumbnail={isThumbnail}>
     {show ? (
       <LoadingComp isThumbnail={isThumbnail} />
@@ -122,6 +130,7 @@ const ChartPage = ({
   data?: (string | number)[][]
 }) => {
   const csv = dataToCsv(data)
+  const { i18n } = useI18n()
   const fileName = (title.indexOf(' (') > 0 ? title.substring(0, title.indexOf(' (')) : title)
     .replace(/&/g, '')
     .toLowerCase()
@@ -162,7 +171,8 @@ export interface SmartChartPageProps<T> {
     dataList: T[],
     chartColor: State.ChartColor,
     isMobile: boolean,
-    isThumbnail: boolean,
+    i18nInfo: I18nInfoType,
+    isThumbnail?: boolean,
   ) => echarts.EChartOption
   toCSV: (dataList: T[]) => (string | number)[][]
   cacheKey?: string
@@ -183,6 +193,7 @@ export function SmartChartPage<T>({
   cacheMode = 'forever',
 }: SmartChartPageProps<T>): ReactElement {
   const isMobile = useIsMobile()
+  const i18nInfo = useI18n()
 
   const query = useChartQueryWithCache(fetchData, cacheKey, cacheMode)
   const dataList = useMemo(() => query.data ?? [], [query.data])
@@ -193,12 +204,12 @@ export function SmartChartPage<T>({
   }, [onFetched, query.data])
 
   const option = useMemo(
-    () => getEChartOption(dataList, ChartColor, isMobile, isThumbnail),
+    () => getEChartOption(dataList, ChartColor, isMobile, i18nInfo, isThumbnail),
     [dataList, getEChartOption, isMobile, isThumbnail],
   )
 
   const content = query.isLoading ? (
-    <ChartLoading show isThumbnail={isThumbnail} />
+    <ChartLoading show isThumbnail={isThumbnail} i18n={i18nInfo.i18n} />
   ) : (
     <ReactChartCore option={option} isThumbnail={isThumbnail} {...chartProps} />
   )

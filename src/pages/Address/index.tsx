@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import AddressHashCard from '../../components/Card/HashCard'
 import Content from '../../components/Content'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { AddressContentPanel } from './styled'
 import { AddressTransactions, AddressOverview } from './AddressComp'
 import { fetchAddressInfo, fetchTransactionsByAddress } from '../../service/http/fetcher'
@@ -12,6 +12,7 @@ import { isAxiosError } from '../../utils/error'
 
 export const Address = () => {
   const { address } = useParams<{ address: string }>()
+  const { i18n } = useI18n()
   const { currentPage, pageSize } = usePaginationParamsInListPage()
 
   // REFACTOR: avoid using useSortParam

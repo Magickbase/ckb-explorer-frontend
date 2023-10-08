@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
+import { I18nInfoType } from '../../../utils/i18n'
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG, parseNumericAbbr } from '../../../utils/chart'
@@ -11,8 +11,11 @@ const getOption = (
   statisticLiquidity: State.StatisticLiquidity[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -28,7 +31,7 @@ const getOption = (
     containLabel: true,
   }
 
-  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 140 : 120)
+  const widthSpan = (value: string, language: string) => tooltipWidth(value, language === 'en' ? 140 : 120)
 
   const parseTooltip = ({
     seriesName,
@@ -36,19 +39,19 @@ const getOption = (
     color,
   }: SeriesItem & { data: [string, string, string, string] }): string => {
     if (seriesName === i18n.t('statistic.circulating_supply')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.circulating_supply'))} ${parseNumericAbbr(
-        data[3],
-        2,
-      )}</div>`
+      return `<div>${tooltipColor(color)}${widthSpan(
+        i18n.t('statistic.circulating_supply'),
+        currentLanguage,
+      )} ${parseNumericAbbr(data[3], 2)}</div>`
     }
     if (seriesName === i18n.t('statistic.dao_deposit')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.dao_deposit'))} ${parseNumericAbbr(
-        data[2],
-        2,
-      )}</div>`
+      return `<div>${tooltipColor(color)}${widthSpan(
+        i18n.t('statistic.dao_deposit'),
+        currentLanguage,
+      )} ${parseNumericAbbr(data[2], 2)}</div>`
     }
     if (seriesName === i18n.t('statistic.tradable')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.tradable'))} ${parseNumericAbbr(
+      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.tradable'), currentLanguage)} ${parseNumericAbbr(
         data[1],
         2,
       )}</div>`
@@ -62,7 +65,7 @@ const getOption = (
           trigger: 'axis',
           formatter: (dataList: any) => {
             const list = dataList as Array<SeriesItem & { data: [string, string, string, string] }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'), currentLanguage)} ${
               list[0].data[0]
             }</div>`
             list.forEach(data => {

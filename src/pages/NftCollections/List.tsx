@@ -4,7 +4,7 @@ import { Popover, Tooltip } from 'antd'
 import classNames from 'classnames'
 import { Trans } from 'react-i18next'
 import SortButton from '../../components/SortButton'
-import i18n from '../../utils/i18n'
+import { I18nType, useI18n } from '../../utils/i18n'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
@@ -14,28 +14,30 @@ import styles from './styles.module.scss'
 
 type NftSortField = 'transactions' | 'holder' | 'minted'
 const primaryColor = getPrimaryColor()
-const filterList: Array<Record<'title' | 'value', string>> = [
-  {
-    value: 'all',
-    title: i18n.t('nft.all-type'),
-  },
-  {
-    value: 'm_nft',
-    title: i18n.t('nft.m_nft'),
-  },
-  {
-    value: 'nrc721',
-    title: i18n.t('nft.nrc_721'),
-  },
-  {
-    value: 'cota',
-    title: i18n.t('nft.cota'),
-  },
-  {
-    value: 'spore',
-    title: i18n.t('nft.spore'),
-  },
-]
+function filterList(i18n: I18nType): Array<Record<'title' | 'value', string>> {
+  return [
+    {
+      value: 'all',
+      title: i18n.t('nft.all-type'),
+    },
+    {
+      value: 'm_nft',
+      title: i18n.t('nft.m_nft'),
+    },
+    {
+      value: 'nrc721',
+      title: i18n.t('nft.nrc_721'),
+    },
+    {
+      value: 'cota',
+      title: i18n.t('nft.cota'),
+    },
+    {
+      value: 'spore',
+      title: i18n.t('nft.spore'),
+    },
+  ]
+}
 
 export const isTxFilterType = (s?: string): boolean => {
   return s ? ['all', 'm_nft', 'nrc721', 'cota', 'spore'].includes(s) : false
@@ -56,9 +58,10 @@ export interface NFTCollection {
 
 const TypeFilter = () => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const { type } = useSearchParams('type')
   const isActive = isTxFilterType(type)
-
+  const list = filterList(i18n)
   return (
     <div className={styles.typeFilter} data-is-active={isActive}>
       {i18n.t('nft.standard')}
@@ -68,7 +71,7 @@ const TypeFilter = () => {
         overlayClassName={styles.antPopover}
         content={
           <div className={styles.filterItems}>
-            {filterList.map(f => (
+            {list.map(f => (
               <Link
                 key={f.value}
                 to={`/nft-collections?${new URLSearchParams({ type: f.value })}`}
@@ -88,6 +91,7 @@ const TypeFilter = () => {
 }
 
 const HolderMinterSort = () => {
+  const { i18n } = useI18n()
   const { sortBy, handleSortClick } = useSortParam<NftSortField>(
     s => s === 'transactions' || s === 'holder' || s === 'minted',
   )
@@ -118,6 +122,7 @@ const HolderMinterSort = () => {
 }
 
 const TypeInfo: React.FC<{ nft: NFTCollection }> = ({ nft: item }) => {
+  const { i18n } = useI18n()
   return i18n.t(`glossary.${item.standard}`) ? (
     <Tooltip
       placement="top"
@@ -150,6 +155,7 @@ const TypeInfo: React.FC<{ nft: NFTCollection }> = ({ nft: item }) => {
 }
 
 export const ListOnDesktop: React.FC<{ isLoading: boolean; list: Array<NFTCollection> }> = ({ list, isLoading }) => {
+  const { i18n } = useI18n()
   return (
     <table data-role="desktop-list">
       <thead>
@@ -252,6 +258,7 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: Array<NFTCollec
 }
 
 export const ListOnMobile: React.FC<{ isLoading: boolean; list: Array<NFTCollection> }> = ({ list, isLoading }) => {
+  const { i18n } = useI18n()
   return (
     <div data-role="mobile-list">
       <div className={styles.listHeader}>

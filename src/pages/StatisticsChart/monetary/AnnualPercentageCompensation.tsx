@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
+import { I18nInfoType } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
 import { ChartCachedKeys } from '../../../constants/cache'
@@ -9,8 +9,11 @@ const getOption = (
   statisticAnnualPercentageCompensations: State.StatisticAnnualPercentageCompensation[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -31,7 +34,7 @@ const getOption = (
       ? {
           trigger: 'axis',
           formatter: (dataList: any) => {
-            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 220 : 80)
+            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 220 : 80)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.year'))} ${
               dataList[0].data[0]
             }</div>`

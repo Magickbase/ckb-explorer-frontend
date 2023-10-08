@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
+import { I18nInfoType } from '../../../utils/i18n'
 import { DATA_ZOOM_CONFIG, parseNumericAbbr } from '../../../utils/chart'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import { localeNumberString } from '../../../utils/number'
@@ -19,9 +19,11 @@ const getOption = (
   statisticAddressBalanceRanks: State.StatisticAddressBalanceRank[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
   getAdaptAddressText: (address: string) => string,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -42,7 +44,7 @@ const getOption = (
       ? {
           trigger: 'axis',
           formatter: (dataList: any) => {
-            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 60 : 35)
+            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 60 : 35)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(
               i18n.t('statistic.address'),
             )} ${getAdaptAddressText(getAddressWithRanking(statisticAddressBalanceRanks, dataList[0].name))}</div>`

@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { localeNumberString } from '../../../utils/number'
 import { shannonToCkb } from '../../../utils/util'
-import i18n from '../../../utils/i18n'
+import { useI18n } from '../../../utils/i18n'
 import DecimalCapacity from '../../../components/DecimalCapacity'
 import { handleBigNumber } from '../../../utils/string'
 import {
@@ -30,6 +30,8 @@ const AddressTextCol = ({ address }: { address: string }) => {
 }
 
 const DepositorCardGroup: FC<{ depositors: (State.NervosDaoDepositor & { rank: number })[] }> = ({ depositors }) => {
+  const { i18n } = useI18n()
+
   const items: ItemCardData<State.NervosDaoDepositor & { rank: number }>[] = [
     {
       title: i18n.t('nervos_dao.dao_title_rank'),
@@ -53,6 +55,7 @@ const DepositorCardGroup: FC<{ depositors: (State.NervosDaoDepositor & { rank: n
 }
 
 export default ({ depositors, filter }: { depositors: State.NervosDaoDepositor[]; filter?: string }) => {
+  const { i18n } = useI18n()
   const rankedDepositors = depositors.map((depositor, index) => ({
     ...depositor,
     rank: index + 1,

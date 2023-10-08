@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
+import { I18nInfoType } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
 import { ChartCachedKeys } from '../../../constants/cache'
@@ -9,8 +9,11 @@ const getOption = (
   statisticInflationRates: State.StatisticInflationRate[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -26,7 +29,7 @@ const getOption = (
     containLabel: true,
   }
 
-  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 220 : 80)
+  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 220 : 80)
 
   const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: string }): string => {
     if (seriesName === i18n.t('statistic.nominal_inflation_rate')) {

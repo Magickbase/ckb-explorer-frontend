@@ -1,5 +1,5 @@
 import { FC, memo } from 'react'
-import i18n from '../../../utils/i18n'
+import { useI18n } from '../../../utils/i18n'
 import { HighLightLink } from '../../../components/Text'
 import { localeNumberString } from '../../../utils/number'
 import DecimalCapacity from '../../../components/DecimalCapacity'
@@ -12,6 +12,7 @@ import { useParsedDate } from '../../../utils/hook'
 
 // eslint-disable-next-line no-underscore-dangle
 const _BlockCardItem: FC<{ block: State.Block; isDelayBlock?: boolean }> = ({ block, isDelayBlock }) => {
+  const { i18n } = useI18n()
   const liveCellChanges = Number(block.liveCellChanges)
   const blockReward = isDelayBlock ? (
     <BlockRewardPlusPanel>
@@ -76,6 +77,7 @@ const _TransactionCardItem: FC<{
   transaction: State.Transaction
   tipBlockNumber: number
 }> = ({ transaction, tipBlockNumber }) => {
+  const { i18n } = useI18n()
   const liveCellChanges = Number(transaction.liveCellChanges)
   let confirmation = tipBlockNumber - Number(transaction.blockNumber)
   confirmation = confirmation < 0 ? 0 : confirmation

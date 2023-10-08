@@ -1,22 +1,34 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
+import { I18nInfoType, LanuageType } from '../../../utils/i18n'
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { fetchStatisticSecondaryIssuance } from '../../../service/http/fetcher'
 
-const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 155 : 70)
+const widthSpan = (value: string, currentLanguage: LanuageType) =>
+  tooltipWidth(value, currentLanguage === 'en' ? 155 : 70)
 
-const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: [string, string, string, string] }): string => {
+const parseTooltip = ({
+  seriesName,
+  data,
+  color,
+  i18nInfo,
+}: SeriesItem & { data: [string, string, string, string]; i18nInfo: I18nInfoType }): string => {
+  const { i18n, currentLanguage } = i18nInfo
+
   if (seriesName === i18n.t('nervos_dao.deposit_compensation')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('nervos_dao.deposit_compensation'))} ${data[3]}%</div>`
+    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('nervos_dao.deposit_compensation'), currentLanguage)} ${
+      data[3]
+    }%</div>`
   }
   if (seriesName === i18n.t('nervos_dao.mining_reward')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('nervos_dao.mining_reward'))} ${data[2]}%</div>`
+    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('nervos_dao.mining_reward'), currentLanguage)} ${
+      data[2]
+    }%</div>`
   }
   if (seriesName === i18n.t('nervos_dao.burnt')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('nervos_dao.burnt'))} ${data[1]}%</div>`
+    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('nervos_dao.burnt'), currentLanguage)} ${data[1]}%</div>`
   }
   return ''
 }
@@ -25,8 +37,11 @@ const getOption = (
   statisticSecondaryIssuance: State.StatisticSecondaryIssuance[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -48,11 +63,11 @@ const getOption = (
           trigger: 'axis',
           formatter: (dataList: any) => {
             const list = dataList as Array<SeriesItem & { data: [string, string, string, string] }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'), currentLanguage)} ${
               dataList[0].data[0]
             }</div>`
             list.forEach(data => {
-              result += parseTooltip(data)
+              result += parseTooltip({ ...data, i18nInfo })
             })
             return result
           },

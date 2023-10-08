@@ -6,7 +6,7 @@ import { NFTCollection, ListOnDesktop, ListOnMobile, isTxFilterType } from './Li
 import Pagination from '../../components/Pagination'
 import { getPrimaryColor } from '../../constants/common'
 import { v2AxiosIns } from '../../service/http/fetcher'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { udtSubmitEmail } from '../../utils/util'
 import { useSearchParams, useSortParam } from '../../utils/hook'
 import styles from './styles.module.scss'
@@ -30,6 +30,7 @@ const submitTokenInfoUrl = udtSubmitEmail()
 
 const NftCollections = () => {
   const history = useHistory()
+  const { i18n } = useI18n()
   const { search } = useLocation()
   const { page = '1', type } = useSearchParams('page', 'type')
 

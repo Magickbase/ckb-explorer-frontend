@@ -3,11 +3,12 @@ import { localeNumberString } from '../../../utils/number'
 import AddressText from '../../AddressText'
 import styles from './index.module.scss'
 import TransactionLiteIncome from '../TransactionLiteIncome'
-import i18n from '../../../utils/i18n'
+import { useI18n } from '../../../utils/i18n'
 import { useIsMobile, useParsedDate } from '../../../utils/hook'
 
 const TransactionLiteItem = ({ transaction, address }: { transaction: State.Transaction; address?: string }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const parsedBlockCreateAt = useParsedDate(transaction.blockTimestamp)
   return (
     <div className={styles.transactionLitePanel}>

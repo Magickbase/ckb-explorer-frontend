@@ -2,7 +2,7 @@ import { useState, ReactNode, FC } from 'react'
 import { Tooltip } from 'antd'
 import { Link } from 'react-router-dom'
 import { CellType } from '../../../constants/common'
-import i18n from '../../../utils/i18n'
+import { I18nType, useI18n } from '../../../utils/i18n'
 import { localeNumberString, parseUDTAmount } from '../../../utils/number'
 import { parseSimpleDate } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
@@ -45,6 +45,7 @@ import AddressText from '../../../components/AddressText'
 
 const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBase }) => {
   const alias = useDASAccount(address)
+  const { i18n } = useI18n()
 
   if (alias && address) {
     return (
@@ -92,6 +93,7 @@ const TransactionCellIndexAddress = ({
   index: number
   isAddrNew: boolean
 }) => {
+  const { i18n } = useI18n()
   const deprecatedAddr = useDeprecatedAddr(cell.addressHash)!
   const newAddr = useNewAddr(cell.addressHash)
   const address = !isAddrNew ? deprecatedAddr : newAddr
@@ -139,7 +141,7 @@ const TransactionCellIndexAddress = ({
   )
 }
 
-const parseNftInfo = (cell: State.Cell) => {
+const parseNftInfo = (cell: State.Cell, i18n: I18nType) => {
   if (cell.cellType === 'nrc_721_token') {
     const nftInfo = cell.extraInfo
     return <TransactionCellNftInfo>{`${nftInfo.symbol} #${nftInfo.amount}`}</TransactionCellNftInfo>
@@ -170,6 +172,7 @@ const parseNftInfo = (cell: State.Cell) => {
 }
 
 const TransactionCellDetail = ({ cell }: { cell: State.Cell }) => {
+  const { i18n } = useI18n()
   let detailTitle = i18n.t('transaction.ckb_capacity')
   let detailIcon
   let tooltip: string | ReactNode = ''
@@ -190,22 +193,22 @@ const TransactionCellDetail = ({ cell }: { cell: State.Cell }) => {
     case 'm_nft_issuer':
       detailTitle = i18n.t('transaction.m_nft_issuer')
       detailIcon = NFTIssuerIcon
-      tooltip = parseNftInfo(cell)
+      tooltip = parseNftInfo(cell, i18n)
       break
     case 'm_nft_class':
       detailTitle = i18n.t('transaction.m_nft_class')
       detailIcon = NFTClassIcon
-      tooltip = parseNftInfo(cell)
+      tooltip = parseNftInfo(cell, i18n)
       break
     case 'm_nft_token':
       detailTitle = i18n.t('transaction.m_nft_token')
       detailIcon = NFTTokenIcon
-      tooltip = parseNftInfo(cell)
+      tooltip = parseNftInfo(cell, i18n)
       break
     case 'nrc_721_token':
       detailTitle = i18n.t('transaction.nrc_721_token')
       detailIcon = NFTTokenIcon
-      tooltip = parseNftInfo(cell)
+      tooltip = parseNftInfo(cell, i18n)
       break
     case 'cota_registry': {
       detailTitle = i18n.t('transaction.cota_registry')
@@ -273,6 +276,7 @@ const TransactionCellInfo = ({ cell, children }: { cell: State.Cell; children: s
 }
 
 const TransactionCellCapacityAmount = ({ cell }: { cell: State.Cell }) => {
+  const { i18n } = useI18n()
   if (cell.cellType === 'udt') {
     const udtInfo = cell.extraInfo
     if (udtInfo.published) {
@@ -306,6 +310,8 @@ export default ({
   isAddrNew: boolean
 }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
+
   if (isMobile) {
     return (
       <TransactionCellCardPanel>

@@ -1,21 +1,23 @@
 import { FC } from 'react'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
 import { handleAxis } from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { parseHourFromMillisecond } from '../../../utils/date'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { fetchStatisticDifficultyUncleRateEpoch } from '../../../service/http/fetcher'
+import { I18nInfoType, LanuageType } from '../../../utils/i18n'
 
-const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 90 : 80)
+const widthSpan = (value: string, currentLanguage: LanuageType) =>
+  tooltipWidth(value, currentLanguage === 'en' ? 90 : 80)
 
-const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: string }) => {
+const parseTooltip = ({ seriesName, data, color, i18nInfo }: SeriesItem & { data: string; i18nInfo: I18nInfoType }) => {
+  const { i18n, currentLanguage } = i18nInfo
   if (seriesName === i18n.t('block.epoch_time')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('block.epoch_time'))} ${data} h</div>`
+    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('block.epoch_time'), currentLanguage)} ${data} h</div>`
   }
   if (seriesName === i18n.t('block.epoch_length')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('block.epoch_length'))} ${data}</div>`
+    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('block.epoch_length'), currentLanguage)} ${data}</div>`
   }
   return ''
 }
@@ -24,8 +26,11 @@ const getOption = (
   statisticChartData: State.StatisticDifficultyUncleRateEpoch[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
+
   const gridThumbnail = {
     left: '4%',
     right: '4%',
@@ -55,9 +60,11 @@ const getOption = (
           trigger: 'axis',
           formatter: (dataList: any) => {
             const list = dataList as Array<SeriesItem & { data: string }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('block.epoch'))} ${list[0].name}</div>`
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('block.epoch'), currentLanguage)} ${
+              list[0].name
+            }</div>`
             list.forEach(data => {
-              result += parseTooltip(data)
+              result += parseTooltip({ ...data, i18nInfo })
             })
             return result
           },

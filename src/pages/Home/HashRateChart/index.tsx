@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/title'
 import echarts from 'echarts/lib/echarts'
-import i18n from '../../../utils/i18n'
+import { I18nType, useI18n } from '../../../utils/i18n'
 import { handleAxis } from '../../../utils/chart'
 import { parseDateNoTime } from '../../../utils/date'
 import SmallLoading from '../../../components/Loading/SmallLoading'
@@ -14,7 +14,11 @@ import { fetchStatisticHashRate } from '../../../service/http/fetcher'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ReactChartCore } from '../../StatisticsChart/common'
 
-const getOption = (statisticHashRates: State.StatisticHashRate[], useMiniStyle: boolean): echarts.EChartOption => ({
+const getOption = (
+  statisticHashRates: State.StatisticHashRate[],
+  useMiniStyle: boolean,
+  i18n: I18nType,
+): echarts.EChartOption => ({
   color: ['#ffffff'],
   title: {
     text: i18n.t('block.hash_rate_hps'),
@@ -99,7 +103,7 @@ const getOption = (statisticHashRates: State.StatisticHashRate[], useMiniStyle: 
 
 export default memo(() => {
   const isLG = useIsLGScreen()
-
+  const { i18n } = useI18n()
   const query = useChartQueryWithCache(fetchStatisticHashRate, ChartCachedKeys.HashRate, 'date')
   const fullStatisticHashRates = useMemo(() => query.data ?? [], [query.data])
 
@@ -122,7 +126,7 @@ export default memo(() => {
   return (
     <HomeChartLink to="/charts/hash-rate">
       <ReactChartCore
-        option={getOption(statisticHashRates, isLG)}
+        option={getOption(statisticHashRates, isLG, i18n)}
         notMerge
         lazyUpdate
         style={{

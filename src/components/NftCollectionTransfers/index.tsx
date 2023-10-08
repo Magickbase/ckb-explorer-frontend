@@ -7,7 +7,7 @@ import { Base64 } from 'js-base64'
 import { hexToBytes } from '@nervosnetwork/ckb-sdk-utils'
 import { parseSporeCellData } from '../../utils/spore'
 import type { TransferListRes, TransferRes } from '../../pages/NftCollectionInfo'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import styles from './styles.module.scss'
 import { getPrimaryColor } from '../../constants/common'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
@@ -42,7 +42,7 @@ NftCollectionTransfers.displayName = 'NftTransfers'
 
 const TransferTable: FC<TransferCollectionProps> = ({ collection, iconURL, list, isLoading }) => {
   const [isShowInAge, setIsShowInAge] = useState(false)
-
+  const { i18n } = useI18n()
   dayjs.locale(i18n.language === 'zh' ? 'zh-cn' : 'en')
 
   return (
@@ -98,6 +98,7 @@ const TransferTableRow: FC<{
   iconURL?: string | null
   isShowInAge?: boolean
 }> = ({ collection, item, iconURL, isShowInAge }) => {
+  const { i18n } = useI18n()
   const coverUrl = item.item.icon_url ?? iconURL
   const parsedBlockCreateAt = useParsedDate(item.transaction.block_timestamp)
   const now = useTimestamp()
@@ -212,6 +213,7 @@ const TransferTableRow: FC<{
 }
 
 const TransferCardGroup: FC<TransferCollectionProps> = ({ collection, iconURL, list, isLoading }) => {
+  const { i18n } = useI18n()
   return (
     <ul>
       {list.length ? (
@@ -228,6 +230,7 @@ const TransferCard: FC<{
   item: TransferRes
   iconURL?: string | null
 }> = ({ collection, item, iconURL }) => {
+  const { i18n } = useI18n()
   const coverUrl = item.item.icon_url ?? iconURL
   const parsedBlockCreateAt = useParsedDate(item.transaction.block_timestamp)
 

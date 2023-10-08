@@ -5,7 +5,7 @@ import { Base64 } from 'js-base64'
 import { hexToBytes } from '@nervosnetwork/ckb-sdk-utils'
 import { parseSporeCellData } from '../../utils/spore'
 import { ReactComponent as Cover } from '../../assets/nft_cover.svg'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import styles from './styles.module.scss'
 import { getPrimaryColor } from '../../constants/common'
 import { v2AxiosIns } from '../../service/http/fetcher'
@@ -32,6 +32,7 @@ const NftCollectionInventory: React.FC<{
   collection: string
   isLoading: boolean
 }> = ({ list, collection, isLoading }) => {
+  const { i18n } = useI18n()
   const { data: info } = useQuery<AxiosResponse<{ icon_url: string | null }>>(['collection-info', collection], () =>
     v2AxiosIns(`nft/collections/${collection}`),
   )

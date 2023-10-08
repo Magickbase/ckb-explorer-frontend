@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Tooltip } from 'antd'
 import CopyIcon from '../../../assets/copy.png'
-import i18n from '../../../utils/i18n'
+import { useI18n } from '../../../utils/i18n'
 import { v2AxiosIns } from '../../../service/http/fetcher'
 import { copyElementValue } from '../../../utils/util'
 import SmallLoading from '../../Loading/SmallLoading'
@@ -50,6 +50,7 @@ export default ({
 }) => {
   const isMobile = useIsMobile()
   const setToast = useSetToast()
+  const { i18n } = useI18n()
 
   const isTx = i18n.t('transaction.transaction') === title
   const newAddr = useNewAddr(hash)

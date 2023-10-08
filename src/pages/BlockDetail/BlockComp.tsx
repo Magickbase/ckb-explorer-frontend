@@ -11,7 +11,7 @@ import PackUpBlueIcon from '../../assets/content_blue_pack_up.png'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import TransactionItem from '../../components/TransactionItem/index'
 import { parseSimpleDate } from '../../utils/date'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { localeNumberString, handleDifficulty } from '../../utils/number'
 import { useIsMobile, useSearchParams } from '../../utils/hook'
 import { hexToUtf8 } from '../../utils/string'
@@ -43,6 +43,7 @@ import { useLatestBlockNumber } from '../../services/ExplorerService'
 const CELL_BASE_ANCHOR = 'cellbase'
 
 const BlockMiner = ({ miner }: { miner: string }) => {
+  const { i18n } = useI18n()
   if (!miner) {
     return <BlockLinkPanel>{i18n.t('address.unable_decode_address')}</BlockLinkPanel>
   }
@@ -104,6 +105,7 @@ const BlockMinerReward = ({
 
 export const BlockOverview: FC<{ block: State.Block }> = ({ block }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const tipBlockNumber = useLatestBlockNumber()
   const [showAllOverview, setShowAllOverview] = useState(false)
   const minerReward = <DecimalCapacity value={localeNumberString(shannonToCkb(block.minerReward))} />
@@ -323,6 +325,7 @@ export const BlockComp = ({
   transactions: State.Transaction[]
   total: number
 }) => {
+  const { i18n } = useI18n()
   const totalPages = Math.ceil(total / pageSize)
   const { push } = useHistory()
   const { hash } = useLocation()

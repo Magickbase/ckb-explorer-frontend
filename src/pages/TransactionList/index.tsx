@@ -6,7 +6,7 @@ import { parseSimpleDate } from '../../utils/date'
 import Content from '../../components/Content'
 import { shannonToCkb } from '../../utils/util'
 import { localeNumberString } from '../../utils/number'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import Pagination from '../../components/Pagination'
 import DecimalCapacity from '../../components/DecimalCapacity'
 import { ItemCardData, ItemCardGroup } from '../../components/Card/ItemCard'
@@ -36,6 +36,7 @@ const TransactionCardGroup: FC<{
   type: TxStatus
   sortButton: (sortRule?: ConfirmedSortByType | PendingSortByType) => ReactNode
 }> = ({ transactions, type, sortButton }) => {
+  const { i18n } = useI18n()
   const itemHash: SortItemCardData<State.Transaction> = {
     title: i18n.t('transaction.transaction_hash'),
     render: transaction => (
@@ -226,6 +227,7 @@ const TransactionTable: FC<{
 
 const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
   const isMobile = useIsMobile()
+  const { i18n } = useI18n()
   const { currentPage, pageSize, setPage } = usePaginationParamsInListPage()
   const { state } = useLocation<RouteState>()
   const stateStaleTime = 3000

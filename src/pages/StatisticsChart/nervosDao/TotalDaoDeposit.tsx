@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
+import { I18nInfoType, LanuageType } from '../../../utils/i18n'
 import { DATA_ZOOM_CONFIG, parseNumericAbbr } from '../../../utils/chart'
 import { parseDateNoTime } from '../../../utils/date'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
@@ -9,21 +9,26 @@ import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../commo
 import { ChartCachedKeys } from '../../../constants/cache'
 import { fetchStatisticTotalDaoDeposit } from '../../../service/http/fetcher'
 
-const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 168 : 110)
+const widthSpan = (value: string, language: LanuageType) => tooltipWidth(value, language === 'en' ? 168 : 110)
 
-const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: [string, string, string] }): string => {
+const parseTooltip = ({
+  seriesName,
+  data,
+  color,
+  i18nInfo,
+}: SeriesItem & { data: [string, string, string]; i18nInfo: I18nInfoType }): string => {
+  const { i18n, currentLanguage } = i18nInfo
   if (seriesName === i18n.t('statistic.total_dao_deposit')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.total_dao_deposit'))} ${parseNumericAbbr(
-      data[1],
-      2,
-    )}</div>`
+    return `<div>${tooltipColor(color)}${widthSpan(
+      i18n.t('statistic.total_dao_deposit'),
+      currentLanguage,
+    )} ${parseNumericAbbr(data[1], 2)}</div>`
   }
   if (seriesName === i18n.t('statistic.total_dao_depositor')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.total_dao_depositor'))} ${parseNumericAbbr(
-      data[2],
-      2,
-      true,
-    )}</div>`
+    return `<div>${tooltipColor(color)}${widthSpan(
+      i18n.t('statistic.total_dao_depositor'),
+      currentLanguage,
+    )} ${parseNumericAbbr(data[2], 2, true)}</div>`
   }
   return ''
 }
@@ -32,6 +37,7 @@ const getOption = (
   statisticTotalDaoDeposits: State.StatisticTotalDaoDeposit[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
   const gridThumbnail = {
@@ -48,6 +54,7 @@ const getOption = (
     bottom: '5%',
     containLabel: true,
   }
+  const { i18n } = i18nInfo
   return {
     color: chartColor.colors,
     tooltip: !isThumbnail
@@ -55,11 +62,12 @@ const getOption = (
           trigger: 'axis',
           formatter: (dataList: any) => {
             const list = dataList as Array<SeriesItem & { data: [string, string, string] }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
-              list[0].data[0]
-            }</div>`
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(
+              i18nInfo.i18n.t('statistic.date'),
+              i18nInfo.currentLanguage,
+            )} ${list[0].data[0]}</div>`
             list.forEach(data => {
-              result += parseTooltip(data)
+              result += parseTooltip({ ...data, i18nInfo })
             })
             return result
           },

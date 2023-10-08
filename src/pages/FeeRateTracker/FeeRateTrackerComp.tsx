@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import dayjs from 'dayjs'
 import classNames from 'classnames'
 import styles from './styles.module.scss'
-import i18n from '../../utils/i18n'
+import { useI18n } from '../../utils/i18n'
 import { ReactChartCore } from '../StatisticsChart/common'
 import { ReactComponent as BikeIcon } from '../../assets/bike.svg'
 import { ReactComponent as CarIcon } from '../../assets/car.svg'
@@ -41,6 +41,7 @@ const calcFeeRate = (tfrs: FeeRateTracker.TransactionFeeRate[]): string =>
 const colors = ChartColor.moreColors
 
 export const FeeRateCards = ({ transactionFeeRates }: { transactionFeeRates: FeeRateTracker.TransactionFeeRate[] }) => {
+  const { i18n } = useI18n()
   const allFrs = transactionFeeRates.sort((a, b) => a.confirmationTime - b.confirmationTime)
   const avgConfirmationTime = getWeightedMedian(allFrs)
 
@@ -99,6 +100,7 @@ export const ConfirmationTimeFeeRateChart = ({
 }: {
   transactionFeeRates: FeeRateTracker.TransactionFeeRate[]
 }) => {
+  const { i18n } = useI18n()
   const data = transactionFeeRates.reduce<Array<Array<number>>>((acc, cur) => {
     if (!cur.confirmationTime) {
       return acc
@@ -227,6 +229,7 @@ export const FeeRateTransactionCountChartCore = ({
 }: {
   pendingTransactionFeeRates: FeeRateTracker.PendingTransactionFeeRate[]
 }) => {
+  const { i18n } = useI18n()
   const feeRateCount = pendingTransactionFeeRates.reduce((acc, cur) => {
     const count = acc.get(cur.feeRate) ?? 0
     acc.set(cur.feeRate, count + 1)
@@ -306,6 +309,7 @@ export const FeeRateTransactionCountChart = ({
 }: {
   pendingTransactionFeeRates: FeeRateTracker.PendingTransactionFeeRate[]
 }) => {
+  const { i18n } = useI18n()
   return useMemo(() => {
     return <FeeRateTransactionCountChartCore pendingTransactionFeeRates={pendingTransactionFeeRates} />
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -317,6 +321,7 @@ export const LastNDaysTransactionFeeRateChart = ({
 }: {
   lastNDaysTransactionFeeRates: FeeRateTracker.LastNDaysTransactionFeeRate[]
 }) => {
+  const { i18n } = useI18n()
   const sortedLastNDaysTransactionFeeRates = lastNDaysTransactionFeeRates
     .filter(r => dayjs(r.date).isValid())
     .sort((a, b) => (dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1))

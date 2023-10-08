@@ -1,18 +1,21 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
 import { parseHourFromMinute } from '../../../utils/date'
 import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
 import { fetchStatisticEpochTimeDistribution } from '../../../service/http/fetcher'
 import { ChartCachedKeys } from '../../../constants/cache'
+import { I18nInfoType } from '../../../utils/i18n'
 
 const getOption = (
   statisticEpochTimeDistributions: State.StatisticEpochTimeDistribution[],
   chartColor: State.ChartColor,
   isMobile: boolean,
+  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { i18n, currentLanguage } = i18nInfo
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -33,7 +36,7 @@ const getOption = (
       ? {
           trigger: 'axis',
           formatter: (dataList: any) => {
-            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 80 : 80)
+            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 80 : 80)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(
               i18n.t('statistic.time_hour'),
             )} ${parseHourFromMinute(dataList[0].name)}</div>`
