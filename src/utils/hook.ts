@@ -609,7 +609,7 @@ export const useHalving = () => {
   const currentEpoch = Number(statistics.epochInfo.epochNumber)
   const nextHalvingCount = Math.ceil(currentEpoch / EPOCHS_PER_HALVING)
   const targetEpoch = EPOCHS_PER_HALVING * nextHalvingCount
-  const singleEpochAverageTime = Number(statistics.estimatedEpochTime)
+  const singleEpochAverageTime = 1000 * 60 * 60 * 4
   const currentEpochUsedTime =
     (Number(statistics.epochInfo.index) / Number(statistics.epochInfo.epochLength)) * singleEpochAverageTime
 
