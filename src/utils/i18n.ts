@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import i18n from 'i18next'
 import { initReactI18next, useTranslation } from 'react-i18next'
 import en from '../locales/en.json'
@@ -17,22 +16,20 @@ export type I18nInfoType = {
   toggleLanguage: () => void
 }
 
-const defaultLanguage = fetchCachedData<LanuageType>(AppCachedKeys.AppLanguage) ?? 'en'
+const getDefaultLanguage = () => fetchCachedData<LanuageType>(AppCachedKeys.AppLanguage) ?? 'en'
 
 i18n.use(initReactI18next).init({
   resources: {
     en,
     zh,
   },
-  fallbackLng: defaultLanguage,
+  fallbackLng: getDefaultLanguage(),
   interpolation: {
     escapeValue: false,
   },
 })
 
 export function useI18n(): I18nInfoType {
-  const initialState = defaultLanguage
-  const [stateLanguage, setStateLanguage] = useState(initialState)
   const { t } = useTranslation()
 
   const changeLanguage = (lan: LanuageType) => {
@@ -45,16 +42,16 @@ export function useI18n(): I18nInfoType {
   }
 
   const setLanguage = (lan: LanuageType) => {
-    setStateLanguage(lan)
     changeLanguage(lan)
   }
 
+  const currentLanguage = i18n.language as LanuageType
   return {
     i18n: { ...i18n, t },
-    currentLanguage: stateLanguage,
+    currentLanguage,
     setLanguage,
     toggleLanguage: () => {
-      if (stateLanguage === 'en') {
+      if (currentLanguage === 'en') {
         setLanguage('zh')
       } else {
         setLanguage('en')

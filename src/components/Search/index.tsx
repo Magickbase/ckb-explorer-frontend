@@ -104,12 +104,7 @@ const Search: FC<{
   const isMobile = useIsMobile()
   const { i18n } = useI18n()
   const history = useHistory()
-  const { t } = i18n
-
-  // eslint-disable-next-line no-console
-  console.log('i18n', i18n, i18n.t)
-
-  const SearchPlaceholder = t('navbar.search_placeholder')
+  const SearchPlaceholder = i18n.t('navbar.search_placeholder')
   const [searchValue, setSearchValue] = useState(content || '')
   const [placeholder, setPlaceholder] = useState(SearchPlaceholder)
   const inputElement = useRef<HTMLInputElement>(null)

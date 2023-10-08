@@ -91,6 +91,8 @@ export const LanguageMenu: FC<{ hideMobileMenu: () => void }> = ({ hideMobileMen
           <SimpleButton
             className="mobile__menus__sub__item"
             onClick={() => {
+              // eslint-disable-next-line
+              console.log('toggleLanguage')
               toggleLanguage()
               hideMobileMenu()
             }}
