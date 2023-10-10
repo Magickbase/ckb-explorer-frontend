@@ -12,7 +12,6 @@ import { useQuery } from 'react-query'
 import { useResizeDetector } from 'react-resize-detector'
 import { interval, share } from 'rxjs'
 import { AppCachedKeys } from '../constants/cache'
-import { useAppState } from '../contexts/providers'
 import { deprecatedAddrToNewAddr } from './util'
 import { startEndEllipsis } from './string'
 import { ListPageParams, PageParams } from '../constants/common'
@@ -27,7 +26,7 @@ import {
 import { parseDate } from './date'
 import { omit } from './object'
 // TODO: This file depends on higher-level abstractions, so it should not be in the utils folder. It should be moved to `src/hooks/index.ts`.
-import { Response } from '../services/ExplorerService'
+import { Response, useStatistics } from '../services/ExplorerService'
 
 /**
  * Returns the value of the argument from the previous render
@@ -603,7 +602,7 @@ export const useCountdown = (targetDate: Date) => {
 }
 
 export const useHalving = () => {
-  const { statistics } = useAppState()
+  const statistics = useStatistics()
 
   const EPOCHS_PER_HALVING = 8760
   const currentEpoch = Number(statistics.epochInfo.epochNumber)
