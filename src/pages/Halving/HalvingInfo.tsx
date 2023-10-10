@@ -3,12 +3,12 @@ import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import { ReactComponent as WarningCircle } from '../../assets/warning_circle.svg'
 import i18n from '../../utils/i18n'
-import { useAppState } from '../../contexts/providers'
 import { useHalving, useIsMobile } from '../../utils/hook'
+import { useStatistics } from '../../services/ExplorerService'
 import styles from './index.module.scss'
 
 export const HalvingInfo = () => {
-  const { statistics } = useAppState()
+  const statistics = useStatistics()
   const isMobile = useIsMobile()
   const { currentEpoch, targetEpoch, estimatedDate } = useHalving()
   const utcOffset = moment().utcOffset() / 60

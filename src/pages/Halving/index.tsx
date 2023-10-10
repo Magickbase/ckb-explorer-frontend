@@ -13,7 +13,7 @@ import { ReactComponent as WarningCircle } from '../../assets/warning_circle.svg
 import i18n, { currentLanguage } from '../../utils/i18n'
 import { HalvingTable } from './HalvingTable'
 import { HalvingInfo } from './HalvingInfo'
-import { useAppState } from '../../contexts/providers'
+import { useStatistics } from '../../services/ExplorerService'
 import { HalvingCountdown } from './HalvingCountdown'
 import { useCountdown, useHalving, useIsMobile } from '../../utils/hook'
 import { fetchCachedData, storeCachedData } from '../../utils/cache'
@@ -44,7 +44,7 @@ function numberToOrdinal(number: number) {
 
 export const HalvingCountdownPage = () => {
   const isMobile = useIsMobile()
-  const { statistics } = useAppState()
+  const statistics = useStatistics()
   const {
     currentEpoch,
     estimatedDate,
