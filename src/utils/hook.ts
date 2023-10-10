@@ -14,7 +14,7 @@ import { interval, share } from 'rxjs'
 import { AppCachedKeys } from '../constants/cache'
 import { deprecatedAddrToNewAddr } from './util'
 import { startEndEllipsis } from './string'
-import { ListPageParams, PageParams } from '../constants/common'
+import { ListPageParams, PageParams, THEORETICAL_EPOCH_TIME, EPOCHS_PER_HALVING } from '../constants/common'
 import {
   fetchCachedData,
   fetchDateChartCache,
@@ -601,30 +601,46 @@ export const useCountdown = (targetDate: Date) => {
   return [days, hours, minutes, seconds]
 }
 
-export const useHalving = () => {
+export const useSingleHalving = (_halvingCount = 1) => {
+  const halvingCount = Math.max(Math.floor(_halvingCount) || 1, 1) // halvingCount should be a positive integer greater than 1.
   const statistics = useStatistics()
+  const celebrationSkipKey = `having-celebration-${halvingCount}`
+  const celebrationSkipped = fetchCachedData(celebrationSkipKey) !== null
+  function skipCelebration() {
+    storeCachedData(celebrationSkipKey, true)
+  }
 
-  const EPOCHS_PER_HALVING = 8760
   const currentEpoch = Number(statistics.epochInfo.epochNumber)
-  const nextHalvingCount = Math.ceil(currentEpoch / EPOCHS_PER_HALVING)
-  const targetEpoch = EPOCHS_PER_HALVING * nextHalvingCount
-  const singleEpochAverageTime = 1000 * 60 * 60 * 4
+  const targetEpoch = EPOCHS_PER_HALVING * halvingCount
   const currentEpochUsedTime =
-    (Number(statistics.epochInfo.index) / Number(statistics.epochInfo.epochLength)) * singleEpochAverageTime
+    (Number(statistics.epochInfo.index) / Number(statistics.epochInfo.epochLength)) * THEORETICAL_EPOCH_TIME
 
-  const estimatedTime = (targetEpoch - currentEpoch) * singleEpochAverageTime - currentEpochUsedTime
-
+  const estimatedTime = (targetEpoch - currentEpoch) * THEORETICAL_EPOCH_TIME - currentEpochUsedTime
   const estimatedDate = useMemo(() => new Date(new Date().getTime() + estimatedTime), [estimatedTime])
 
+  const haveDone = currentEpoch >= targetEpoch || new Date().getTime() > estimatedDate.getTime()
+  const celebrationOverEpoch = targetEpoch + 30 * 6 // Every 6 epochs is theoretically 1 day.
+  const inCelebration = haveDone && currentEpoch < celebrationOverEpoch && !celebrationSkipped
+
   return {
-    EPOCHS_PER_HALVING,
+    halvingCount,
     currentEpoch,
     targetEpoch,
-    nextHalvingCount,
-    singleEpochAverageTime,
+    inCelebration,
+    skipCelebration,
     currentEpochUsedTime,
     estimatedDate,
   }
+}
+
+export const useHalving = () => {
+  const statistics = useStatistics()
+  const currentEpoch = Number(statistics.epochInfo.epochNumber)
+  const lastedHalvingCount = Math.ceil((currentEpoch + 1) / EPOCHS_PER_HALVING)
+  const lastedHalving = useSingleHalving(lastedHalvingCount)
+  const previousHalving = useSingleHalving(lastedHalvingCount - 1)
+
+  return previousHalving.inCelebration ? previousHalving : lastedHalving
 }
 
 export default {
