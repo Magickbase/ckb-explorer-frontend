@@ -71,7 +71,7 @@ export const HalvingCountdownPage = () => {
     date: estimatedDate.toUTCString(),
     countdown: shortCountdown(),
   })
-  const shareUrl = `https://twitter.com/share?text=${encodeURIComponent(shareText)}&hashtags=CKB%2CPoW%2CHalving`
+  const shareUrl = `https://x.com/share?text=${encodeURIComponent(shareText)}&hashtags=CKB%2CPoW%2CHalving`
   const getTargetBlockByHavingCount = (count: number) => {
     return (
       EPOCHS_PER_HALVING *
