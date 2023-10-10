@@ -1,6 +1,6 @@
 import { Tooltip } from 'antd'
 import BigNumber from 'bignumber.js'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { ReactComponent as WarningCircle } from '../../assets/warning_circle.svg'
 import i18n from '../../utils/i18n'
 import { useHalving, useIsMobile } from '../../utils/hook'
@@ -11,7 +11,7 @@ export const HalvingInfo = () => {
   const statistics = useStatistics()
   const isMobile = useIsMobile()
   const { currentEpoch, targetEpoch, estimatedDate } = useHalving()
-  const utcOffset = moment().utcOffset() / 60
+  const utcOffset = dayjs().utcOffset() / 60
 
   if (isMobile) {
     return (
@@ -43,8 +43,12 @@ export const HalvingInfo = () => {
 
           <div className={styles.epochInfoItem}>
             <div className={styles.epochInfoValue}>
-              <Tooltip title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}>
-                {moment(estimatedDate).format('YYYY.MM.DD hh:mm:ss')}
+              <Tooltip
+                color="#fff"
+                overlayInnerStyle={{ color: '#333333' }}
+                title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
+              >
+                {dayjs(estimatedDate).format('YYYY.MM.DD hh:mm:ss')}
               </Tooltip>
             </div>
             <div className={styles.textSecondary}>{i18n.t('halving.estimated_time')}</div>
@@ -80,8 +84,12 @@ export const HalvingInfo = () => {
 
       <div className={styles.epochInfoItem}>
         <strong className={styles.epochInfoValue}>
-          {moment(estimatedDate).format('YYYY.MM.DD hh:mm:ss')}
-          <Tooltip title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}>
+          {dayjs(estimatedDate).format('YYYY.MM.DD hh:mm:ss')}
+          <Tooltip
+            color="#fff"
+            overlayInnerStyle={{ color: '#333333' }}
+            title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
+          >
             <WarningCircle style={{ marginLeft: '4px' }} width={16} height={16} />
           </Tooltip>
         </strong>
