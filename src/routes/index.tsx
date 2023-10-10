@@ -60,8 +60,7 @@ const routes: RouteProps[] = [
   },
   {
     path: '/halving',
-    exact: true,
-    comp: Halving,
+    component: Halving,
   },
   {
     path: '/block/list',
