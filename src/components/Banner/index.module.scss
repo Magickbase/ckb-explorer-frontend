@@ -29,14 +29,14 @@ $backgroudColor: #232323;
   background-position: bottom;
   background-size: cover;
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     height: 300px;
   }
 }
 
 .halvingBannerShadow {
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgb(0 0 0 / 30%);
   height: 100%;
 }
 
@@ -48,7 +48,7 @@ $backgroudColor: #232323;
   flex-direction: column;
   gap: 8px;
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     gap: 16px;
   }
 }
@@ -57,7 +57,7 @@ $backgroudColor: #232323;
   margin-top: -16px;
   height: 64px;
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     height: 100px;
   }
 }
@@ -71,7 +71,7 @@ $backgroudColor: #232323;
   text-transform: capitalize;
 
   &.linear {
-    background: linear-gradient(45deg, rgb(130, 203, 140), rgb(121, 122, 121), rgb(172, 221, 181));
+    background: linear-gradient(45deg, rgb(130 203 140), rgb(121 122 121), rgb(172 221 181));
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -79,15 +79,15 @@ $backgroudColor: #232323;
   &.success {
     transform: rotate(-2deg);
     text-shadow: 1px 1px 1px var(--primary-color), -0.5px -0.5px 1px white;
-    color: rgb(28, 28, 28);
+    color: rgb(28 28 28);
     margin-top: -12px;
 
-    @media (min-width: 750px) {
+    @media (width >= 750px) {
       text-shadow: 1px 1px 1px var(--primary-color), -1px -1px 1px white;
     }
   }
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     font-size: 40px;
   }
 }
@@ -105,8 +105,10 @@ $backgroudColor: #232323;
   user-select: none;
   text-transform: capitalize;
   background: linear-gradient(180deg, #00cc9b, #008365);
+  display: flex;
+  align-items: center;
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     padding: 16px 24px;
   }
 }

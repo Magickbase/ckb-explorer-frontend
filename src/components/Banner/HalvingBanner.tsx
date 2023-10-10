@@ -2,6 +2,7 @@ import classnames from 'classnames'
 import styles from './index.module.scss'
 import halvingBanner from '../../assets/halving_banner.png'
 import halvingBannerSuccess from '../../assets/halving_banner_success.png'
+import { ReactComponent as MoveIcon } from '../../assets/move.svg'
 import halvingSuccessAni from '../../assets/halving_success_ani.gif'
 import SimpleButton from '../SimpleButton'
 import { useCountdown, useHalving } from '../../utils/hook'
@@ -75,6 +76,7 @@ export const HalvingBanner = () => {
               {inCelebration
                 ? i18n.t('halving.learn_more')
                 : `${i18n.t('halving.halving_countdown')} ${shortCountdown()}`}
+              <MoveIcon style={{ marginTop: 2 }} />
             </SimpleButton>
           </a>
         </div>

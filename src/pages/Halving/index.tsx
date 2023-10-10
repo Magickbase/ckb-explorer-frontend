@@ -170,6 +170,8 @@ export const HalvingCountdownPage = () => {
 
           <Tooltip
             placement="top"
+            color="#fff"
+            overlayInnerStyle={{ color: '#333333' }}
             title={
               <>
                 <p>{i18n.t('halving.countdown_tooltip_section1')}</p>
