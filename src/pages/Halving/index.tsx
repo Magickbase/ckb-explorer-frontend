@@ -16,8 +16,7 @@ import { HalvingInfo } from './HalvingInfo'
 import { useStatistics } from '../../services/ExplorerService'
 import { HalvingCountdown } from './HalvingCountdown'
 import { useCountdown, useHalving, useIsMobile } from '../../utils/hook'
-import { fetchCachedData, storeCachedData } from '../../utils/cache'
-import { getPrimaryColor } from '../../constants/common'
+import { getPrimaryColor, EPOCHS_PER_HALVING, THEORETICAL_EPOCH_TIME } from '../../constants/common'
 import styles from './index.module.scss'
 
 function numberToOrdinal(number: number) {
@@ -45,20 +44,12 @@ function numberToOrdinal(number: number) {
 export const HalvingCountdownPage = () => {
   const isMobile = useIsMobile()
   const statistics = useStatistics()
-  const {
-    currentEpoch,
-    estimatedDate,
-    singleEpochAverageTime,
-    currentEpochUsedTime,
-    EPOCHS_PER_HALVING,
-    nextHalvingCount,
-  } = useHalving()
+  const { currentEpoch, estimatedDate, currentEpochUsedTime, halvingCount, inCelebration, skipCelebration } =
+    useHalving()
 
-  const lastedHavingKey = `lasted-having-${nextHalvingCount - 1}`
-  const unreadLastedHaving = nextHalvingCount > 1 && fetchCachedData(lastedHavingKey) === null
   const percent =
-    (((currentEpoch % EPOCHS_PER_HALVING) * singleEpochAverageTime - currentEpochUsedTime) /
-      (EPOCHS_PER_HALVING * singleEpochAverageTime)) *
+    (((currentEpoch % EPOCHS_PER_HALVING) * THEORETICAL_EPOCH_TIME - currentEpochUsedTime) /
+      (EPOCHS_PER_HALVING * THEORETICAL_EPOCH_TIME)) *
     100
   const [days, hours, minutes, seconds] = useCountdown(estimatedDate)
 
@@ -76,7 +67,7 @@ export const HalvingCountdownPage = () => {
   }
 
   const shareText = i18n.t('halving.share_text', {
-    times: i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount)}`),
+    times: i18n.t(`ordinal.${numberToOrdinal(halvingCount)}`),
     date: estimatedDate.toUTCString(),
     countdown: shortCountdown(),
   })
@@ -90,7 +81,7 @@ export const HalvingCountdownPage = () => {
   }
 
   const renderHalvingPanel = () => {
-    if (unreadLastedHaving) {
+    if (inCelebration) {
       return (
         <div
           className={styles.halvingPanel}
@@ -101,12 +92,12 @@ export const HalvingCountdownPage = () => {
             <div className={styles.textCapitalize}>
               {i18n.t('halving.the')}
               {i18n.t('symbol.char_space')}
-              {i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount - 1)}`)}
+              {i18n.t(`ordinal.${numberToOrdinal(halvingCount)}`)}
               {i18n.t('symbol.char_space')}
               {i18n.t('halving.halving')}
               {i18n.t('halving.actived')}{' '}
-              <a className={styles.textPrimary} href={`/block/${getTargetBlockByHavingCount(nextHalvingCount - 1)}`}>
-                {new BigNumber(getTargetBlockByHavingCount(nextHalvingCount - 1)).toFormat()}.
+              <a className={styles.textPrimary} href={`/block/${getTargetBlockByHavingCount(halvingCount)}`}>
+                {new BigNumber(getTargetBlockByHavingCount(halvingCount)).toFormat()}.
               </a>
             </div>
           </div>
@@ -114,9 +105,7 @@ export const HalvingCountdownPage = () => {
             <button
               className={classnames(styles.halvingSuccessBtn, styles.textCapitalize)}
               type="button"
-              onClick={() => {
-                storeCachedData(lastedHavingKey, true)
-              }}
+              onClick={() => skipCelebration()}
             >
               {i18n.t('halving.next')}
               {i18n.t('symbol.char_space')}
@@ -130,16 +119,16 @@ export const HalvingCountdownPage = () => {
     return (
       <div className={styles.halvingPanel}>
         <div className={classnames(styles.halvingPanelTitle, styles.textCapitalize)}>
-          {i18n.t(`ordinal.${numberToOrdinal(nextHalvingCount)}`)}
+          {i18n.t(`ordinal.${numberToOrdinal(halvingCount)}`)}
           {i18n.t('symbol.char_space')}
           {i18n.t('halving.halving')}
 
-          {nextHalvingCount > 1 && (
+          {halvingCount > 1 && (
             <Popover
               content={
                 <Table
                   pagination={false}
-                  dataSource={new Array(nextHalvingCount - 1).fill({}).map((_, index) => ({
+                  dataSource={new Array(halvingCount - 1).fill({}).map((_, index) => ({
                     key: index,
                     event: `${i18n.t(`ordinal.${numberToOrdinal(index + 1)}`)}
                   ${i18n.t('symbol.char_space')}
