@@ -13,6 +13,7 @@ import { ReactComponent as WarningCircle } from '../../assets/warning_circle.svg
 import i18n, { currentLanguage } from '../../utils/i18n'
 import { HalvingTable } from './HalvingTable'
 import { HalvingInfo } from './HalvingInfo'
+import SmallLoading from '../../components/Loading/SmallLoading'
 import { useStatistics } from '../../services/ExplorerService'
 import { HalvingCountdown } from './HalvingCountdown'
 import { useCountdown, useHalving, useIsMobile } from '../../utils/hook'
@@ -44,7 +45,7 @@ function numberToOrdinal(number: number) {
 export const HalvingCountdownPage = () => {
   const isMobile = useIsMobile()
   const statistics = useStatistics()
-  const { currentEpoch, estimatedDate, currentEpochUsedTime, halvingCount, inCelebration, skipCelebration } =
+  const { currentEpoch, estimatedDate, currentEpochUsedTime, halvingCount, inCelebration, skipCelebration, isLoading } =
     useHalving()
 
   const percent =
@@ -81,6 +82,14 @@ export const HalvingCountdownPage = () => {
   }
 
   const renderHalvingPanel = () => {
+    if (isLoading || Number.isNaN(seconds)) {
+      return (
+        <div className={classnames(styles.halvingPanel, styles.loadingPanel)}>
+          <SmallLoading />
+        </div>
+      )
+    }
+
     if (inCelebration) {
       return (
         <div
@@ -280,7 +289,7 @@ export const HalvingCountdownPage = () => {
 
       <Tooltip title={i18n.t('halving.share_tooltip')}>
         <a className={styles.shareWrapper} href={shareUrl} target="_blank" rel="noreferrer">
-          <div className={styles.XIconBg}>
+          <div className={styles.xIconBg}>
             <XIcon fill="white" height={40} width={40} />
           </div>
         </a>

@@ -3,17 +3,16 @@
   bottom: 10px;
   right: 18px;
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     right: 60px;
   }
 }
 
 .halvingCountdown {
   display: flex;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   align-items: flex-start;
   justify-content: space-between;
-  flex-direction: row;
 
   .digtialClockNumber {
     border: 1px solid #004938;
@@ -26,6 +25,7 @@
     background: linear-gradient(#003a2d, #001d16, #003a2d);
     position: relative;
     margin-bottom: 4px;
+
     &::after {
       content: ' ';
       width: 100%;
@@ -34,9 +34,10 @@
       position: absolute;
       z-index: 0;
     }
+
     span {
       z-index: 1;
-      font-family: 'digital-clock-font';
+      font-family: digital-clock-font, sans-serif;
       font-size: 32px;
       font-weight: 400;
       padding-top: 5px;
@@ -46,6 +47,7 @@
   .digtialClockSeparate {
     width: 8px;
     height: 100%;
+
     &::after {
       content: ':';
       font-size: 32px;
@@ -63,11 +65,12 @@
     text-align: center;
   }
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     .digtialClockNumber {
       width: 136px;
       height: 136px;
       margin-bottom: 8px;
+
       span {
         font-size: 80px;
         padding-top: 10px;
@@ -76,6 +79,7 @@
 
     .digtialClockSeparate {
       width: 16px;
+
       &::after {
         font-size: 64px;
         height: 136px;
@@ -91,7 +95,9 @@
 
 .halvingProgress {
   line-height: 0;
+
   :global {
+    /* stylelint-disable-next-line selector-class-pattern */
     .ant-progress-inner {
       background-color: transparent;
       border: 1px solid var(--primary-color);
@@ -103,8 +109,10 @@
   color: var(--primary-color);
   display: flex;
   justify-content: space-evenly;
+
   span {
     position: relative;
+
     &::after {
       content: ' ';
       width: 2px;
@@ -119,10 +127,10 @@
   }
 }
 
-.XIconBg {
+.xIconBg {
   display: flex;
   background: black;
-  box-shadow: rgba(77, 77, 77, 0.2) 0px 2px 6px 0px;
+  box-shadow: rgb(77 77 77 / 20%) 0 2px 6px 0;
   border-radius: 6px;
   padding: 8px;
 }
@@ -135,28 +143,34 @@
   overflow: auto;
   border-spacing: 0;
   border-collapse: collapse;
+
   thead {
     display: table-header-group;
     vertical-align: middle;
     border-color: inherit;
     background-color: #00291f;
   }
+
   tr {
     text-transform: capitalize;
+
     &:nth-child(1n) {
       background-color: #003d2f;
     }
+
     &:nth-child(2n) {
       background-color: #00291f;
     }
   }
+
   th {
     padding: 16px 24px;
-    border: 1px solid rgb(34, 27, 40);
+    border: 1px solid rgb(34 27 40);
   }
+
   td {
     padding: 16px 24px;
-    border: 1px solid rgb(34, 27, 40);
+    border: 1px solid rgb(34 27 40);
   }
 }
 
@@ -165,36 +179,47 @@
   padding-top: 32px;
   padding-bottom: 128px;
   color: white;
-  background-color: rgba(5, 22, 6, 1);
+  background-color: rgb(5 22 6 / 100%);
   background-position: bottom;
   background-size: 100% auto;
   background-repeat: no-repeat;
+
   .halvingBannerWrapper {
     display: flex;
     justify-content: center;
   }
+
   .halvingBannerContent {
     max-width: 100%;
 
-    @media (min-width: 960px) {
+    @media (width >= 960px) {
       max-width: 960px;
     }
 
     flex: 1;
   }
+
   .halvingBannerShadow {
     width: 100%;
     height: 72px;
     position: absolute;
     bottom: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgb(17, 17, 17));
+    background: linear-gradient(180deg, rgb(0 0 0 / 0%), rgb(17 17 17));
   }
 }
 
+.loadingPanel {
+  min-height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
 .halvingPanel {
-  background: rgba(21, 19, 23, 1);
+  background: rgb(21 19 23 / 100%);
   background-size: cover;
-  border: 2px solid rgba(51, 41, 69, 0.5);
+  border: 2px solid rgb(51 41 69 / 50%);
   border-radius: 12px;
   overflow: hidden;
   padding: 24px 16px;
@@ -222,7 +247,7 @@
     align-items: center;
   }
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     padding: 32px 64px;
     gap: 32px;
     border-radius: 24px;
@@ -245,7 +270,7 @@
   flex-direction: column;
   gap: 24px;
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     gap: 32px;
   }
 }
@@ -256,7 +281,7 @@
   font-size: 20px;
   margin-bottom: 16px;
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     font-size: 32px;
     margin-bottom: 32px;
   }
@@ -267,14 +292,14 @@
   font-weight: 400;
   margin-bottom: 24px;
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     font-size: 24px;
     margin-bottom: 48px;
   }
 }
 
 .panel {
-  color: rgba(240, 240, 240, 1);
+  color: rgb(240 240 240 / 100%);
   background: #001d16;
   display: flex;
   flex-direction: column;
@@ -283,7 +308,7 @@
   gap: 16px;
   font-size: 16px;
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     border-radius: 24px;
     padding: 48px;
     gap: 48px;
@@ -323,15 +348,16 @@
 
   .separate {
     height: 40px;
-    background: rgba(234, 234, 234, 0.2);
+    background: rgb(234 234 234 / 20%);
     width: 1px;
   }
 
-  @media (min-width: 750px) {
+  @media (width >= 750px) {
     .epochInfoItem {
       gap: 16px;
       flex: inherit;
     }
+
     .epochInfoValue {
       font-size: 20px;
     }
@@ -339,7 +365,7 @@
 }
 
 .textSecondary {
-  color: rgba(240, 240, 240, 0.5);
+  color: rgb(240 240 240 / 50%);
 }
 
 .textPrimary {

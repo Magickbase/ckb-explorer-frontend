@@ -3,6 +3,7 @@ import styles from './index.module.scss'
 import halvingBanner from '../../assets/halving_banner.png'
 import halvingBannerSuccess from '../../assets/halving_banner_success.png'
 import { ReactComponent as MoveIcon } from '../../assets/move.svg'
+import LoadingWhiteImage from '../../assets/loading_white.gif'
 import halvingSuccessAni from '../../assets/halving_success_ani.gif'
 import SimpleButton from '../SimpleButton'
 import { useCountdown, useHalving } from '../../utils/hook'
@@ -31,10 +32,13 @@ function numberToOrdinal(number: number) {
 }
 
 export const HalvingBanner = () => {
-  const { estimatedDate, halvingCount, inCelebration } = useHalving()
+  const { estimatedDate, halvingCount, inCelebration, isLoading } = useHalving()
   const [days, hours, minutes, seconds] = useCountdown(estimatedDate)
 
   const shortCountdown = () => {
+    if (isLoading || Number.isNaN(seconds)) {
+      return <img className={styles.halvingLoading} src={LoadingWhiteImage} alt="loading" />
+    }
     if (days > 0) {
       return `${days}${i18n.t('symbol.char_space')}${i18n.t('unit.days')}`
     }
@@ -73,9 +77,13 @@ export const HalvingBanner = () => {
           )}
           <a href="/halving">
             <SimpleButton className={styles.learnMoreButton}>
-              {inCelebration
-                ? i18n.t('halving.learn_more')
-                : `${i18n.t('halving.halving_countdown')} ${shortCountdown()}`}
+              {inCelebration ? (
+                i18n.t('halving.learn_more')
+              ) : (
+                <>
+                  {i18n.t('halving.halving_countdown')} {shortCountdown()}
+                </>
+              )}
               <MoveIcon style={{ marginTop: 2 }} />
             </SimpleButton>
           </a>

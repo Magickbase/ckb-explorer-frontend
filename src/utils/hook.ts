@@ -616,13 +616,14 @@ export const useSingleHalving = (_halvingCount = 1) => {
     (Number(statistics.epochInfo.index) / Number(statistics.epochInfo.epochLength)) * THEORETICAL_EPOCH_TIME
 
   const estimatedTime = (targetEpoch - currentEpoch) * THEORETICAL_EPOCH_TIME - currentEpochUsedTime
-  const estimatedDate = useMemo(() => new Date(new Date().getTime() + estimatedTime), [estimatedTime])
+  const estimatedDate = new Date(new Date().getTime() + estimatedTime)
 
   const haveDone = currentEpoch >= targetEpoch || new Date().getTime() > estimatedDate.getTime()
   const celebrationOverEpoch = targetEpoch + 30 * 6 // Every 6 epochs is theoretically 1 day.
   const inCelebration = haveDone && currentEpoch < celebrationOverEpoch && !celebrationSkipped
 
   return {
+    isLoading: statistics.epochInfo.index === '0',
     halvingCount,
     currentEpoch,
     targetEpoch,
