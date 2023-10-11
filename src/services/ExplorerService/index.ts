@@ -1,6 +1,6 @@
 import { BehaviorSubject, Subscription, map, switchMap, timer } from 'rxjs'
 import { BLOCK_POLLING_TIME } from '../../constants/common'
-import * as apiFetcher from './fetcher'
+import { apiFetcher } from './fetcher'
 
 const initStatistics: State.Statistics = {
   tipBlockNumber: '0',
