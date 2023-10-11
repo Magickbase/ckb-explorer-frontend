@@ -1,14 +1,11 @@
 import { AxiosResponse } from 'axios'
 import BigNumber from 'bignumber.js'
 import { Dayjs } from 'dayjs'
+import { ReactNode } from 'react'
 import { pick } from '../../utils/object'
 import { toCamelcase } from '../../utils/util'
 import { requesterV1, requesterV2 } from './requester'
 import { Response } from './types'
-
-// TODO: Temporarily compatible with old code, it exists in the form of `explorerService.api.requesterV2`,
-// and in the future, the `requester` should be hidden from the outside.
-export { requesterV2 }
 
 export const fetchBlocks = (page: number, size: number, sort?: string) =>
   requesterV1
@@ -45,6 +42,9 @@ export const fetchTransactionsByAddress = (
       },
     })
     .then((res: AxiosResponse) => toCamelcase<Response.Response<Response.Wrapper<State.Transaction>[]>>(res.data))
+
+export const fetchTransactionRaw = (hash: string) =>
+  requesterV2.get<unknown>(`transactions/${hash}/raw`).then(res => res.data)
 
 export const fetchTransactionByHash = (hash: string) =>
   requesterV1
@@ -315,6 +315,44 @@ export const fetchStatisticMinerVersionDistribution = () =>
     toCamelcase<{ data: Array<{ version: string; blocksCount: number }> }>(res.data),
   )
 
+export namespace FeeRateTracker {
+  export interface TransactionFeeRate {
+    id: number
+    timestamp: number
+    feeRate: number
+    confirmationTime: number
+  }
+
+  export interface PendingTransactionFeeRate {
+    id: number
+    feeRate: number
+  }
+
+  export interface LastNDaysTransactionFeeRate {
+    date: string
+    feeRate: string
+  }
+
+  export interface TransactionFeesStatistic {
+    transactionFeeRates: TransactionFeeRate[]
+    pendingTransactionFeeRates: PendingTransactionFeeRate[]
+    lastNDaysTransactionFeeRates: LastNDaysTransactionFeeRate[]
+  }
+
+  export interface FeeRateCard {
+    priority: string
+    icon: ReactNode
+    feeRate?: string
+    priorityClass: string
+    confirmationTime: number
+  }
+}
+
+export const fetchStatisticTransactionFees = () =>
+  requesterV2
+    .get('statistics/transaction_fees')
+    .then(res => toCamelcase<FeeRateTracker.TransactionFeesStatistic>(res.data))
+
 export const fetchStatisticCellCount = (): Promise<Response.Response<Response.Wrapper<State.StatisticCellCount>[]>> =>
   requesterV1(`/daily_statistics/live_cells_count-dead_cells_count`).then(res => {
     const resp = toCamelcase<Response.Response<Response.Wrapper<Omit<State.StatisticCellCount, 'allCellsCount'>>[]>>(
@@ -516,4 +554,285 @@ export const exportTransactions = ({
   return requesterV1
     .get(`/${type}/download_csv`, { params: { ...rangeParams, id } })
     .then(res => toCamelcase<string>(res.data))
+}
+
+export interface NFTCollection {
+  id: number
+  standard: string
+  name: string
+  description: string
+  h24_ckb_transactions_count: string
+  creator: string | null
+  icon_url: string | null
+  items_count: number | null
+  holders_count: number | null
+  type_script: { code_hash: string; hash_type: 'data' | 'type'; args: string } | null
+}
+
+export const fetchNFTCollections = (page: string, sort: string, type?: string) =>
+  requesterV2
+    .get<{
+      data: Array<NFTCollection>
+      pagination: {
+        count: number
+        page: number
+        next: number | null
+        prev: number | null
+        last: number
+      }
+    }>('nft/collections', {
+      params: {
+        page,
+        sort,
+        type,
+      },
+    })
+    .then(res => res.data)
+
+export const fetchNFTCollection = (collection: string) =>
+  requesterV2.get<NFTCollection>(`nft/collections/${collection}`).then(res => res.data)
+
+export const fetchNFTCollectionHolders = (id: string, page: string, sort?: string, addressHash?: string | null) =>
+  requesterV2
+    .get<{
+      data: Record<string, number>
+    }>(`/nft/collections/${id}/holders`, {
+      params: {
+        page,
+        sort,
+        address_hash: addressHash,
+      },
+    })
+    .then(res => res.data)
+
+export interface NFTItem {
+  icon_url: string | null
+  id: number
+  token_id: string
+  owner: string | null
+  standard: string | null
+  cell: {
+    cell_index: number
+    data: string | null
+    status: string
+    tx_hash: string
+  } | null
+  collection: NFTCollection
+  name: string | null
+  metadata_url: string | null
+}
+
+export const fetchNFTCollectionItems = (id: string, page: string) =>
+  requesterV2
+    .get<{
+      data: Array<NFTItem>
+      pagination: {
+        count: number
+        page: number
+        next: number | null
+        prev: number | null
+        last: number
+      }
+    }>(`/nft/collections/${id}/items`, {
+      params: {
+        page,
+      },
+    })
+    .then(res => res.data)
+
+export const fetchNFTCollectionItem = (collectionId: string, id: string) =>
+  requesterV2.get<NFTItem>(`nft/collections/${collectionId}/items/${id}`).then(res => res.data)
+
+export const fetchNFTItemByOwner = (owner: string, standard: string, page?: string) =>
+  requesterV2
+    .get<{
+      data: Array<NFTItem>
+      pagination: {
+        series: Array<string>
+      }
+    }>('nft/items', {
+      params: {
+        owner,
+        standard,
+        page,
+      },
+    })
+    .then(res => res.data)
+
+export interface ScriptInfo {
+  id: string
+  scriptName: string
+  scriptType: string
+  codeHash: string
+  hashType: 'type' | 'data'
+  capacityOfDeployedCells: string
+  capacityOfReferringCells: string
+  countOfTransactions: number
+  countOfDeployedCells: number
+  countOfReferringCells: number
+}
+
+export const fetchScriptInfo = (codeHash: string, hashType: string) =>
+  requesterV2
+    .get('scripts/general_info', {
+      params: {
+        code_hash: codeHash,
+        hash_type: hashType,
+      },
+    })
+    .then(res => toCamelcase<Response.Response<ScriptInfo>>(res.data))
+
+export interface CKBTransactionInScript {
+  id: number
+  txHash: string
+  blockId: number
+  blockNumber: number
+  blockTimestamp: number
+  transactionFee: number
+  isCellbase: boolean
+  txStatus: string
+  displayInputs: State.Cell[]
+  displayOutputs: State.Cell[]
+}
+
+export const fetchScriptCKBTransactions = (codeHash: string, hashType: string, page: number, pageSize: number) =>
+  requesterV2
+    .get('scripts/ckb_transactions', {
+      params: {
+        code_hash: codeHash,
+        hash_type: hashType,
+        page,
+        page_size: pageSize,
+      },
+    })
+    .then(res =>
+      toCamelcase<
+        Response.Response<{
+          ckbTransactions: CKBTransactionInScript[]
+          // TODO: This structure is unexpected and will be adjusted in the future.
+          // Refs: https://github.com/Magickbase/ckb-explorer-public-issues/issues/451
+          meta: {
+            total: number
+            pageSize: number
+          }
+        }>
+      >(res.data),
+    )
+
+export interface CellInScript {
+  id: number
+  capacity: string
+  data: string
+  ckbTransactionId: number
+  createdAt: string
+  updatedAt: string
+  status: string
+  addressId: number
+  blockId: number
+  txHash: string
+  cellIndex: number
+  generatedById?: number
+  consumedById?: number
+  cellType: string
+  dataSize: number
+  occupiedCapacity: number
+  blockTimestamp: number
+  consumedBlockTimestamp: number
+  typeHash?: string
+  udtAmount: number
+  dao: string
+  lockScriptId?: number
+  typeScriptId?: number
+}
+
+export const fetchScriptCells = (
+  cellType: 'deployed_cells' | 'referring_cells',
+  codeHash: string,
+  hashType: string,
+  page: number,
+  pageSize: number,
+) =>
+  requesterV2
+    .get(`scripts/${cellType}`, {
+      params: {
+        code_hash: codeHash,
+        hash_type: hashType,
+        page,
+        page_size: pageSize,
+      },
+    })
+    .then(res =>
+      toCamelcase<
+        Response.Response<{
+          deployedCells?: CellInScript[]
+          referringCells?: CellInScript[]
+          // TODO: This structure is unexpected and will be adjusted in the future.
+          // Refs: https://github.com/Magickbase/ckb-explorer-public-issues/issues/451
+          meta: {
+            total: number
+            pageSize: number
+          }
+        }>
+      >(res.data),
+    )
+
+export interface TransferRes {
+  id: number
+  from: string | null
+  to: string | null
+  action: 'mint' | 'normal' | 'destruction'
+  item: NFTItem
+  transaction: {
+    tx_hash: string
+    block_number: number
+    block_timestamp: number
+  }
+}
+
+export interface TransferListRes {
+  data: Array<TransferRes>
+  pagination: {
+    count: number
+    page: number
+    next: number | null
+    prev: number | null
+    last: number
+  }
+}
+
+export const fetchNFTCollectionTransferList = (
+  id: string,
+  page: string,
+  tokenId?: string | null,
+  transferAction?: string | null,
+  addressHash?: string | null,
+  txHash?: string | null,
+) =>
+  requesterV2
+    .get<TransferListRes>(`/nft/transfers`, {
+      params: {
+        page,
+        collection_id: id,
+        token_id: tokenId,
+        transfer_action: transferAction,
+        address_hash: addressHash,
+        tx_hash: txHash,
+      },
+    })
+    .then(res => res.data)
+
+export type DASAccount = string
+
+export type DASAccountMap = Record<string, DASAccount | null>
+
+export async function fetchDASAccounts(addresses: string[]): Promise<DASAccountMap> {
+  const { data } = await requesterV2.post<Record<string, string>>('das_accounts', {
+    addresses,
+  })
+  const dataWithNormalizeEmptyValue = Object.fromEntries(
+    Object.entries(data).map(([addr, account]) => {
+      return account === '' ? [addr, null] : [addr, account]
+    }),
+  )
+  return dataWithNormalizeEmptyValue
 }
