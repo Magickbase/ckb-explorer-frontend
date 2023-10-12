@@ -9,7 +9,7 @@ import SimpleButton from '../../SimpleButton'
 import ChainDropdown from '../../Dropdown/ChainType'
 import { useIsMobile } from '../../../utils/hook'
 import { ChainName, MAINNET_URL, TESTNET_URL } from '../../../constants/common'
-import { fetchNodeVersion } from '../../../service/http/fetcher'
+import { explorerService } from '../../../services/ExplorerService'
 import { AppCachedKeys } from '../../../constants/cache'
 import { fetchCachedData, storeCachedData } from '../../../utils/cache'
 
@@ -50,14 +50,14 @@ const BlockchainDropdown: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
       }}
     >
       <SimpleButton
-        className="header__blockchain__flag"
+        className="headerBlockchainFlag"
         onMouseOver={() => {
           setShowChainType(true)
         }}
       >
-        <div className="header__blockchain__content_panel">
+        <div className="headerBlockchainContentPanel">
           <div
-            className="header__blockchain__content"
+            className="headerBlockchainContent"
             style={{
               textTransform: 'uppercase',
             }}
@@ -66,7 +66,7 @@ const BlockchainDropdown: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
           </div>
           <img src={getDropdownIcon(showChainType)} alt="dropdown icon" />
         </div>
-        <div className="header__blockchain__node__version">{handleVersion(nodeVersion)}</div>
+        <div className="headerBlockchainNodeVersion">{handleVersion(nodeVersion)}</div>
       </SimpleButton>
       {showChainType && <ChainDropdown setShow={setShowChainType} left={chainTypeLeft} top={chainTypeTop} />}
     </HeaderBlockchainPanel>
@@ -86,28 +86,28 @@ const BlockchainMenu: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
   return (
     <MobileSubMenuPanel showSubMenu={false}>
       <SimpleButton
-        className="mobile__menus__main__item"
+        className="mobileMenusMainItem"
         onClick={() => {
           setShowSubMenu(!showSubMenu)
         }}
       >
         <div
-          className="mobile__menus__main__item__content__highlight"
+          className="mobileMenusMainItemContentHighlight"
           style={{
             textTransform: 'uppercase',
           }}
         >
           {isMainnet() ? ChainName.Mainnet : ChainName.Testnet}
         </div>
-        <img className="mobile__menus__main__item__icon" alt="mobile chain type icon" src={chainTypeIcon()} />
+        <img className="mobileMenusMainItemIcon" alt="mobile chain type icon" src={chainTypeIcon()} />
       </SimpleButton>
-      <div className="blockchain__mobile__node__version">{handleVersion(nodeVersion)}</div>
+      <div className="blockchainMobileNodeVersion">{handleVersion(nodeVersion)}</div>
       {showSubMenu && (
         <>
-          <a className="mobile__menus__sub__item" href={MAINNET_URL}>
+          <a className="mobileMenusSubItem" href={MAINNET_URL}>
             {`${ChainName.Mainnet} mainnet`}
           </a>
-          <a className="mobile__menus__sub__item" href={TESTNET_URL}>
+          <a className="mobileMenusSubItem" href={TESTNET_URL}>
             {`${ChainName.Testnet} testnet`}
           </a>
         </>
@@ -122,7 +122,7 @@ export default memo(() => {
   const query = useQuery(
     ['node_version'],
     async () => {
-      const wrapper = await fetchNodeVersion()
+      const wrapper = await explorerService.api.fetchNodeVersion()
       const nodeVersion = wrapper.attributes.version
       storeCachedData(AppCachedKeys.Version, `${nodeVersion}&${new Date().getTime()}`)
       return nodeVersion

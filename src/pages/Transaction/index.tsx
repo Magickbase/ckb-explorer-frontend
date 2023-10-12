@@ -5,7 +5,7 @@ import Content from '../../components/Content'
 import { useI18n } from '../../utils/i18n'
 import { TransactionDiv as TransactionPanel } from './styled'
 import TransactionComp, { TransactionOverview } from './TransactionComp'
-import { fetchTransactionByHash } from '../../service/http/fetcher'
+import { explorerService } from '../../services/ExplorerService'
 import { QueryResult } from '../../components/QueryResult'
 import { defaultTransactionInfo } from './state'
 
@@ -14,7 +14,7 @@ export default () => {
   const { hash: txHash } = useParams<{ hash: string }>()
 
   const query = useQuery(['transaction', txHash], async () => {
-    const wrapper = await fetchTransactionByHash(txHash)
+    const wrapper = await explorerService.api.fetchTransactionByHash(txHash)
     const transaction = wrapper.attributes
     if (transaction.displayOutputs && transaction.displayOutputs.length > 0) {
       transaction.displayOutputs[0].isGenesisOutput = transaction.blockNumber === 0

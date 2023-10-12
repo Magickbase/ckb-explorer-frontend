@@ -65,7 +65,7 @@ const BlockMinerMessage = ({ minerMessage }: { minerMessage: string }) => {
     <BlockMinerMessagePanel>
       <AddressText monospace={false}>{minerMessage}</AddressText>
       <Tooltip placement="top" title={`UTF-8: ${hexToUtf8(minerMessage)}`}>
-        <img className="block__miner__message_utf8" src={MoreIcon} alt="more" />
+        <img className="blockMinerMessageUtf8" src={MoreIcon} alt="more" />
       </Tooltip>
     </BlockMinerMessagePanel>
   )
@@ -86,7 +86,7 @@ const BlockMinerReward = ({
       <div className="block__miner__reward_value">{value}</div>
       <Tooltip placement="top" title={tooltip}>
         <div
-          className="block__miner__reward_tip"
+          className="blockMinerRewardTip"
           role="button"
           tabIndex={-1}
           onKeyDown={() => {}}
@@ -299,11 +299,11 @@ export const BlockOverview: FC<{ block: State.Block }> = ({ block }) => {
           <span />
           {rootInfoItems.map(item => (
             <BlockRootInfoItemPanel key={item.title}>
-              <div className="block__root_info_title">
+              <div className="blockRootInfoTitle">
                 <span>{item.title}</span>
                 {item.tooltip && <HelpTip title={item.tooltip} />}
               </div>
-              <div className="block__root_info_value monospace">{item.content}</div>
+              <div className="blockRootInfoValue monospace">{item.content}</div>
             </BlockRootInfoItemPanel>
           ))}
         </BlockRootInfoPanel>
@@ -339,6 +339,7 @@ export const BlockComp = ({
         title={`${i18n.t('transaction.transactions')} (${localeNumberString(total)})`}
         className={styles.transactionTitleCard}
         isSingle
+        rearClassName={styles.rear}
         rear={
           <Filter
             showReset={!!filter}

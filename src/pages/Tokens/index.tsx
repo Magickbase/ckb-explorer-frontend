@@ -24,7 +24,7 @@ import { udtSubmitEmail } from '../../utils/util'
 import SmallLoading from '../../components/Loading/SmallLoading'
 import styles from './styles.module.scss'
 import { useIsMobile, usePaginationParamsInPage } from '../../utils/hook'
-import { fetchTokens } from '../../service/http/fetcher'
+import { explorerService } from '../../services/ExplorerService'
 import { QueryResult } from '../../components/QueryResult'
 
 const TokenItem = ({ token, isLast }: { token: State.UDT; isLast?: boolean }) => {
@@ -57,8 +57,8 @@ const TokenItem = ({ token, isLast }: { token: State.UDT; isLast?: boolean }) =>
 
   return (
     <TokensTableItem>
-      <div className="tokens__item__content">
-        <div className="tokens__item__name__panel">
+      <div className="tokensItemContent">
+        <div className="tokensItemNamePanel">
           <img src={token.iconFile ? token.iconFile : SUDTTokenIcon} alt="token icon" />
           <div>
             <TokensItemNamePanel>
@@ -79,18 +79,16 @@ const TokenItem = ({ token, isLast }: { token: State.UDT; isLast?: boolean }) =>
                 </Tooltip>
               )}
             </TokensItemNamePanel>
-            {token.description && !isMobile && <div className="tokens__item__description">{token.description}</div>}
+            {token.description && !isMobile && <div className="tokensItemDescription">{token.description}</div>}
           </div>
         </div>
-        <div className="tokens__item__transactions">{transactions}</div>
-        <div className="tokens__item__address__count">{addressCount}</div>
+        <div className="tokensItemTransactions">{transactions}</div>
+        <div className="tokensItemAddressCount">{addressCount}</div>
         {!isMobile && (
-          <div className="tokens__item__created__time">
-            {parseDateNoTime(Number(token.createdAt) / 1000, false, '-')}
-          </div>
+          <div className="tokensItemCreatedTime">{parseDateNoTime(Number(token.createdAt) / 1000, false, '-')}</div>
         )}
       </div>
-      {!isLast && <div className="tokens__item__separate" />}
+      {!isLast && <div className="tokensItemSeparate" />}
     </TokensTableItem>
   )
 }
@@ -104,7 +102,7 @@ export default () => {
   const sort = new URLSearchParams(location.search).get('sort')
 
   const query = useQuery(['tokens', currentPage, _pageSize, sort], async () => {
-    const { data, meta } = await fetchTokens(currentPage, _pageSize, sort ?? undefined)
+    const { data, meta } = await explorerService.api.fetchTokens(currentPage, _pageSize, sort ?? undefined)
     if (data == null || data.length === 0) {
       throw new Error('Tokens empty')
     }
@@ -121,7 +119,7 @@ export default () => {
   return (
     <Content>
       <TokensPanel className="container">
-        <div className="tokens__title__panel">
+        <div className="tokensTitlePanel">
           <span>{i18n.t('udt.tokens')}</span>
           <a rel="noopener noreferrer" target="_blank" href={udtSubmitEmail()}>
             {i18n.t('udt.submit_token_info')}

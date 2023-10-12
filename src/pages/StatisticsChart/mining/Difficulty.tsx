@@ -5,7 +5,7 @@ import { parseDateNoTime } from '../../../utils/date'
 import { handleDifficulty } from '../../../utils/number'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { fetchStatisticDifficulty } from '../../../service/http/fetcher'
+import { explorerService } from '../../../services/ExplorerService'
 import { I18nInfoType } from '../../../utils/i18n'
 
 const getOption = (
@@ -106,7 +106,7 @@ export const DifficultyChart = ({ isThumbnail = false }: { isThumbnail?: boolean
     <SmartChartPage
       title={t('block.difficulty')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticDifficulty}
+      fetchData={explorerService.api.fetchStatisticDifficulty}
       getEChartOption={getOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.Difficulty}

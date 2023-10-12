@@ -2,8 +2,8 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
 export const HomeChartLink = styled(Link)`
-  div {
-    cursor: pointer !important;
+  canvas {
+    cursor: pointer;
   }
 `
 
@@ -13,7 +13,7 @@ export const ChartLoadingPanel = styled.div`
   align-items: center;
   justify-content: center;
 
-  .chart__no__data {
+  .chartNoData {
     width: 105px;
     height: auto;
 

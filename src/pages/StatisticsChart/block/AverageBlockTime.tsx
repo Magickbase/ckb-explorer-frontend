@@ -3,7 +3,7 @@ import { parseDateNoTime, parseSimpleDate, parseSimpleDateNoSecond } from '../..
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
 import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
-import { fetchStatisticAverageBlockTimes } from '../../../service/http/fetcher'
+import { explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { I18nInfoType } from '../../../utils/i18n'
 
@@ -186,7 +186,7 @@ export const AverageBlockTimeChart = ({ isThumbnail = false }: { isThumbnail?: b
       title={t('statistic.average_block_time')}
       description={t('statistic.average_block_time_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticAverageBlockTimes}
+      fetchData={explorerService.api.fetchStatisticAverageBlockTimes}
       getEChartOption={getOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.AverageBlockTime}

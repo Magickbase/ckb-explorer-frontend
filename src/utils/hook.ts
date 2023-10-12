@@ -26,6 +26,8 @@ import {
 import { parseDate } from './date'
 import { omit } from './object'
 import { useI18n } from './i18n'
+// TODO: This file depends on higher-level abstractions, so it should not be in the utils folder. It should be moved to `src/hooks/index.ts`.
+import { Response } from '../services/ExplorerService'
 
 /**
  * Returns the value of the argument from the previous render

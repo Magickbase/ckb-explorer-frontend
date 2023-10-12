@@ -67,7 +67,7 @@ const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBas
     return (
       <AddressText
         linkProps={{
-          className: 'transaction__cell_address_link',
+          className: 'transactionCellAddressLink',
           to: `/address/${address}`,
         }}
       >
@@ -76,7 +76,7 @@ const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBas
     )
   }
   return (
-    <span className="transaction__cell_address_no_link">
+    <span className="transactionCellAddressNoLink">
       {isCellBase ? 'Cellbase' : i18n.t('address.unable_decode_address')}
     </span>
   )
@@ -115,7 +115,7 @@ const TransactionCellIndexAddress = ({
   }
   return (
     <TransactionCellAddressPanel>
-      <div className="transaction__cell_index">
+      <div className="transactionCellIndex">
         <div>{`#${index}`}</div>
       </div>
       <TransactionCellHashPanel highLight={cell.addressHash !== null}>
@@ -239,7 +239,7 @@ const TransactionCellDetail = ({ cell }: { cell: State.Cell }) => {
   }
   return (
     <TransactionCellDetailPanel isWithdraw={cell.cellType === 'nervos_dao_withdrawing'}>
-      <div className="transaction__cell__detail__panel">
+      <div className="transactionCellDetailPanel">
         {tooltip ? (
           <Tooltip placement="top" title={tooltip}>
             <img src={detailIcon} alt="cell detail" />
@@ -258,13 +258,13 @@ const TransactionCellInfo = ({ cell, children }: { cell: State.Cell; children: s
   return (
     <TransactionCellInfoPanel>
       <SimpleButton
-        className="transaction__cell__info__content"
+        className="transactionCellInfoContent"
         onClick={() => {
           setShowModal(true)
         }}
       >
         <div>{children}</div>
-        <div className="transaction__cell__info__separate" />
+        <div className="transactionCellInfoSeparate" />
       </SimpleButton>
       <SimpleModal isShow={showModal} setIsShow={setShowModal}>
         <TransactionCellDetailModal>
@@ -289,8 +289,8 @@ const TransactionCellCapacityAmount = ({ cell }: { cell: State.Cell }) => {
 
 const TransactionCellMobileItem = ({ title, value = null }: { title: string | ReactNode; value?: ReactNode }) => (
   <TransactionCellCardContent>
-    <div className="transaction__cell__card__title">{title}</div>
-    <div className="transaction__cell__card__value">{value}</div>
+    <div className="transactionCellCardTitle">{title}</div>
+    <div className="transactionCellCardValue">{value}</div>
   </TransactionCellCardContent>
 )
 
@@ -315,7 +315,7 @@ export default ({
   if (isMobile) {
     return (
       <TransactionCellCardPanel>
-        <div className="transaction__cell__card__separate" />
+        <div className="transactionCellCardSeparate" />
         <TransactionCellMobileItem
           title={
             cell.fromCellbase && cellType === CellType.Input ? (
@@ -350,7 +350,7 @@ export default ({
   return (
     <TransactionCellPanel id={cellType === CellType.Output ? `output_${index}_${txHash}` : ''}>
       <TransactionCellContentPanel isCellbase={cell.fromCellbase}>
-        <div className="transaction__cell__address">
+        <div className="transactionCellAddress">
           {cell.fromCellbase && cellType === CellType.Input ? (
             <Cellbase cell={cell} cellType={cellType} isDetail />
           ) : (
@@ -358,7 +358,7 @@ export default ({
           )}
         </div>
 
-        <div className="transaction__cell_detail">
+        <div className="transactionCellDetail">
           {cell.fromCellbase && cellType === CellType.Input ? (
             <TransactionReward showReward={showReward} cell={cell} />
           ) : (
@@ -366,11 +366,11 @@ export default ({
           )}
         </div>
 
-        <div className="transaction__cell_capacity">
+        <div className="transactionCellCapacity">
           <TransactionCellCapacityAmount cell={cell} />
         </div>
 
-        <div className="transaction__detail__cell_info">
+        <div className="transactionDetailCellInfo">
           <TransactionCellInfo cell={cell}>Cell Info</TransactionCellInfo>
         </div>
       </TransactionCellContentPanel>

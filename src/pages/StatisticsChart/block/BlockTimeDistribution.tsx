@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { fetchStatisticBlockTimeDistribution } from '../../../service/http/fetcher'
+import { explorerService } from '../../../services/ExplorerService'
 import { I18nInfoType } from '../../../utils/i18n'
 
 const getOption = (
@@ -92,7 +92,7 @@ const getOption = (
 const fetchStatisticBlockTimeDistributions = async () => {
   const {
     attributes: { blockTimeDistribution },
-  } = await fetchStatisticBlockTimeDistribution()
+  } = await explorerService.api.fetchStatisticBlockTimeDistribution()
   const sumBlocks = blockTimeDistribution
     .flatMap(data => Number(data[1]))
     .reduce((previous, current) => previous + current)

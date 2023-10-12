@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
-import { fetchStatisticUncleRate } from '../../../service/http/fetcher'
+import { explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { I18nInfoType } from '../../../utils/i18n'
 
@@ -120,7 +120,7 @@ export const UncleRateChart = ({ isThumbnail = false }: { isThumbnail?: boolean 
       title={t('block.uncle_rate')}
       description={t('statistic.uncle_rate_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticUncleRate}
+      fetchData={explorerService.api.fetchStatisticUncleRate}
       getEChartOption={getOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.UncleRate}

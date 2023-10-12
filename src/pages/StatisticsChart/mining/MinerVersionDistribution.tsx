@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { EChartOption } from 'echarts'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { fetchStatisticMinerVersionDistribution } from '../../../service/http/fetcher'
+import { explorerService } from '../../../services/ExplorerService'
 import { I18nInfoType } from '../../../utils/i18n'
 
 const Colors = [
@@ -103,7 +103,7 @@ const getOption = (
 }
 
 const fetchData = async () => {
-  const { data: list } = await fetchStatisticMinerVersionDistribution()
+  const { data: list } = await explorerService.api.fetchStatisticMinerVersionDistribution()
   const totalBlocks = list.reduce((acc, cur) => acc + cur.blocksCount, 0)
   return list.map(v => ({
     version: v.version,

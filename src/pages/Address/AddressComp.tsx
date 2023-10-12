@@ -6,7 +6,7 @@ import { Base64 } from 'js-base64'
 import { hexToBytes } from '@nervosnetwork/ckb-sdk-utils'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import TransactionItem from '../../components/TransactionItem/index'
-import { v2AxiosIns } from '../../service/http/fetcher'
+import { explorerService } from '../../services/ExplorerService'
 import { I18nType, useI18n } from '../../utils/i18n'
 import { parseSporeCellData } from '../../utils/spore'
 import { localeNumberString, parseUDTAmount } from '../../utils/number'
@@ -167,18 +167,18 @@ const AddressUDTItem = ({ udtAccount }: { udtAccount: State.UDTAccount }) => {
 
   return (
     <AddressUDTItemPanel href={href} isLink={isSudt || isNft}>
-      <div className="address__udt__label">
+      <div className="addressUdtLabel">
         {isUnverified ? `${i18n.t('udt.unverified')}: ` : null}
         <span>{UDT_LABEL[udtType] ?? 'unknown'}</span>
       </div>
-      <div className="address__udt__detail">
+      <div className="addressUdtDetail">
         <img
-          className="address__udt__item__icon"
+          className="addressUdtItemIcon"
           src={`${patchMibaoImg(icon)}${coverQuery}`}
           alt="udt icon"
           onError={isSudt ? showDefaultIcon : handleNftImgError}
         />
-        <div className="address__udt__item__info">
+        <div className="addressUdtItemInfo">
           <span>{isUnverified ? '?' : name}</span>
           <span>{isUnverified ? '?' : property}</span>
         </div>
@@ -282,7 +282,7 @@ export const AddressOverview: FC<{ address: State.Address }> = ({ address }) => 
 
   const { data: initList } = useQuery<AxiosResponse<CoTAList>>(
     ['cota-list', address.addressHash],
-    () => v2AxiosIns(`nft/items?owner=${address.addressHash}&standard=cota`),
+    () => explorerService.api.requesterV2(`nft/items?owner=${address.addressHash}&standard=cota`),
     {
       enabled: !!address?.addressHash,
     },
@@ -291,7 +291,7 @@ export const AddressOverview: FC<{ address: State.Address }> = ({ address }) => 
   const { data: cotaList } = useQuery<CoTAList['data']>(['cota-list', initList?.data.pagination.series], () =>
     Promise.all(
       (initList?.data.pagination.series ?? []).map(p =>
-        v2AxiosIns(`nft/items?owner=${address.addressHash}&standard=cota&page=${p}`),
+        explorerService.api.requesterV2(`nft/items?owner=${address.addressHash}&standard=cota&page=${p}`),
       ),
     ).then(list => {
       return list.reduce((total, acc) => [...total, ...acc.data.data], [] as CoTAList['data'])
@@ -306,7 +306,7 @@ export const AddressOverview: FC<{ address: State.Address }> = ({ address }) => 
       {udtAccounts.length || cotaList?.length ? (
         <AddressUDTAssetsPanel>
           <span>{i18n.t('address.user_defined_token')}</span>
-          <div className="address__udt__assets__grid">
+          <div className="addressUdtAssetsGrid">
             {udtAccounts.map(udt => (
               <AddressUDTItem udtAccount={udt} key={udt.symbol + udt.udtType + udt.amount} />
             ))}

@@ -18,7 +18,7 @@ import { isMainnet } from '../../utils/chain'
 import Filter from '../../components/Search/Filter'
 import { localeNumberString } from '../../utils/number'
 import Script from '../../components/Script'
-import { fetchSimpleUDT, fetchSimpleUDTTransactions } from '../../service/http/fetcher'
+import { explorerService } from '../../services/ExplorerService'
 import { deprecatedAddrToNewAddr } from '../../utils/util'
 import { QueryResult } from '../../components/QueryResult'
 import { defaultUDTInfo } from './state'
@@ -54,7 +54,7 @@ export const SimpleUDT = () => {
   const type = query.get('type')
 
   const querySimpleUDT = useQuery(['simple-udt'], async () => {
-    const wrapper = await fetchSimpleUDT(typeHash)
+    const wrapper = await explorerService.api.fetchSimpleUDT(typeHash)
     const udt = wrapper.attributes
     return udt
   })
@@ -64,7 +64,7 @@ export const SimpleUDT = () => {
   const querySimpleUDTTransactions = useQuery(
     ['simple-udt-transactions', typeHash, currentPage, _pageSize, filter, type],
     async () => {
-      const { data, meta } = await fetchSimpleUDTTransactions({
+      const { data, meta } = await explorerService.api.fetchSimpleUDTTransactions({
         typeHash,
         page: currentPage,
         size: pageSize,
@@ -128,8 +128,8 @@ export const SimpleUDT = () => {
         </SimpleUDTHashCard>
 
         <UDTTransactionTitlePanel>
-          <div className="udt__transaction__container">
-            <div className="udt__transaction__title">
+          <div className="udtTransactionContainer">
+            <div className="udtTransactionTitle">
               {`${t('transaction.transactions')} (${localeNumberString(total)})`}
             </div>
             <div className={styles.searchAndfilter}>
