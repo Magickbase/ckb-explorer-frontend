@@ -1,7 +1,5 @@
 import * as timezoneMock from 'timezone-mock'
 import * as MockDate from 'mockdate'
-import i18next from 'i18next'
-import { initReactI18next } from 'react-i18next'
 import {
   formatData,
   parseTime,
@@ -15,8 +13,8 @@ import {
   getCurrentYear,
   getCSTTime,
   parseDate,
+  dayjs,
 } from '../../utils/date'
-import en from '../../locales/en.json'
 
 describe('Date methods tests', () => {
   beforeAll(() => {
@@ -87,23 +85,23 @@ describe('Date methods tests', () => {
   })
 
   it('parseDate', async () => {
-    i18next.use(initReactI18next).init({
-      resources: {
-        en,
-      },
-      interpolation: {
-        escapeValue: false,
+    const localeList = dayjs.Ls
+    dayjs.updateLocale('en', {
+      relativeTime: {
+        ...localeList.en.relativeTime,
+        s: `%ds`,
+        m: `%dmin`,
+        mm: `%dmin`,
+        past: `%s ago`,
       },
     })
-
-    const t = i18next.getFixedT('en')
     MockDate.set(1588694400000, 480)
-    expect(parseDate(1588694380000, t)).toBe('20s ago')
-    expect(parseDate(1588691000000, t)).toBe('56min 40s ago')
+    expect(parseDate(1588694380000)).toBe('20s ago')
+    expect(parseDate(1588691000000)).toBe('56min 40s ago')
 
     MockDate.reset()
     timezoneMock.register('UTC')
-    expect(parseDate(1588651000000, t)).toBe('2020/05/05 03:56:40')
+    expect(parseDate(1588651000000)).toBe('2020/05/05 03:56:40')
   })
 
   it('getCSTTime', async () => {

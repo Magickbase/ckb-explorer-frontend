@@ -7,6 +7,8 @@
       "overview": "Overview",
       "view_all": "View All",
       "minute": "min",
+      "seconds_unit": "s",
+      "ago": "ago",
       "second_ago": "s ago",
       "ckb_unit": "CKB",
       "note": "Note: ",

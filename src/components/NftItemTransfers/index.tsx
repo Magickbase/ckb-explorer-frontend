@@ -95,7 +95,7 @@ const NftItemTransfers: React.FC<{ list: TransferListRes['data']; isLoading: boo
                   <td>
                     {isShowInAge
                       ? dayjs(item.transaction.block_timestamp).fromNow()
-                      : parseDate(item.transaction.block_timestamp, t)}
+                      : parseDate(item.transaction.block_timestamp)}
                   </td>
                   <td>
                     {item.from ? (
@@ -173,7 +173,7 @@ const NftItemTransfers: React.FC<{ list: TransferListRes['data']; isLoading: boo
                 </div>
                 <div>
                   <dt>{t('nft.age')}</dt>
-                  <dd>{parseDate(item.transaction.block_timestamp, t)}</dd>
+                  <dd>{parseDate(item.transaction.block_timestamp)}</dd>
                 </div>
                 <div>
                   <dt>{t('nft.from')}</dt>

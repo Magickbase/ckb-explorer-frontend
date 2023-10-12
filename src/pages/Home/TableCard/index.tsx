@@ -8,7 +8,7 @@ import { TableMinerContentItem } from '../../../components/Table'
 import { BlockRewardPlusPanel, BlockRewardPanel, BlockCardPanel, TransactionCardPanel } from './styled'
 import AddressText from '../../../components/AddressText'
 import styles from './index.module.scss'
-import { useParsedDate } from '../../../utils/hook'
+import { useParseDate } from '../../../utils/hook'
 
 // eslint-disable-next-line no-underscore-dangle
 const _BlockCardItem: FC<{ block: State.Block; isDelayBlock?: boolean }> = ({ block, isDelayBlock }) => {
@@ -35,7 +35,7 @@ const _BlockCardItem: FC<{ block: State.Block; isDelayBlock?: boolean }> = ({ bl
     </BlockRewardPanel>
   )
 
-  const parsedBlockCreateAt = useParsedDate(block.timestamp)
+  const parsedBlockCreateAt = useParseDate(block.timestamp)
 
   return (
     <BlockCardPanel>
@@ -83,7 +83,7 @@ const _TransactionCardItem: FC<{
   confirmation = confirmation < 0 ? 0 : confirmation
   const confirmationUnit = confirmation > 1 ? t('address.confirmations') : t('address.confirmation')
 
-  const parsedBlockCreateAt = useParsedDate(transaction.blockTimestamp)
+  const parsedBlockCreateAt = useParseDate(transaction.blockTimestamp)
 
   return (
     <TransactionCardPanel>

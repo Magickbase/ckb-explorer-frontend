@@ -11,7 +11,6 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { useResizeDetector } from 'react-resize-detector'
 import { interval, share } from 'rxjs'
-import { useTranslation } from 'react-i18next'
 import { AppCachedKeys } from '../constants/cache'
 import { deprecatedAddrToNewAddr } from './util'
 import { startEndEllipsis } from './string'
@@ -576,10 +575,8 @@ export function useTimestamp(): number {
   return timestamp
 }
 
-export function useParsedDate(timestamp: number): string {
-  const { t } = useTranslation()
-  const now = useTimestamp()
-  return parseDate(timestamp, t, now)
+export function useParseDate(timestamp: number): string {
+  return parseDate(timestamp)
 }
 
 export default {

@@ -13,7 +13,7 @@ import { getPrimaryColor } from '../../constants/common'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { explorerService } from '../../services/ExplorerService'
 import { dayjs } from '../../utils/date'
-import { useParsedDate, useTimestamp } from '../../utils/hook'
+import { useParseDate, useTimestamp } from '../../utils/hook'
 import { useCurrentLanguage } from '../../utils/i18n'
 
 const primaryColor = getPrimaryColor()
@@ -102,7 +102,7 @@ const TransferTableRow: FC<{
 }> = ({ collection, item, iconURL, isShowInAge }) => {
   const { t } = useTranslation()
   const coverUrl = item.item.icon_url ?? iconURL
-  const parsedBlockCreateAt = useParsedDate(item.transaction.block_timestamp)
+  const parsedBlockCreateAt = useParseDate(item.transaction.block_timestamp)
   const now = useTimestamp()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const timeRelativeBlockCreate = useMemo(() => dayjs(item.transaction.block_timestamp).fromNow(), [now])
@@ -234,7 +234,7 @@ const TransferCard: FC<{
 }> = ({ collection, item, iconURL }) => {
   const { t } = useTranslation()
   const coverUrl = item.item.icon_url ?? iconURL
-  const parsedBlockCreateAt = useParsedDate(item.transaction.block_timestamp)
+  const parsedBlockCreateAt = useParseDate(item.transaction.block_timestamp)
 
   const renderCover = () => {
     const cell = item.item?.cell
