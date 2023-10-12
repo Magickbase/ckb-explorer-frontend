@@ -205,6 +205,7 @@ export const PaginationRightItem = styled.div`
 
     @media (max-width: 750px) {
       margin-left: 10px;
+      margin-right: 10px;
       font-size: 12px;
     }
   }
