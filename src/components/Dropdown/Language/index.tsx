@@ -1,12 +1,12 @@
-import { I18nType, LanuageType, useI18n } from '../../../utils/i18n'
+import { TranslateFunction } from '../../../utils/i18n'
 import { LanguagePanel } from './styled'
 import SimpleButton from '../../SimpleButton'
 
-export const languageText = (lan: LanuageType | null, i18n: I18nType, reverse?: boolean) => {
+export const languageText = (lan: LanuageType | null, t: TranslateFunction, reverse?: boolean) => {
   if (reverse) {
-    return lan === 'zh' ? i18n.t('navbar.language_en') : i18n.t('navbar.language_zh')
+    return lan === 'zh' ? t('navbar.language_en') : t('navbar.language_zh')
   }
-  return lan === 'en' ? i18n.t('navbar.language_en') : i18n.t('navbar.language_zh')
+  return lan === 'en' ? t('navbar.language_en') : t('navbar.language_zh')
 }
 
 export default ({ setShow, left, top }: { setShow: Function; left: number; top: number }) => {
@@ -21,7 +21,7 @@ export default ({ setShow, left, top }: { setShow: Function; left: number; top: 
   return (
     <LanguagePanel left={left} top={top} onMouseLeave={hideDropdown}>
       <SimpleButton className="languageSelected" onClick={hideDropdown}>
-        {languageText(currentLanguage, i18n)}
+        {languageText(currentLanguage, t)}
       </SimpleButton>
       <div className="languageSeparate" />
       <SimpleButton className="languageNormal" onClick={handleLanguage}>

@@ -6,7 +6,6 @@ import RightBlueArrow from '../../../assets/right_blue_arrow.png'
 import LiveCellIcon from '../../../assets/live_cell.png'
 import LiveCellBlueIcon from '../../../assets/live_cell_blue.png'
 import { isMainnet } from '../../../utils/chain'
-import { useI18n } from '../../../utils/i18n'
 import { RightArrowImage, LeftArrowImage } from './styled'
 
 const CellInputIcon = ({ cell }: { cell: State.Cell }) =>
@@ -21,7 +20,7 @@ const CellInputIcon = ({ cell }: { cell: State.Cell }) =>
   ) : null
 
 const CellOutputIcon = ({ cell }: { cell: State.Cell }) => {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
 
   if (cell.status === 'dead') {
     return (
@@ -31,7 +30,7 @@ const CellOutputIcon = ({ cell }: { cell: State.Cell }) => {
     )
   }
   return (
-    <Tooltip placement="topRight" title={i18n.t('transaction.unspent_output')} arrowPointAtCenter>
+    <Tooltip placement="topRight" title={t('transaction.unspent_output')} arrowPointAtCenter>
       <RightArrowImage src={isMainnet() ? LiveCellIcon : LiveCellBlueIcon} alt="right arrow" />
     </Tooltip>
   )

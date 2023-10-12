@@ -6,7 +6,7 @@ import 'dayjs/locale/en'
 import BigNumber from 'bignumber.js'
 import weekday from 'dayjs/plugin/weekday'
 import localeData from 'dayjs/plugin/localeData'
-import { I18nType } from './i18n'
+import { TranslateFunction } from './i18n'
 
 dayjs.extend(relativeTime)
 dayjs.extend(updateLocale)
@@ -55,13 +55,13 @@ export const parseDateNoTime = (timestamp: number | string | Date, noYear = fals
   return `${year}${formatData(date.getMonth() + 1)}${connector}${formatData(date.getDate())}`
 }
 
-export const parseDate = (timestamp: number | string, i18n: I18nType, now = new Date().getTime()) => {
+export const parseDate = (timestamp: number | string, t: TranslateFunction, now = new Date().getTime()) => {
   const diff = (now - Number(timestamp)) / 1000
   if (diff < 60) {
-    return `${Math.floor(diff)}${i18n.t('common.second_ago')}`
+    return `${Math.floor(diff)}${t('common.second_ago')}`
   }
   if (diff < 3600) {
-    return `${Math.floor(diff / 60)}${i18n.t('common.minute')} ${Math.floor(diff % 60)}${i18n.t('common.second_ago')}`
+    return `${Math.floor(diff / 60)}${t('common.minute')} ${Math.floor(diff % 60)}${t('common.second_ago')}`
   }
   return parseSimpleDate(timestamp)
 }

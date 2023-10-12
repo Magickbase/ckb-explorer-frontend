@@ -1,10 +1,9 @@
-import { useI18n } from '../../utils/i18n'
+import { useTranslation } from 'react-i18next'
 import { IS_MAINTAINING } from '../../constants/common'
 import styles from './styles.module.scss'
 
 const MaintainAlert = () => {
-  const { i18n } = useI18n()
-  const { t } = i18n
+  const { t } = useTranslation()
   if (IS_MAINTAINING) {
     return <div className={styles.container}>{t('error.maintain')}</div>
   }

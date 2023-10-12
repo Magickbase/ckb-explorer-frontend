@@ -3,7 +3,7 @@ import { EChartOption } from 'echarts'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { explorerService } from '../../../services/ExplorerService'
-import { I18nInfoType } from '../../../utils/i18n'
+import { useCurrentLanguage } from '../../../utils/i18n'
 
 const Colors = [
   '#069ECD',
@@ -23,14 +23,14 @@ interface VersionRecord {
   percent: number
 }
 
-const getOption = (
+const useOption = (
   list: Array<VersionRecord>,
   chartColor: State.ChartColor,
   isMobile: boolean,
-  i18nInfo: I18nInfoType,
   isThumbnail = false,
 ): echarts.EChartOption => {
-  const { i18n, currentLanguage } = i18nInfo
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
 
   const gridThumbnail = {
     left: '4%',
@@ -52,10 +52,8 @@ const getOption = (
         formatter: data => {
           const item = Array.isArray(data) ? data[0] : data
           const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 80 : 60)
-          let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.version'))} ${
-            item.data.title
-          }</div>`
-          result += `<div>${tooltipColor(chartColor.colors[0])}${widthSpan(i18n.t('statistic.percent'))} ${
+          let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.version'))} ${item.data.title}</div>`
+          result += `<div>${tooltipColor(chartColor.colors[0])}${widthSpan(t('statistic.percent'))} ${
             item.data.value
           }%</div>`
           return result
@@ -78,7 +76,7 @@ const getOption = (
     },
     series: [
       {
-        name: i18n.t('statistic.miner_version_distribution'),
+        name: t('statistic.miner_version_distribution'),
         type: 'pie',
         radius: isMobile || isThumbnail ? '50%' : '75%',
         center: ['50%', '50%'],
@@ -90,7 +88,7 @@ const getOption = (
           },
         },
         data: list.map(data => {
-          const version = data.version === 'others' ? i18n.t(`statistic.others`) : data.version
+          const version = data.version === 'others' ? t(`statistic.others`) : data.version
           return {
             name: `${version} (${data.percent}%)`,
             title: version,
@@ -121,7 +119,7 @@ export const MinerVersionDistributionChart = ({ isThumbnail = false }: { isThumb
       title={t('statistic.miner_version_distribution')}
       isThumbnail={isThumbnail}
       fetchData={fetchData}
-      getEChartOption={getOption}
+      getEChartOption={useOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.MinerVersionDistribution}
       cacheMode="date"

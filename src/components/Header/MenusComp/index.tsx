@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { memo } from 'react'
 import { useIsMobile } from '../../../utils/hook'
-import { I18nType, useI18n } from '../../../utils/i18n'
+import { TranslateFunction } from '../../../utils/i18n'
 import { MobileMenuItem, MobileMenuLink, HeaderMenuPanel } from './styled'
 import { isMainnet } from '../../../utils/chain'
 
@@ -10,41 +10,41 @@ export enum LinkType {
   Outer,
 }
 
-const menuDataList = (i18n: I18nType) => [
+const menuDataList = (t: TranslateFunction) => [
   {
     type: LinkType.Inner,
-    name: i18n.t('navbar.home'),
+    name: t('navbar.home'),
     url: '/',
   },
   {
     type: LinkType.Inner,
-    name: i18n.t('navbar.nervos_dao'),
+    name: t('navbar.nervos_dao'),
     url: '/nervosdao',
   },
   {
     type: LinkType.Inner,
-    name: i18n.t('navbar.tokens'),
+    name: t('navbar.tokens'),
     url: '/tokens',
   },
   {
     type: LinkType.Inner,
-    name: i18n.t('navbar.nft_collections'),
+    name: t('navbar.nft_collections'),
     url: '/nft-collections',
   },
   {
     type: LinkType.Inner,
-    name: i18n.t('navbar.charts'),
+    name: t('navbar.charts'),
     url: '/charts',
   },
   {
     type: LinkType.Inner,
-    name: i18n.t('navbar.fee_rate'),
+    name: t('navbar.fee_rate'),
     url: '/fee-rate-tracker',
   },
   !isMainnet()
     ? {
         type: LinkType.Outer,
-        name: i18n.t('navbar.faucet'),
+        name: t('navbar.faucet'),
         url: 'https://faucet.nervos.org/',
       }
     : {},
@@ -60,7 +60,7 @@ const MenuItemLink = ({ menu }: { menu: any }) => {
 }
 
 export default memo(() => {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   return useIsMobile() ? (
     <MobileMenuItem>
       {menuDataList(i18n)

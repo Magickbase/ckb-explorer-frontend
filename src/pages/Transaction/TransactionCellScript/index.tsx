@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import { useEffect, useState, ReactNode, useRef } from 'react'
 import BigNumber from 'bignumber.js'
+import { useTranslation } from 'react-i18next'
 import { explorerService, Response } from '../../../services/ExplorerService'
 import { CellState } from '../../../constants/common'
 import { hexToUtf8 } from '../../../utils/string'
@@ -16,7 +17,7 @@ import {
   TransactionCellScriptContentPanel,
   TransactionDetailScriptButton,
 } from './styled'
-import { I18nType, useI18n } from '../../../utils/i18n'
+import { TranslateFunction } from '../../../utils/i18n'
 import SmallLoading from '../../../components/Loading/SmallLoading'
 import CloseIcon from '../../../assets/modal_close.png'
 import { getContractHashTag } from '../../../utils/util'
@@ -59,7 +60,7 @@ const handleFetchCellInfo = async (
   setScriptFetchStatus: (val: boolean) => void,
   setContent: Function,
   setToast: ReturnType<typeof useSetToast>,
-  i18n: I18nType,
+  t: TranslateFunction,
 ) => {
   setScriptFetchStatus(false)
 
@@ -101,7 +102,7 @@ const handleFetchCellInfo = async (
             const err = error.response.data[0]
             if (err.status === 400 && err.code === 1022) {
               setToast({
-                message: i18n.t('toast.data_too_large'),
+                message: t('toast.data_too_large'),
                 type: 'warning',
               })
               return null
@@ -184,7 +185,7 @@ const ScriptContent = ({
   content: State.Script | State.Data | CapacityUsage | undefined
   state: CellState
 }) => {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const hashTag = getContractHashTag(content as State.Script)
   const data = content as State.Data
   const script = content as State.Script
@@ -198,7 +199,7 @@ const ScriptContent = ({
           const v = capacities[key as keyof CapacityUsage]
 
           if (!v) return null
-          const field = i18n.t(`transaction.${key}_capacity`)
+          const field = t(`transaction.${key}_capacity`)
           return <ScriptContentItem key={key} title={`"${field}": `} value={v || ''} />
         })}
       </>
@@ -207,7 +208,7 @@ const ScriptContent = ({
   if (state === CellState.DATA) {
     return (
       <ScriptContentItem
-        title={data.data ? `"${i18n.t('transaction.script_data')}": ` : ''}
+        title={data.data ? `"${t('transaction.script_data')}": ` : ''}
         value={data.data ? `"${data.data}"` : JSON.stringify(initScriptContent.data, null, 4)}
       />
     )
@@ -217,7 +218,7 @@ const ScriptContent = ({
   }
   return (
     <>
-      <ScriptContentItem title={`"${i18n.t('transaction.script_code_hash')}": `} value={script.codeHash} />
+      <ScriptContentItem title={`"${t('transaction.script_code_hash')}": `} value={script.codeHash} />
       {hashTag && (
         <ScriptContentItem
           value={
@@ -227,8 +228,8 @@ const ScriptContent = ({
           }
         />
       )}
-      <ScriptContentItem title={`"${i18n.t('transaction.script_hash_type')}": `} value={script.hashType} />
-      <ScriptContentItem title={`"${i18n.t('transaction.script_args')}": `} value={(content as State.Script).args} />
+      <ScriptContentItem title={`"${t('transaction.script_hash_type')}": `} value={script.hashType} />
+      <ScriptContentItem title={`"${t('transaction.script_args')}": `} value={(content as State.Script).args} />
     </>
   )
 }
@@ -249,7 +250,7 @@ const ScriptContentJson = ({
 
 export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
   const setToast = useSetToast()
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const [scriptFetched, setScriptFetched] = useState(false)
   const [content, setContent] = useState(null as State.Script | State.Data | CapacityUsage | null)
   const [state, setState] = useState(CellState.LOCK as CellState)
@@ -260,13 +261,13 @@ export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
   }
 
   useEffect(() => {
-    handleFetchCellInfo(cell, state, setScriptFetched, setContent, setToast, i18n)
+    handleFetchCellInfo(cell, state, setScriptFetched, setContent, setToast, t)
   }, [cell, state, setToast])
 
   const onClickCopy = () => {
     navigator.clipboard.writeText(updateJsonFormat(content)).then(
       () => {
-        setToast({ message: i18n.t('common.copied') })
+        setToast({ message: t('common.copied') })
       },
       error => {
         console.error(error)
@@ -278,22 +279,22 @@ export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
     <TransactionDetailContainer ref={ref}>
       <TransactionCellDetailPanel>
         <TransactionDetailLock selected={state === CellState.LOCK} onClick={() => changeType(CellState.LOCK)}>
-          {i18n.t('transaction.lock_script')}
-          <HelpTip title={i18n.t('glossary.lock_script')} placement="bottom" containerRef={ref} />
+          {t('transaction.lock_script')}
+          <HelpTip title={t('glossary.lock_script')} placement="bottom" containerRef={ref} />
         </TransactionDetailLock>
         <TransactionDetailType selected={state === CellState.TYPE} onClick={() => changeType(CellState.TYPE)}>
-          {i18n.t('transaction.type_script')}
-          <HelpTip title={i18n.t('glossary.type_script')} placement="bottom" containerRef={ref} />
+          {t('transaction.type_script')}
+          <HelpTip title={t('glossary.type_script')} placement="bottom" containerRef={ref} />
         </TransactionDetailType>
         <TransactionDetailData selected={state === CellState.DATA} onClick={() => changeType(CellState.DATA)}>
-          {i18n.t('transaction.data')}
+          {t('transaction.data')}
         </TransactionDetailData>
         <TransactionDetailCapacityUsage
           selected={state === CellState.CAPACITY}
           onClick={() => changeType(CellState.CAPACITY)}
         >
-          {i18n.t('transaction.capacity_usage')}
-          <HelpTip title={i18n.t('glossary.capacity_usage')} placement="bottom" containerRef={ref} />
+          {t('transaction.capacity_usage')}
+          <HelpTip title={t('glossary.capacity_usage')} placement="bottom" containerRef={ref} />
         </TransactionDetailCapacityUsage>
         <div className="transactionDetailModalClose">
           <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
@@ -313,7 +314,7 @@ export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
         {!content && scriptFetched ? null : (
           <div className="transactionDetailCopy">
             <TransactionDetailCopyButton onClick={onClickCopy}>
-              <div>{i18n.t('common.copy')}</div>
+              <div>{t('common.copy')}</div>
               <CopyIcon />
             </TransactionDetailCopyButton>
             {(state === CellState.LOCK || state === CellState.TYPE) &&
@@ -322,7 +323,7 @@ export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
             'codeHash' in content &&
             'hashType' in content ? (
               <TransactionDetailScriptButton href={`/script/${content.codeHash}/${content.hashType}`} target="_blank">
-                <div>{i18n.t('scripts.script')}</div>
+                <div>{t('scripts.script')}</div>
                 <OuterLinkIcon />
               </TransactionDetailScriptButton>
             ) : null}

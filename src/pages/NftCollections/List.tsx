@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom'
 import { scriptToHash } from '@nervosnetwork/ckb-sdk-utils'
 import { Popover, Tooltip } from 'antd'
 import classNames from 'classnames'
-import { Trans } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import SortButton from '../../components/SortButton'
-import { I18nType, useI18n } from '../../utils/i18n'
+import { TranslateFunction } from '../../utils/i18n'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
@@ -14,27 +14,27 @@ import styles from './styles.module.scss'
 
 type NftSortField = 'transactions' | 'holder' | 'minted'
 const primaryColor = getPrimaryColor()
-function filterList(i18n: I18nType): Array<Record<'title' | 'value', string>> {
+function filterList(t: TranslateFunction): Array<Record<'title' | 'value', string>> {
   return [
     {
       value: 'all',
-      title: i18n.t('nft.all-type'),
+      title: t('nft.all-type'),
     },
     {
       value: 'm_nft',
-      title: i18n.t('nft.m_nft'),
+      title: t('nft.m_nft'),
     },
     {
       value: 'nrc721',
-      title: i18n.t('nft.nrc_721'),
+      title: t('nft.nrc_721'),
     },
     {
       value: 'cota',
-      title: i18n.t('nft.cota'),
+      title: t('nft.cota'),
     },
     {
       value: 'spore',
-      title: i18n.t('nft.spore'),
+      title: t('nft.spore'),
     },
   ]
 }
@@ -58,13 +58,13 @@ export interface NFTCollection {
 
 const TypeFilter = () => {
   const isMobile = useIsMobile()
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const { type } = useSearchParams('type')
   const isActive = isTxFilterType(type)
-  const list = filterList(i18n)
+  const list = filterList(t)
   return (
     <div className={styles.typeFilter} data-is-active={isActive}>
-      {i18n.t('nft.standard')}
+      {t('nft.standard')}
       <Popover
         placement={isMobile ? 'bottomRight' : 'bottomLeft'}
         trigger={isMobile ? 'click' : 'hover'}
@@ -91,7 +91,7 @@ const TypeFilter = () => {
 }
 
 const HolderMinterSort = () => {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const { sortBy, handleSortClick } = useSortParam<NftSortField>(
     s => s === 'transactions' || s === 'holder' || s === 'minted',
   )
@@ -105,7 +105,7 @@ const HolderMinterSort = () => {
         onClick={() => handleSortClick('holder')}
         aria-hidden
       >
-        {i18n.t('nft.holder')}
+        {t('nft.holder')}
       </div>
       &nbsp;/&nbsp;
       <div
@@ -115,15 +115,15 @@ const HolderMinterSort = () => {
         onClick={() => handleSortClick('minted')}
         aria-hidden
       >
-        {i18n.t('nft.minted')}
+        {t('nft.minted')}
       </div>
     </div>
   )
 }
 
 const TypeInfo: React.FC<{ nft: NFTCollection }> = ({ nft: item }) => {
-  const { i18n } = useI18n()
-  return i18n.t(`glossary.${item.standard}`) ? (
+  const { t } = useTranslation()
+  return t(`glossary.${item.standard}`) ? (
     <Tooltip
       placement="top"
       overlayClassName={styles.nftTooltip}
@@ -147,33 +147,33 @@ const TypeInfo: React.FC<{ nft: NFTCollection }> = ({ nft: item }) => {
         />
       }
     >
-      {i18n.t(`nft.${item.standard}`)}
+      {t(`nft.${item.standard}`)}
     </Tooltip>
   ) : (
-    i18n.t(`nft.${item.standard}`)
+    t(`nft.${item.standard}`)
   )
 }
 
 export const ListOnDesktop: React.FC<{ isLoading: boolean; list: Array<NFTCollection> }> = ({ list, isLoading }) => {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   return (
     <table data-role="desktop-list">
       <thead>
         <tr>
-          <th>{i18n.t('nft.collection_name')}</th>
+          <th>{t('nft.collection_name')}</th>
           <th>
             <TypeFilter />
           </th>
           <th className={styles.transactionsHeader}>
             <span>
-              {i18n.t('nft.transactions')}
+              {t('nft.transactions')}
               <SortButton field="transactions" />
             </span>
           </th>
           <th>
             <HolderMinterSort />
           </th>
-          <th>{i18n.t('nft.minter_address')}</th>
+          <th>{t('nft.minter_address')}</th>
         </tr>
       </thead>
       <tbody>
@@ -248,7 +248,7 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: Array<NFTCollec
         ) : (
           <tr>
             <td colSpan={5} className={styles.noRecord}>
-              {isLoading ? 'loading' : i18n.t(`nft.no_record`)}
+              {isLoading ? 'loading' : t(`nft.no_record`)}
             </td>
           </tr>
         )}
@@ -258,7 +258,7 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: Array<NFTCollec
 }
 
 export const ListOnMobile: React.FC<{ isLoading: boolean; list: Array<NFTCollection> }> = ({ list, isLoading }) => {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   return (
     <div data-role="mobile-list">
       <div className={styles.listHeader}>
@@ -307,13 +307,13 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: Array<NFTCollect
                   </div>
                 </div>
                 <dl>
-                  <dt>{i18n.t(`nft.standard`)}</dt>
+                  <dt>{t(`nft.standard`)}</dt>
                   <dd>
                     <TypeInfo nft={item} />
                   </dd>
                 </dl>
                 <dl>
-                  <dt>{`${i18n.t('nft.holder')}/${i18n.t('nft.minted')}`}</dt>
+                  <dt>{`${t('nft.holder')}/${t('nft.minted')}`}</dt>
                   <dd>
                     {`${(item.holders_count ?? 0).toLocaleString('en')}/${(item.items_count ?? 0).toLocaleString(
                       'en',
@@ -322,7 +322,7 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: Array<NFTCollect
                 </dl>
                 {item.creator ? (
                   <dl>
-                    <dt>{i18n.t(`nft.minter_address`)}</dt>
+                    <dt>{t(`nft.minter_address`)}</dt>
                     <dd>
                       <Tooltip title={item.creator}>
                         <Link
@@ -341,7 +341,7 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: Array<NFTCollect
             )
           })
         ) : (
-          <div className={styles.loading}>{isLoading ? 'loading' : i18n.t(`nft.no_record`)}</div>
+          <div className={styles.loading}>{isLoading ? 'loading' : t(`nft.no_record`)}</div>
         )}
       </div>
     </div>

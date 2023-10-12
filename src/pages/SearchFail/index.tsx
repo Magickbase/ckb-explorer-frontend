@@ -1,21 +1,22 @@
+import { useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
 import Search from '../../components/Search'
-import { I18nType, useI18n } from '../../utils/i18n'
+import { TranslateFunction } from '../../utils/i18n'
 import { SearchFailType, MAINNET_URL, TESTNET_URL } from '../../constants/common'
 import { isMainnet } from '../../utils/chain'
 import { SearchContent, SearchPanel } from './styled'
 import { useSearchParams } from '../../utils/hook'
 
-const chainErrorMessage = (i18n: I18nType) =>
-  isMainnet() ? i18n.t('search.address_type_testnet_error') : i18n.t('search.address_type_mainnet_error')
+const chainErrorMessage = (t: TranslateFunction) =>
+  isMainnet() ? t('search.address_type_testnet_error') : t('search.address_type_mainnet_error')
 
-const chainUrlMessage = (i18n: I18nType) =>
-  isMainnet() ? i18n.t('search.address_type_testnet_url') : i18n.t('search.address_type_mainnet_url')
+const chainUrlMessage = (t: TranslateFunction) =>
+  isMainnet() ? t('search.address_type_testnet_url') : t('search.address_type_mainnet_url')
 
 const targetUrl = isMainnet() ? TESTNET_URL : MAINNET_URL
 
 export default ({ address }: { address?: string }) => {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const params = useSearchParams('q', 'type')
   const { q, type } = params
   const query = address || q
@@ -29,15 +30,15 @@ export default ({ address }: { address?: string }) => {
         <SearchContent>
           {type === SearchFailType.CHAIN_ERROR || address ? (
             <div>
-              <span>{chainErrorMessage(i18n)}</span>
+              <span>{chainErrorMessage(t)}</span>
               <a href={`${targetUrl}address/${q}`} rel="noopener noreferrer">
-                {chainUrlMessage(i18n)}
+                {chainUrlMessage(t)}
               </a>
             </div>
           ) : (
             <>
-              <span>{i18n.t('search.empty_result')}</span>
-              <span className="searchFailItems">{i18n.t('search.empty_result_items')}</span>
+              <span>{t('search.empty_result')}</span>
+              <span className="searchFailItems">{t('search.empty_result_items')}</span>
             </>
           )}
         </SearchContent>

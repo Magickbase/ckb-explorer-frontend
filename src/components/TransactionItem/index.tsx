@@ -6,7 +6,6 @@ import TransactionCell from './TransactionItemCell'
 import TransactionCellList from './TransactionItemCellList'
 import TransactionIncome from './TransactionIncome'
 import { FullPanel, TransactionHashBlockPanel, TransactionCellPanel, TransactionPanel } from './styled'
-import { useI18n } from '../../utils/i18n'
 import { CellType } from '../../constants/common'
 import AddressText from '../AddressText'
 import { useIsLGScreen, useParsedDate } from '../../utils/hook'
@@ -35,7 +34,7 @@ const TransactionItem = ({
   scrollIntoViewOnMount?: boolean
 }) => {
   const isLG = useIsLGScreen()
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -68,7 +67,7 @@ const TransactionItem = ({
           </AddressText>
           {!isBlock && (
             <div className="transactionItemBlock">
-              {`(${i18n.t('block.block')} ${localeNumberString(transaction.blockNumber)})  ${parsedBlockCreateAt}`}
+              {`(${t('block.block')} ${localeNumberString(transaction.blockNumber)})  ${parsedBlockCreateAt}`}
             </div>
           )}
         </div>
@@ -94,7 +93,7 @@ const TransactionItem = ({
               )}
             />
           ) : (
-            <div className="transactionItemOutputEmpty">{i18n.t('transaction.empty_output')}</div>
+            <div className="transactionItemOutputEmpty">{t('transaction.empty_output')}</div>
           )}
         </div>
       </TransactionCellPanel>

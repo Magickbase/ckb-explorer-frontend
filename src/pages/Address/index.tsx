@@ -2,7 +2,6 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import AddressHashCard from '../../components/Card/HashCard'
 import Content from '../../components/Content'
-import { useI18n } from '../../utils/i18n'
 import { AddressContentPanel } from './styled'
 import { AddressTransactions, AddressOverview } from './AddressComp'
 import { explorerService } from '../../services/ExplorerService'
@@ -12,7 +11,7 @@ import { isAxiosError } from '../../utils/error'
 
 export const Address = () => {
   const { address } = useParams<{ address: string }>()
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const { currentPage, pageSize } = usePaginationParamsInListPage()
 
   // REFACTOR: avoid using useSortParam
@@ -58,7 +57,7 @@ export const Address = () => {
     <Content>
       <AddressContentPanel className="container">
         <AddressHashCard
-          title={addressInfoQuery.data?.type === 'LockHash' ? i18n.t('address.lock_hash') : i18n.t('address.address')}
+          title={addressInfoQuery.data?.type === 'LockHash' ? t('address.lock_hash') : t('address.address')}
           hash={address}
           specialAddress={addressInfoQuery.data?.isSpecial ? addressInfoQuery.data.specialAddress : ''}
           showDASInfoOnHeader={addressInfoQuery.data?.addressHash ?? false}

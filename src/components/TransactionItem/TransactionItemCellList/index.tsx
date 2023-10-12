@@ -1,7 +1,6 @@
 import { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import TransactionCellListPanel from './styled'
-import { useI18n } from '../../../utils/i18n'
 
 const MAX_CELL_SHOW_SIZE = 10
 
@@ -14,13 +13,13 @@ export default ({
   transaction: State.Transaction
   render: (cell: State.Cell) => ReactNode
 }) => {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   return (
     <TransactionCellListPanel>
       {cells && cells.map((cell, index) => index < MAX_CELL_SHOW_SIZE && render(cell))}
       {cells && cells.length >= MAX_CELL_SHOW_SIZE && (
         <div className="transactionItemViewAll">
-          <Link to={`/transaction/${transaction.transactionHash}`}>{i18n.t('common.view_all')}</Link>
+          <Link to={`/transaction/${transaction.transactionHash}`}>{t('common.view_all')}</Link>
         </div>
       )}
     </TransactionCellListPanel>

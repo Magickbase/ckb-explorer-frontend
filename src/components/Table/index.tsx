@@ -1,6 +1,5 @@
 import { memo, ReactNode } from 'react'
 import { Col, Row } from 'antd'
-import { useI18n } from '../../utils/i18n'
 import { TableTitleRowItem, TableContentRowItem, HighlightLink, TableMinerContentPanel } from './styled'
 import AddressText from '../AddressText'
 
@@ -31,7 +30,7 @@ export const TableMinerContentItem = memo(
     textCenter?: boolean
     fontSize?: string
   }) => {
-    const { i18n } = useI18n()
+    const { t } = useTranslation()
     return (
       <TableMinerContentPanel width={width} fontSize={fontSize}>
         {content ? (
@@ -49,7 +48,7 @@ export const TableMinerContentItem = memo(
             </Col>
           </Row>
         ) : (
-          <div className="tableMinerTextDisable">{i18n.t('address.unable_decode_address')}</div>
+          <div className="tableMinerTextDisable">{t('address.unable_decode_address')}</div>
         )}
       </TableMinerContentPanel>
     )

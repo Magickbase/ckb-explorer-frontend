@@ -2,6 +2,7 @@ import type { AxiosResponse } from 'axios'
 import { Link, useParams, useHistory } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Popover } from 'antd'
+import { useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
 import Pagination from '../../components/Pagination'
 import NftHolderList from '../../components/NftHolderList'
@@ -12,7 +13,7 @@ import Filter from '../../components/Search/Filter'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
 import { explorerService } from '../../services/ExplorerService'
-import { I18nType, useI18n } from '../../utils/i18n'
+import { TranslateFunction } from '../../utils/i18n'
 import { useSearchParams, useIsMobile } from '../../utils/hook'
 import styles from './styles.module.scss'
 import { CsvExport } from '../../components/CsvExport'
@@ -88,19 +89,19 @@ export interface HolderListRes {
 }
 
 const tabs = ['transfers', 'holders', 'inventory']
-function filterList(i18n: I18nType): Array<Record<'title' | 'value', string>> {
+function filterList(t: TranslateFunction): Array<Record<'title' | 'value', string>> {
   return [
     {
       value: 'mint',
-      title: i18n.t('udt.view-mint-txns'),
+      title: t('udt.view-mint-txns'),
     },
     {
       value: 'normal',
-      title: i18n.t('udt.view-transfer-txns'),
+      title: t('udt.view-transfer-txns'),
     },
     {
       value: 'destruction',
-      title: i18n.t('udt.view-burn-txns'),
+      title: t('udt.view-burn-txns'),
     },
   ]
 }
@@ -109,12 +110,12 @@ const PAGE_SIZE = 50
 const NftCollectionInfo = () => {
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const { tab = tabs[0], page = '1' } = useSearchParams('tab', 'page', 'tx_type')
   const { type, filter, sort } = useSearchParams('type', 'filter', 'sort')
   const isMobile = useIsMobile()
 
-  const filteredList = filterList(i18n)
+  const filteredList = filterList(t)
   const isFilteredByType = filteredList.some(f => f.value === type)
 
   const { isLoading: isTransferListLoading, data: transferListRes } = useQuery<AxiosResponse<TransferListRes>>(
@@ -218,13 +219,13 @@ const NftCollectionInfo = () => {
         <div className={styles.navigation}>
           <div className={styles.tabs}>
             <Link to={`/nft-collections/${id}?tab=${tabs[0]}`} data-is-active={tab === tabs[0]}>
-              {i18n.t(`nft.activity`)}
+              {t(`nft.activity`)}
             </Link>
             <Link to={`/nft-collections/${id}?tab=${tabs[1]}`} data-is-active={tab === tabs[1]}>
-              {i18n.t(`nft.holder-list`)}
+              {t(`nft.holder-list`)}
             </Link>
             <Link to={`/nft-collections/${id}?tab=${tabs[2]}`} data-is-active={tab === tabs[2]}>
-              {i18n.t(`nft.inventory`)}
+              {t(`nft.inventory`)}
             </Link>
           </div>
 
@@ -233,7 +234,7 @@ const NftCollectionInfo = () => {
               <Filter
                 defaultValue={filter}
                 showReset={!!filter}
-                placeholder={i18n.t(tab === tabs[0] ? 'udt.address-or-hash' : 'udt.address')}
+                placeholder={t(tab === tabs[0] ? 'udt.address-or-hash' : 'udt.address')}
                 onFilter={filter => {
                   history.push(`/nft-collections/${id}?${new URLSearchParams({ tab, filter })}`)
                 }}

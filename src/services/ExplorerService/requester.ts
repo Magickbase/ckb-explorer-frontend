@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios'
+import { useTranslation } from 'react-i18next'
 import CONFIG from '../../config'
-import i18n from '../../utils/i18n'
 import { setNetworkErrMsgs } from '../../components/Sheet'
 
 export const requesterV1 = axios.create({
@@ -24,7 +24,8 @@ export const requesterV2 = axios.create({
 
 let timeout: ReturnType<typeof setTimeout> | null
 
-const updateNetworkError = (errMessage = 'toast.invalid_network') => {
+const useUpdateNetworkError = (errMessage = 'toast.invalid_network') => {
+  const { t } = useTranslation()
   if (timeout) {
     clearTimeout(timeout)
   }
@@ -32,7 +33,7 @@ const updateNetworkError = (errMessage = 'toast.invalid_network') => {
     setNetworkErrMsgs([])
     timeout = null
   }, 2000)
-  setNetworkErrMsgs([i18n.t(errMessage)])
+  setNetworkErrMsgs([t(errMessage)])
 }
 
 requesterV1.interceptors.request.use(
@@ -55,21 +56,21 @@ requesterV1.interceptors.response.use(
       const { message }: { message: string } = error.response.data
       switch (error.response.status) {
         case 503:
-          updateNetworkError(message || undefined)
+          useUpdateNetworkError(message || undefined)
           break
         case 422:
         case 404:
         case 400:
           break
         case 429:
-          updateNetworkError('toast.too_many_request')
+          useUpdateNetworkError('toast.too_many_request')
           break
         default:
-          updateNetworkError()
+          useUpdateNetworkError()
           break
       }
     } else {
-      updateNetworkError()
+      useUpdateNetworkError()
     }
     return Promise.reject(error)
   },

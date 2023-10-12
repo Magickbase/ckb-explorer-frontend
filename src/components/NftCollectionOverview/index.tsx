@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Tooltip } from 'antd'
 import { explorerService } from '../../services/ExplorerService'
-import { useI18n } from '../../utils/i18n'
 import styles from './styles.module.scss'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { getPrimaryColor } from '../../constants/common'
@@ -22,7 +21,7 @@ interface InfoRes {
 }
 
 const NftCollectionOverview = ({ id }: { id: string }) => {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const { isLoading, data } = useQuery<AxiosResponse<InfoRes>>(['collection-info', id], () =>
     explorerService.api.requesterV2(`nft/collections/${id}`),
   )
@@ -42,30 +41,30 @@ const NftCollectionOverview = ({ id }: { id: string }) => {
         ) : (
           <img alt="logo" src="/images/nft_placeholder.png" loading="lazy" />
         )}
-        <span>{isLoading ? i18n.t(`nft.loading`) : info?.name}</span>
+        <span>{isLoading ? t(`nft.loading`) : info?.name}</span>
       </div>
       <div className={styles.desc}>{info?.description}</div>
       <dl>
-        <dt>{i18n.t(`nft.standard`)}</dt>
+        <dt>{t(`nft.standard`)}</dt>
         <dd>
-          {isLoading ? i18n.t(`nft.loading`) : null}
-          {!isLoading && info?.standard ? i18n.t(`nft.${info?.standard}`) : `-`}
+          {isLoading ? t(`nft.loading`) : null}
+          {!isLoading && info?.standard ? t(`nft.${info?.standard}`) : `-`}
         </dd>
       </dl>
       <dl>
         <dt>
-          {i18n.t('nft.holder')}/{i18n.t('nft.minted')}
+          {t('nft.holder')}/{t('nft.minted')}
         </dt>
         <dd>
           {isLoading
-            ? i18n.t(`nft.loading`)
+            ? t(`nft.loading`)
             : `${(info?.holders_count ?? 0).toLocaleString('en')}/${(info?.items_count ?? 0).toLocaleString('en')}`}
         </dd>
       </dl>
       <dl>
-        <dt>{i18n.t(`nft.minter_address`)}</dt>
+        <dt>{t(`nft.minter_address`)}</dt>
         <dd>
-          {isLoading ? i18n.t(`nft.loading`) : null}
+          {isLoading ? t(`nft.loading`) : null}
 
           {!isLoading && info?.creator ? (
             <Tooltip title={info.creator}>

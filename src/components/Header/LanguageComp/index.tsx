@@ -1,5 +1,4 @@
 import { useState, useLayoutEffect, FC } from 'react'
-import { useI18n } from '../../../utils/i18n'
 import { HeaderLanguagePanel, MobileSubMenuPanel } from './styled'
 import SimpleButton from '../../SimpleButton'
 import WhiteDropdownIcon from '../../../assets/white_dropdown.png'
@@ -48,7 +47,7 @@ export const LanguageDropdown = () => {
         }}
       >
         <div className="headerLanguageContentPanel">
-          <div className="headerLanguageContent">{languageText(currentLanguage, i18n)}</div>
+          <div className="headerLanguageContent">{languageText(currentLanguage, t)}</div>
           <img src={getDropdownIcon(showLanguage)} alt="dropdown icon" />
         </div>
       </SimpleButton>
@@ -70,7 +69,7 @@ export const LanguageMenu: FC<{ hideMobileMenu: () => void }> = ({ hideMobileMen
         }}
       >
         <div className="mobileMenusMainItemContent">
-          {currentLanguage === 'en' ? i18n.t('navbar.language_en') : i18n.t('navbar.language_zh')}
+          {currentLanguage === 'en' ? t('navbar.language_en') : t('navbar.language_zh')}
         </div>
         <img
           className="mobileMenusMainItemIcon"
@@ -86,7 +85,7 @@ export const LanguageMenu: FC<{ hideMobileMenu: () => void }> = ({ hideMobileMen
               hideMobileMenu()
             }}
           >
-            {currentLanguage === 'en' ? i18n.t('navbar.language_en') : i18n.t('navbar.language_zh')}
+            {currentLanguage === 'en' ? t('navbar.language_en') : t('navbar.language_zh')}
           </SimpleButton>
           <SimpleButton
             className="mobileMenusSubItem"
@@ -97,7 +96,7 @@ export const LanguageMenu: FC<{ hideMobileMenu: () => void }> = ({ hideMobileMen
               hideMobileMenu()
             }}
           >
-            {currentLanguage === 'en' ? i18n.t('navbar.language_zh') : i18n.t('navbar.language_en')}
+            {currentLanguage === 'en' ? t('navbar.language_zh') : t('navbar.language_en')}
           </SimpleButton>
         </>
       )}

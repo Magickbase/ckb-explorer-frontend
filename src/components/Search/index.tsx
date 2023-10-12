@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect, FC, memo } from 'react'
 import { useHistory } from 'react-router'
 import { AxiosError } from 'axios'
+import { useTranslation } from 'react-i18next'
 import { SearchImage, SearchInputPanel, SearchPanel, SearchButton, SearchContainer } from './styled'
 import { explorerService, Response } from '../../services/ExplorerService'
 import SearchLogo from '../../assets/search_black.png'
 import ClearLogo from '../../assets/clear.png'
 import { addPrefixForHash, containSpecialChar } from '../../utils/string'
-import { I18nType, useI18n } from '../../utils/i18n'
+import { TranslateFunction } from '../../utils/i18n'
 import { HttpErrorCode, SearchFailType } from '../../constants/common'
 import { useIsMobile } from '../../utils/hook'
 import { isChainTypeError } from '../../utils/chain'
@@ -27,9 +28,9 @@ const clearSearchInput = (inputElement: any) => {
   }
 }
 
-const setSearchLoading = (inputElement: any, i18n: I18nType) => {
+const setSearchLoading = (inputElement: any, t: TranslateFunction) => {
   const input: HTMLInputElement = inputElement.current
-  input.value = i18n.t('search.loading')
+  input.value = t('search.loading')
 }
 
 const setSearchContent = (inputElement: any, content: string) => {
@@ -44,7 +45,7 @@ const handleSearchResult = (
   inputElement: any,
   setSearchValue: Function,
   history: ReturnType<typeof useHistory>,
-  i18n: I18nType,
+  t: TranslateFunction,
 ) => {
   const query = searchValue.trim().replace(',', '') // remove front and end blank and ','
   if (!query || containSpecialChar(query)) {
@@ -56,7 +57,7 @@ const handleSearchResult = (
     return
   }
 
-  setSearchLoading(inputElement, i18n)
+  setSearchLoading(inputElement, t)
   explorerService.api
     .fetchSearchResult(addPrefixForHash(query))
     .then((response: any) => {
@@ -103,9 +104,9 @@ const Search: FC<{
   onEditEnd?: () => void
 }> = memo(({ content, hasButton, onEditEnd }) => {
   const isMobile = useIsMobile()
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const history = useHistory()
-  const SearchPlaceholder = i18n.t('navbar.search_placeholder')
+  const SearchPlaceholder = t('navbar.search_placeholder')
   const [searchValue, setSearchValue] = useState(content || '')
   const [placeholder, setPlaceholder] = useState(SearchPlaceholder)
   const inputElement = useRef<HTMLInputElement>(null)
@@ -138,7 +139,7 @@ const Search: FC<{
 
   const searchKeyAction = (event: any) => {
     if (event.keyCode === 13) {
-      handleSearchResult(searchValue, inputElement, setSearchValue, history, i18n)
+      handleSearchResult(searchValue, inputElement, setSearchValue, history, t)
       onEditEnd?.()
     }
   }
@@ -165,11 +166,11 @@ const Search: FC<{
       {hasButton && (
         <SearchButton
           onClick={() => {
-            handleSearchResult(searchValue, inputElement, setSearchValue, history, i18n)
+            handleSearchResult(searchValue, inputElement, setSearchValue, history, t)
             onEditEnd?.()
           }}
         >
-          {i18n.t('search.search')}
+          {t('search.search')}
         </SearchButton>
       )}
     </SearchContainer>

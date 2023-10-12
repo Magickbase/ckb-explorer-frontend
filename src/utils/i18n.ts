@@ -8,13 +8,7 @@ import { AppCachedKeys } from '../constants/cache'
 export type LanuageType = 'en' | 'zh'
 
 export type I18nType = typeof i18n
-
-export type I18nInfoType = {
-  i18n: I18nType
-  currentLanguage: LanuageType
-  setLanguage: (lan: LanuageType) => void
-  toggleLanguage: () => void
-}
+export type TranslateFunction = typeof i18n.t
 
 const getDefaultLanguage = () => fetchCachedData<LanuageType>(AppCachedKeys.AppLanguage) ?? 'en'
 
@@ -29,33 +23,21 @@ i18n.use(initReactI18next).init({
   },
 })
 
-export function useI18n(): I18nInfoType {
-  const { t } = useTranslation()
+i18n.on('languageChanged', lan => {
+  storeCachedData(AppCachedKeys.AppLanguage, lan)
+})
 
-  const changeLanguage = (lan: LanuageType) => {
-    if (lan.indexOf('zh') !== -1) {
-      i18n.changeLanguage('zh')
-    } else {
-      i18n.changeLanguage('en')
-    }
-    storeCachedData(AppCachedKeys.AppLanguage, lan)
-  }
+export const useCurrentLanguage = (): LanuageType => {
+  const { i18n } = useTranslation()
+  return i18n.language as LanuageType
+}
 
-  const setLanguage = (lan: LanuageType) => {
-    changeLanguage(lan)
+export const useToggleLanguage = () => {
+  const currentLanguage = useCurrentLanguage()
+  if (currentLanguage.indexOf('zh') !== -1) {
+    i18n.changeLanguage('zh')
+  } else {
+    i18n.changeLanguage('en')
   }
-
-  const currentLanguage = i18n.language as LanuageType
-  return {
-    i18n: { ...i18n, t },
-    currentLanguage,
-    setLanguage,
-    toggleLanguage: () => {
-      if (currentLanguage === 'en') {
-        setLanguage('zh')
-      } else {
-        setLanguage('en')
-      }
-    },
-  }
+  storeCachedData(AppCachedKeys.AppLanguage, currentLanguage)
 }

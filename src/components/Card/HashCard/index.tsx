@@ -1,8 +1,8 @@
 import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Tooltip } from 'antd'
+import { useTranslation } from 'react-i18next'
 import CopyIcon from '../../../assets/copy.png'
-import { useI18n } from '../../../utils/i18n'
 import { explorerService } from '../../../services/ExplorerService'
 import { copyElementValue } from '../../../utils/util'
 import SmallLoading from '../../Loading/SmallLoading'
@@ -50,9 +50,9 @@ export default ({
 }) => {
   const isMobile = useIsMobile()
   const setToast = useSetToast()
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
 
-  const isTx = i18n.t('transaction.transaction') === title
+  const isTx = t('transaction.transaction') === title
   const newAddr = useNewAddr(hash)
   const deprecatedAddr = useDeprecatedAddr(hash)
   const counterpartAddr = newAddr === hash ? deprecatedAddr : newAddr
@@ -105,7 +105,7 @@ export default ({
               className="hashCopyIcon"
               onClick={() => {
                 copyElementValue(document.getElementById('hashValue'))
-                setToast({ message: i18n.t('common.copied') })
+                setToast({ message: t('common.copied') })
               }}
             >
               {!loading && <img src={CopyIcon} alt="copy" />}
@@ -113,7 +113,7 @@ export default ({
             {counterpartAddr ? (
               <Tooltip
                 placement="top"
-                title={i18n.t(`address.${newAddr === hash ? 'visit-deprecated-address' : 'view-new-address'}`)}
+                title={t(`address.${newAddr === hash ? 'visit-deprecated-address' : 'view-new-address'}`)}
               >
                 <a
                   href={`${window.location.href.split('/address/')[0]}/address/${counterpartAddr}`}
@@ -126,7 +126,7 @@ export default ({
               </Tooltip>
             ) : null}
             {isTx ? (
-              <Tooltip placement="top" title={i18n.t(`transaction.export-transaction`)}>
+              <Tooltip placement="top" title={t(`transaction.export-transaction`)}>
                 <button className={styles.exportTx} onClick={handleExportTxClick} type="button">
                   <DownloadIcon />
                 </button>
@@ -140,9 +140,9 @@ export default ({
         </div>
 
         {specialAddress && (
-          <Tooltip title={i18n.t('address.vesting_tooltip')} placement={isMobile ? 'bottomRight' : 'bottom'}>
+          <Tooltip title={t('address.vesting_tooltip')} placement={isMobile ? 'bottomRight' : 'bottom'}>
             <Link to={`/address/${specialAddress}`} className="hashVesting">
-              {i18n.t('address.vesting')}
+              {t('address.vesting')}
             </Link>
           </Tooltip>
         )}

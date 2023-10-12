@@ -11,6 +11,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { useResizeDetector } from 'react-resize-detector'
 import { interval, share } from 'rxjs'
+import { useTranslation } from 'react-i18next'
 import { AppCachedKeys } from '../constants/cache'
 import { deprecatedAddrToNewAddr } from './util'
 import { startEndEllipsis } from './string'
@@ -25,7 +26,6 @@ import {
 } from './cache'
 import { parseDate } from './date'
 import { omit } from './object'
-import { useI18n } from './i18n'
 // TODO: This file depends on higher-level abstractions, so it should not be in the utils folder. It should be moved to `src/hooks/index.ts`.
 import { Response } from '../services/ExplorerService'
 
@@ -577,9 +577,9 @@ export function useTimestamp(): number {
 }
 
 export function useParsedDate(timestamp: number): string {
-  const { i18n } = useI18n()
+  const { t } = useTranslation()
   const now = useTimestamp()
-  return parseDate(timestamp, i18n, now)
+  return parseDate(timestamp, t, now)
 }
 
 export default {

@@ -1,7 +1,7 @@
 module.exports = {
   extends: ['airbnb', 'plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'react-hooks', 'unused-imports'],
   globals: {
     State: 'true',
     CustomRouter: 'true',
@@ -32,16 +32,9 @@ module.exports = {
       },
     ],
     'no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'error',
     'no-undef': 'off',
     'implicit-arrow-linebreak': 'off',
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      {
-        vars: 'local',
-        args: 'after-used',
-        ignoreRestSiblings: false,
-      },
-    ],
     'operator-linebreak': [0, 'none'],
     'arrow-parens': [2, 'as-needed'],
     'max-len': [
@@ -122,4 +115,9 @@ module.exports = {
       },
     },
   },
+  overrides: [
+    {
+      files: ['src/**/*.ts', 'src/**/*.tsx', '.js'],
+    },
+  ],
 }

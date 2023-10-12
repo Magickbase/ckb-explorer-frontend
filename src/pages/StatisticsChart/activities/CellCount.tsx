@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import { I18nInfoType, LanuageType } from '../../../utils/i18n'
+import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
 import { DATA_ZOOM_CONFIG, handleAxis } from '../../../utils/chart'
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
@@ -10,42 +10,41 @@ import { explorerService } from '../../../services/ExplorerService'
 const widthSpan = (value: string, currentLanguage: LanuageType) =>
   tooltipWidth(value, currentLanguage === 'en' ? 125 : 80)
 
-const parseTooltip = ({
-  seriesName,
-  data,
-  color,
-  i18nInfo,
-}: SeriesItem & { data: [string, string, string, string]; i18nInfo: I18nInfoType }): string => {
-  const { i18n, currentLanguage } = i18nInfo
-  if (seriesName === i18n.t('statistic.dead_cell')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.dead_cell'), currentLanguage)} ${handleAxis(
-      data[2],
-      2,
-    )}</div>`
+const useTooltip = () => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
+  return ({ seriesName, data, color }: SeriesItem & { data: [string, string, string, string] }): string => {
+    if (seriesName === t('statistic.dead_cell')) {
+      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.dead_cell'), currentLanguage)} ${handleAxis(
+        data[2],
+        2,
+      )}</div>`
+    }
+    if (seriesName === t('statistic.all_cells')) {
+      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.all_cells'), currentLanguage)} ${handleAxis(
+        data[1],
+        2,
+      )}</div>`
+    }
+    if (seriesName === t('statistic.live_cell')) {
+      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.live_cell'), currentLanguage)} ${handleAxis(
+        data[3],
+        2,
+      )}</div>`
+    }
+    return ''
   }
-  if (seriesName === i18n.t('statistic.all_cells')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.all_cells'), currentLanguage)} ${handleAxis(
-      data[1],
-      2,
-    )}</div>`
-  }
-  if (seriesName === i18n.t('statistic.live_cell')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.live_cell'), currentLanguage)} ${handleAxis(
-      data[3],
-      2,
-    )}</div>`
-  }
-  return ''
 }
 
-const getOption = (
+const useOption = (
   statisticCellCounts: State.StatisticCellCount[],
   chartColor: State.ChartColor,
   isMobile: boolean,
-  i18nInfo: I18nInfoType,
+
   isThumbnail = false,
 ): echarts.EChartOption => {
-  const { i18n, currentLanguage } = i18nInfo
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -60,6 +59,7 @@ const getOption = (
     bottom: '5%',
     containLabel: true,
   }
+  const parseTooltip = useTooltip()
   return {
     color: chartColor.colors,
     tooltip: !isThumbnail
@@ -67,11 +67,11 @@ const getOption = (
           trigger: 'axis',
           formatter: (dataList: any) => {
             const list = dataList as Array<SeriesItem & { data: [string, string, string, string] }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'), currentLanguage)} ${
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'), currentLanguage)} ${
               list[0].data[0]
             }</div>`
             list.forEach(data => {
-              result += parseTooltip({ ...data, i18nInfo })
+              result += parseTooltip(data)
             })
             return result
           },
@@ -82,13 +82,13 @@ const getOption = (
         ? []
         : [
             {
-              name: i18n.t('statistic.all_cells'),
+              name: t('statistic.all_cells'),
             },
             {
-              name: i18n.t('statistic.live_cell'),
+              name: t('statistic.live_cell'),
             },
             {
-              name: i18n.t('statistic.dead_cell'),
+              name: t('statistic.dead_cell'),
             },
           ],
     },
@@ -96,7 +96,7 @@ const getOption = (
     dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
     xAxis: [
       {
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.date'),
+        name: isMobile || isThumbnail ? '' : t('statistic.date'),
         nameLocation: 'middle',
         nameGap: 30,
         type: 'category',
@@ -120,7 +120,7 @@ const getOption = (
     ],
     series: [
       {
-        name: i18n.t('statistic.all_cells'),
+        name: t('statistic.all_cells'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -133,7 +133,7 @@ const getOption = (
         },
       },
       {
-        name: i18n.t('statistic.dead_cell'),
+        name: t('statistic.dead_cell'),
         type: 'line',
         stack: 'sum',
         yAxisIndex: 0,
@@ -144,7 +144,7 @@ const getOption = (
         },
       },
       {
-        name: i18n.t('statistic.live_cell'),
+        name: t('statistic.live_cell'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -184,7 +184,7 @@ export const CellCountChart = ({ isThumbnail = false }: { isThumbnail?: boolean 
       title={t('statistic.cell_count')}
       isThumbnail={isThumbnail}
       fetchData={explorerService.api.fetchStatisticCellCount}
-      getEChartOption={getOption}
+      getEChartOption={useOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.CellCount}
       cacheMode="date"
