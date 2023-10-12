@@ -35,11 +35,10 @@ export const useCurrentLanguage = (): LanuageType => {
 export const useToggleLanguage = () => {
   const currentLanguage = useCurrentLanguage()
   return () => {
-    if (currentLanguage.indexOf('zh') !== -1) {
+    if (currentLanguage.indexOf('zh') === -1) {
       i18n.changeLanguage('zh')
     } else {
       i18n.changeLanguage('en')
     }
-    storeCachedData(AppCachedKeys.AppLanguage, currentLanguage)
   }
 }
