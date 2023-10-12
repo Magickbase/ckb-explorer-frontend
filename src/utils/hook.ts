@@ -580,7 +580,7 @@ export function useParsedDate(timestamp: number): string {
   return parseDate(timestamp, now)
 }
 
-export const useCountdown = (targetDate: Date) => {
+export const useCountdown = (targetDate: Date): [number, number, number, number, boolean] => {
   const countdownDate = new Date(targetDate).getTime()
 
   const [countdown, setCountdown] = useState(countdownDate - new Date().getTime())
@@ -593,12 +593,13 @@ export const useCountdown = (targetDate: Date) => {
     return () => clearInterval(interval)
   }, [countdownDate])
 
-  const days = Math.floor(countdown / (1000 * 60 * 60 * 24))
-  const hours = Math.floor((countdown % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-  const minutes = Math.floor((countdown % (1000 * 60 * 60)) / (1000 * 60))
-  const seconds = Math.floor((countdown % (1000 * 60)) / 1000)
+  const expired = countdown <= 0
+  const days = expired ? 0 : Math.floor(countdown / (1000 * 60 * 60 * 24))
+  const hours = expired ? 0 : Math.floor((countdown % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = expired ? 0 : Math.floor((countdown % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = expired ? 0 : Math.floor((countdown % (1000 * 60)) / 1000)
 
-  return [days, hours, minutes, seconds]
+  return [days, hours, minutes, seconds, expired]
 }
 
 export const useSingleHalving = (_halvingCount = 1) => {
@@ -618,7 +619,7 @@ export const useSingleHalving = (_halvingCount = 1) => {
   const estimatedTime = (targetEpoch - currentEpoch) * THEORETICAL_EPOCH_TIME - currentEpochUsedTime
   const estimatedDate = new Date(new Date().getTime() + estimatedTime)
 
-  const haveDone = currentEpoch >= targetEpoch || new Date().getTime() > estimatedDate.getTime()
+  const haveDone = currentEpoch >= targetEpoch
   const celebrationOverEpoch = targetEpoch + 30 * 6 // Every 6 epochs is theoretically 1 day.
   const inCelebration = haveDone && currentEpoch < celebrationOverEpoch && !celebrationSkipped
 

@@ -52,7 +52,7 @@ export const HalvingCountdownPage = () => {
     (((currentEpoch % EPOCHS_PER_HALVING) * THEORETICAL_EPOCH_TIME - currentEpochUsedTime) /
       (EPOCHS_PER_HALVING * THEORETICAL_EPOCH_TIME)) *
     100
-  const [days, hours, minutes, seconds] = useCountdown(estimatedDate)
+  const [days, hours, minutes, seconds, expired] = useCountdown(estimatedDate)
 
   const shortCountdown = () => {
     if (days > 0) {
@@ -121,6 +121,15 @@ export const HalvingCountdownPage = () => {
               {i18n.t('halving.halving')}
             </button>
           </div>
+        </div>
+      )
+    }
+
+    if (expired) {
+      return (
+        <div className={classnames(styles.halvingPanel, styles.loadingPanel)}>
+          {i18n.t('halving.comming_soon')}
+          <SmallLoading />
         </div>
       )
     }

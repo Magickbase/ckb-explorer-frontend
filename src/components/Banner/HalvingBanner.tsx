@@ -33,7 +33,7 @@ function numberToOrdinal(number: number) {
 
 export const HalvingBanner = () => {
   const { estimatedDate, halvingCount, inCelebration, isLoading } = useHalving()
-  const [days, hours, minutes, seconds] = useCountdown(estimatedDate)
+  const [days, hours, minutes, seconds, expired] = useCountdown(estimatedDate)
 
   const shortCountdown = () => {
     if (isLoading || Number.isNaN(seconds)) {
@@ -50,6 +50,22 @@ export const HalvingBanner = () => {
     }
 
     return `${seconds}${i18n.t('symbol.char_space')}${i18n.t('unit.seconds')}`
+  }
+
+  const learnMoreText = () => {
+    if (inCelebration) {
+      return i18n.t('halving.learn_more')
+    }
+
+    if (expired) {
+      return i18n.t('halving.comming_soon')
+    }
+
+    return (
+      <>
+        {i18n.t('halving.halving_countdown')} {shortCountdown()}
+      </>
+    )
   }
 
   return (
@@ -77,13 +93,7 @@ export const HalvingBanner = () => {
           )}
           <a href="/halving">
             <SimpleButton className={styles.learnMoreButton}>
-              {inCelebration ? (
-                i18n.t('halving.learn_more')
-              ) : (
-                <>
-                  {i18n.t('halving.halving_countdown')} {shortCountdown()}
-                </>
-              )}
+              {learnMoreText()}
               <MoveIcon style={{ marginTop: 2 }} />
             </SimpleButton>
           </a>
