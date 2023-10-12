@@ -9,7 +9,7 @@ import TransactionIncome from './TransactionIncome'
 import { FullPanel, TransactionHashBlockPanel, TransactionCellPanel, TransactionPanel } from './styled'
 import { CellType } from '../../constants/common'
 import AddressText from '../AddressText'
-import { useIsLGScreen, useParseDate } from '../../utils/hook'
+import { useIsLGScreen, useParsedDate } from '../../utils/hook'
 
 export interface CircleCorner {
   top?: boolean
@@ -50,7 +50,7 @@ const TransactionItem = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const parsedBlockCreateAt = useParseDate(transaction.blockTimestamp)
+  const parsedBlockCreateAt = useParsedDate(transaction.blockTimestamp)
 
   return (
     <TransactionPanel ref={ref} circleCorner={circleCorner}>

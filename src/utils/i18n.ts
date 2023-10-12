@@ -1,6 +1,5 @@
 import i18n from 'i18next'
 import { initReactI18next, useTranslation } from 'react-i18next'
-import dayjs from 'dayjs'
 import en from '../locales/en.json'
 import zh from '../locales/zh.json'
 import { storeCachedData, fetchCachedData } from './cache'
@@ -24,14 +23,7 @@ i18n.use(initReactI18next).init({
   },
 })
 
-i18n.on('languageChanged', (lan: LanuageType) => {
-  if (lan === 'zh') {
-    dayjs.locale('zh-cn')
-  } else if (lan === 'en') {
-    dayjs.locale('en')
-  } else {
-    throw new Error('language not supported')
-  }
+i18n.on('languageChanged', lan => {
   storeCachedData(AppCachedKeys.AppLanguage, lan)
 })
 

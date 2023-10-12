@@ -6,23 +6,9 @@ import 'dayjs/locale/en'
 import BigNumber from 'bignumber.js'
 import weekday from 'dayjs/plugin/weekday'
 import localeData from 'dayjs/plugin/localeData'
+import { TranslateFunction } from './i18n'
 
-// strict thresholds
-const thresholds = [
-  { l: 's', r: 1 },
-  { l: 'm', r: 1 },
-  { l: 'mm', r: 59, d: 'minute' },
-  { l: 'h', r: 1 },
-  { l: 'hh', r: 23, d: 'hour' },
-  { l: 'd', r: 1 },
-  { l: 'dd', r: 29, d: 'day' },
-  { l: 'M', r: 1 },
-  { l: 'MM', r: 11, d: 'month' },
-  { l: 'y', r: 1 },
-  { l: 'yy', d: 'year' },
-]
-
-dayjs.extend(relativeTime, { thresholds })
+dayjs.extend(relativeTime)
 dayjs.extend(updateLocale)
 
 dayjs.extend(weekday)
@@ -69,10 +55,13 @@ export const parseDateNoTime = (timestamp: number | string | Date, noYear = fals
   return `${year}${formatData(date.getMonth() + 1)}${connector}${formatData(date.getDate())}`
 }
 
-export const parseDate = (timestamp: number | string, now = new Date().getTime()) => {
+export const parseDate = (timestamp: number | string, t: TranslateFunction, now = new Date().getTime()) => {
   const diff = (now - Number(timestamp)) / 1000
+  if (diff < 60) {
+    return `${Math.floor(diff)}${t('common.second_ago')}`
+  }
   if (diff < 3600) {
-    return dayjs().to(dayjs(timestamp))
+    return `${Math.floor(diff / 60)}${t('common.minute')} ${Math.floor(diff % 60)}${t('common.second_ago')}`
   }
   return parseSimpleDate(timestamp)
 }
