@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { Tooltip } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { TransactionIncomePanel, TransactionCapacityValuePanel } from './styled'
 import { shannonToCkb } from '../../../utils/util'
 import { localeNumberString } from '../../../utils/number'

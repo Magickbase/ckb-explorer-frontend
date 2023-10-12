@@ -4,8 +4,6 @@ import { useQuery } from 'react-query'
 import { Popover } from 'antd'
 import { useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
-import Pagination from '../../components/Pagination'
-import NftHolderList from '../../components/NftHolderList'
 import NftCollectionOverview from '../../components/NftCollectionOverview'
 import NftCollectionTransfers from '../../components/NftCollectionTransfers'
 import NftCollectionInventory from '../../components/NftCollectionInventory'
@@ -18,6 +16,8 @@ import { useSearchParams, useIsMobile } from '../../utils/hook'
 import styles from './styles.module.scss'
 import { CsvExport } from '../../components/CsvExport'
 import PaginationWithRear from '../../components/PaginationWithRear'
+import NftHolderList from '../../components/NftHolderList'
+import Pagination from '../../components/Pagination'
 
 export interface InventoryRes {
   data: Array<{

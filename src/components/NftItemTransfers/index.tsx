@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Tooltip } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { getPrimaryColor } from '../../constants/common'
 import { dayjs, parseDate } from '../../utils/date'
 import styles from './styles.module.scss'
+import { useCurrentLanguage } from '../../utils/i18n'
 
 const primaryColor = getPrimaryColor()
 
@@ -40,8 +42,9 @@ export interface TransferListRes {
 const NftItemTransfers: React.FC<{ list: TransferListRes['data']; isLoading: boolean }> = ({ list, isLoading }) => {
   const [isShowInAge, setIsShowInAge] = useState(false)
   const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
 
-  dayjs.locale(i18n.language === 'zh' ? 'zh-cn' : 'en')
+  dayjs.locale(currentLanguage === 'zh' ? 'zh-cn' : 'en')
 
   return (
     <div className={styles.list}>

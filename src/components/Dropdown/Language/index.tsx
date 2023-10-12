@@ -1,8 +1,11 @@
-import { TranslateFunction } from '../../../utils/i18n'
+import { useTranslation } from 'react-i18next'
+import { useCurrentLanguage, useToggleLanguage } from '../../../utils/i18n'
 import { LanguagePanel } from './styled'
 import SimpleButton from '../../SimpleButton'
 
-export const languageText = (lan: LanuageType | null, t: TranslateFunction, reverse?: boolean) => {
+export const useLanguageText = (reverse?: boolean) => {
+  const lan = useCurrentLanguage()
+  const { t } = useTranslation()
   if (reverse) {
     return lan === 'zh' ? t('navbar.language_en') : t('navbar.language_zh')
   }
@@ -10,7 +13,7 @@ export const languageText = (lan: LanuageType | null, t: TranslateFunction, reve
 }
 
 export default ({ setShow, left, top }: { setShow: Function; left: number; top: number }) => {
-  const { toggleLanguage, currentLanguage, i18n } = useI18n()
+  const toggleLanguage = useToggleLanguage()
   const hideDropdown = () => {
     setShow(false)
   }
@@ -21,11 +24,11 @@ export default ({ setShow, left, top }: { setShow: Function; left: number; top: 
   return (
     <LanguagePanel left={left} top={top} onMouseLeave={hideDropdown}>
       <SimpleButton className="languageSelected" onClick={hideDropdown}>
-        {languageText(currentLanguage, t)}
+        {useLanguageText()}
       </SimpleButton>
       <div className="languageSeparate" />
       <SimpleButton className="languageNormal" onClick={handleLanguage}>
-        {languageText(currentLanguage, i18n, true)}
+        {useLanguageText(true)}
       </SimpleButton>
     </LanguagePanel>
   )

@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import RightArrowIcon from '../../assets/input_arrow_output.png'
 import DownArrowIcon from '../../assets/input_arrow_output_down.png'
 import { localeNumberString } from '../../utils/number'

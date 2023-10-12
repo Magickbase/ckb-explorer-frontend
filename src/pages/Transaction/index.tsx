@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
+import { useTranslation } from 'react-i18next'
 import TransactionHashCard from '../../components/Card/HashCard'
 import Content from '../../components/Content'
 import { TransactionDiv as TransactionPanel } from './styled'

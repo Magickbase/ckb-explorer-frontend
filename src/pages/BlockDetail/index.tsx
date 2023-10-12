@@ -1,5 +1,6 @@
 import { useParams, useLocation } from 'react-router-dom'
 import { useQuery } from 'react-query'
+import { useTranslation } from 'react-i18next'
 import BlockHashCard from '../../components/Card/HashCard'
 import Content from '../../components/Content'
 import { BlockDetailPanel } from './styled'

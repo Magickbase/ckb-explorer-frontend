@@ -1,4 +1,5 @@
 import { FC, memo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { HighLightLink } from '../../../components/Text'
 import { localeNumberString } from '../../../utils/number'
 import DecimalCapacity from '../../../components/DecimalCapacity'

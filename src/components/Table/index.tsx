@@ -1,5 +1,6 @@
 import { memo, ReactNode } from 'react'
 import { Col, Row } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { TableTitleRowItem, TableContentRowItem, HighlightLink, TableMinerContentPanel } from './styled'
 import AddressText from '../AddressText'
 

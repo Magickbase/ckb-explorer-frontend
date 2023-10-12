@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ScriptItemPanel, ScriptPanel } from './styled'
 import HashTag from '../HashTag'
 import { getContractHashTag } from '../../utils/util'

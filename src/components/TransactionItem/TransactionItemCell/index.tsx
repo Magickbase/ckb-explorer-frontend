@@ -2,11 +2,12 @@ import { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Popover, Tooltip } from 'antd'
 import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
 import NervosDAOCellIcon from '../../../assets/nervos_dao_cell.png'
 import NervosDAOWithdrawingIcon from '../../../assets/nervos_dao_withdrawing.png'
 import CurrentAddressIcon from '../../../assets/current_address.svg'
 import UDTTokenIcon from '../../../assets/udt_token.png'
-import { TranslateFunction } from '../../../utils/i18n'
+import { TranslateFunction, useCurrentLanguage } from '../../../utils/i18n'
 import { localeNumberString, parseUDTAmount } from '../../../utils/number'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import {
@@ -93,7 +94,7 @@ const WithdrawPopoverItem = ({
 const WithdrawPopoverInfo = ({ cell }: { cell: State.Cell }) => {
   const isMobile = useIsMobile()
   const { t } = useTranslation()
-  const { currentLanguage } = useI18n()
+  const currentLanguage = useCurrentLanguage()
   let width = 'short'
   if (currentLanguage === 'en') {
     width = isDaoDepositCell(cell.cellType) ? 'long' : 'medium'

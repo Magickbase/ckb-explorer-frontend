@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import TransactionItem from '../../../components/TransactionItem'
 import { TransactionsPagination, DAONoResultPanel } from './styled'
 import Pagination from '../../../components/Pagination'

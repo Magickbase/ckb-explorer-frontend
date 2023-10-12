@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PaginationLeftItem, PaginationRightItem, PaginationPanel } from './styled'
 import LeftBlack from '../../assets/pagination_black_left.png'
 import RightBlack from '../../assets/pagination_black_right.png'

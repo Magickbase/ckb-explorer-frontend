@@ -6,6 +6,7 @@ import 'echarts/lib/component/title'
 import 'echarts/lib/component/legend'
 import 'echarts/lib/component/legendScroll'
 import { Tooltip } from 'antd'
+import { useTranslation } from 'react-i18next'
 import {
   DaoOverviewPanel,
   DaoOverviewLeftPanel,

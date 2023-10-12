@@ -5,6 +5,7 @@ import { useQuery } from 'react-query'
 import { Tooltip } from 'antd'
 import { Base64 } from 'js-base64'
 import { hexToBytes } from '@nervosnetwork/ckb-sdk-utils'
+import { useTranslation } from 'react-i18next'
 import { parseSporeCellData } from '../../utils/spore'
 import type { TransferListRes, TransferRes } from '../../pages/NftCollectionInfo'
 import styles from './styles.module.scss'
@@ -13,6 +14,7 @@ import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { explorerService } from '../../services/ExplorerService'
 import { dayjs } from '../../utils/date'
 import { useParsedDate, useTimestamp } from '../../utils/hook'
+import { useCurrentLanguage } from '../../utils/i18n'
 
 const primaryColor = getPrimaryColor()
 
@@ -42,7 +44,8 @@ NftCollectionTransfers.displayName = 'NftTransfers'
 const TransferTable: FC<TransferCollectionProps> = ({ collection, iconURL, list, isLoading }) => {
   const [isShowInAge, setIsShowInAge] = useState(false)
   const { t } = useTranslation()
-  dayjs.locale(i18n.language === 'zh' ? 'zh-cn' : 'en')
+  const currentLanguage = useCurrentLanguage()
+  dayjs.locale(currentLanguage === 'zh' ? 'zh-cn' : 'en')
 
   return (
     <table>

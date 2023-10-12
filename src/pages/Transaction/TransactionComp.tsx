@@ -2,11 +2,11 @@
 import { useState, ReactNode, FC } from 'react'
 import { Link } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
-import { Trans } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import { parseSimpleDate } from '../../utils/date'
 import { localeNumberString } from '../../utils/number'
-import { formatConfirmation, shannonToCkb, matchTxHash } from '../../utils/util'
+import { useFormatConfirmation, shannonToCkb, matchTxHash } from '../../utils/util'
 import {
   TransactionBlockHeightPanel,
   TransactionInfoContentPanel,
@@ -126,6 +126,7 @@ export const TransactionOverview: FC<{ transaction: State.Transaction }> = ({ tr
     maxCycles,
   } = transaction
   const { t } = useTranslation()
+  const parseFormatConfirmation = useFormatConfirmation()
   let confirmation = 0
   if (tipBlockNumber && blockNumber) {
     confirmation = tipBlockNumber - blockNumber
@@ -175,7 +176,7 @@ export const TransactionOverview: FC<{ transaction: State.Transaction }> = ({ tr
         {
           title: t('transaction.status'),
           tooltip: t('glossary.transaction_status'),
-          content: formatConfirmation(confirmation, t),
+          content: parseFormatConfirmation(confirmation),
         },
       )
     }

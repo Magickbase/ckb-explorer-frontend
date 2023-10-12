@@ -4,6 +4,7 @@ import { useQuery } from 'react-query'
 import { Radio } from 'antd'
 import { Base64 } from 'js-base64'
 import { hexToBytes } from '@nervosnetwork/ckb-sdk-utils'
+import { useTranslation } from 'react-i18next'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import TransactionItem from '../../components/TransactionItem/index'
 import { explorerService } from '../../services/ExplorerService'
@@ -211,14 +212,8 @@ const lockScriptIcon = (show: boolean) => {
   return isMainnet() ? ArrowDownIcon : ArrowDownBlueIcon
 }
 
-const getAddressInfo = ({
-  liveCellsCount,
-  minedBlocksCount,
-  type,
-  addressHash,
-  lockInfo,
-  i18n,
-}: State.Address & { t: TranslateFunction }) => {
+const useAddressInfo = ({ liveCellsCount, minedBlocksCount, type, addressHash, lockInfo }: State.Address) => {
+  const { t } = useTranslation()
   const items: OverviewItemData[] = [
     {
       title: t('address.live_cells'),
@@ -264,7 +259,7 @@ const AddressLockScript: FC<{ address: State.Address }> = ({ address }) => {
 
   return (
     <AddressLockScriptPanel>
-      <OverviewCard items={getAddressInfo({ ...address, i18n })} hideShadow>
+      <OverviewCard items={useAddressInfo(address)} hideShadow>
         <AddressLockScriptController onClick={() => setShowLock(!showLock)}>
           <div>{t('address.lock_script')}</div>
           <img alt="lock script" src={lockScriptIcon(showLock)} />

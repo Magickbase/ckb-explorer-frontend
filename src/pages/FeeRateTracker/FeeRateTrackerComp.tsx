@@ -2,12 +2,14 @@ import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
 import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
 import styles from './styles.module.scss'
 import { ReactChartCore } from '../StatisticsChart/common'
 import { ReactComponent as BikeIcon } from '../../assets/bike.svg'
 import { ReactComponent as CarIcon } from '../../assets/car.svg'
 import { ReactComponent as RocketIcon } from '../../assets/rocket.svg'
 import { ChartColor } from '../../constants/common'
+import { useCurrentLanguage } from '../../utils/i18n'
 
 const textStyleInChart: echarts.EChartOption.TextStyle = {
   color: '#999999',
@@ -306,11 +308,11 @@ export const FeeRateTransactionCountChart = ({
 }: {
   pendingTransactionFeeRates: FeeRateTracker.PendingTransactionFeeRate[]
 }) => {
-  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
   return useMemo(() => {
     return <FeeRateTransactionCountChartCore pendingTransactionFeeRates={pendingTransactionFeeRates} />
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pendingTransactionFeeRates, i18n.language])
+  }, [pendingTransactionFeeRates, currentLanguage])
 }
 
 export const LastNDaysTransactionFeeRateChart = ({

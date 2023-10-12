@@ -1,4 +1,5 @@
 import { useState, useLayoutEffect, FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { HeaderLanguagePanel, MobileSubMenuPanel } from './styled'
 import SimpleButton from '../../SimpleButton'
 import WhiteDropdownIcon from '../../../assets/white_dropdown.png'
@@ -6,7 +7,8 @@ import WhiteDropUpIcon from '../../../assets/white_drop_up.png'
 import BlueDropUpIcon from '../../../assets/blue_drop_up.png'
 import GreenDropUpIcon from '../../../assets/green_drop_up.png'
 import { isMainnet } from '../../../utils/chain'
-import LanDropdown, { languageText } from '../../Dropdown/Language'
+import LanDropdown, { useLanguageText } from '../../Dropdown/Language'
+import { useCurrentLanguage, useToggleLanguage } from '../../../utils/i18n'
 
 const getDropdownIcon = (showDropdown: boolean) => {
   if (!showDropdown) return WhiteDropdownIcon
@@ -17,7 +19,7 @@ export const LanguageDropdown = () => {
   const [showLanguage, setShowLanguage] = useState(false)
   const [languageLeft, setLanguageLeft] = useState(0)
   const [languageTop, setLanguageTop] = useState(0)
-  const { i18n, currentLanguage } = useI18n()
+  const currentLanguage = useCurrentLanguage()
 
   useLayoutEffect(() => {
     if (showLanguage) {
@@ -47,7 +49,7 @@ export const LanguageDropdown = () => {
         }}
       >
         <div className="headerLanguageContentPanel">
-          <div className="headerLanguageContent">{languageText(currentLanguage, t)}</div>
+          <div className="headerLanguageContent">{useLanguageText()}</div>
           <img src={getDropdownIcon(showLanguage)} alt="dropdown icon" />
         </div>
       </SimpleButton>
@@ -58,7 +60,9 @@ export const LanguageDropdown = () => {
 
 export const LanguageMenu: FC<{ hideMobileMenu: () => void }> = ({ hideMobileMenu }) => {
   const [showSubMenu, setShowSubMenu] = useState(false)
-  const { currentLanguage, toggleLanguage, i18n } = useI18n()
+  const currentLanguage = useCurrentLanguage()
+  const toggleLanguage = useToggleLanguage()
+  const { t } = useTranslation()
 
   return (
     <MobileSubMenuPanel showSubMenu={false}>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { copyElementValue } from '../../../utils/util'
 import SimpleButton from '../../SimpleButton'
 import { useSetToast } from '../../Toast'

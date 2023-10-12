@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useIsMobile } from '../../../utils/hook'
-import { TranslateFunction } from '../../../utils/i18n'
 import { MobileMenuItem, MobileMenuLink, HeaderMenuPanel } from './styled'
 import { isMainnet } from '../../../utils/chain'
 
@@ -10,45 +10,48 @@ export enum LinkType {
   Outer,
 }
 
-const menuDataList = (t: TranslateFunction) => [
-  {
-    type: LinkType.Inner,
-    name: t('navbar.home'),
-    url: '/',
-  },
-  {
-    type: LinkType.Inner,
-    name: t('navbar.nervos_dao'),
-    url: '/nervosdao',
-  },
-  {
-    type: LinkType.Inner,
-    name: t('navbar.tokens'),
-    url: '/tokens',
-  },
-  {
-    type: LinkType.Inner,
-    name: t('navbar.nft_collections'),
-    url: '/nft-collections',
-  },
-  {
-    type: LinkType.Inner,
-    name: t('navbar.charts'),
-    url: '/charts',
-  },
-  {
-    type: LinkType.Inner,
-    name: t('navbar.fee_rate'),
-    url: '/fee-rate-tracker',
-  },
-  !isMainnet()
-    ? {
-        type: LinkType.Outer,
-        name: t('navbar.faucet'),
-        url: 'https://faucet.nervos.org/',
-      }
-    : {},
-]
+const useMenuDataList = () => {
+  const { t } = useTranslation()
+  return [
+    {
+      type: LinkType.Inner,
+      name: t('navbar.home'),
+      url: '/',
+    },
+    {
+      type: LinkType.Inner,
+      name: t('navbar.nervos_dao'),
+      url: '/nervosdao',
+    },
+    {
+      type: LinkType.Inner,
+      name: t('navbar.tokens'),
+      url: '/tokens',
+    },
+    {
+      type: LinkType.Inner,
+      name: t('navbar.nft_collections'),
+      url: '/nft-collections',
+    },
+    {
+      type: LinkType.Inner,
+      name: t('navbar.charts'),
+      url: '/charts',
+    },
+    {
+      type: LinkType.Inner,
+      name: t('navbar.fee_rate'),
+      url: '/fee-rate-tracker',
+    },
+    !isMainnet()
+      ? {
+          type: LinkType.Outer,
+          name: t('navbar.faucet'),
+          url: 'https://faucet.nervos.org/',
+        }
+      : {},
+  ]
+}
 
 const MenuItemLink = ({ menu }: { menu: any }) => {
   const { url, type, name } = menu
@@ -60,10 +63,10 @@ const MenuItemLink = ({ menu }: { menu: any }) => {
 }
 
 export default memo(() => {
-  const { t } = useTranslation()
+  const menuList = useMenuDataList()
   return useIsMobile() ? (
     <MobileMenuItem>
-      {menuDataList(i18n)
+      {menuList
         .filter(menu => menu.name !== undefined)
         .map(menu => (
           <MenuItemLink menu={menu} key={menu.name} />
@@ -71,7 +74,7 @@ export default memo(() => {
     </MobileMenuItem>
   ) : (
     <HeaderMenuPanel>
-      {menuDataList(i18n)
+      {menuList
         .filter(menu => menu.name !== undefined)
         .map(menu =>
           menu.type === LinkType.Inner ? (

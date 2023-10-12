@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Tooltip } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { CellType, PAGE_CELL_COUNT } from '../../../constants/common'
 import TransactionCell from '../TransactionCell'
 import { TransactionCellListPanel, TransactionCellListTitlePanel, TransactionCellsPanel } from './styled'
