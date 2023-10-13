@@ -94,8 +94,11 @@ export const HalvingCountdownPage = () => {
 
     if (inCelebration) {
       return (
-        <div className={styles.halvingPanelWrapper} style={{ paddingTop: isMobile ? 64 : 128, paddingBottom: 128 }}>
-          <div className={styles.halvingPanel} style={{ backgroundImage: `url(${halvingSuccessBg})` }}>
+        <div className={styles.halvingPanelWrapper}>
+          <div
+            className={styles.halvingPanel}
+            style={{ paddingTop: isMobile ? 64 : 128, paddingBottom: 128, backgroundImage: `url(${halvingSuccessBg})` }}
+          >
             <div className={classnames(styles.halvingSuccessText, styles.textCenter)}>
               {i18n.t('halving.congratulations')}!
               <div>
@@ -148,7 +151,7 @@ export const HalvingCountdownPage = () => {
 
             {halvingCount > 1 && (
               <Popover
-                placement="top"
+                placement="topLeft"
                 arrowPointAtCenter
                 content={
                   <Table
