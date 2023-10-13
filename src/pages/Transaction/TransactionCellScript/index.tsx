@@ -2,7 +2,7 @@
 import { useEffect, useState, ReactNode, useRef } from 'react'
 import BigNumber from 'bignumber.js'
 import { TFunction, useTranslation } from 'react-i18next'
-import { explorerService, Response } from '../../../services/ExplorerService'
+import { explorerService } from '../../../services/ExplorerService'
 import { CellState } from '../../../constants/common'
 import { hexToUtf8 } from '../../../utils/string'
 import {
@@ -27,6 +27,7 @@ import { ReactComponent as OuterLinkIcon } from '../../../assets/outer_link_icon
 import { HelpTip } from '../../../components/HelpTip'
 import { useSetToast } from '../../../components/Toast'
 import { CellBasicInfo } from '../../../utils/transformer'
+import { isAxiosError } from '../../../utils/error'
 
 const initScriptContent = {
   lock: 'null',
@@ -71,10 +72,7 @@ const handleFetchCellInfo = async (
 
   const fetchLock = async () => {
     if (cell.id) {
-      const wrapper: Response.Wrapper<State.Script> | null = await explorerService.api.fetchScript(
-        'lock_scripts',
-        `${cell.id}`,
-      )
+      const wrapper = await explorerService.api.fetchScript('lock_scripts', `${cell.id}`)
       return wrapper ? wrapper.attributes : initScriptContent.lock
     }
     return initScriptContent.lock
@@ -82,42 +80,42 @@ const handleFetchCellInfo = async (
 
   const fetchType = async () => {
     if (cell.id) {
-      const wrapper: Response.Wrapper<State.Script> | null = await explorerService.api.fetchScript(
-        'type_scripts',
-        `${cell.id}`,
-      )
+      const wrapper = await explorerService.api.fetchScript('type_scripts', `${cell.id}`)
       return wrapper ? wrapper.attributes : initScriptContent.type
     }
     return initScriptContent.type
   }
 
   const fetchData = async () => {
-    if (cell.id) {
-      return explorerService.api
-        .fetchCellData(`${cell.id}`)
-        .then((wrapper: Response.Wrapper<State.Data> | null) => {
-          const dataValue: State.Data = wrapper ? wrapper.attributes : initScriptContent.data
-          if (wrapper && cell.isGenesisOutput) {
-            dataValue.data = hexToUtf8(wrapper.attributes.data)
-          }
-          return dataValue || initScriptContent.data
+    // TODO: When will cell.id be empty? Its type description indicates that it will not be empty.
+    if (!cell.id) return initScriptContent.data
+
+    try {
+      const wrapper = await explorerService.api.fetchCellData(`${cell.id}`)
+      if (!wrapper) return initScriptContent.data
+
+      const dataValue = wrapper.attributes
+      if (cell.isGenesisOutput) {
+        dataValue.data = hexToUtf8(wrapper.attributes.data)
+      }
+      return dataValue
+    } catch (error) {
+      // TODO: Why hide other errors?
+      if (!isAxiosError(error)) return null
+      const respErrors = error.response?.data
+      if (!Array.isArray(respErrors)) return null
+
+      const err = respErrors[0]
+      if (err.status === 400 && err.code === 1022) {
+        setToast({
+          message: t('toast.data_too_large'),
+          type: 'warning',
         })
-        .catch(error => {
-          if (error.response && error.response.data && error.response.data[0]) {
-            const err = error.response.data[0]
-            if (err.status === 400 && err.code === 1022) {
-              setToast({
-                message: t('toast.data_too_large'),
-                type: 'warning',
-              })
-              return null
-            }
-          }
-          return null
-        })
+      }
+
+      // TODO: Why hide other errors?
+      return null
     }
-    const dataValue: State.Data = initScriptContent.data
-    return dataValue
   }
 
   switch (state) {

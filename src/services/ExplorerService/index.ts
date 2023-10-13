@@ -41,19 +41,14 @@ class ExplorerService {
   start() {
     this.callbacksAtStop = new Subscription()
     this.callbacksAtStop.add(
-      timer(0, BLOCK_POLLING_TIME)
-        .pipe(
-          switchMap(this.api.fetchStatistics),
-          map(wrapper => wrapper.attributes),
-        )
-        .subscribe(this.latestStatistics$),
+      timer(0, BLOCK_POLLING_TIME).pipe(switchMap(this.api.fetchStatistics)).subscribe(this.latestStatistics$),
     )
 
     this.callbacksAtStop.add(
       timer(0, BLOCK_POLLING_TIME)
         .pipe(
           switchMap(this.api.fetchTipBlockNumber),
-          map(wrapper => Number(wrapper.attributes.tipBlockNumber)),
+          map(tipBlockNumber => Number(tipBlockNumber)),
         )
         .subscribe(this.latestBlockNumber$),
     )

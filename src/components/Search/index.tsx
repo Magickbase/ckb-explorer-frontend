@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, FC, memo, RefObject, ChangeEvent } from 'react'
 import { useHistory } from 'react-router'
-import { AxiosError } from 'axios'
 import { TFunction, useTranslation } from 'react-i18next'
 import { SearchImage, SearchInputPanel, SearchPanel, SearchButton, SearchContainer } from './styled'
 import { explorerService, Response } from '../../services/ExplorerService'
@@ -10,14 +9,9 @@ import { addPrefixForHash, containSpecialChar } from '../../utils/string'
 import { HttpErrorCode, SearchFailType } from '../../constants/common'
 import { useIsMobile } from '../../utils/hook'
 import { isChainTypeError } from '../../utils/chain'
-
-enum SearchResultType {
-  Block = 'block',
-  Transaction = 'ckb_transaction',
-  Address = 'address',
-  LockHash = 'lock_hash',
-  UDT = 'udt',
-}
+import { isAxiosError } from '../../utils/error'
+// TODO: Refactor is needed. Should not directly import anything from the descendants of ExplorerService.
+import { SearchResultType } from '../../services/ExplorerService/fetcher'
 
 const clearSearchInput = (inputElement: RefObject<HTMLInputElement>) => {
   const input = inputElement.current
@@ -41,7 +35,7 @@ const setSearchContent = (inputElement: RefObject<HTMLInputElement>, content: st
   }
 }
 
-const handleSearchResult = (
+const handleSearchResult = async (
   searchValue: string,
   inputElement: RefObject<HTMLInputElement>,
   setSearchValue: Function,
@@ -59,44 +53,39 @@ const handleSearchResult = (
   }
 
   setSearchLoading(inputElement, t)
-  explorerService.api
-    .fetchSearchResult(addPrefixForHash(query))
-    .then((response: any) => {
-      const { data } = response
-      if (!response || !data.type) {
-        history.push(`/search/fail?q=${query}`)
-        return
-      }
+
+  try {
+    const { data } = await explorerService.api.fetchSearchResult(addPrefixForHash(query))
+    clearSearchInput(inputElement)
+    setSearchValue('')
+    if (data.type === SearchResultType.Block) {
+      history.push(`/block/${data.attributes.blockHash}`)
+    } else if (data.type === SearchResultType.Transaction) {
+      history.push(`/transaction/${data.attributes.transactionHash}`)
+    } else if (data.type === SearchResultType.Address) {
+      history.push(`/address/${data.attributes.addressHash}`)
+    } else if (data.type === SearchResultType.LockHash) {
+      history.push(`/address/${data.attributes.lockHash}`)
+    } else if (data.type === SearchResultType.UDT) {
+      history.push(`/sudt/${query}`)
+    }
+  } catch (error) {
+    setSearchContent(inputElement, query)
+
+    if (
+      isAxiosError(error) &&
+      error.response?.data &&
+      error.response.status === 404 &&
+      (error.response.data as Response.Error[]).find(
+        (errorData: Response.Error) => errorData.code === HttpErrorCode.NOT_FOUND_ADDRESS,
+      )
+    ) {
       clearSearchInput(inputElement)
-      setSearchValue('')
-      if (data.type === SearchResultType.Block) {
-        history.push(`/block/${(data as Response.Wrapper<State.Block>).attributes.blockHash}`)
-      } else if (data.type === SearchResultType.Transaction) {
-        history.push(`/transaction/${(data as Response.Wrapper<State.Transaction>).attributes.transactionHash}`)
-      } else if (data.type === SearchResultType.Address) {
-        history.push(`/address/${(data as Response.Wrapper<State.Address>).attributes.addressHash}`)
-      } else if (data.type === SearchResultType.LockHash) {
-        history.push(`/address/${(data as Response.Wrapper<State.Address>).attributes.lockHash}`)
-      } else if (data.type === SearchResultType.UDT) {
-        history.push(`/sudt/${query}`)
-      }
-    })
-    .catch((error: AxiosError) => {
-      setSearchContent(inputElement, query)
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.status === 404 &&
-        (error.response.data as Response.Error[]).find(
-          (errorData: Response.Error) => errorData.code === HttpErrorCode.NOT_FOUND_ADDRESS,
-        )
-      ) {
-        clearSearchInput(inputElement)
-        history.push(`/address/${query}`)
-      } else {
-        history.push(`/search/fail?q=${query}`)
-      }
-    })
+      history.push(`/address/${query}`)
+    } else {
+      history.push(`/search/fail?q=${query}`)
+    }
+  }
 }
 
 const Search: FC<{
