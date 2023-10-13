@@ -5,10 +5,6 @@ declare namespace State {
     hashType: string
   }
 
-  export interface Data {
-    data: string
-  }
-
   export interface NodeVersion {
     version: string
   }

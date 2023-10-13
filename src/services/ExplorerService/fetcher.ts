@@ -139,7 +139,9 @@ export const apiFetcher = {
   fetchScript: (scriptType: 'lock_scripts' | 'type_scripts', id: string) =>
     v1GetNullableWrapped<State.Script>(`/cell_output_${scriptType}/${id}`),
 
-  fetchCellData: (id: string) => v1GetNullableWrapped<State.Data>(`/cell_output_data/${id}`),
+  fetchCellData: (id: string) =>
+    // TODO: When will it return an empty result?
+    v1GetNullableWrapped<{ data: string }>(`/cell_output_data/${id}`).then(res => res?.attributes.data ?? null),
 
   fetchSearchResult: (param: string) =>
     v1Get<
