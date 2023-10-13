@@ -9,10 +9,6 @@ export const PaginationPanel = styled.div`
   justify-content: center;
   border-radius: 0 0 6px 6px;
   box-shadow: 0 2px 6px 0 rgb(0 0 0 / 12%);
-
-  @media (max-width: 750px) {
-    margin-bottom: 30px;
-  }
 `
 
 export const PaginationLeftItem = styled.div`
