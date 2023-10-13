@@ -181,8 +181,12 @@
   color: white;
   background-color: rgb(5 22 6 / 100%);
   background-position: bottom;
-  background-size: 100% auto;
+  background-size: 200% auto;
   background-repeat: no-repeat;
+
+  @media (width >= 750px) {
+    background-size: 100% auto;
+  }
 
   .halvingBannerWrapper {
     display: flex;
@@ -218,11 +222,20 @@
   text-align: center;
 }
 
-.halvingPanel {
-  background: rgb(21 19 23 / 100%);
-  background-size: cover;
-  border: 2px solid rgb(51 41 69 / 50%);
+.halvingPanelWrapper {
+  background: linear-gradient(90deg, #00574380, #ffffff24, #00574380);
+  padding: 2px;
   border-radius: 12px;
+
+  @media (width >= 750px) {
+    border-radius: 24px;
+  }
+}
+
+.halvingPanel {
+  background: #000f0b;
+  background-size: cover;
+  border-radius: 10px;
   overflow: hidden;
   padding: 24px 16px;
   gap: 24px;
@@ -230,7 +243,7 @@
   flex-direction: column;
 
   .halvingSuccessText {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
   }
 
@@ -252,7 +265,7 @@
   @media (width >= 750px) {
     padding: 32px 64px;
     gap: 32px;
-    border-radius: 24px;
+    border-radius: 22px;
 
     .halvingPanelTitle {
       font-weight: 700;
@@ -366,6 +379,15 @@
   }
 }
 
+.flexItemsCenter {
+  display: flex;
+  align-items: center;
+}
+
+.fontSizeSm {
+  font-size: 14px;
+}
+
 .textSecondary {
   color: rgb(240 240 240 / 50%);
 }
@@ -380,4 +402,66 @@
 
 .textCapitalize {
   text-transform: capitalize;
+}
+
+.halvingPopover {
+  border-radius: 4px;
+  width: 300px;
+
+  :global {
+    /* stylelint-disable-next-line selector-class-pattern */
+    .ant-popover-inner {
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* stylelint-disable-next-line selector-class-pattern */
+    .ant-popover-inner-content {
+      padding: 0 16px;
+    }
+  }
+}
+
+.historyTable {
+  :global {
+    /* stylelint-disable-next-line selector-class-pattern */
+    .ant-table {
+      /* stylelint-disable-next-line selector-class-pattern */
+      .ant-table-thead {
+        tr > th {
+          background: transparent;
+          color: #666;
+          padding: 8px 20px;
+
+          &::before {
+            width: 0 !important;
+          }
+
+          &:first-child {
+            padding-left: 0;
+          }
+
+          &:last-child {
+            padding-right: 0;
+          }
+        }
+      }
+
+      /* stylelint-disable-next-line selector-class-pattern */
+      .ant-table-tbody {
+        tr > td {
+          padding: 8px 20px;
+          font-weight: 500;
+
+          &:first-child {
+            padding-left: 0;
+          }
+
+          &:last-child {
+            padding-right: 0;
+          }
+        }
+      }
+    }
+  }
 }
