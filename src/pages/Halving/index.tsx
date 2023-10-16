@@ -201,12 +201,13 @@ export const HalvingCountdownPage = () => {
                 />
               </Popover>
             )}
+            <div style={{ marginLeft: 'auto' }} />
 
             <Tooltip
               placement={isMobile ? 'topRight' : 'top'}
               color="#fff"
               arrowPointAtCenter
-              overlayStyle={{ minWidth: 400 }}
+              overlayStyle={{ minWidth: isMobile ? 200 : 400 }}
               overlayInnerStyle={{ color: '#333333' }}
               title={
                 <>
@@ -218,11 +219,7 @@ export const HalvingCountdownPage = () => {
                 </>
               }
             >
-              <WarningCircle
-                width={isMobile ? 16 : 20}
-                height={isMobile ? 16 : 20}
-                style={{ cursor: 'pointer', marginLeft: 'auto' }}
-              />
+              <WarningCircle width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} style={{ cursor: 'pointer' }} />
             </Tooltip>
           </div>
 

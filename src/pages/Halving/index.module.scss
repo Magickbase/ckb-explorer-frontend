@@ -181,12 +181,8 @@
   color: white;
   background-color: rgb(5 22 6 / 100%);
   background-position: bottom;
-  background-size: 200% auto;
+  background-size: 1080px;
   background-repeat: no-repeat;
-
-  @media (width >= 750px) {
-    background-size: 100% auto;
-  }
 
   .halvingBannerWrapper {
     display: flex;
