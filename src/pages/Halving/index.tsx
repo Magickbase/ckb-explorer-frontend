@@ -84,42 +84,47 @@ export const HalvingCountdownPage = () => {
   const renderHalvingPanel = () => {
     if (isLoading || Number.isNaN(seconds)) {
       return (
-        <div className={classnames(styles.halvingPanel, styles.loadingPanel)}>
-          <SmallLoading />
+        <div className={styles.halvingPanelWrapper}>
+          <div className={classnames(styles.halvingPanel, styles.loadingPanel)}>
+            <SmallLoading />
+          </div>
         </div>
       )
     }
 
     if (inCelebration) {
       return (
-        <div
-          className={styles.halvingPanel}
-          style={{ paddingTop: isMobile ? 64 : 128, paddingBottom: 128, backgroundImage: `url(${halvingSuccessBg})` }}
-        >
-          <div className={classnames(styles.halvingSuccessText, styles.textCenter)}>
-            {i18n.t('halving.congratulations')}!
-            <div className={styles.textCapitalize}>
-              {i18n.t('halving.the')}
-              {i18n.t('symbol.char_space')}
-              {i18n.t(`ordinal.${numberToOrdinal(halvingCount)}`)}
-              {i18n.t('symbol.char_space')}
-              {i18n.t('halving.halving')}
-              {i18n.t('halving.actived')}{' '}
-              <a className={styles.textPrimary} href={`/block/${getTargetBlockByHavingCount(halvingCount)}`}>
-                {new BigNumber(getTargetBlockByHavingCount(halvingCount)).toFormat()}.
-              </a>
+        <div className={styles.halvingPanelWrapper}>
+          <div
+            className={styles.halvingPanel}
+            style={{ paddingTop: isMobile ? 64 : 128, paddingBottom: 128, backgroundImage: `url(${halvingSuccessBg})` }}
+          >
+            <div className={classnames(styles.halvingSuccessText, styles.textCenter)}>
+              {i18n.t('halving.congratulations')}!
+              <div>
+                <span className={styles.textCapitalize}>{i18n.t('halving.the')}</span>
+                {i18n.t('symbol.char_space')}
+                {i18n.t(`ordinal.${numberToOrdinal(halvingCount)}`)}
+                {i18n.t('symbol.char_space')}
+                {i18n.t('halving.halving')}
+                {i18n.t('symbol.char_space')}
+                {i18n.t('halving.actived')}{' '}
+                <a className={styles.textPrimary} href={`/block/${getTargetBlockByHavingCount(halvingCount)}`}>
+                  {new BigNumber(getTargetBlockByHavingCount(halvingCount)).toFormat()}.
+                </a>
+              </div>
             </div>
-          </div>
-          <div className={styles.textCenter}>
-            <button
-              className={classnames(styles.halvingSuccessBtn, styles.textCapitalize)}
-              type="button"
-              onClick={() => skipCelebration()}
-            >
-              {i18n.t('halving.next')}
-              {i18n.t('symbol.char_space')}
-              {i18n.t('halving.halving')}
-            </button>
+            <div className={styles.textCenter}>
+              <button
+                className={classnames(styles.halvingSuccessBtn, styles.textCapitalize)}
+                type="button"
+                onClick={() => skipCelebration()}
+              >
+                {i18n.t('halving.next')}
+                {i18n.t('symbol.char_space')}
+                {i18n.t('halving.halving')}
+              </button>
+            </div>
           </div>
         </div>
       )
@@ -127,100 +132,118 @@ export const HalvingCountdownPage = () => {
 
     if (expired) {
       return (
-        <div className={classnames(styles.halvingPanel, styles.loadingPanel)}>
-          {i18n.t('halving.comming_soon')}
-          <SmallLoading />
+        <div className={styles.halvingPanelWrapper}>
+          <div className={classnames(styles.halvingPanel, styles.loadingPanel)}>
+            {i18n.t('halving.comming_soon')}
+            <SmallLoading />
+          </div>
         </div>
       )
     }
 
     return (
-      <div className={styles.halvingPanel}>
-        <div className={classnames(styles.halvingPanelTitle, styles.textCapitalize)}>
-          {i18n.t(`ordinal.${numberToOrdinal(halvingCount)}`)}
-          {i18n.t('symbol.char_space')}
-          {i18n.t('halving.halving')}
+      <div className={styles.halvingPanelWrapper}>
+        <div className={styles.halvingPanel}>
+          <div className={classnames(styles.halvingPanelTitle, styles.textCapitalize)}>
+            {i18n.t(`ordinal.${numberToOrdinal(halvingCount)}`)}
+            {i18n.t('symbol.char_space')}
+            {i18n.t('halving.halving')}
 
-          {halvingCount > 1 && (
-            <Popover
-              content={
-                <Table
-                  pagination={false}
-                  dataSource={new Array(halvingCount - 1).fill({}).map((_, index) => ({
-                    key: index,
-                    event: `${i18n.t(`ordinal.${numberToOrdinal(index + 1)}`)}
+            {halvingCount > 1 && (
+              <Popover
+                placement="topLeft"
+                arrowPointAtCenter
+                content={
+                  <Table
+                    onHeaderRow={() => ({
+                      className: styles.historyTableHeaderRow,
+                    })}
+                    size="middle"
+                    className={styles.historyTable}
+                    pagination={false}
+                    dataSource={new Array(halvingCount - 1).fill({}).map((_, index) => ({
+                      key: index,
+                      event: `${i18n.t(`ordinal.${numberToOrdinal(index + 1)}`)}
                   ${i18n.t('symbol.char_space')}
                   ${i18n.t('halving.halving')}`,
-                    epoch: new BigNumber(EPOCHS_PER_HALVING * (index + 1)).toFormat(),
-                    height: getTargetBlockByHavingCount(index + 1),
-                  }))}
-                  columns={[
-                    {
-                      title: 'Event',
-                      dataIndex: 'event',
-                      key: 'event',
-                      render: event => <span className={styles.textCapitalize}>{event}</span>,
-                    },
-                    { title: 'Epoch', dataIndex: 'epoch', key: 'epoch' },
-                    {
-                      title: 'Height',
-                      dataIndex: 'height',
-                      key: 'height',
-                      render: block => (
-                        <a className={styles.textPrimary} href={`/block/${block}`}>
-                          {new BigNumber(block).toFormat()}
-                        </a>
-                      ),
-                    },
-                  ]}
+                      epoch: new BigNumber(EPOCHS_PER_HALVING * (index + 1)).toFormat(),
+                      height: getTargetBlockByHavingCount(index + 1),
+                    }))}
+                    columns={[
+                      {
+                        title: 'Event',
+                        dataIndex: 'event',
+                        key: 'event',
+                        render: event => <span className={styles.textCapitalize}>{event}</span>,
+                      },
+                      { title: 'Epoch', dataIndex: 'epoch', key: 'epoch' },
+                      {
+                        title: 'Height',
+                        dataIndex: 'height',
+                        key: 'height',
+                        render: block => (
+                          <a className={styles.textPrimary} href={`/block/${block}`}>
+                            {new BigNumber(block).toFormat()}
+                          </a>
+                        ),
+                      },
+                    ]}
+                  />
+                }
+                title={null}
+                trigger="hover"
+                overlayClassName={styles.halvingPopover}
+              >
+                <CalendarIcon
+                  style={{ marginLeft: 4, cursor: 'pointer' }}
+                  width={isMobile ? 16 : 20}
+                  height={isMobile ? 16 : 20}
                 />
+              </Popover>
+            )}
+
+            <Tooltip
+              placement={isMobile ? 'topRight' : 'top'}
+              color="#fff"
+              arrowPointAtCenter
+              overlayStyle={{ minWidth: 400 }}
+              overlayInnerStyle={{ color: '#333333' }}
+              title={
+                <>
+                  <p>{i18n.t('halving.countdown_tooltip_section1')}</p>
+                  <p>
+                    <strong>{i18n.t('halving.countdown_tooltip_section2')}</strong>
+                  </p>
+                  <p>{i18n.t('halving.countdown_tooltip_section3')}</p>
+                </>
               }
-              title={null}
-              trigger="hover"
             >
-              <CalendarIcon
-                style={{ marginLeft: 4, cursor: 'pointer' }}
+              <WarningCircle
                 width={isMobile ? 16 : 20}
                 height={isMobile ? 16 : 20}
+                style={{ cursor: 'pointer', marginLeft: 'auto' }}
               />
-            </Popover>
-          )}
-
-          <Tooltip
-            placement="top"
-            color="#fff"
-            overlayInnerStyle={{ color: '#333333' }}
-            title={
-              <>
-                <p>{i18n.t('halving.countdown_tooltip_section1')}</p>
-                <p>
-                  <strong>{i18n.t('halving.countdown_tooltip_section2')}</strong>
-                </p>
-                <p>{i18n.t('halving.countdown_tooltip_section3')}</p>
-              </>
-            }
-          >
-            <WarningCircle width={isMobile ? 16 : 20} height={isMobile ? 16 : 20} style={{ marginLeft: 'auto' }} />
-          </Tooltip>
-        </div>
-
-        <HalvingCountdown />
-
-        <div>
-          <Progress
-            className={styles.halvingProgress}
-            strokeColor={getPrimaryColor()}
-            percent={Number(percent.toFixed(2))}
-            strokeWidth={12}
-            showInfo={false}
-          />
-          <div className={styles.halvingProgressMarks}>
-            <span>25%</span>
-            <span>50%</span>
-            <span>75%</span>
+            </Tooltip>
           </div>
+
+          <HalvingCountdown />
+
+          <div>
+            <Progress
+              className={styles.halvingProgress}
+              strokeColor={getPrimaryColor()}
+              percent={Number(percent.toFixed(2))}
+              strokeWidth={isMobile ? 8 : 12}
+              showInfo={false}
+            />
+            <div className={styles.halvingProgressMarks}>
+              <span>25%</span>
+              <span>50%</span>
+              <span>75%</span>
+            </div>
+          </div>
+          <HalvingInfo />
         </div>
-        <HalvingInfo />
       </div>
     )
   }

@@ -83,12 +83,14 @@ $backgroudColor: #232323;
 
   &.success {
     transform: rotate(-2deg);
-    text-shadow: 1px 1px 1px var(--primary-color), -0.5px -0.5px 1px white;
+    text-shadow: 1.5px 1.5px 1px #57f3a9, -1px -1px 1px #eef8f2;
     color: rgb(28 28 28);
-    margin-top: -12px;
+    line-height: 26px;
+    margin-top: -4px;
+    margin-bottom: 4px;
 
     @media (width >= 750px) {
-      text-shadow: 1px 1px 1px var(--primary-color), -1px -1px 1px white;
+      text-shadow: 1.5px 1.5px 1px #57f3a9, -1px -1px 1px #eef8f2;
     }
   }
 

@@ -2,11 +2,12 @@ import classnames from 'classnames'
 import styles from './index.module.scss'
 import halvingBanner from '../../assets/halving_banner.png'
 import halvingBannerSuccess from '../../assets/halving_banner_success.png'
+import halvingBannerSuccessMobile from '../../assets/halving_banner_success_mobile.png'
 import { ReactComponent as MoveIcon } from '../../assets/move.svg'
 import LoadingWhiteImage from '../../assets/loading_white.gif'
 import halvingSuccessAni from '../../assets/halving_success_ani.gif'
 import SimpleButton from '../SimpleButton'
-import { useCountdown, useHalving } from '../../utils/hook'
+import { useCountdown, useHalving, useIsMobile } from '../../utils/hook'
 import i18n from '../../utils/i18n'
 
 function numberToOrdinal(number: number) {
@@ -34,6 +35,7 @@ function numberToOrdinal(number: number) {
 export const HalvingBanner = () => {
   const { estimatedDate, halvingCount, inCelebration, isLoading } = useHalving()
   const [days, hours, minutes, seconds, expired] = useCountdown(estimatedDate)
+  const isMobile = useIsMobile()
 
   const shortCountdown = () => {
     if (isLoading || Number.isNaN(seconds)) {
@@ -68,11 +70,23 @@ export const HalvingBanner = () => {
     )
   }
 
+  const bgImage = (() => {
+    if (!inCelebration) {
+      return halvingBanner
+    }
+
+    if (isMobile) {
+      return halvingBannerSuccessMobile
+    }
+
+    return halvingBannerSuccess
+  })()
+
   return (
     <div
       className={classnames(styles.halvingBannerWrapper, { [styles.halvingBannerSuccess]: inCelebration })}
       style={{
-        backgroundImage: `url(${inCelebration ? halvingBannerSuccess : halvingBanner})`,
+        backgroundImage: `url(${bgImage})`,
       }}
     >
       <div className={styles.halvingBannerShadow}>

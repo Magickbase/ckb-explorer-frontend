@@ -1,5 +1,6 @@
 import { Tooltip } from 'antd'
 import BigNumber from 'bignumber.js'
+import classnames from 'classnames'
 import dayjs from 'dayjs'
 import { ReactComponent as WarningCircle } from '../../assets/warning_circle.svg'
 import i18n from '../../utils/i18n'
@@ -44,14 +45,20 @@ export const HalvingInfo = () => {
           <div className={styles.epochInfoItem}>
             <div className={styles.epochInfoValue}>
               <Tooltip
+                placement="topRight"
                 color="#fff"
                 overlayInnerStyle={{ color: '#333333' }}
                 title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
               >
-                {dayjs(estimatedDate).format('YYYY.MM.DD hh:mm:ss')}
+                <div className={styles.flexItemsCenter}>
+                  {dayjs(estimatedDate).format('YYYY.MM.DD hh:mm:ss')}
+                  <WarningCircle style={{ marginLeft: 2 }} width={12} height={12} />
+                </div>
               </Tooltip>
             </div>
-            <div className={styles.textSecondary}>{i18n.t('halving.estimated_time')}</div>
+            <div className={classnames(styles.textSecondary, styles.fontSizeSm)}>
+              {i18n.t('halving.estimated_time')}
+            </div>
           </div>
         </div>
       </>
@@ -90,7 +97,7 @@ export const HalvingInfo = () => {
             overlayInnerStyle={{ color: '#333333' }}
             title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
           >
-            <WarningCircle style={{ marginLeft: '4px' }} width={16} height={16} />
+            <WarningCircle style={{ cursor: 'pointer', marginLeft: '4px' }} width={16} height={16} />
           </Tooltip>
         </strong>
         <div className={styles.textSecondary}>{i18n.t('halving.estimated_time')}</div>
