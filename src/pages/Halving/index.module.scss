@@ -466,7 +466,8 @@
 :global {
   /* stylelint-disable */
   .ant-tooltip-placement-top .ant-tooltip-arrow,
-  .ant-popover-placement-top .ant-popover-arrow {
+  .ant-popover-placement-top .ant-popover-arrow,
+  .ant-tooltip-placement-topRight .ant-tooltip-arrow {
     /* stylelint-enable */
     bottom: 1px;
   }
