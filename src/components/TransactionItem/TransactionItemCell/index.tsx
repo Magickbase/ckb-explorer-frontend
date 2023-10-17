@@ -7,7 +7,7 @@ import NervosDAOCellIcon from '../../../assets/nervos_dao_cell.png'
 import NervosDAOWithdrawingIcon from '../../../assets/nervos_dao_withdrawing.png'
 import CurrentAddressIcon from '../../../assets/current_address.svg'
 import UDTTokenIcon from '../../../assets/udt_token.png'
-import { TranslateFunction, useCurrentLanguage } from '../../../utils/i18n'
+import { useCurrentLanguage } from '../../../utils/i18n'
 import { localeNumberString, parseUDTAmount } from '../../../utils/number'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import {
@@ -71,10 +71,12 @@ const AddressTextWithAlias: FC<{
   )
 }
 
-const udtAmount = (udt: State.UDTInfo, t: TranslateFunction) =>
-  udt.published
+const useUdtAmount = (udt: State.UDTInfo) => {
+  const { t } = useTranslation()
+  return udt.published
     ? `${parseUDTAmount(udt.amount, udt.decimal)} ${udt.uan || udt.symbol}`
     : `${t('udt.unknown_token')} #${udt.typeHash.substring(udt.typeHash.length - 4)}`
+}
 
 const WithdrawPopoverItem = ({
   width,
@@ -198,12 +200,11 @@ const TransactionCellNervosDao = ({ cell, cellType }: { cell: State.Cell; cellTy
 
 const TransactionCellUDT = ({ cell }: { cell: State.Cell$UDT }) => {
   const isMobile = useIsMobile()
-  const { t } = useTranslation()
   const { extraInfo } = cell
 
   return (
     <TransactionCellUDTPanel>
-      <span>{udtAmount(extraInfo, t)}</span>
+      <span>{useUdtAmount(extraInfo)}</span>
       <Tooltip
         placement={isMobile ? 'topRight' : 'top'}
         title={`Capacity: ${localeNumberString(shannonToCkbDecimal(cell.capacity, 8))} CKB`}

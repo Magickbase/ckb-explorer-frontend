@@ -1,17 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
 import Search from '../../components/Search'
-import { TranslateFunction } from '../../utils/i18n'
 import { SearchFailType, MAINNET_URL, TESTNET_URL } from '../../constants/common'
 import { isMainnet } from '../../utils/chain'
 import { SearchContent, SearchPanel } from './styled'
 import { useSearchParams } from '../../utils/hook'
-
-const chainErrorMessage = (t: TranslateFunction) =>
-  isMainnet() ? t('search.address_type_testnet_error') : t('search.address_type_mainnet_error')
-
-const chainUrlMessage = (t: TranslateFunction) =>
-  isMainnet() ? t('search.address_type_testnet_url') : t('search.address_type_mainnet_url')
 
 const targetUrl = isMainnet() ? TESTNET_URL : MAINNET_URL
 
@@ -20,6 +13,12 @@ export default ({ address }: { address?: string }) => {
   const params = useSearchParams('q', 'type')
   const { q, type } = params
   const query = address || q
+
+  const chainErrorMessage = () =>
+    isMainnet() ? t('search.address_type_testnet_error') : t('search.address_type_mainnet_error')
+
+  const chainUrlMessage = () =>
+    isMainnet() ? t('search.address_type_testnet_url') : t('search.address_type_mainnet_url')
 
   return (
     <Content>
@@ -30,9 +29,9 @@ export default ({ address }: { address?: string }) => {
         <SearchContent>
           {type === SearchFailType.CHAIN_ERROR || address ? (
             <div>
-              <span>{chainErrorMessage(t)}</span>
+              <span>{chainErrorMessage()}</span>
               <a href={`${targetUrl}address/${q}`} rel="noopener noreferrer">
-                {chainUrlMessage(t)}
+                {chainUrlMessage()}
               </a>
             </div>
           ) : (

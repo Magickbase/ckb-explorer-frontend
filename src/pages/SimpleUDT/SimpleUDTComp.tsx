@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import TransactionItem from '../../components/TransactionItem/index'
-import { TranslateFunction } from '../../utils/i18n'
-
 import { SimpleUDTTransactionsPagination, SimpleUDTTransactionsPanel, UDTNoResultPanel } from './styled'
 import { parseUDTAmount } from '../../utils/number'
 import { ReactComponent as OpenInNew } from '../../assets/open_in_new.svg'
@@ -15,7 +13,8 @@ import AddressText from '../../components/AddressText'
 import PaginationWithRear from '../../components/PaginationWithRear'
 import { CsvExport } from '../../components/CsvExport'
 
-const addressContent = (address: string, t: TranslateFunction) => {
+const useAddressContent = (address: string) => {
+  const { t } = useTranslation()
   if (!address) {
     return t('address.unable_decode_address')
   }
@@ -42,7 +41,8 @@ const addressContent = (address: string, t: TranslateFunction) => {
   )
 }
 
-const simpleUDTInfo = (udt: State.UDT, t: TranslateFunction) => {
+const useSimpleUDTInfo = (udt: State.UDT) => {
+  const { t } = useTranslation()
   const { displayName, uan, fullName, issuerAddress, symbol, addressesCount, decimal, totalAmount } = udt
   return [
     {
@@ -52,7 +52,7 @@ const simpleUDTInfo = (udt: State.UDT, t: TranslateFunction) => {
     {
       title: t('udt.issuer'),
       contentWrapperClass: styles.addressWidthModify,
-      content: addressContent(issuerAddress, t),
+      content: useAddressContent(issuerAddress),
     },
     {
       title: t('udt.holder_addresses'),
@@ -74,10 +74,8 @@ const simpleUDTInfo = (udt: State.UDT, t: TranslateFunction) => {
 }
 
 export const SimpleUDTOverview = ({ children, udt }: { children: ReactNode; udt: State.UDT }) => {
-  const { t } = useTranslation()
-
   return (
-    <OverviewCard items={simpleUDTInfo(udt, t)} hideShadow>
+    <OverviewCard items={useSimpleUDTInfo(udt)} hideShadow>
       {children}
     </OverviewCard>
   )

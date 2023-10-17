@@ -28,7 +28,6 @@ import { useIsLGScreen, useIsMobile } from '../../../utils/hook'
 import { ReactChartCore } from '../../StatisticsChart/common'
 import { HelpTip } from '../../../components/HelpTip'
 import { ChartColor } from '../../../constants/common'
-import { TranslateFunction } from '../../../utils/i18n'
 
 interface NervosDaoItemContent {
   title: string
@@ -67,47 +66,50 @@ const daoIcon = (symbol: 'positive' | 'negative' | 'zero' | undefined) => {
   }
 }
 
-const nervosDaoItemContents = (nervosDao: State.NervosDao, t: TranslateFunction): NervosDaoItemContent[] => [
-  {
-    title: t('nervos_dao.deposit'),
-    change: handleBigNumberFloor(shannonToCkbDecimal(nervosDao.depositChanges, 2), 2),
-    changeSymbol: numberSymbol(Number(nervosDao.depositChanges)),
-    content: localeNumberString(shannonToCkbDecimal(nervosDao.totalDeposit, 2)),
-    tooltip: t('nervos_dao.today_update'),
-  },
-  {
-    title: t('nervos_dao.addresses'),
-    titleTooltip: t('nervos_dao.deposit_address_tooltip'),
-    change: localeNumberString(nervosDao.depositorChanges),
-    changeSymbol: numberSymbol(Number(nervosDao.depositorChanges), false),
-    content: localeNumberString(nervosDao.depositorsCount),
-    tooltip: t('nervos_dao.today_update'),
-  },
+const useNervosDaoItemContents = (nervosDao: State.NervosDao): NervosDaoItemContent[] => {
+  const { t } = useTranslation()
+  return [
+    {
+      title: t('nervos_dao.deposit'),
+      change: handleBigNumberFloor(shannonToCkbDecimal(nervosDao.depositChanges, 2), 2),
+      changeSymbol: numberSymbol(Number(nervosDao.depositChanges)),
+      content: localeNumberString(shannonToCkbDecimal(nervosDao.totalDeposit, 2)),
+      tooltip: t('nervos_dao.today_update'),
+    },
+    {
+      title: t('nervos_dao.addresses'),
+      titleTooltip: t('nervos_dao.deposit_address_tooltip'),
+      change: localeNumberString(nervosDao.depositorChanges),
+      changeSymbol: numberSymbol(Number(nervosDao.depositorChanges), false),
+      content: localeNumberString(nervosDao.depositorsCount),
+      tooltip: t('nervos_dao.today_update'),
+    },
 
-  {
-    title: t('nervos_dao.claimed_compensation'),
-    change: handleBigNumberFloor(shannonToCkbDecimal(nervosDao.claimedCompensationChanges, 2), 2),
-    changeSymbol: numberSymbol(Number(nervosDao.claimedCompensationChanges)),
-    content: localeNumberString(shannonToCkbDecimal(nervosDao.claimedCompensation, 2)),
-    tooltip: t('nervos_dao.today_update'),
-  },
-  {
-    title: t('nervos_dao.average_deposit_time'),
-    content: `${handleBigNumber(nervosDao.averageDepositTime, 1)} ${t('nervos_dao.days')}`,
-  },
-  {
-    title: t('nervos_dao.estimated_apc'),
-    titleTooltip: t('glossary.estimated_apc'),
-    content: `${Number(nervosDao.estimatedApc).toFixed(2)}%`,
-  },
-  {
-    title: t('nervos_dao.unclaimed_compensation'),
-    change: handleBigNumberFloor(shannonToCkbDecimal(nervosDao.unclaimedCompensationChanges, 2), 2),
-    changeSymbol: numberSymbol(Number(nervosDao.unclaimedCompensationChanges)),
-    content: localeNumberString(shannonToCkbDecimal(nervosDao.unclaimedCompensation, 2)),
-    tooltip: t('nervos_dao.today_update'),
-  },
-]
+    {
+      title: t('nervos_dao.claimed_compensation'),
+      change: handleBigNumberFloor(shannonToCkbDecimal(nervosDao.claimedCompensationChanges, 2), 2),
+      changeSymbol: numberSymbol(Number(nervosDao.claimedCompensationChanges)),
+      content: localeNumberString(shannonToCkbDecimal(nervosDao.claimedCompensation, 2)),
+      tooltip: t('nervos_dao.today_update'),
+    },
+    {
+      title: t('nervos_dao.average_deposit_time'),
+      content: `${handleBigNumber(nervosDao.averageDepositTime, 1)} ${t('nervos_dao.days')}`,
+    },
+    {
+      title: t('nervos_dao.estimated_apc'),
+      titleTooltip: t('glossary.estimated_apc'),
+      content: `${Number(nervosDao.estimatedApc).toFixed(2)}%`,
+    },
+    {
+      title: t('nervos_dao.unclaimed_compensation'),
+      change: handleBigNumberFloor(shannonToCkbDecimal(nervosDao.unclaimedCompensationChanges, 2), 2),
+      changeSymbol: numberSymbol(Number(nervosDao.unclaimedCompensationChanges)),
+      content: localeNumberString(shannonToCkbDecimal(nervosDao.unclaimedCompensation, 2)),
+      tooltip: t('nervos_dao.today_update'),
+    },
+  ]
+}
 
 const NervosDaoLeftItem = ({ item, firstLine }: { item: NervosDaoItemContent; firstLine?: boolean }) => (
   <DaoOverviewLeftItemPanel hasChange={!!item.change} symbol={item.changeSymbol} hasTooltip={!!item.titleTooltip}>
@@ -132,8 +134,7 @@ const NervosDaoLeftItem = ({ item, firstLine }: { item: NervosDaoItemContent; fi
 
 const NervosDaoOverviewLeftComp: FC<{ nervosDao: State.NervosDao }> = ({ nervosDao }) => {
   const isMobile = useIsMobile()
-  const { t } = useTranslation()
-  const leftItems = nervosDaoItemContents(nervosDao, t)
+  const leftItems = useNervosDaoItemContents(nervosDao)
 
   if (isMobile) {
     return (
@@ -181,12 +182,8 @@ const NervosDaoOverviewLeftComp: FC<{ nervosDao: State.NervosDao }> = ({ nervosD
   )
 }
 
-const useOption = (
-  nervosDao: State.NervosDao,
-  colors: string[],
-  isMobile: boolean,
-  t: TranslateFunction,
-): echarts.EChartOption => {
+const useOption = (nervosDao: State.NervosDao, colors: string[], isMobile: boolean): echarts.EChartOption => {
+  const { t } = useTranslation()
   const { miningReward, depositCompensation, treasuryAmount } = nervosDao
   const sum =
     shannonToCkbDecimal(miningReward) + shannonToCkbDecimal(depositCompensation) + shannonToCkbDecimal(treasuryAmount)
@@ -308,7 +305,7 @@ export default ({ nervosDao }: { nervosDao: State.NervosDao }) => {
         color: ChartColor.daoColors[2],
       },
     ],
-    [],
+    [t],
   )
 
   return (
@@ -322,7 +319,7 @@ export default ({ nervosDao }: { nervosDao: State.NervosDao }) => {
             <HelpTip title={t('glossary.secondary_issuance')} />
           </div>
           <ReactChartCore
-            option={useOption(nervosDao, ChartColor.daoColors, isMobile, t)}
+            option={useOption(nervosDao, ChartColor.daoColors, isMobile)}
             notMerge
             lazyUpdate
             style={{

@@ -123,7 +123,7 @@ export const MinerAddressDistributionChart = ({ isThumbnail = false }: { isThumb
   const getEChartOption: SmartChartPageProps<State.StatisticMinerAddress>['getEChartOption'] = useCallback(
     (...args) =>
       parseOption(...args, address => (isMobile ? adaptMobileEllipsis(address, 4) : adaptPCEllipsis(address, 2))),
-    [adaptMobileEllipsis, adaptPCEllipsis, isMobile],
+    [adaptMobileEllipsis, adaptPCEllipsis, isMobile, parseOption],
   )
 
   return (

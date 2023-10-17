@@ -7,8 +7,8 @@ import WhiteDropUpIcon from '../../../assets/white_drop_up.png'
 import BlueDropUpIcon from '../../../assets/blue_drop_up.png'
 import GreenDropUpIcon from '../../../assets/green_drop_up.png'
 import { isMainnet } from '../../../utils/chain'
-import LanDropdown, { useLanguageText } from '../../Dropdown/Language'
-import { useCurrentLanguage, useToggleLanguage } from '../../../utils/i18n'
+import LanDropdown from '../../Dropdown/Language'
+import { useCurrentLanguage, useLanguageText, useToggleLanguage } from '../../../utils/i18n'
 
 const getDropdownIcon = (showDropdown: boolean) => {
   if (!showDropdown) return WhiteDropdownIcon
@@ -32,7 +32,7 @@ export const LanguageDropdown = () => {
         }
       }
     }
-  }, [showLanguage])
+  }, [showLanguage, currentLanguage])
 
   return (
     <HeaderLanguagePanel

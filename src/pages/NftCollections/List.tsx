@@ -4,7 +4,6 @@ import { Popover, Tooltip } from 'antd'
 import classNames from 'classnames'
 import { Trans, useTranslation } from 'react-i18next'
 import SortButton from '../../components/SortButton'
-import { TranslateFunction } from '../../utils/i18n'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
@@ -14,7 +13,8 @@ import styles from './styles.module.scss'
 
 type NftSortField = 'transactions' | 'holder' | 'minted'
 const primaryColor = getPrimaryColor()
-function filterList(t: TranslateFunction): Array<Record<'title' | 'value', string>> {
+function useFilterList(): Array<Record<'title' | 'value', string>> {
+  const { t } = useTranslation()
   return [
     {
       value: 'all',
@@ -61,7 +61,7 @@ const TypeFilter = () => {
   const { t } = useTranslation()
   const { type } = useSearchParams('type')
   const isActive = isTxFilterType(type)
-  const list = filterList(t)
+  const list = useFilterList()
   return (
     <div className={styles.typeFilter} data-is-active={isActive}>
       {t('nft.standard')}

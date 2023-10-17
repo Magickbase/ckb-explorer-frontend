@@ -7,10 +7,8 @@ import { AppCachedKeys } from '../constants/cache'
 
 export type LanuageType = 'en' | 'zh'
 
-export type I18nType = typeof i18n
-export type TranslateFunction = typeof i18n.t
-
 const getDefaultLanguage = () => fetchCachedData<LanuageType>(AppCachedKeys.AppLanguage) ?? 'en'
+const setDefaultLanguage = (lng: LanuageType) => storeCachedData(AppCachedKeys.AppLanguage, lng)
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -23,8 +21,8 @@ i18n.use(initReactI18next).init({
   },
 })
 
-i18n.on('languageChanged', lan => {
-  storeCachedData(AppCachedKeys.AppLanguage, lan)
+i18n.on('languageChanged', (lng: LanuageType) => {
+  setDefaultLanguage(lng)
 })
 
 export const useCurrentLanguage = (): LanuageType => {
@@ -41,4 +39,17 @@ export const useToggleLanguage = () => {
       i18n.changeLanguage('en')
     }
   }
+}
+
+export const useLanguageText = (payload?: { reverse: boolean }) => {
+  const currentLanguage = useCurrentLanguage()
+  const { t } = useTranslation()
+  if (payload?.reverse) {
+    return currentLanguage === 'zh' ? t('navbar.language_en') : t('navbar.language_zh')
+  }
+  return currentLanguage === 'en' ? t('navbar.language_en') : t('navbar.language_zh')
+}
+
+export const useOtherLanguageText = () => {
+  return useLanguageText({ reverse: true })
 }

@@ -11,7 +11,6 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { useResizeDetector } from 'react-resize-detector'
 import { interval, share } from 'rxjs'
-import { useTranslation } from 'react-i18next'
 import { AppCachedKeys } from '../constants/cache'
 import { deprecatedAddrToNewAddr } from './util'
 import { startEndEllipsis } from './string'
@@ -24,10 +23,10 @@ import {
   storeDateChartCache,
   storeEpochChartCache,
 } from './cache'
-import { parseDate } from './date'
 import { omit } from './object'
 // TODO: This file depends on higher-level abstractions, so it should not be in the utils folder. It should be moved to `src/hooks/index.ts`.
 import { Response } from '../services/ExplorerService'
+import { useParseDate } from './date'
 
 /**
  * Returns the value of the argument from the previous render
@@ -577,9 +576,9 @@ export function useTimestamp(): number {
 }
 
 export function useParsedDate(timestamp: number): string {
-  const { t } = useTranslation()
+  const parseDate = useParseDate()
   const now = useTimestamp()
-  return parseDate(timestamp, t, now)
+  return parseDate(timestamp, now)
 }
 
 export default {

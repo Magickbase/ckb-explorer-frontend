@@ -4,11 +4,10 @@ import { useQuery } from 'react-query'
 import { Radio } from 'antd'
 import { Base64 } from 'js-base64'
 import { hexToBytes } from '@nervosnetwork/ckb-sdk-utils'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import TransactionItem from '../../components/TransactionItem/index'
 import { explorerService } from '../../services/ExplorerService'
-import { TranslateFunction } from '../../utils/i18n'
 import { parseSporeCellData } from '../../utils/spore'
 import { localeNumberString, parseUDTAmount } from '../../utils/number'
 import { shannonToCkb, deprecatedAddrToNewAddr, handleNftImgError, patchMibaoImg } from '../../utils/util'
@@ -48,7 +47,7 @@ import { omit } from '../../utils/object'
 import { CsvExport } from '../../components/CsvExport'
 import PaginationWithRear from '../../components/PaginationWithRear'
 
-const addressAssetInfo = (address: State.Address, useMiniStyle: boolean, t: TranslateFunction) => {
+const addressAssetInfo = (address: State.Address, useMiniStyle: boolean, t: TFunction) => {
   const items = [
     {
       title: '',

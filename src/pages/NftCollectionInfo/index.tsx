@@ -2,7 +2,7 @@ import type { AxiosResponse } from 'axios'
 import { Link, useParams, useHistory } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { Popover } from 'antd'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
 import NftCollectionOverview from '../../components/NftCollectionOverview'
 import NftCollectionTransfers from '../../components/NftCollectionTransfers'
@@ -11,7 +11,6 @@ import Filter from '../../components/Search/Filter'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
 import { explorerService } from '../../services/ExplorerService'
-import { TranslateFunction } from '../../utils/i18n'
 import { useSearchParams, useIsMobile } from '../../utils/hook'
 import styles from './styles.module.scss'
 import { CsvExport } from '../../components/CsvExport'
@@ -89,7 +88,7 @@ export interface HolderListRes {
 }
 
 const tabs = ['transfers', 'holders', 'inventory']
-function filterList(t: TranslateFunction): Array<Record<'title' | 'value', string>> {
+function getFilterList(t: TFunction): Array<Record<'title' | 'value', string>> {
   return [
     {
       value: 'mint',
@@ -115,7 +114,7 @@ const NftCollectionInfo = () => {
   const { type, filter, sort } = useSearchParams('type', 'filter', 'sort')
   const isMobile = useIsMobile()
 
-  const filteredList = filterList(t)
+  const filteredList = getFilterList(t)
   const isFilteredByType = filteredList.some(f => f.value === type)
 
   const { isLoading: isTransferListLoading, data: transferListRes } = useQuery<AxiosResponse<TransferListRes>>(

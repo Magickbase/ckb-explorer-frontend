@@ -7,7 +7,7 @@ import { AxiosResponse } from 'axios'
 import { useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
-import { TranslateFunction, useCurrentLanguage } from '../../utils/i18n'
+import { useCurrentLanguage } from '../../utils/i18n'
 import { HashCardPanel } from '../../components/Card/HashCard/styled'
 import { localeNumberString } from '../../utils/number'
 import { CodeHashMessage, ScriptCells, ScriptTransactions } from './ScriptsComp'
@@ -23,7 +23,8 @@ import { explorerService, Response } from '../../services/ExplorerService'
 
 const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
 
-const scriptHashNameMap = (t: TranslateFunction): Map<string, string> => {
+const useScriptHashNameMap = (): Map<string, string> => {
+  const { t } = useTranslation()
   return new Map(
     scriptDataList
       .map(scriptData =>
@@ -41,7 +42,8 @@ const scriptHashNameMap = (t: TranslateFunction): Map<string, string> => {
   )
 }
 
-const getScriptInfo = (scriptInfo: ScriptInfo, t: TranslateFunction) => {
+const useScriptInfo = (scriptInfo: ScriptInfo) => {
+  const { t } = useTranslation()
   const { scriptName, scriptType, id, codeHash, hashType, capacityOfDeployedCells, capacityOfReferringCells } =
     scriptInfo
   const items: OverviewItemData[] = [
@@ -87,17 +89,16 @@ const getScriptInfo = (scriptInfo: ScriptInfo, t: TranslateFunction) => {
 }
 
 const ScriptsTitleOverview = ({ scriptInfo }: { scriptInfo: ScriptInfo }) => {
-  const { t } = useTranslation()
-
   return (
     <div className={styles.scriptsTitleOverviewPanel}>
-      <OverviewCard items={getScriptInfo(scriptInfo, t)} hideShadow />
+      <OverviewCard items={useScriptInfo(scriptInfo)} hideShadow />
     </div>
   )
 }
 
-const seekScriptName = (codeHash: string, hashType: string, t: TranslateFunction): string => {
-  const nameMap = scriptHashNameMap(t)
+const useSeekScriptName = (codeHash: string, hashType: string): string => {
+  const { t } = useTranslation()
+  const nameMap = useScriptHashNameMap()
   return nameMap.has(`${codeHash}_${hashType}`) ? nameMap.get(`${codeHash}_${hashType}`)! : t('scripts.unnamed_script')
 }
 
@@ -141,7 +142,7 @@ export const ScriptPage = () => {
           countOfDeployedCells: 0,
           countOfReferringCells: 0,
         } as ScriptInfo)
-  scriptInfo.scriptName = seekScriptName(scriptInfo.codeHash, scriptInfo.hashType, t)
+  scriptInfo.scriptName = useSeekScriptName(scriptInfo.codeHash, scriptInfo.hashType)
 
   useEffect(() => {
     setCountOfTransactions(scriptInfo.countOfTransactions)

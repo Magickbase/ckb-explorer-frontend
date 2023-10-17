@@ -3,7 +3,6 @@ import { Tooltip } from 'antd'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { CellType } from '../../../constants/common'
-import { TranslateFunction } from '../../../utils/i18n'
 import { localeNumberString, parseUDTAmount } from '../../../utils/number'
 import { parseSimpleDate } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
@@ -140,7 +139,8 @@ const TransactionCellIndexAddress = ({
   )
 }
 
-const parseNftInfo = (cell: State.Cell, t: TranslateFunction) => {
+const useParseNftInfo = (cell: State.Cell) => {
+  const { t } = useTranslation()
   if (cell.cellType === 'nrc_721_token') {
     const nftInfo = cell.extraInfo
     return <TransactionCellNftInfo>{`${nftInfo.symbol} #${nftInfo.amount}`}</TransactionCellNftInfo>
@@ -175,6 +175,7 @@ const TransactionCellDetail = ({ cell }: { cell: State.Cell }) => {
   let detailTitle = t('transaction.ckb_capacity')
   let detailIcon
   let tooltip: string | ReactNode = ''
+  const nftInfo = useParseNftInfo(cell)
   switch (cell.cellType) {
     case 'nervos_dao_deposit':
       detailTitle = t('transaction.nervos_dao_deposit')
@@ -192,22 +193,22 @@ const TransactionCellDetail = ({ cell }: { cell: State.Cell }) => {
     case 'm_nft_issuer':
       detailTitle = t('transaction.m_nft_issuer')
       detailIcon = NFTIssuerIcon
-      tooltip = parseNftInfo(cell, t)
+      tooltip = nftInfo
       break
     case 'm_nft_class':
       detailTitle = t('transaction.m_nft_class')
       detailIcon = NFTClassIcon
-      tooltip = parseNftInfo(cell, t)
+      tooltip = nftInfo
       break
     case 'm_nft_token':
       detailTitle = t('transaction.m_nft_token')
       detailIcon = NFTTokenIcon
-      tooltip = parseNftInfo(cell, t)
+      tooltip = nftInfo
       break
     case 'nrc_721_token':
       detailTitle = t('transaction.nrc_721_token')
       detailIcon = NFTTokenIcon
-      tooltip = parseNftInfo(cell, t)
+      tooltip = nftInfo
       break
     case 'cota_registry': {
       detailTitle = t('transaction.cota_registry')

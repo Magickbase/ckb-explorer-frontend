@@ -22,7 +22,6 @@ import {
 } from '../../constants/common'
 import { localeNumberString, handleHashRate, handleDifficulty } from '../../utils/number'
 import { handleBigNumber } from '../../utils/string'
-import { TranslateFunction } from '../../utils/i18n'
 import LatestBlocksIcon from '../../assets/latest_blocks.png'
 import LatestTransactionsIcon from '../../assets/latest_transactions.png'
 import { BlockCardItem, TransactionCardItem } from './TableCard'
@@ -69,54 +68,52 @@ const parseHashRate = (hashRate: string | undefined) => (hashRate ? handleHashRa
 
 const parseBlockTime = (blockTime: string | undefined) => (blockTime ? parseTime(Number(blockTime)) : '- -')
 
-const getBlockchainDataList = (
-  statistics: State.Statistics,
-  isMobile: boolean,
-  isLG: boolean,
-  t: TranslateFunction,
-): BlockchainData[] => [
-  {
-    name: t('blockchain.latest_block'),
-    value: localeNumberString(statistics.tipBlockNumber),
-    showSeparate: true,
-  },
-  {
-    name: t('blockchain.average_block_time'),
-    value: parseBlockTime(statistics.averageBlockTime),
-    showSeparate: !isMobile,
-  },
-  {
-    name: t('blockchain.hash_rate'),
-    value: parseHashRate(statistics.hashRate),
-    showSeparate: true,
-  },
-  {
-    name: t('blockchain.difficulty'),
-    value: handleDifficulty(statistics.currentEpochDifficulty),
-    showSeparate: true,
-  },
-  {
-    name: t('blockchain.epoch'),
-    value: statistics.epochInfo.epochNumber,
-    rightValue: `${statistics.epochInfo.index}/${statistics.epochInfo.epochLength}`,
-    showSeparate: true,
-  },
-  {
-    name: t('blockchain.estimated_epoch_time'),
-    value: parseTimeNoSecond(Number(statistics.estimatedEpochTime)),
-    showSeparate: !isLG,
-  },
-  {
-    name: t('blockchain.transactions_per_minute'),
-    value: handleBigNumber(statistics.transactionsCountPerMinute, 2),
-    showSeparate: true,
-  },
-  {
-    name: t('blockchain.transactions_last_24hrs'),
-    value: handleBigNumber(statistics.transactionsLast24Hrs, 2),
-    showSeparate: false,
-  },
-]
+const useBlockchainDataList = (statistics: State.Statistics, isMobile: boolean, isLG: boolean): BlockchainData[] => {
+  const { t } = useTranslation()
+  return [
+    {
+      name: t('blockchain.latest_block'),
+      value: localeNumberString(statistics.tipBlockNumber),
+      showSeparate: true,
+    },
+    {
+      name: t('blockchain.average_block_time'),
+      value: parseBlockTime(statistics.averageBlockTime),
+      showSeparate: !isMobile,
+    },
+    {
+      name: t('blockchain.hash_rate'),
+      value: parseHashRate(statistics.hashRate),
+      showSeparate: true,
+    },
+    {
+      name: t('blockchain.difficulty'),
+      value: handleDifficulty(statistics.currentEpochDifficulty),
+      showSeparate: true,
+    },
+    {
+      name: t('blockchain.epoch'),
+      value: statistics.epochInfo.epochNumber,
+      rightValue: `${statistics.epochInfo.index}/${statistics.epochInfo.epochLength}`,
+      showSeparate: true,
+    },
+    {
+      name: t('blockchain.estimated_epoch_time'),
+      value: parseTimeNoSecond(Number(statistics.estimatedEpochTime)),
+      showSeparate: !isLG,
+    },
+    {
+      name: t('blockchain.transactions_per_minute'),
+      value: handleBigNumber(statistics.transactionsCountPerMinute, 2),
+      showSeparate: true,
+    },
+    {
+      name: t('blockchain.transactions_last_24hrs'),
+      value: handleBigNumber(statistics.transactionsLast24Hrs, 2),
+      showSeparate: false,
+    },
+  ]
+}
 
 const HomeHeaderTopPanel: FC = memo(() => {
   const ref = useRef<HTMLDivElement>(null)
@@ -236,7 +233,7 @@ export default () => {
     handleBlockchainAlert()
   }, BLOCKCHAIN_ALERT_POLLING_TIME)
 
-  const blockchainDataList = getBlockchainDataList(statistics, isMobile, isLG, t)
+  const blockchainDataList = useBlockchainDataList(statistics, isMobile, isLG)
 
   return (
     <Content>

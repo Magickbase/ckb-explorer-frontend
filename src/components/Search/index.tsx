@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect, FC, memo } from 'react'
 import { useHistory } from 'react-router'
 import { AxiosError } from 'axios'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 import { SearchImage, SearchInputPanel, SearchPanel, SearchButton, SearchContainer } from './styled'
 import { explorerService, Response } from '../../services/ExplorerService'
 import SearchLogo from '../../assets/search_black.png'
 import ClearLogo from '../../assets/clear.png'
 import { addPrefixForHash, containSpecialChar } from '../../utils/string'
-import { TranslateFunction } from '../../utils/i18n'
 import { HttpErrorCode, SearchFailType } from '../../constants/common'
 import { useIsMobile } from '../../utils/hook'
 import { isChainTypeError } from '../../utils/chain'
@@ -28,7 +27,7 @@ const clearSearchInput = (inputElement: any) => {
   }
 }
 
-const setSearchLoading = (inputElement: any, t: TranslateFunction) => {
+const setSearchLoading = (inputElement: any, t: TFunction) => {
   const input: HTMLInputElement = inputElement.current
   input.value = t('search.loading')
 }
@@ -45,7 +44,7 @@ const handleSearchResult = (
   inputElement: any,
   setSearchValue: Function,
   history: ReturnType<typeof useHistory>,
-  t: TranslateFunction,
+  t: TFunction,
 ) => {
   const query = searchValue.trim().replace(',', '') // remove front and end blank and ','
   if (!query || containSpecialChar(query)) {

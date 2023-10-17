@@ -135,7 +135,7 @@ export const AddressBalanceRankChart = ({ isThumbnail = false }: { isThumbnail?:
   const parseOption = useOption()
   const getEChartOption: SmartChartPageProps<State.StatisticAddressBalanceRank>['getEChartOption'] = useCallback(
     (...args) => parseOption(...args, address => adaptPCEllipsis(address, 6)),
-    [adaptPCEllipsis],
+    [adaptPCEllipsis, parseOption],
   )
 
   return (

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import { useEffect, useState, ReactNode, useRef } from 'react'
 import BigNumber from 'bignumber.js'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 import { explorerService, Response } from '../../../services/ExplorerService'
 import { CellState } from '../../../constants/common'
 import { hexToUtf8 } from '../../../utils/string'
@@ -17,7 +17,6 @@ import {
   TransactionCellScriptContentPanel,
   TransactionDetailScriptButton,
 } from './styled'
-import { TranslateFunction } from '../../../utils/i18n'
 import SmallLoading from '../../../components/Loading/SmallLoading'
 import CloseIcon from '../../../assets/modal_close.png'
 import { getContractHashTag } from '../../../utils/util'
@@ -60,7 +59,7 @@ const handleFetchCellInfo = async (
   setScriptFetchStatus: (val: boolean) => void,
   setContent: Function,
   setToast: ReturnType<typeof useSetToast>,
-  t: TranslateFunction,
+  t: TFunction,
 ) => {
   setScriptFetchStatus(false)
 
@@ -262,7 +261,7 @@ export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
 
   useEffect(() => {
     handleFetchCellInfo(cell, state, setScriptFetched, setContent, setToast, t)
-  }, [cell, state, setToast])
+  }, [cell, state, setToast, t])
 
   const onClickCopy = () => {
     navigator.clipboard.writeText(updateJsonFormat(content)).then(

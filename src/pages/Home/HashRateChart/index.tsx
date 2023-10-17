@@ -4,7 +4,6 @@ import 'echarts/lib/chart/line'
 import 'echarts/lib/component/title'
 import echarts from 'echarts/lib/echarts'
 import { useTranslation } from 'react-i18next'
-import { TranslateFunction } from '../../../utils/i18n'
 import { handleAxis } from '../../../utils/chart'
 import { parseDateNoTime } from '../../../utils/date'
 import SmallLoading from '../../../components/Loading/SmallLoading'
@@ -16,96 +15,94 @@ import { ChartCachedKeys } from '../../../constants/cache'
 import { ReactChartCore } from '../../StatisticsChart/common'
 
 const useOption = () => {
-  return (
-    statisticHashRates: State.StatisticHashRate[],
-    useMiniStyle: boolean,
-    t: TranslateFunction,
-  ): echarts.EChartOption => ({
-    color: ['#ffffff'],
-    title: {
-      text: t('block.hash_rate_hps'),
-      textAlign: 'left',
-      textStyle: {
-        color: '#ffffff',
-        fontSize: 12,
-        fontWeight: 'lighter',
-        fontFamily: 'Lato',
-      },
-    },
-    grid: {
-      left: useMiniStyle ? '1%' : '2%',
-      right: '3%',
-      top: useMiniStyle ? '20%' : '15%',
-      bottom: '2%',
-      containLabel: true,
-    },
-    xAxis: [
-      {
-        axisLine: {
-          lineStyle: {
-            color: '#ffffff',
-            width: 1,
-          },
-        },
-        data: statisticHashRates.map(data => data.createdAtUnixtimestamp),
-        axisLabel: {
-          formatter: (value: string) => parseDateNoTime(value, true),
-        },
-        boundaryGap: false,
-      },
-    ],
-    yAxis: [
-      {
-        position: 'left',
-        type: 'value',
-        scale: true,
-        axisLine: {
-          lineStyle: {
-            color: '#ffffff',
-            width: 1,
-          },
-        },
-        splitLine: {
-          lineStyle: {
-            color: '#ffffff',
-            width: 0.5,
-            opacity: 0.2,
-          },
-        },
-        axisLabel: {
-          formatter: (value: string) => handleAxis(new BigNumber(value), 0),
-        },
-        boundaryGap: ['5%', '2%'],
-      },
-      {
-        position: 'right',
-        type: 'value',
-        axisLine: {
-          lineStyle: {
-            color: '#ffffff',
-            width: 1,
-          },
-        },
-      },
-    ],
-    series: [
-      {
-        name: t('block.hash_rate'),
-        type: 'line',
-        yAxisIndex: 0,
-        lineStyle: {
+  const { t } = useTranslation()
+  return (statisticHashRates: State.StatisticHashRate[], useMiniStyle: boolean): echarts.EChartOption => {
+    return {
+      color: ['#ffffff'],
+      title: {
+        text: t('block.hash_rate_hps'),
+        textAlign: 'left',
+        textStyle: {
           color: '#ffffff',
-          width: 1,
+          fontSize: 12,
+          fontWeight: 'lighter',
+          fontFamily: 'Lato',
         },
-        symbol: 'none',
-        data: statisticHashRates.map(data => new BigNumber(data.avgHashRate).toNumber()),
       },
-    ],
-  })
+      grid: {
+        left: useMiniStyle ? '1%' : '2%',
+        right: '3%',
+        top: useMiniStyle ? '20%' : '15%',
+        bottom: '2%',
+        containLabel: true,
+      },
+      xAxis: [
+        {
+          axisLine: {
+            lineStyle: {
+              color: '#ffffff',
+              width: 1,
+            },
+          },
+          data: statisticHashRates.map(data => data.createdAtUnixtimestamp),
+          axisLabel: {
+            formatter: (value: string) => parseDateNoTime(value, true),
+          },
+          boundaryGap: false,
+        },
+      ],
+      yAxis: [
+        {
+          position: 'left',
+          type: 'value',
+          scale: true,
+          axisLine: {
+            lineStyle: {
+              color: '#ffffff',
+              width: 1,
+            },
+          },
+          splitLine: {
+            lineStyle: {
+              color: '#ffffff',
+              width: 0.5,
+              opacity: 0.2,
+            },
+          },
+          axisLabel: {
+            formatter: (value: string) => handleAxis(new BigNumber(value), 0),
+          },
+          boundaryGap: ['5%', '2%'],
+        },
+        {
+          position: 'right',
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#ffffff',
+              width: 1,
+            },
+          },
+        },
+      ],
+      series: [
+        {
+          name: t('block.hash_rate'),
+          type: 'line',
+          yAxisIndex: 0,
+          lineStyle: {
+            color: '#ffffff',
+            width: 1,
+          },
+          symbol: 'none',
+          data: statisticHashRates.map(data => new BigNumber(data.avgHashRate).toNumber()),
+        },
+      ],
+    }
+  }
 }
 export default memo(() => {
   const isLG = useIsLGScreen()
-  const { t } = useTranslation()
   const query = useChartQueryWithCache(explorerService.api.fetchStatisticHashRate, ChartCachedKeys.HashRate, 'date')
   const fullStatisticHashRates = useMemo(() => query.data ?? [], [query.data])
   const parseOption = useOption()
@@ -130,7 +127,7 @@ export default memo(() => {
   return (
     <HomeChartLink to="/charts/hash-rate">
       <ReactChartCore
-        option={parseOption(statisticHashRates, isLG, t)}
+        option={parseOption(statisticHashRates, isLG)}
         notMerge
         lazyUpdate
         style={{
