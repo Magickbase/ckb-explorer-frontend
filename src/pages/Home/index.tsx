@@ -22,12 +22,14 @@ import {
 } from '../../constants/common'
 import { localeNumberString, handleHashRate, handleDifficulty } from '../../utils/number'
 import { handleBigNumber } from '../../utils/string'
+import { isMainnet } from '../../utils/chain'
 import LatestBlocksIcon from '../../assets/latest_blocks.png'
 import LatestTransactionsIcon from '../../assets/latest_transactions.png'
 import { BlockCardItem, TransactionCardItem } from './TableCard'
 import Loading from '../../components/Loading/SmallLoading'
 import { useElementIntersecting, useInterval, useIsLGScreen, useIsMobile } from '../../utils/hook'
 import Banner from '../../components/Banner'
+import { HalvingBanner } from '../../components/Banner/HalvingBanner'
 import { handleBlockchainAlert } from '../../service/app/blockchain'
 import Search from '../../components/Search'
 import AverageBlockTimeChart from './AverageBlockTimeChart'
@@ -237,7 +239,7 @@ export default () => {
 
   return (
     <Content>
-      <Banner />
+      {isMainnet() ? <HalvingBanner /> : <Banner />}
       <div className="container">
         <HomeHeaderTopPanel />
         <div className={`${styles.homeStatisticTopPanel} ${styles.afterHardFork}`}>
