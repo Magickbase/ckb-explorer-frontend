@@ -163,9 +163,24 @@ export const apiFetcher = {
       statistics => statistics.tipBlockNumber,
     ),
 
-  fetchBlockchainInfo: () => v1GetNullableWrapped<State.BlockchainInfo>('statistics/blockchain_info'),
+  fetchBlockchainInfo: () =>
+    v1GetNullableWrapped<{
+      blockchainInfo: {
+        isInitialBlockDownload: boolean
+        epoch: string
+        difficulty: string
+        medianTime: string
+        chain: string
+        alerts: {
+          id: string
+          message: string
+          noticeNntil: string
+          priority: string
+        }[]
+      }
+    }>('statistics/blockchain_info'),
 
-  fetchNodeVersion: () => v1GetUnwrapped<State.NodeVersion>('/nets/version'),
+  fetchNodeVersion: () => v1GetUnwrapped<{ version: string }>('/nets/version'),
 
   fetchNervosDao: () => v1GetUnwrapped<State.NervosDao>(`contracts/nervos_dao`),
 

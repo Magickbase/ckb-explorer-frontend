@@ -26,6 +26,7 @@ import { ReactComponent as TimeDownIcon } from '../../assets/time_down.svg'
 import { ReactComponent as TimeUpIcon } from '../../assets/time_up.svg'
 import { sliceNftName } from '../../utils/string'
 import {
+  OrderByType,
   useIsLGScreen,
   useIsMobile,
   useNewAddr,
@@ -318,7 +319,7 @@ export const AddressTransactions = ({
   address: string
   transactions: State.Transaction[]
   transactionsTotal: number
-  timeOrderBy: State.SortOrderTypes
+  timeOrderBy: OrderByType
 }) => {
   const isMobile = useIsMobile()
   const { t } = useTranslation()
