@@ -52,7 +52,7 @@
       "comming_soon": "减半将在几秒钟内发生",
       "halving_countdown": "减半倒计时",
       "learn_more": "了解更多",
-      "banner_congratulation": "CKB {{times}}减半生效.",
+      "banner_congratulation": "CKB {{times}}减半生效",
       "countdown_tooltip_section1": "倒计时是如何估算的?",
       "countdown_tooltip_section2": "[目标 Epoch - 当前 Epoch] * 单个 Epoch 平均用时 - 当前 Epoch 已用时间",
       "countdown_tooltip_section3": "*单个 Epoch 平均用时取近1000个 Epoch 的平均用时.",
