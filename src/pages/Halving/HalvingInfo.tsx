@@ -44,17 +44,18 @@ export const HalvingInfo = () => {
 
           <div className={styles.epochInfoItem}>
             <div className={styles.epochInfoValue}>
-              <Tooltip
-                placement="topRight"
-                color="#fff"
-                overlayInnerStyle={{ color: '#333333' }}
-                title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
-              >
-                <div className={styles.flexItemsCenter}>
-                  {dayjs(estimatedDate).format('YYYY.MM.DD hh:mm:ss')}
-                  <WarningCircle style={{ marginLeft: 2 }} width={12} height={12} />
-                </div>
-              </Tooltip>
+              <div className={styles.flexItemsCenter}>
+                <span style={{ marginRight: 2 }}>{dayjs(estimatedDate).format('YYYY.MM.DD hh:mm:ss')}</span>
+                <Tooltip
+                  placement="topRight"
+                  color="#fff"
+                  arrowPointAtCenter
+                  overlayInnerStyle={{ color: '#333333' }}
+                  title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
+                >
+                  <WarningCircle width={12} height={12} />
+                </Tooltip>
+              </div>
             </div>
             <div className={classnames(styles.textSecondary, styles.fontSizeSm)}>
               {i18n.t('halving.estimated_time')}
