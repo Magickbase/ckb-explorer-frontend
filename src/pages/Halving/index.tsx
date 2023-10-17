@@ -151,7 +151,7 @@ export const HalvingCountdownPage = () => {
 
             {halvingCount > 1 && (
               <Popover
-                placement="topLeft"
+                placement="top"
                 arrowPointAtCenter
                 content={
                   <Table
