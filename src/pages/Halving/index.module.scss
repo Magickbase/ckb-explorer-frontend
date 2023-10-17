@@ -448,6 +448,7 @@
         tr > td {
           padding: 8px 20px;
           font-weight: 500;
+          border: 0;
 
           &:first-child {
             padding-left: 0;
@@ -459,5 +460,14 @@
         }
       }
     }
+  }
+}
+
+:global {
+  /* stylelint-disable */
+  .ant-tooltip-placement-top .ant-tooltip-arrow,
+  .ant-popover-placement-top .ant-popover-arrow {
+    /* stylelint-enable */
+    bottom: 1px;
   }
 }
