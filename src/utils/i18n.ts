@@ -37,7 +37,7 @@ export const useCurrentLanguage = (): LanuageType => {
 export const useToggleLanguage = () => {
   const currentLanguage = useCurrentLanguage()
   return () => {
-    if (currentLanguage.indexOf('zh') === -1) {
+    if (currentLanguage === 'zh') {
       i18n.changeLanguage('zh')
     } else {
       i18n.changeLanguage('en')
