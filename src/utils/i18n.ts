@@ -27,7 +27,11 @@ i18n.on('languageChanged', (lng: LanuageType) => {
 
 export const useCurrentLanguage = (): LanuageType => {
   const { i18n } = useTranslation()
-  return i18n.language as LanuageType
+  const currentLanguage = i18n.language
+  if (currentLanguage !== 'en' && currentLanguage !== 'zh') {
+    throw new Error('Not supported language')
+  }
+  return currentLanguage
 }
 
 export const useToggleLanguage = () => {

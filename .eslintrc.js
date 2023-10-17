@@ -33,6 +33,7 @@ module.exports = {
     ],
     'no-unused-vars': 'off',
     'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': 'error',
     'no-undef': 'off',
     'implicit-arrow-linebreak': 'off',
     'operator-linebreak': [0, 'none'],
@@ -115,9 +116,4 @@ module.exports = {
       },
     },
   },
-  overrides: [
-    {
-      files: ['src/**/*.ts', 'src/**/*.tsx', '.js'],
-    },
-  ],
 }
