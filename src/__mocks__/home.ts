@@ -1,7 +1,9 @@
 import { toCamelcase } from '../utils/util'
+import { Block } from '../models/Block'
+import { Transaction } from '../models/Transaction'
 
 export const latestBlocksMock = () => {
-  return toCamelcase<State.Block[]>([
+  return toCamelcase<Block[]>([
     {
       miner_hash: 'ckb1qyqqzmlaljcrd0mneh63sx4gzlyvhz0g35nsh6e30l',
       number: '1686123',
@@ -26,11 +28,11 @@ export const latestBlocksMock = () => {
       transactions_count: '1',
       live_cell_changes: '1',
     },
-  ]) as State.Block[]
+  ]) as Block[]
 }
 
 export const latestTxMock = () => {
-  return toCamelcase<State.Transaction[]>([
+  return toCamelcase<Transaction[]>([
     {
       transaction_hash: '0x896ff246313e0a9fc7b392af6665774460d6d8614783f40764b17864bde10643',
       block_number: '1687517',
@@ -52,7 +54,7 @@ export const latestTxMock = () => {
       capacity_involved: '111303562450',
       live_cell_changes: '1',
     },
-  ]) as State.Transaction[]
+  ]) as Transaction[]
 }
 
 export const statisticMock = (): State.Statistics => {

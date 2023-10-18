@@ -1,9 +1,11 @@
 import { toCamelcase } from '../utils/util'
+import { Block } from '../models/Block'
+import { Transaction } from '../models/Transaction'
 
 export const blockMock = () => {
   return toCamelcase<{
-    block: State.Block
-    transactions: State.Transaction[]
+    block: Block
+    transactions: Transaction[]
     total: number
     status: State.FetchStatus
   }>({

@@ -9,6 +9,8 @@ import { Response } from './types'
 import { assert } from '../../utils/error'
 import { Cell } from '../../models/Cell'
 import { Script } from '../../models/Script'
+import { Block } from '../../models/Block'
+import { Transaction } from '../../models/Transaction'
 
 async function v1Get<T>(...args: Parameters<typeof requesterV1.get>) {
   return requesterV1.get(...args).then(res => toCamelcase<Response.Response<T>>(res.data))
@@ -47,7 +49,7 @@ export enum SearchResultType {
 
 export const apiFetcher = {
   fetchBlocks: (page: number, size: number, sort?: string) =>
-    v1Get<Response.Wrapper<State.Block>[]>('blocks', {
+    v1Get<Response.Wrapper<Block>[]>('blocks', {
       params: {
         page,
         page_size: size,
@@ -66,7 +68,7 @@ export const apiFetcher = {
     ),
 
   fetchTransactionsByAddress: (address: string, page: number, size: number, sort?: string, txTypeFilter?: string) =>
-    v1GetUnwrappedPagedList<State.Transaction>(`address_transactions/${address}`, {
+    v1GetUnwrappedPagedList<Transaction>(`address_transactions/${address}`, {
       params: {
         page,
         page_size: size,
@@ -77,7 +79,7 @@ export const apiFetcher = {
 
   fetchTransactionRaw: (hash: string) => requesterV2.get<unknown>(`transactions/${hash}/raw`).then(res => res.data),
 
-  fetchTransactionByHash: (hash: string) => v1GetUnwrapped<State.Transaction>(`transactions/${hash}`),
+  fetchTransactionByHash: (hash: string) => v1GetUnwrapped<Transaction>(`transactions/${hash}`),
 
   fetchTransactionLiteDetailsByHash: (hash: string) =>
     requesterV2
@@ -85,7 +87,7 @@ export const apiFetcher = {
       .then((res: AxiosResponse) => toCamelcase<Response.Response<State.TransactionLiteDetails[]>>(res.data)),
 
   fetchTransactions: (page: number, size: number, sort?: string) =>
-    v1GetUnwrappedPagedList<State.Transaction>('transactions', {
+    v1GetUnwrappedPagedList<Transaction>('transactions', {
       params: {
         page,
         page_size: size,
@@ -104,7 +106,7 @@ export const apiFetcher = {
           sort,
         },
       })
-      .then(res => toCamelcase<Response.Response<State.Transaction[]>>(res.data))
+      .then(res => toCamelcase<Response.Response<Transaction[]>>(res.data))
       .then(res => {
         assert(res.meta, 'Unexpected paged list response')
         return {
@@ -127,7 +129,7 @@ export const apiFetcher = {
       filter: string | null
     }>,
   ) =>
-    v1GetUnwrappedPagedList<State.Transaction>(`/block_transactions/${blockHash}`, {
+    v1GetUnwrappedPagedList<Transaction>(`/block_transactions/${blockHash}`, {
       params: {
         page,
         page_size,
@@ -136,7 +138,7 @@ export const apiFetcher = {
       },
     }),
 
-  fetchBlock: (blockHeightOrHash: string) => v1GetUnwrapped<State.Block>(`blocks/${blockHeightOrHash}`),
+  fetchBlock: (blockHeightOrHash: string) => v1GetUnwrapped<Block>(`blocks/${blockHeightOrHash}`),
 
   fetchScript: (scriptType: 'lock_scripts' | 'type_scripts', id: string) =>
     v1GetNullableWrapped<Script>(`/cell_output_${scriptType}/${id}`),
@@ -147,8 +149,8 @@ export const apiFetcher = {
 
   fetchSearchResult: (param: string) =>
     v1Get<
-      | Response.Wrapper<State.Block, SearchResultType.Block>
-      | Response.Wrapper<State.Transaction, SearchResultType.Transaction>
+      | Response.Wrapper<Block, SearchResultType.Block>
+      | Response.Wrapper<Transaction, SearchResultType.Transaction>
       | Response.Wrapper<State.Address, SearchResultType.Address>
       | Response.Wrapper<State.Address, SearchResultType.LockHash>
       | Response.Wrapper<unknown, SearchResultType.UDT>
@@ -188,7 +190,7 @@ export const apiFetcher = {
 
   // Unused currently
   fetchNervosDaoTransactions: (page: number, size: number) =>
-    v1Get<Response.Wrapper<State.Transaction>[]>(`contract_transactions/nervos_dao`, {
+    v1Get<Response.Wrapper<Transaction>[]>(`contract_transactions/nervos_dao`, {
       params: {
         page,
         page_size: size,
@@ -196,12 +198,11 @@ export const apiFetcher = {
     }),
 
   // Unused currently
-  fetchNervosDaoTransactionsByHash: (hash: string) =>
-    v1GetWrapped<State.Transaction>(`dao_contract_transactions/${hash}`),
+  fetchNervosDaoTransactionsByHash: (hash: string) => v1GetWrapped<Transaction>(`dao_contract_transactions/${hash}`),
 
   // Unused currently
   fetchNervosDaoTransactionsByAddress: (address: string, page: number, size: number) =>
-    v1Get<Response.Wrapper<State.Transaction>[]>(`address_dao_transactions/${address}`, {
+    v1Get<Response.Wrapper<Transaction>[]>(`address_dao_transactions/${address}`, {
       params: {
         page,
         page_size: size,
@@ -209,7 +210,7 @@ export const apiFetcher = {
     }),
 
   fetchNervosDaoTransactionsByFilter: ({ page, size, filter }: { page: number; size: number; filter?: string }) =>
-    v1GetUnwrappedPagedList<State.Transaction>(`contract_transactions/nervos_dao`, {
+    v1GetUnwrappedPagedList<Transaction>(`contract_transactions/nervos_dao`, {
       params: {
         page,
         page_size: size,
@@ -411,7 +412,7 @@ export const apiFetcher = {
     filter?: string | null
     type?: string | null
   }) =>
-    v1GetUnwrappedPagedList<State.Transaction>(`/udt_transactions/${typeHash}`, {
+    v1GetUnwrappedPagedList<Transaction>(`/udt_transactions/${typeHash}`, {
       params: {
         page,
         page_size: size,

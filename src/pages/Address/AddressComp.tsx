@@ -48,6 +48,7 @@ import { LayoutLiteProfessional } from '../../constants/common'
 import { omit } from '../../utils/object'
 import { CsvExport } from '../../components/CsvExport'
 import PaginationWithRear from '../../components/PaginationWithRear'
+import { Transaction } from '../../models/Transaction'
 
 const addressAssetInfo = (address: State.Address, useMiniStyle: boolean, t: TFunction) => {
   const items = [
@@ -317,7 +318,7 @@ export const AddressTransactions = ({
   timeOrderBy,
 }: {
   address: string
-  transactions: State.Transaction[]
+  transactions: Transaction[]
   transactionsTotal: number
   timeOrderBy: OrderByType
 }) => {
@@ -403,12 +404,12 @@ export const AddressTransactions = ({
                 <div>{t('transaction.capacity_change')}</div>
               </div>
             )}
-            {txList.map((transaction: State.Transaction) => (
+            {txList.map((transaction: Transaction) => (
               <TransactionLiteItem address={address} transaction={transaction} key={transaction.transactionHash} />
             ))}
           </>
         ) : (
-          txList.map((transaction: State.Transaction, index: number) => (
+          txList.map((transaction: Transaction, index: number) => (
             <TransactionItem
               address={address}
               transaction={transaction}

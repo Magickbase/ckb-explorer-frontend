@@ -26,6 +26,7 @@ import {
   TransactionInfoItemPanel,
 } from './styled'
 import { useLatestBlockNumber } from '../../../services/ExplorerService'
+import { Transaction } from '../../../models/Transaction'
 
 const showTxStatus = (txStatus: string) => txStatus?.replace(/^\S/, s => s.toUpperCase()) ?? '-'
 const TransactionBlockHeight = ({ blockNumber, txStatus }: { blockNumber: number; txStatus: string }) => (
@@ -104,7 +105,7 @@ const TransactionInfoItemWrapper = ({
   </TransactionInfoContentPanel>
 )
 
-export const TransactionOverview: FC<{ transaction: State.Transaction; layout: LayoutLiteProfessional }> = ({
+export const TransactionOverview: FC<{ transaction: Transaction; layout: LayoutLiteProfessional }> = ({
   transaction,
   layout,
 }) => {

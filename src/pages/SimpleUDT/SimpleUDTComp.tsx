@@ -12,6 +12,7 @@ import styles from './styles.module.scss'
 import AddressText from '../../components/AddressText'
 import PaginationWithRear from '../../components/PaginationWithRear'
 import { CsvExport } from '../../components/CsvExport'
+import { Transaction } from '../../models/Transaction'
 
 const useAddressContent = (address: string) => {
   const { t } = useTranslation()
@@ -92,7 +93,7 @@ export const SimpleUDTComp = ({
 }: {
   currentPage: number
   pageSize: number
-  transactions: State.Transaction[]
+  transactions: Transaction[]
   total: number
   onPageChange: (page: number) => void
   filterNoResult?: boolean
@@ -112,7 +113,7 @@ export const SimpleUDTComp = ({
     <>
       <SimpleUDTTransactionsPanel>
         {transactions.map(
-          (transaction: State.Transaction, index: number) =>
+          (transaction: Transaction, index: number) =>
             transaction && (
               <TransactionItem
                 transaction={transaction}

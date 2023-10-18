@@ -1,8 +1,9 @@
 import { Cell } from '../models/Cell'
+import { Transaction } from '../models/Transaction'
 import type { CellInScript, CKBTransactionInScript } from '../services/ExplorerService/fetcher'
 
 // TODO: move to models
-export const transformToTransaction = (tx: CKBTransactionInScript): State.Transaction => {
+export const transformToTransaction = (tx: CKBTransactionInScript): Transaction => {
   return {
     transactionHash: tx.txHash,
     blockNumber: tx.blockNumber,

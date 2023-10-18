@@ -1,4 +1,6 @@
-export const defaultTransactionInfo: State.Transaction = {
+import { Transaction } from '../../models/Transaction'
+
+export const defaultTransactionInfo: Transaction = {
   transactionHash: '',
   blockNumber: 0,
   blockTimestamp: 0,

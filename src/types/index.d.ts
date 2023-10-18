@@ -1,6 +1,5 @@
 declare namespace State {
   import { Script } from '../models/Script'
-  import { Cell } from '../models/Cell'
 
   export interface TransactionLiteDetails {
     address: string
@@ -121,75 +120,6 @@ declare namespace State {
     isSpecial: boolean
     specialAddress: string
     udtAccounts?: Array<UDTAccount>
-  }
-
-  export interface Block {
-    blockHash: string
-    number: number
-    transactionsCount: number
-    proposalsCount: number
-    unclesCount: number
-    uncleBlockHashes: string[]
-    reward: string
-    rewardStatus: 'pending' | 'issued'
-    totalTransactionFee: string
-    receivedTxFee: string
-    receivedTxFeeStatus: 'pending' | 'calculated'
-    totalCellCapacity: string
-    minerHash: string
-    minerMessage: string
-    timestamp: number
-    difficulty: string
-    epoch: number
-    length: string
-    startNumber: number
-    version: number
-    nonce: string
-    transactionsRoot: string
-    blockIndexInEpoch: string
-    minerReward: string
-    liveCellChanges: string
-    size: number
-    largestBlockInEpoch: number
-    largestBlock: number
-    cycles: number | null
-    maxCyclesInEpoch: number | null
-    maxCycles: number | null
-  }
-
-  export interface CellDep {
-    depType: string
-    outPoint: {
-      index: string
-      txHash: string
-    }
-  }
-
-  export interface Transaction {
-    transactionHash: string
-    blockNumber: number
-    blockTimestamp: number
-    transactionFee: string
-    income: string
-    isCellbase: boolean
-    targetBlockNumber: number
-    version: number
-    displayInputs: Cell[]
-    displayOutputs: Cell[]
-    cellDeps: CellDep[]
-    headerDeps: string[]
-    witnesses: string[]
-    liveCellChanges: string
-    capacityInvolved: string
-    txStatus: string
-    detailedMessage: string
-    bytes: number
-    largestTxInEpoch: number
-    largestTx: number
-    cycles: number | null
-    maxCyclesInEpoch: number | null
-    maxCycles: number | null
-    createTimestamp?: number
   }
 
   export interface NervosDao {

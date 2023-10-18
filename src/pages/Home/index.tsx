@@ -38,6 +38,8 @@ import styles from './index.module.scss'
 import { RouteState } from '../../routes/state'
 import { explorerService, useLatestBlockNumber, useStatistics } from '../../services/ExplorerService'
 import { useShowSearchBarInHeader } from '../../components/Header'
+import { Block } from '../../models/Block'
+import { Transaction } from '../../models/Transaction'
 
 interface BlockchainData {
   name: string
@@ -153,7 +155,7 @@ const HomeHeaderTopPanel: FC = memo(() => {
   )
 })
 
-const BlockList: FC<{ blocks: State.Block[] }> = memo(({ blocks }) => {
+const BlockList: FC<{ blocks: Block[] }> = memo(({ blocks }) => {
   return blocks.length > 0 ? (
     <>
       {blocks.map((block, index) => (
@@ -168,7 +170,7 @@ const BlockList: FC<{ blocks: State.Block[] }> = memo(({ blocks }) => {
   )
 })
 
-const TransactionList: FC<{ transactions: State.Transaction[]; tipBlockNumber: number }> = memo(
+const TransactionList: FC<{ transactions: Transaction[]; tipBlockNumber: number }> = memo(
   ({ transactions, tipBlockNumber }) => {
     return transactions.length > 0 ? (
       <>
