@@ -7,6 +7,8 @@ import { toCamelcase } from '../../utils/util'
 import { requesterV1, requesterV2 } from './requester'
 import { Response } from './types'
 import { assert } from '../../utils/error'
+import { Cell } from '../../models/Cell'
+import { Script } from '../../models/Script'
 
 async function v1Get<T>(...args: Parameters<typeof requesterV1.get>) {
   return requesterV1.get(...args).then(res => toCamelcase<Response.Response<T>>(res.data))
@@ -137,7 +139,7 @@ export const apiFetcher = {
   fetchBlock: (blockHeightOrHash: string) => v1GetUnwrapped<State.Block>(`blocks/${blockHeightOrHash}`),
 
   fetchScript: (scriptType: 'lock_scripts' | 'type_scripts', id: string) =>
-    v1GetNullableWrapped<State.Script>(`/cell_output_${scriptType}/${id}`),
+    v1GetNullableWrapped<Script>(`/cell_output_${scriptType}/${id}`),
 
   fetchCellData: (id: string) =>
     // TODO: When will it return an empty result?
@@ -717,8 +719,8 @@ export interface CKBTransactionInScript {
   transactionFee: number
   isCellbase: boolean
   txStatus: string
-  displayInputs: State.Cell[]
-  displayOutputs: State.Cell[]
+  displayInputs: Cell[]
+  displayOutputs: Cell[]
 }
 
 export interface CellInScript {

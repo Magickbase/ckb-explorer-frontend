@@ -1,141 +1,15 @@
 declare namespace State {
-  export interface Script {
-    codeHash: string
-    args: string
-    hashType: string
-  }
-
-  interface UDTInfo {
-    symbol: string
-    amount: string
-    decimal: string
-    typeHash: string
-    published: boolean
-    uan?: string
-  }
-
-  interface Nrc721TokenInfo {
-    amount: string
-    symbol: string
-  }
-
-  interface NftIssuer {
-    issuerName: string
-  }
-
-  interface NftClass {
-    className: string
-    total: string
-  }
-
-  interface NftToken {
-    className: string
-    tokenId: string
-    total: string
-  }
-
-  interface CellInfo {
-    lock: Script
-    type: Script
-    data: string
-  }
-
-  interface Cell$Base {
-    id: number
-    addressHash: string
-    capacity: string
-    occupiedCapacity: string
-    fromCellbase: boolean
-    generatedTxHash: string
-    targetBlockNumber: number
-    baseReward: string
-    secondaryReward: string
-    commitReward: string
-    proposalReward: string
-    consumedTxHash: string
-    status: 'live' | 'dead'
-    isGenesisOutput: boolean
-    cellIndex: string
-    compensationStartedBlockNumber: number
-    compensationEndedBlockNumber: number
-    compensationStartedTimestamp: number
-    compensationEndedTimestamp: number
-    lockedUntilBlockNumber: number
-    lockedUntilBlockTimestamp: number
-    interest: string
-    daoTypeHash: string
-    cellInfo: CellInfo
-    since?: {
-      raw: string
-      median_timestamp?: string
-    }
-  }
-
-  interface Cell$NoExtra extends Cell$Base {
-    cellType:
-      | 'normal'
-      | 'nervos_dao_deposit'
-      | 'nervos_dao_withdrawing'
-      | 'cota_registry'
-      | 'cota_regular'
-      | 'nft_transfer'
-      | 'simple_transfer'
-      | 'nft_mint'
-      | 'spore_cluster'
-      | 'spore_cell'
-    extraInfo?: never
-  }
-
-  interface Cell$UDT extends Cell$Base {
-    cellType: 'udt'
-    extraInfo: UDTInfo
-  }
-
-  interface Cell$NftIssuer extends Cell$Base {
-    cellType: 'm_nft_issuer'
-    extraInfo: NftIssuer
-  }
-
-  interface Cell$NftClass extends Cell$Base {
-    cellType: 'm_nft_class'
-    extraInfo: NftClass
-  }
-
-  interface Cell$NftToken extends Cell$Base {
-    cellType: 'm_nft_token'
-    extraInfo: NftToken
-  }
-
-  interface Cell$Nrc721Token extends Cell$Base {
-    cellType: 'nrc_721_token'
-    extraInfo: Nrc721TokenInfo
-  }
-
-  type Cell = Cell$NoExtra | Cell$UDT | Cell$NftIssuer | Cell$NftClass | Cell$NftToken | Cell$Nrc721Token
+  import { Script } from '../models/Script'
+  import { Cell } from '../models/Cell'
 
   export interface TransactionLiteDetails {
     address: string
     transfers: LiteTransfer[]
   }
 
-  // cell_type comes from: https://github.com/nervosnetwork/ckb-explorer/blob/develop/app/utils/ckb_utils.rb#L380
-  type CellType =
-    | 'normal'
-    | 'udt'
-    | 'nervos_dao_deposit'
-    | 'nervos_dao_withdrawing'
-    | 'spore_cell'
-    | 'spore_cluster'
-    | 'cota_regular'
-    | 'cota_registry'
-    | 'm_nft_issuer'
-    | 'm_nft_class'
-    | 'm_nft_token'
-    | 'nrc_721_token'
-    | 'nrc_721_factory'
   interface LiteTransfer {
     capacity: string
-    cellType: CellType
+    cellType: Cell['cellType']
 
     udtInfo?: {
       symbol: string

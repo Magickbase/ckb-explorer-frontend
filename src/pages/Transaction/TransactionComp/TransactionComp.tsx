@@ -1,7 +1,8 @@
 import TransactionCellList from '../TransactionCellList'
 import { useAddrFormatToggle } from '../../../utils/hook'
+import { Cell } from '../../../models/Cell'
 
-const handleCellbaseInputs = (inputs: State.Cell[], outputs: State.Cell[]) => {
+const handleCellbaseInputs = (inputs: Cell[], outputs: Cell[]) => {
   if (inputs[0] && inputs[0].fromCellbase && outputs[0] && outputs[0].baseReward) {
     const resultInputs = inputs
     resultInputs[0] = {

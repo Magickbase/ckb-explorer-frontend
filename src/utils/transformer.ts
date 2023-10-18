@@ -1,5 +1,7 @@
+import { Cell } from '../models/Cell'
 import type { CellInScript, CKBTransactionInScript } from '../services/ExplorerService/fetcher'
 
+// TODO: move to models
 export const transformToTransaction = (tx: CKBTransactionInScript): State.Transaction => {
   return {
     transactionHash: tx.txHash,
@@ -30,7 +32,8 @@ export const transformToTransaction = (tx: CKBTransactionInScript): State.Transa
   }
 }
 
-export type CellBasicInfo = Pick<State.Cell, 'id' | 'isGenesisOutput' | 'capacity' | 'occupiedCapacity'>
+// TODO: move to models
+export type CellBasicInfo = Pick<Cell, 'id' | 'isGenesisOutput' | 'capacity' | 'occupiedCapacity'>
 export const transformToCellBasicInfo = (cell: CellInScript): CellBasicInfo => {
   return {
     id: cell.id,
