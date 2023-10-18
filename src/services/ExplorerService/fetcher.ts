@@ -11,6 +11,8 @@ import { Cell } from '../../models/Cell'
 import { Script } from '../../models/Script'
 import { Block } from '../../models/Block'
 import { Transaction } from '../../models/Transaction'
+import { Address } from '../../models/Address'
+import { UDT } from '../../models/UDT'
 
 async function v1Get<T>(...args: Parameters<typeof requesterV1.get>) {
   return requesterV1.get(...args).then(res => toCamelcase<Response.Response<T>>(res.data))
@@ -60,8 +62,8 @@ export const apiFetcher = {
   fetchLatestBlocks: (size: number) => apiFetcher.fetchBlocks(1, size),
 
   fetchAddressInfo: (address: string) =>
-    v1GetWrapped<State.Address>(`addresses/${address}`).then(
-      (wrapper): State.Address => ({
+    v1GetWrapped<Address>(`addresses/${address}`).then(
+      (wrapper): Address => ({
         ...wrapper.attributes,
         type: wrapper.type === 'lock_hash' ? 'LockHash' : 'Address',
       }),
@@ -151,8 +153,8 @@ export const apiFetcher = {
     v1Get<
       | Response.Wrapper<Block, SearchResultType.Block>
       | Response.Wrapper<Transaction, SearchResultType.Transaction>
-      | Response.Wrapper<State.Address, SearchResultType.Address>
-      | Response.Wrapper<State.Address, SearchResultType.LockHash>
+      | Response.Wrapper<Address, SearchResultType.Address>
+      | Response.Wrapper<Address, SearchResultType.LockHash>
       | Response.Wrapper<unknown, SearchResultType.UDT>
     >('suggest_queries', {
       params: {
@@ -397,7 +399,7 @@ export const apiFetcher = {
 
   fetchFlushChartCache: () => v1GetUnwrapped<State.StatisticCacheInfo>(`statistics/flush_cache_info`),
 
-  fetchSimpleUDT: (typeHash: string) => v1GetUnwrapped<State.UDT>(`/udts/${typeHash}`),
+  fetchSimpleUDT: (typeHash: string) => v1GetUnwrapped<UDT>(`/udts/${typeHash}`),
 
   fetchSimpleUDTTransactions: ({
     typeHash,
@@ -423,7 +425,7 @@ export const apiFetcher = {
     }),
 
   fetchTokens: (page: number, size: number, sort?: string) =>
-    v1GetUnwrappedPagedList<State.UDT>(`/udts`, {
+    v1GetUnwrappedPagedList<UDT>(`/udts`, {
       params: {
         page,
         page_size: size,

@@ -13,6 +13,7 @@ import AddressText from '../../components/AddressText'
 import PaginationWithRear from '../../components/PaginationWithRear'
 import { CsvExport } from '../../components/CsvExport'
 import { Transaction } from '../../models/Transaction'
+import { UDT } from '../../models/UDT'
 
 const useAddressContent = (address: string) => {
   const { t } = useTranslation()
@@ -42,7 +43,7 @@ const useAddressContent = (address: string) => {
   )
 }
 
-const useSimpleUDTInfo = (udt: State.UDT) => {
+const useSimpleUDTInfo = (udt: UDT) => {
   const { t } = useTranslation()
   const { displayName, uan, fullName, issuerAddress, symbol, addressesCount, decimal, totalAmount } = udt
   return [
@@ -74,7 +75,7 @@ const useSimpleUDTInfo = (udt: State.UDT) => {
   ] as OverviewItemData[]
 }
 
-export const SimpleUDTOverview = ({ children, udt }: { children: ReactNode; udt: State.UDT }) => {
+export const SimpleUDTOverview = ({ children, udt }: { children: ReactNode; udt: UDT }) => {
   return (
     <OverviewCard items={useSimpleUDTInfo(udt)} hideShadow>
       {children}

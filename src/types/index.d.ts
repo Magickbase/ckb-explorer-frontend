@@ -1,5 +1,5 @@
 declare namespace State {
-  import { Script } from '../models/Script'
+  import { Cell } from '../models/Cell'
 
   export interface TransactionLiteDetails {
     address: string
@@ -25,101 +25,6 @@ declare namespace State {
       tokenId: string // none 0x prefix hex number
       total: string // decimal string
     }
-  }
-
-  export interface LockInfo {
-    status: 'locked' | 'unlocked'
-    epochNumber: string
-    epochIndex: string
-    estimatedUnlockTime: string
-  }
-
-  export interface SUDT {
-    symbol: string
-    decimal: string
-    amount: string
-    typeHash: string
-    udtIconFile: string
-    uan?: string
-    udtType: 'sudt'
-    collection: undefined
-    cota: undefined
-  }
-
-  interface MNFT {
-    symbol: string
-    decimal: string
-    amount: string
-    typeHash: string
-    udtIconFile: string
-    udtType: 'm_nft_token'
-    uan: undefined
-    collection: {
-      typeHash: string
-    }
-    cota: undefined
-  }
-
-  interface NRC721 {
-    symbol: string
-    amount: string // token id in fact
-    typeHash: string
-    udtIconFile: string // base uri with token id in fact
-    udtType: 'nrc_721_token'
-    uan: undefined
-    collection: {
-      typeHash: string
-    }
-    cota: undefined
-  }
-
-  interface CoTA {
-    symbol: string
-    amount: string
-    typeHash: string
-    udtIconFile: string // base uri with token id in fact
-    udtType: 'cota'
-    uan: undefined
-    collection: undefined
-    cota: {
-      cotaId: number
-      tokenId: number
-    }
-  }
-
-  interface Spore {
-    symbol?: string
-    amount: string
-    typeHash: string
-    udtIconFile: string
-    udtType: 'spore_cell'
-    collection: {
-      typeHash: string | null
-    }
-    uan: undefined
-    cota: undefined
-  }
-
-  export type UDTAccount = SUDT | MNFT | NRC721 | CoTA | Spore
-
-  export interface Address {
-    addressHash: string
-    lockHash: string
-    balance: string
-    balanceOccupied: string
-    transactionsCount: number
-    lockScript: Script
-    pendingRewardBlocksCount: number
-    type: 'Address' | 'LockHash' | ''
-    daoDeposit: number
-    interest: number
-    daoCompensation: number
-    lockInfo: LockInfo
-    liveCellsCount: string
-    minedBlocksCount: string
-    isSpecial: boolean
-    specialAddress: string
-    udtAccounts?: Array<UDTAccount>
   }
 
   export interface NervosDao {
@@ -370,24 +275,6 @@ declare namespace State {
   }
 
   export type FetchStatus = keyof FetchStatusValue
-
-  export interface UDT {
-    symbol: string
-    fullName: string
-    iconFile: string
-    published: boolean
-    description: string
-    totalAmount: string
-    addressesCount: string
-    decimal: string
-    h24CkbTransactionsCount: string
-    createdAt: string
-    typeHash: string
-    issuerAddress: string
-    typeScript: Script
-    displayName?: string
-    uan?: string
-  }
 
   export type TransactionCsvExportType = 'address_transactions' | 'blocks' | 'udts' | 'nft'
 
