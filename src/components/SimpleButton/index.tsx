@@ -14,8 +14,8 @@ export default ({
 }: {
   id?: string
   className?: string
-  onClick?: Function
-  onMouseOver?: Function
+  onClick?: React.MouseEventHandler<HTMLDivElement>
+  onMouseOver?: React.MouseEventHandler<HTMLDivElement>
   children: ReactNode | string
 }) => (
   <ButtonPanel
@@ -24,12 +24,12 @@ export default ({
     role="button"
     tabIndex={-1}
     onKeyDown={() => {}}
-    onMouseOver={(event: any) => {
+    onMouseOver={event => {
       if (onMouseOver) {
         onMouseOver(event)
       }
     }}
-    onClick={(event: any) => {
+    onClick={event => {
       if (onClick) {
         onClick(event)
       }

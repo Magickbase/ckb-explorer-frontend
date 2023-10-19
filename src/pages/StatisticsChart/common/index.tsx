@@ -55,7 +55,7 @@ const ReactChartCore = ({
 }: {
   option: EChartOption
   isThumbnail?: boolean
-  clickEvent?: any
+  clickEvent?: React.MouseEventHandler<HTMLDivElement>
   notMerge?: boolean
   lazyUpdate?: boolean
   style?: CSSProperties
@@ -102,7 +102,7 @@ const ReactChartCore = ({
   return <div style={{ height: isThumbnail ? '200px' : '70vh', ...style }} className={className} ref={chartRef} />
 }
 
-const dataToCsv = (data: any[] | undefined) => {
+const dataToCsv = (data: (string | number)[][] | undefined) => {
   if (!data || data.length === 0) {
     return undefined
   }

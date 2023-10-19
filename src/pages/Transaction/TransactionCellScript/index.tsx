@@ -26,6 +26,7 @@ import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
 import { ReactComponent as OuterLinkIcon } from '../../../assets/outer_link_icon.svg'
 import { HelpTip } from '../../../components/HelpTip'
 import { useSetToast } from '../../../components/Toast'
+import { CellBasicInfo } from '../../../utils/transformer'
 
 const initScriptContent = {
   lock: 'null',
@@ -33,6 +34,11 @@ const initScriptContent = {
   data: {
     data: '0x',
   },
+}
+
+type TransactionCellScriptProps = {
+  cell: CellBasicInfo
+  onClose: Function
 }
 
 type CapacityUsage = Record<'declared' | 'occupied', string | null>
@@ -54,7 +60,7 @@ const updateJsonFormat = (content: State.Script | State.Data | CapacityUsage | n
 }
 
 const handleFetchCellInfo = async (
-  cell: State.Cell,
+  cell: CellBasicInfo,
   state: CellState,
   setScriptFetchStatus: (val: boolean) => void,
   setContent: Function,
@@ -114,6 +120,9 @@ const handleFetchCellInfo = async (
     return dataValue
   }
 
+  const isScript = (scriptOrString: State.Script | string): scriptOrString is State.Script => {
+    return typeof scriptOrString !== 'string'
+  }
   switch (state) {
     case CellState.LOCK:
       fetchLock().then(lock => {
@@ -149,8 +158,9 @@ const handleFetchCellInfo = async (
         }
 
         const CAPACITY_SIZE = 8
-        const occupied = ([lock, type] as Array<any>)
+        const occupied = [lock, type]
           .filter(s => s !== 'null')
+          .filter(isScript)
           .map(
             script => Math.ceil(script.codeHash.slice(2).length / 2) + Math.ceil(script.args.slice(2).length / 2) + 1,
           )
@@ -247,7 +257,7 @@ const ScriptContentJson = ({
   </TransactionCellScriptContentPanel>
 )
 
-export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
+export default ({ cell, onClose }: TransactionCellScriptProps) => {
   const setToast = useSetToast()
   const { t } = useTranslation()
   const [scriptFetched, setScriptFetched] = useState(false)

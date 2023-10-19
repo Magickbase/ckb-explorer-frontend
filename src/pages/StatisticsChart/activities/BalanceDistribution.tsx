@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
-import { DATA_ZOOM_CONFIG, handleAxis, handleLogGroupAxis } from '../../../utils/chart'
+import { DATA_ZOOM_CONFIG, assertIsArray, handleAxis, handleLogGroupAxis } from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
 import { ChartCachedKeys } from '../../../constants/cache'
@@ -45,7 +45,8 @@ const useOption = (
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
+          formatter: dataList => {
+            assertIsArray(dataList)
             const list = dataList as (SeriesItem & { data: string })[]
             let result = `<div>${tooltipColor('#333333')}${widthSpan(
               t('statistic.addresses_balance'),

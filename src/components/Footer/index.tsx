@@ -15,7 +15,11 @@ import { udtSubmitEmail } from '../../utils/util'
 interface FooterLinkItem {
   label?: string
   url?: string
-  icon?: any
+  icon?: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement> & {
+      title?: string | undefined
+    }
+  >
 }
 
 interface FooterLink {
@@ -36,7 +40,7 @@ const FooterImageItem = ({ item }: { item: FooterLinkItem }) => {
   const { label, url, icon: IconComponent } = item
   return (
     <FooterImageItemPanel key={label} href={url} rel="noopener noreferrer" target="_blank">
-      <IconComponent />
+      {IconComponent && <IconComponent />}
       <span>{label}</span>
     </FooterImageItemPanel>
   )
@@ -129,7 +133,7 @@ export default memo(() => {
       <FooterMenuPanel>
         <div className="footerFoundation">
           <div className="footerTitle">{Footers[0].name}</div>
-          {Footers[0].items.map((item: any) => (
+          {Footers[0].items.map((item: FooterLinkItem) => (
             <FooterItem item={item} key={item.label} />
           ))}
         </div>
@@ -137,31 +141,31 @@ export default memo(() => {
           <div className="footerTitle">{Footers[1].name}</div>
           {Footers[1].items
             .filter(item => item.label !== undefined)
-            .map((item: any) => (
+            .map((item: FooterLinkItem) => (
               <FooterItem item={item} key={item.label} />
             ))}
         </div>
         <div className="footerCommunity">
           {isMobile ? (
             <div>
-              {Footers[2].items.map((item: any) => (
+              {Footers[2].items.map((item: FooterLinkItem) => (
                 <FooterImageItem item={item} key={item.label} />
               ))}
             </div>
           ) : (
             <>
               <div>
-                {Footers[2].items.slice(0, 3).map((item: any) => (
+                {Footers[2].items.slice(0, 3).map((item: FooterLinkItem) => (
                   <FooterImageItem item={item} key={item.label} />
                 ))}
               </div>
               <div>
-                {Footers[2].items.slice(3, 6).map((item: any) => (
+                {Footers[2].items.slice(3, 6).map((item: FooterLinkItem) => (
                   <FooterImageItem item={item} key={item.label} />
                 ))}
               </div>
               <div>
-                {Footers[2].items.slice(6).map((item: any) => (
+                {Footers[2].items.slice(6).map((item: FooterLinkItem) => (
                   <FooterImageItem item={item} key={item.label} />
                 ))}
               </div>

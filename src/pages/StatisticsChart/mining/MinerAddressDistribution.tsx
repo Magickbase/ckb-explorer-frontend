@@ -6,6 +6,7 @@ import { ChartCachedKeys } from '../../../constants/cache'
 import { explorerService } from '../../../services/ExplorerService'
 import { useAdaptMobileEllipsis, useAdaptPCEllipsis, useIsMobile } from '../../../utils/hook'
 import { useCurrentLanguage } from '../../../utils/i18n'
+import { assertNotArray } from '../../../utils/chart'
 
 const Colors = [
   '#069ECD',
@@ -49,7 +50,8 @@ const useOption = () => {
       color: [chartColor.colors[0], ...Colors],
       tooltip: !isThumbnail
         ? {
-            formatter: (data: any) => {
+            formatter: data => {
+              assertNotArray(data)
               const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 60 : 65)
               let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.address'))} ${getAdaptAddressText(
                 data.data.title,
@@ -108,7 +110,7 @@ export const MinerAddressDistributionChart = ({ isThumbnail = false }: { isThumb
 
   const history = useHistory()
   const clickEvent = useCallback(
-    (param: any) => {
+    param => {
       if (param && param.data.title) {
         history.push(`/address/${param.data.title}`)
       }

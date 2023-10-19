@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { parseDateNoTime, parseSimpleDate, parseSimpleDateNoSecond } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
-import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
+import { DATA_ZOOM_CONFIG, assertIsArray } from '../../../utils/chart'
 import { explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useCurrentLanguage } from '../../../utils/i18n'
@@ -58,7 +58,8 @@ const useOption = (
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
+          formatter: dataList => {
+            assertIsArray(dataList)
             const list = dataList as Array<SeriesItem & { data: string }>
             let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'))} ${parseSimpleDateNoSecond(
               new Date(list[0].data[0]),

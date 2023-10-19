@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { EChartOption } from 'echarts'
 
 export const DATA_ZOOM_CONFIG = [
   {
@@ -124,4 +125,28 @@ export const getFeeRateSamples = (feeRates: Array<FeeRateTracker.TransactionFeeR
     .slice(0, sampleCount)
 
   return samples
+}
+
+type AssertIsArray = (
+  value: EChartOption.Tooltip.Format | EChartOption.Tooltip.Format[],
+) => asserts value is EChartOption.Tooltip.Format[]
+
+export const assertIsArray: AssertIsArray = (value: EChartOption.Tooltip.Format | EChartOption.Tooltip.Format[]) => {
+  const isArray = Array.isArray(value)
+  if (!isArray) {
+    throw new Error('value is not an array')
+  }
+}
+
+type AssertIsNotArray = (
+  value: EChartOption.Tooltip.Format | EChartOption.Tooltip.Format[],
+) => asserts value is EChartOption.Tooltip.Format
+
+export const assertNotArray: AssertIsNotArray = (
+  value: EChartOption.Tooltip.Format | EChartOption.Tooltip.Format[],
+) => {
+  const isArray = Array.isArray(value)
+  if (isArray) {
+    throw new Error('value is an array')
+  }
 }
