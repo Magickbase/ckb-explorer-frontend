@@ -28,10 +28,10 @@ export const TransactionDetailItem = styled.div`
     left: 2px;
     bottom: 0;
     content: '';
-    background: ${(props: { theme: any }) => `${props.theme.primary}`};
+    background: ${(props: { theme: { primary: string } }) => `${props.theme.primary}`};
     width: calc(100% - 4px);
     height: 5px;
-    display: ${(props: { theme: any; selected: boolean }) => (props.selected ? 'block' : 'none')};
+    display: ${(props: { theme: { primary: string }; selected: boolean }) => (props.selected ? 'block' : 'none')};
   }
 `
 

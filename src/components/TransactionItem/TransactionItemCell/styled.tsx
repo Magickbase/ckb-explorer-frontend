@@ -18,7 +18,7 @@ export const TransactionCellPanel = styled.div`
   }
 
   .transactionCellAddress {
-    color: ${({ highLight = false, theme }: { highLight?: boolean; theme: any }) =>
+    color: ${({ highLight = false, theme }: { highLight?: boolean; theme: { primary: string } }) =>
       highLight ? `${theme.primary}` : '#000000'};
     font-weight: 500;
     min-width: 0;
@@ -33,11 +33,11 @@ export const TransactionCellPanel = styled.div`
     }
 
     a {
-      color: ${({ theme }: { theme: any }) => `${theme.primary}`};
+      color: ${({ theme }: { theme: { primary: string } }) => `${theme.primary}`};
     }
 
     a:hover {
-      color: ${({ theme }: { theme: any }) => `${theme.primary}`};
+      color: ${({ theme }: { theme: { primary: string } }) => `${theme.primary}`};
     }
   }
 `
@@ -194,10 +194,10 @@ export const WithdrawItemPanel = styled.div`
   }
 
   a {
-    color: ${({ theme }: { theme: any }) => theme.primary};
+    color: ${({ theme }: { theme: { primary: string } }) => theme.primary};
   }
 
   a:hover {
-    color: ${({ theme }: { theme: any }) => `${theme.primary}`};
+    color: ${({ theme }: { theme: { primary: string } }) => `${theme.primary}`};
   }
 `
