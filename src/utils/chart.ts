@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { EChartOption } from 'echarts'
+import { SeriesItem } from '../pages/StatisticsChart/common'
 
 export const DATA_ZOOM_CONFIG = [
   {
@@ -148,5 +149,51 @@ export const assertNotArray: AssertIsNotArray = (
   const isArray = Array.isArray(value)
   if (isArray) {
     throw new Error('value is an array')
+  }
+}
+
+type AssertSerialsItem = (value: EChartOption.Tooltip.Format) => asserts value is SeriesItem
+export const assertSerialsItem: AssertSerialsItem = (value: EChartOption.Tooltip.Format) => {
+  if (
+    typeof value.seriesName !== 'string' ||
+    typeof value.name !== 'string' ||
+    typeof value.color !== 'string' ||
+    typeof value.dataIndex !== 'number'
+  ) {
+    throw new Error('invalid SeriesItem')
+  }
+}
+
+export const assertSerialsDataIsString: (value: EChartOption.Tooltip.Format) => asserts value is { data: string } = (
+  value: EChartOption.Tooltip.Format,
+) => {
+  if (typeof value.data !== 'string') {
+    throw new Error('data is not string')
+  }
+}
+
+export const assertSerialsDataIsStringArrayOf3: (
+  value: EChartOption.Tooltip.Format,
+) => asserts value is { data: [string, string, string] } = (value: EChartOption.Tooltip.Format) => {
+  if (
+    Array.isArray(value.data) ||
+    typeof value.data[0] !== 'string' ||
+    typeof value.data[1] !== 'string' ||
+    typeof value.data[2] !== 'string'
+  ) {
+    throw new Error('invalid SeriesItem length of 3')
+  }
+}
+export const assertSerialsDataIsStringArrayOf4: (
+  value: EChartOption.Tooltip.Format,
+) => asserts value is { data: [string, string, string, string] } = (value: EChartOption.Tooltip.Format) => {
+  if (
+    Array.isArray(value.data) ||
+    typeof value.data[0] !== 'string' ||
+    typeof value.data[1] !== 'string' ||
+    typeof value.data[2] !== 'string' ||
+    typeof value.data[3] !== 'string'
+  ) {
+    throw new Error('invalid SeriesItem length of 4')
   }
 }

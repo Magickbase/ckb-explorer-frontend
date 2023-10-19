@@ -96,7 +96,7 @@ const useOption = (
             },
           ],
           label: {
-            formatter: (label: any) => `${label.data.value}%`,
+            formatter: (label: { data: { value: string } }) => `${label.data.value}%`,
           },
         },
       },

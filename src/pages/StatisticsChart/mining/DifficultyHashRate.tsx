@@ -171,7 +171,7 @@ const useOption = (
                 },
               ],
               label: {
-                formatter: (params: any) => `${params.value}%`,
+                formatter: (params: { value: string }) => `${params.value}%`,
               },
             },
         data: statisticDifficultyHashRates.map(data => (Number(data.uncleRate) * 100).toFixed(2)),
