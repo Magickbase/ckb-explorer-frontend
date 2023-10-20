@@ -1,4 +1,5 @@
 import { Transaction } from '../../models/Transaction'
+import { TransactionRecord } from '../../services/ExplorerService'
 
 export const defaultTransactionInfo: Transaction = {
   transactionHash: '',
@@ -26,7 +27,7 @@ export const defaultTransactionInfo: Transaction = {
   maxCycles: null,
 }
 
-export const defaultTransactionLiteDetails: State.TransactionLiteDetails[] = [
+export const defaultTransactionLiteDetails: TransactionRecord[] = [
   {
     address: '',
     transfers: [],

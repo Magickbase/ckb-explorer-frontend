@@ -72,8 +72,10 @@ const parseHashRate = (hashRate: string | undefined) => (hashRate ? handleHashRa
 
 const parseBlockTime = (blockTime: string | undefined) => (blockTime ? parseTime(Number(blockTime)) : '- -')
 
-const useBlockchainDataList = (statistics: State.Statistics, isMobile: boolean, isLG: boolean): BlockchainData[] => {
+const useBlockchainDataList = (isMobile: boolean, isLG: boolean): BlockchainData[] => {
   const { t } = useTranslation()
+  const statistics = useStatistics()
+
   return [
     {
       name: t('blockchain.latest_block'),
@@ -192,7 +194,6 @@ export default () => {
   const { t } = useTranslation()
   const isLG = useIsLGScreen()
   const history = useHistory<RouteState>()
-  const statistics = useStatistics()
   const tipBlockNumber = useLatestBlockNumber()
 
   const blocksQuery = useQuery(
@@ -236,7 +237,7 @@ export default () => {
     handleBlockchainAlert()
   }, BLOCKCHAIN_ALERT_POLLING_TIME)
 
-  const blockchainDataList = useBlockchainDataList(statistics, isMobile, isLG)
+  const blockchainDataList = useBlockchainDataList(isMobile, isLG)
 
   return (
     <Content>

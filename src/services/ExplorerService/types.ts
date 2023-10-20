@@ -1,3 +1,5 @@
+import { Cell } from '../../models/Cell'
+
 export namespace Response {
   export interface Response<T> {
     data: T
@@ -163,3 +165,47 @@ export namespace ChartItem {
     radio: string
   }
 }
+
+export interface NervosDaoDepositor {
+  addressHash: string
+  daoDeposit: number
+  averageDepositTime: string
+}
+
+export interface TransactionRecord {
+  address: string
+  transfers: TransactionRecordTransfer[]
+}
+
+export interface TransactionRecordTransfer {
+  capacity: string
+  cellType: Cell['cellType']
+
+  udtInfo?: {
+    symbol: string
+    amount: string
+    decimal: string
+    typeHash: string
+    published: boolean
+    displayName: string
+    uan: string
+  }
+
+  mNftInfo?: {
+    className: string
+    tokenId: string // none 0x prefix hex number
+    total: string // decimal string
+  }
+}
+
+interface FetchStatusValue {
+  OK: string
+  Error: string
+  InProgress: string
+  None: string
+}
+
+// Unused currently
+export type FetchStatus = keyof FetchStatusValue
+
+export type SupportedExportTransactionType = 'address_transactions' | 'blocks' | 'udts' | 'nft'

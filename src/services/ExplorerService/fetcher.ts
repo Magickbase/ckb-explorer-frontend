@@ -5,7 +5,7 @@ import { ReactNode } from 'react'
 import { pick } from '../../utils/object'
 import { toCamelcase } from '../../utils/util'
 import { requesterV1, requesterV2 } from './requester'
-import { ChartItem, Response } from './types'
+import { ChartItem, NervosDaoDepositor, Response, SupportedExportTransactionType, TransactionRecord } from './types'
 import { assert } from '../../utils/error'
 import { Cell } from '../../models/Cell'
 import { Script } from '../../models/Script'
@@ -86,7 +86,7 @@ export const apiFetcher = {
   fetchTransactionLiteDetailsByHash: (hash: string) =>
     requesterV2
       .get(`ckb_transactions/${hash}/details`)
-      .then((res: AxiosResponse) => toCamelcase<Response.Response<State.TransactionLiteDetails[]>>(res.data)),
+      .then((res: AxiosResponse) => toCamelcase<Response.Response<TransactionRecord[]>>(res.data)),
 
   fetchTransactions: (page: number, size: number, sort?: string) =>
     v1GetUnwrappedPagedList<Transaction>('transactions', {
@@ -162,10 +162,25 @@ export const apiFetcher = {
       },
     }),
 
-  fetchStatistics: () => v1GetUnwrapped<State.Statistics>(`statistics`),
+  fetchStatistics: () =>
+    v1GetUnwrapped<{
+      tipBlockNumber: string
+      averageBlockTime: string
+      currentEpochDifficulty: string
+      hashRate: string
+      epochInfo: {
+        epochNumber: string
+        epochLength: string
+        index: string
+      }
+      estimatedEpochTime: string
+      transactionsLast24Hrs: string
+      transactionsCountPerMinute: string
+      reorgStartedAt: string | null
+    }>(`statistics`),
 
   fetchTipBlockNumber: () =>
-    v1GetUnwrapped<Pick<State.Statistics, 'tipBlockNumber'>>('statistics/tip_block_number').then(
+    v1GetUnwrapped<Pick<APIReturn<'fetchStatistics'>, 'tipBlockNumber'>>('statistics/tip_block_number').then(
       statistics => statistics.tipBlockNumber,
     ),
 
@@ -188,7 +203,22 @@ export const apiFetcher = {
 
   fetchNodeVersion: () => v1GetUnwrapped<{ version: string }>('/nets/version'),
 
-  fetchNervosDao: () => v1GetUnwrapped<State.NervosDao>(`contracts/nervos_dao`),
+  fetchNervosDao: () =>
+    v1GetUnwrapped<{
+      totalDeposit: string
+      depositorsCount: string
+      depositChanges: string
+      unclaimedCompensationChanges: string
+      claimedCompensationChanges: string
+      depositorChanges: string
+      unclaimedCompensation: string
+      claimedCompensation: string
+      averageDepositTime: string
+      miningReward: string
+      depositCompensation: string
+      treasuryAmount: string
+      estimatedApc: string
+    }>(`contracts/nervos_dao`),
 
   // Unused currently
   fetchNervosDaoTransactions: (page: number, size: number) =>
@@ -221,7 +251,7 @@ export const apiFetcher = {
       },
     }),
 
-  fetchNervosDaoDepositors: () => v1GetUnwrappedList<State.NervosDaoDepositor>(`/dao_depositors`),
+  fetchNervosDaoDepositors: () => v1GetUnwrappedList<NervosDaoDepositor>(`/dao_depositors`),
 
   fetchStatisticTransactionCount: () =>
     v1GetUnwrappedList<ChartItem.TransactionCount>(`/daily_statistics/transactions_count`).then(items =>
@@ -528,7 +558,7 @@ export const apiFetcher = {
     date,
     block,
   }: {
-    type: State.TransactionCsvExportType
+    type: SupportedExportTransactionType
     id?: string
     date?: Record<'start' | 'end', Dayjs | undefined>
     block?: Record<'from' | 'to', number>
@@ -725,6 +755,10 @@ export const apiFetcher = {
 // ====================
 // Types
 // ====================
+
+export type APIFetcher = typeof apiFetcher
+
+export type APIReturn<T extends keyof APIFetcher> = Awaited<ReturnType<APIFetcher[T]>>
 
 export namespace FeeRateTracker {
   export interface TransactionFeeRate {
