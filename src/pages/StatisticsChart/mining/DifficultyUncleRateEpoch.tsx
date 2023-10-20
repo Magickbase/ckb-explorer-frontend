@@ -7,6 +7,7 @@ import { parseHourFromMillisecond } from '../../../utils/date'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
 const widthSpan = (value: string, currentLanguage: LanuageType) =>
   tooltipWidth(value, currentLanguage === 'en' ? 90 : 80)
@@ -27,7 +28,7 @@ const useTooltip = () => {
 
 const useOption = (
   statisticChartData: ChartItem.DifficultyUncleRateEpoch[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
 
   isThumbnail = false,

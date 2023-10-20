@@ -6,10 +6,11 @@ import { DATA_ZOOM_CONFIG, assertIsArray, assertSerialsDataIsString, assertSeria
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
 const useOption = (
   statisticAverageBlockTimes: ChartItem.AverageBlockTime[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {

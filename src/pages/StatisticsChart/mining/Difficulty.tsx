@@ -7,10 +7,11 @@ import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
 const useOption = (
   statisticDifficulties: ChartItem.Difficulty[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {

@@ -5,6 +5,7 @@ import { DATA_ZOOM_CONFIG, assertIsArray } from '../../../utils/chart'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
 const max = (statisticUncleRates: ChartItem.UncleRate[]) => {
   const array = statisticUncleRates.flatMap(data => Number(data.uncleRate) * 100)
@@ -13,7 +14,7 @@ const max = (statisticUncleRates: ChartItem.UncleRate[]) => {
 
 const useOption = (
   statisticUncleRates: ChartItem.UncleRate[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
 
   isThumbnail = false,

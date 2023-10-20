@@ -4,6 +4,7 @@ import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { explorerService } from '../../../services/ExplorerService'
 import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
 const Colors = [
   '#069ECD',
@@ -25,7 +26,7 @@ interface VersionRecord {
 
 const useOption = (
   list: Array<VersionRecord>,
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {

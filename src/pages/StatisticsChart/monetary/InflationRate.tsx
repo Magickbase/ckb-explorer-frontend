@@ -4,10 +4,11 @@ import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../commo
 import { DATA_ZOOM_CONFIG, assertSerialsDataIsString, assertIsArray, assertSerialsItem } from '../../../utils/chart'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
 const useOption = (
   statisticInflationRates: ChartItem.InflationRate[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {

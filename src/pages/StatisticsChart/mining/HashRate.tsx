@@ -7,10 +7,11 @@ import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
 const useOption = (
   statisticHashRates: ChartItem.HashRate[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
 
   isThumbnail = false,

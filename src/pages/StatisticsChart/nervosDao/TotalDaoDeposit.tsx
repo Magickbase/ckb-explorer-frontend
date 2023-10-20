@@ -14,6 +14,7 @@ import { isMainnet } from '../../../utils/chain'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
 const widthSpan = (value: string, language: LanuageType) => tooltipWidth(value, language === 'en' ? 168 : 110)
 
@@ -39,7 +40,7 @@ const useTooltip = () => {
 
 const useOption = (
   statisticTotalDaoDeposits: ChartItem.TotalDaoDeposit[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
 
   isThumbnail = false,

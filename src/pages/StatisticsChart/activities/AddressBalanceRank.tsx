@@ -9,6 +9,7 @@ import { tooltipColor, tooltipWidth, SmartChartPage, SmartChartPageProps } from 
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useAdaptPCEllipsis } from '../../../utils/hook'
+import { ChartColorConfig } from '../../../constants/common'
 
 const getAddressWithRanking = (statisticAddressBalanceRanks: ChartItem.AddressBalanceRank[], ranking?: string) => {
   if (!ranking) return ''
@@ -21,7 +22,7 @@ const useOption = () => {
   const currentLanguage = useCurrentLanguage()
   return (
     statisticAddressBalanceRanks: ChartItem.AddressBalanceRank[],
-    chartColor: State.ChartColor,
+    chartColor: ChartColorConfig,
     isMobile: boolean,
     isThumbnail = false,
     getAdaptAddressText: (address: string) => string,

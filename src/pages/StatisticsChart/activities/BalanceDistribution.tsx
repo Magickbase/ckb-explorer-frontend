@@ -13,6 +13,7 @@ import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../commo
 import { localeNumberString } from '../../../utils/number'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
 const widthSpan = (value: string, currentLanguage: string) => tooltipWidth(value, currentLanguage === 'en' ? 270 : 110)
 
@@ -27,7 +28,7 @@ const parseTooltip = ({
 
 const useOption = (
   statisticBalanceDistributions: ChartItem.BalanceDistribution[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {

@@ -7,6 +7,7 @@ import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { useAdaptMobileEllipsis, useAdaptPCEllipsis, useIsMobile } from '../../../utils/hook'
 import { useCurrentLanguage } from '../../../utils/i18n'
 import { assertNotArray } from '../../../utils/chart'
+import { ChartColorConfig } from '../../../constants/common'
 
 const Colors = [
   '#069ECD',
@@ -26,7 +27,7 @@ const useOption = () => {
   const currentLanguage = useCurrentLanguage()
   return (
     statisticMinerAddresses: ChartItem.MinerAddress[],
-    chartColor: State.ChartColor,
+    chartColor: ChartColorConfig,
     isMobile: boolean,
     isThumbnail = false,
     getAdaptAddressText: (address: string) => string,

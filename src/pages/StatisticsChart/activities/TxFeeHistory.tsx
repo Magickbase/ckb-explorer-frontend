@@ -8,10 +8,11 @@ import { isMainnet } from '../../../utils/chain'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
 const useOption = (
   statisticTxFeeHistories: ChartItem.TransactionFee[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
 
   isThumbnail = false,

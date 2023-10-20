@@ -12,10 +12,11 @@ import {
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
 const useOption = (
   statisticLiquidity: ChartItem.Liquidity[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
 
   isThumbnail = false,

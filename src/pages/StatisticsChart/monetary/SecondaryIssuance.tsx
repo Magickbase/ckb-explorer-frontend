@@ -10,6 +10,7 @@ import {
 } from '../../../utils/chart'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
 const widthSpan = (value: string, currentLanguage: LanuageType) =>
   tooltipWidth(value, currentLanguage === 'en' ? 155 : 70)
@@ -36,7 +37,7 @@ const useTooltip = () => {
 
 const useOption = (
   statisticSecondaryIssuance: ChartItem.SecondaryIssuance[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
 
   isThumbnail = false,

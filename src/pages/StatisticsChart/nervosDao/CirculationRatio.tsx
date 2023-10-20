@@ -5,10 +5,11 @@ import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG, assertIsArray } from '../../../utils/chart'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
 const useOption = (
   statisticCirculationRatios: ChartItem.CirculationRatio[],
-  chartColor: State.ChartColor,
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {
