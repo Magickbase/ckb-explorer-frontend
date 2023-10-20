@@ -96,18 +96,6 @@ const useOption = (
   }
 }
 
-const fetchStatisticEpochTimeDistributions = async () => {
-  const { epochTimeDistribution } = await explorerService.api.fetchStatisticEpochTimeDistribution()
-  const statisticEpochTimeDistributions: State.StatisticEpochTimeDistribution[] = epochTimeDistribution.map(data => {
-    const [time, epoch] = data
-    return {
-      time,
-      epoch,
-    }
-  })
-  return statisticEpochTimeDistributions
-}
-
 const toCSV = (statisticEpochTimeDistributions: State.StatisticEpochTimeDistribution[]) =>
   statisticEpochTimeDistributions
     ? statisticEpochTimeDistributions.map(data => [parseHourFromMinute(data.time), data.epoch])
@@ -120,7 +108,7 @@ export const EpochTimeDistributionChart = ({ isThumbnail = false }: { isThumbnai
       title={t('statistic.epoch_time_distribution_more')}
       description={t('statistic.epoch_time_distribution_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticEpochTimeDistributions}
+      fetchData={explorerService.api.fetchStatisticEpochTimeDistribution}
       getEChartOption={useOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.EpochTimeDistribution}

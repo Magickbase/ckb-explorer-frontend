@@ -298,7 +298,18 @@ export const apiFetcher = {
     }),
 
   fetchStatisticMinerAddressDistribution: () =>
-    v1GetUnwrapped<State.StatisticMinerAddressDistribution>(`/distribution_data/miner_address_distribution`),
+    v1GetUnwrapped<State.StatisticMinerAddressDistribution>(`/distribution_data/miner_address_distribution`).then(
+      ({ minerAddressDistribution }) => {
+        const blockSum = Object.values(minerAddressDistribution).reduce((sum, val) => sum + Number(val), 0)
+        const statisticMinerAddresses: State.StatisticMinerAddress[] = Object.entries(minerAddressDistribution).map(
+          ([key, val]) => ({
+            address: key,
+            radio: (Number(val) / blockSum).toFixed(3),
+          }),
+        )
+        return statisticMinerAddresses
+      },
+    ),
 
   fetchStatisticMinerVersionDistribution: () =>
     requesterV2(`/blocks/ckb_node_versions`).then((res: AxiosResponse) =>
@@ -332,12 +343,45 @@ export const apiFetcher = {
     ),
 
   fetchStatisticBalanceDistribution: () =>
-    v1GetUnwrapped<State.StatisticAddressBalanceDistribution>(`/distribution_data/address_balance_distribution`),
+    v1GetUnwrapped<State.StatisticAddressBalanceDistribution>(`/distribution_data/address_balance_distribution`).then(
+      ({ addressBalanceDistribution }) => {
+        const balanceDistributions = addressBalanceDistribution.map(distribution => {
+          const [balance, addresses, sumAddresses] = distribution
+          return {
+            balance,
+            addresses,
+            sumAddresses,
+          }
+        })
+        return balanceDistributions
+      },
+    ),
 
   fetchStatisticTxFeeHistory: () => v1GetUnwrappedList<State.StatisticTransactionFee>(`/daily_statistics/total_tx_fee`),
 
   fetchStatisticBlockTimeDistribution: () =>
-    v1GetUnwrapped<State.StatisticBlockTimeDistributions>(`/distribution_data/block_time_distribution`),
+    v1GetUnwrapped<State.StatisticBlockTimeDistributions>(`/distribution_data/block_time_distribution`).then(
+      ({ blockTimeDistribution }) => {
+        const sumBlocks = blockTimeDistribution
+          .flatMap(data => Number(data[1]))
+          .reduce((previous, current) => previous + current)
+        const statisticBlockTimeDistributions = [
+          {
+            time: '0',
+            ratio: '0',
+          },
+        ].concat(
+          blockTimeDistribution.map(data => {
+            const [time, blocks] = data
+            return {
+              time,
+              ratio: (Number(blocks) / sumBlocks).toFixed(5),
+            }
+          }),
+        )
+        return statisticBlockTimeDistributions
+      },
+    ),
 
   fetchStatisticAverageBlockTimes: () =>
     v1GetUnwrapped<State.StatisticAverageBlockTimes>(`/distribution_data/average_block_time`).then(
@@ -349,7 +393,20 @@ export const apiFetcher = {
     v1Get<Response.Wrapper<State.StatisticOccupiedCapacity>[]>(`/daily_statistics/occupied_capacity`),
 
   fetchStatisticEpochTimeDistribution: () =>
-    v1GetUnwrapped<State.StatisticEpochTimeDistributions>(`/distribution_data/epoch_time_distribution`),
+    v1GetUnwrapped<State.StatisticEpochTimeDistributions>(`/distribution_data/epoch_time_distribution`).then(
+      ({ epochTimeDistribution }) => {
+        const statisticEpochTimeDistributions: State.StatisticEpochTimeDistribution[] = epochTimeDistribution.map(
+          data => {
+            const [time, epoch] = data
+            return {
+              time,
+              epoch,
+            }
+          },
+        )
+        return statisticEpochTimeDistributions
+      },
+    ),
 
   // Unused currently
   fetchStatisticNewNodeCount: () =>
@@ -363,7 +420,17 @@ export const apiFetcher = {
     v1GetUnwrappedList<State.StatisticTotalSupply>(`/daily_statistics/circulating_supply-burnt-locked_capacity`),
 
   fetchStatisticAnnualPercentageCompensation: () =>
-    v1GetUnwrapped<State.StatisticAnnualPercentageCompensations>(`/monetary_data/nominal_apc`),
+    v1GetUnwrapped<State.StatisticAnnualPercentageCompensations>(`/monetary_data/nominal_apc`).then(
+      ({ nominalApc }) => {
+        const statisticAnnualPercentageCompensations = nominalApc
+          .filter((_apc, index) => index % 3 === 0 || index === nominalApc.length - 1)
+          .map((apc, index) => ({
+            year: 0.25 * index,
+            apc,
+          }))
+        return statisticAnnualPercentageCompensations
+      },
+    ),
 
   fetchStatisticSecondaryIssuance: () =>
     v1GetUnwrappedList<State.StatisticSecondaryIssuance>(
@@ -387,7 +454,20 @@ export const apiFetcher = {
   fetchStatisticInflationRate: () =>
     v1GetUnwrapped<State.StatisticInflationRates>(
       `/monetary_data/nominal_apc50-nominal_inflation_rate-real_inflation_rate`,
-    ),
+    ).then(({ nominalApc, nominalInflationRate, realInflationRate }) => {
+      const statisticInflationRates = []
+      for (let i = 0; i < nominalApc.length; i++) {
+        if (i % 6 === 0 || i === nominalApc.length - 1) {
+          statisticInflationRates.push({
+            year: i % 6 === 0 ? Math.floor(i / 6) * 0.5 : 50,
+            nominalApc: nominalApc[i],
+            nominalInflationRate: nominalInflationRate[i],
+            realInflationRate: realInflationRate[i],
+          })
+        }
+      }
+      return statisticInflationRates
+    }),
 
   fetchStatisticLiquidity: () =>
     v1GetUnwrappedList<State.StatisticLiquidity>(`/daily_statistics/circulating_supply-liquidity`).then(items => {

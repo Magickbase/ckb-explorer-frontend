@@ -165,19 +165,6 @@ const useOption = (
   }
 }
 
-const fetchStatisticBalanceDistributions = async () => {
-  const { addressBalanceDistribution } = await explorerService.api.fetchStatisticBalanceDistribution()
-  const balanceDistributions = addressBalanceDistribution.map(distribution => {
-    const [balance, addresses, sumAddresses] = distribution
-    return {
-      balance,
-      addresses,
-      sumAddresses,
-    }
-  })
-  return balanceDistributions
-}
-
 const toCSV = (statisticBalanceDistributions?: State.StatisticBalanceDistribution[]) =>
   statisticBalanceDistributions
     ? statisticBalanceDistributions.map((data, index) => [
@@ -197,7 +184,7 @@ export const BalanceDistributionChart = ({ isThumbnail = false }: { isThumbnail?
       title={t('statistic.balance_distribution')}
       description={t('statistic.balance_distribution_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticBalanceDistributions}
+      fetchData={explorerService.api.fetchStatisticBalanceDistribution}
       getEChartOption={useOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.BalanceDistribution}

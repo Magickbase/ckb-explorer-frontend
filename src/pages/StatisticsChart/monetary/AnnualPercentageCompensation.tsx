@@ -93,17 +93,6 @@ const useOption = (
   }
 }
 
-const fetchStatisticAnnualPercentageCompensations = async () => {
-  const { nominalApc } = await explorerService.api.fetchStatisticAnnualPercentageCompensation()
-  const statisticAnnualPercentageCompensations = nominalApc
-    .filter((_apc, index) => index % 3 === 0 || index === nominalApc.length - 1)
-    .map((apc, index) => ({
-      year: 0.25 * index,
-      apc,
-    }))
-  return statisticAnnualPercentageCompensations
-}
-
 const toCSV = (statisticAnnualPercentageCompensations: State.StatisticAnnualPercentageCompensation[]) =>
   statisticAnnualPercentageCompensations
     ? statisticAnnualPercentageCompensations.map(data => [data.year, (Number(data.apc) / 100).toFixed(4)])
@@ -116,7 +105,7 @@ export const AnnualPercentageCompensationChart = ({ isThumbnail = false }: { isT
       title={t('statistic.nominal_apc')}
       description={t('statistic.nominal_rpc_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticAnnualPercentageCompensations}
+      fetchData={explorerService.api.fetchStatisticAnnualPercentageCompensation}
       getEChartOption={useOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.APC}

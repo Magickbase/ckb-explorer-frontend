@@ -89,28 +89,6 @@ const useOption = (
   }
 }
 
-const fetchStatisticBlockTimeDistributions = async () => {
-  const { blockTimeDistribution } = await explorerService.api.fetchStatisticBlockTimeDistribution()
-  const sumBlocks = blockTimeDistribution
-    .flatMap(data => Number(data[1]))
-    .reduce((previous, current) => previous + current)
-  const statisticBlockTimeDistributions = [
-    {
-      time: '0',
-      ratio: '0',
-    },
-  ].concat(
-    blockTimeDistribution.map(data => {
-      const [time, blocks] = data
-      return {
-        time,
-        ratio: (Number(blocks) / sumBlocks).toFixed(5),
-      }
-    }),
-  )
-  return statisticBlockTimeDistributions
-}
-
 const toCSV = (statisticBlockTimeDistributions: State.StatisticBlockTimeDistribution[]) =>
   statisticBlockTimeDistributions
     ? statisticBlockTimeDistributions.map(data => [data.time, Number(data.ratio).toFixed(4)])
@@ -123,7 +101,7 @@ export const BlockTimeDistributionChart = ({ isThumbnail = false }: { isThumbnai
       title={t('statistic.block_time_distribution_more')}
       description={t('statistic.block_time_distribution_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticBlockTimeDistributions}
+      fetchData={explorerService.api.fetchStatisticBlockTimeDistribution}
       getEChartOption={useOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.BlockTimeDistribution}

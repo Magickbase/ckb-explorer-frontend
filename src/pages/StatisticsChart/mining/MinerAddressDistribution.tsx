@@ -88,18 +88,6 @@ const useOption = () => {
   }
 }
 
-const fetchStatisticMinerAddresses = async () => {
-  const { minerAddressDistribution } = await explorerService.api.fetchStatisticMinerAddressDistribution()
-  const blockSum = Object.values(minerAddressDistribution).reduce((sum, val) => sum + Number(val), 0)
-  const statisticMinerAddresses: State.StatisticMinerAddress[] = Object.entries(minerAddressDistribution).map(
-    ([key, val]) => ({
-      address: key,
-      radio: (Number(val) / blockSum).toFixed(3),
-    }),
-  )
-  return statisticMinerAddresses
-}
-
 const toCSV = (statisticMinerAddresses: State.StatisticMinerAddress[]) =>
   statisticMinerAddresses ? statisticMinerAddresses.map(data => [data.address, data.radio]) : []
 
@@ -131,7 +119,7 @@ export const MinerAddressDistributionChart = ({ isThumbnail = false }: { isThumb
       title={t('statistic.miner_addresses_rank')}
       isThumbnail={isThumbnail}
       chartProps={{ onClick: !isThumbnail ? onClick : undefined }}
-      fetchData={fetchStatisticMinerAddresses}
+      fetchData={explorerService.api.fetchStatisticMinerAddressDistribution}
       getEChartOption={getEChartOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.MinerAddressDistribution}

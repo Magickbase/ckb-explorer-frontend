@@ -147,23 +147,6 @@ const useOption = (
   }
 }
 
-const fetchStatisticInflationRates = async () => {
-  const { nominalApc, nominalInflationRate, realInflationRate } =
-    await explorerService.api.fetchStatisticInflationRate()
-  const statisticInflationRates = []
-  for (let i = 0; i < nominalApc.length; i++) {
-    if (i % 6 === 0 || i === nominalApc.length - 1) {
-      statisticInflationRates.push({
-        year: i % 6 === 0 ? Math.floor(i / 6) * 0.5 : 50,
-        nominalApc: nominalApc[i],
-        nominalInflationRate: nominalInflationRate[i],
-        realInflationRate: realInflationRate[i],
-      })
-    }
-  }
-  return statisticInflationRates
-}
-
 const toCSV = (statisticInflationRates: State.StatisticInflationRate[]) =>
   statisticInflationRates
     ? statisticInflationRates.map(data => [
@@ -181,7 +164,7 @@ export const InflationRateChart = ({ isThumbnail = false }: { isThumbnail?: bool
       title={t('statistic.inflation_rate')}
       description={t('statistic.inflation_rate_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticInflationRates}
+      fetchData={explorerService.api.fetchStatisticInflationRate}
       getEChartOption={useOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.InflationRate}
