@@ -3,10 +3,10 @@ import { useCurrentLanguage } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG, assertSerialsDataIsString, assertIsArray, assertSerialsItem } from '../../../utils/chart'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 
 const useOption = (
-  statisticInflationRates: State.StatisticInflationRate[],
+  statisticInflationRates: ChartItem.InflationRate[],
   chartColor: State.ChartColor,
   isMobile: boolean,
   isThumbnail = false,
@@ -147,7 +147,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticInflationRates: State.StatisticInflationRate[]) =>
+const toCSV = (statisticInflationRates: ChartItem.InflationRate[]) =>
   statisticInflationRates
     ? statisticInflationRates.map(data => [
         data.year,

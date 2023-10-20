@@ -2,17 +2,17 @@ import { useTranslation } from 'react-i18next'
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG, assertIsArray } from '../../../utils/chart'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useCurrentLanguage } from '../../../utils/i18n'
 
-const max = (statisticUncleRates: State.StatisticUncleRate[]) => {
+const max = (statisticUncleRates: ChartItem.UncleRate[]) => {
   const array = statisticUncleRates.flatMap(data => Number(data.uncleRate) * 100)
   return Math.max(5, Math.ceil(Math.max(...array)))
 }
 
 const useOption = (
-  statisticUncleRates: State.StatisticUncleRate[],
+  statisticUncleRates: ChartItem.UncleRate[],
   chartColor: State.ChartColor,
   isMobile: boolean,
 
@@ -110,7 +110,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticUncleRates: State.StatisticUncleRate[]) =>
+const toCSV = (statisticUncleRates: ChartItem.UncleRate[]) =>
   statisticUncleRates ? statisticUncleRates.map(data => [data.createdAtUnixtimestamp, data.uncleRate]) : []
 
 export const UncleRateChart = ({ isThumbnail = false }: { isThumbnail?: boolean }) => {

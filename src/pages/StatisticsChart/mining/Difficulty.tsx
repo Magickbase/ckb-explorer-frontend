@@ -5,11 +5,11 @@ import { parseDateNoTime } from '../../../utils/date'
 import { handleDifficulty } from '../../../utils/number'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { useCurrentLanguage } from '../../../utils/i18n'
 
 const useOption = (
-  statisticDifficulties: State.StatisticDifficulty[],
+  statisticDifficulties: ChartItem.Difficulty[],
   chartColor: State.ChartColor,
   isMobile: boolean,
   isThumbnail = false,
@@ -96,7 +96,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticDifficulties: State.StatisticDifficulty[]) =>
+const toCSV = (statisticDifficulties: ChartItem.Difficulty[]) =>
   statisticDifficulties ? statisticDifficulties.map(data => [data.createdAtUnixtimestamp, data.avgDifficulty]) : []
 
 export const DifficultyChart = ({ isThumbnail = false }: { isThumbnail?: boolean }) => {

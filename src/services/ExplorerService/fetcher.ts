@@ -5,7 +5,7 @@ import { ReactNode } from 'react'
 import { pick } from '../../utils/object'
 import { toCamelcase } from '../../utils/util'
 import { requesterV1, requesterV2 } from './requester'
-import { Response } from './types'
+import { ChartItem, Response } from './types'
 import { assert } from '../../utils/error'
 import { Cell } from '../../models/Cell'
 import { Script } from '../../models/Script'
@@ -224,32 +224,34 @@ export const apiFetcher = {
   fetchNervosDaoDepositors: () => v1GetUnwrappedList<State.NervosDaoDepositor>(`/dao_depositors`),
 
   fetchStatisticTransactionCount: () =>
-    v1GetUnwrappedList<State.StatisticTransactionCount>(`/daily_statistics/transactions_count`).then(items =>
+    v1GetUnwrappedList<ChartItem.TransactionCount>(`/daily_statistics/transactions_count`).then(items =>
       // filter latest exceptional data out
       items.filter((item, idx) => idx < items.length - 2 || item.transactionsCount !== '0'),
     ),
 
   fetchStatisticAddressCount: () =>
-    v1GetUnwrappedList<State.StatisticAddressCount>(`/daily_statistics/addresses_count`).then(items =>
+    v1GetUnwrappedList<ChartItem.AddressCount>(`/daily_statistics/addresses_count`).then(items =>
       // filter latest exceptional data out
       items.filter((item, idx) => idx < items.length - 2 || item.addressesCount !== '0'),
     ),
 
   fetchStatisticTotalDaoDeposit: () =>
-    v1GetUnwrappedList<State.StatisticTotalDaoDeposit>('/daily_statistics/total_depositors_count-total_dao_deposit'),
+    v1GetUnwrappedList<ChartItem.TotalDaoDeposit>('/daily_statistics/total_depositors_count-total_dao_deposit'),
 
   fetchStatisticNewDaoDeposit: () =>
-    v1GetUnwrappedList<State.StatisticNewDaoDeposit>('/daily_statistics/daily_dao_deposit-daily_dao_depositors_count'),
+    v1GetUnwrappedList<ChartItem.NewDaoDeposit>('/daily_statistics/daily_dao_deposit-daily_dao_depositors_count'),
 
   // Unused currently
   fetchStatisticNewDaoWithdraw: () =>
-    v1GetUnwrappedList<State.StatisticNewDaoWithdraw>('/daily_statistics/daily_dao_withdraw'),
+    v1GetUnwrappedList<{ dailyDaoWithdraw: string; createdAtUnixtimestamp: string }>(
+      '/daily_statistics/daily_dao_withdraw',
+    ),
 
   fetchStatisticCirculationRatio: () =>
-    v1GetUnwrappedList<State.StatisticCirculationRatio>('/daily_statistics/circulation_ratio'),
+    v1GetUnwrappedList<ChartItem.CirculationRatio>('/daily_statistics/circulation_ratio'),
 
   fetchStatisticDifficultyHashRate: () =>
-    v1GetUnwrappedList<State.StatisticDifficultyHashRate>(`/epoch_statistics/difficulty-uncle_rate-hash_rate`).then(
+    v1GetUnwrappedList<ChartItem.DifficultyHashRate>(`/epoch_statistics/difficulty-uncle_rate-hash_rate`).then(
       items => {
         return (
           items
@@ -266,13 +268,13 @@ export const apiFetcher = {
     ),
 
   fetchStatisticDifficulty: () =>
-    v1GetUnwrappedList<State.StatisticDifficulty>(`/daily_statistics/avg_difficulty`).then(items =>
+    v1GetUnwrappedList<ChartItem.Difficulty>(`/daily_statistics/avg_difficulty`).then(items =>
       // filter latest exceptional data out
       items.filter((item, idx) => idx < items.length - 2 || item.avgDifficulty !== '0.0'),
     ),
 
   fetchStatisticHashRate: () =>
-    v1GetUnwrappedList<State.StatisticHashRate>(`/daily_statistics/avg_hash_rate`).then(items => {
+    v1GetUnwrappedList<ChartItem.HashRate>(`/daily_statistics/avg_hash_rate`).then(items => {
       return (
         items
           // filter latest exceptional data out
@@ -285,7 +287,7 @@ export const apiFetcher = {
     }),
 
   fetchStatisticUncleRate: () =>
-    v1GetUnwrappedList<State.StatisticUncleRate>(`/daily_statistics/uncle_rate`).then(items => {
+    v1GetUnwrappedList<ChartItem.UncleRate>(`/daily_statistics/uncle_rate`).then(items => {
       return (
         items
           // filter latest exceptional data out
@@ -298,18 +300,18 @@ export const apiFetcher = {
     }),
 
   fetchStatisticMinerAddressDistribution: () =>
-    v1GetUnwrapped<State.StatisticMinerAddressDistribution>(`/distribution_data/miner_address_distribution`).then(
-      ({ minerAddressDistribution }) => {
-        const blockSum = Object.values(minerAddressDistribution).reduce((sum, val) => sum + Number(val), 0)
-        const statisticMinerAddresses: State.StatisticMinerAddress[] = Object.entries(minerAddressDistribution).map(
-          ([key, val]) => ({
-            address: key,
-            radio: (Number(val) / blockSum).toFixed(3),
-          }),
-        )
-        return statisticMinerAddresses
-      },
-    ),
+    v1GetUnwrapped<{ minerAddressDistribution: Record<string, string> }>(
+      `/distribution_data/miner_address_distribution`,
+    ).then(({ minerAddressDistribution }) => {
+      const blockSum = Object.values(minerAddressDistribution).reduce((sum, val) => sum + Number(val), 0)
+      const statisticMinerAddresses: ChartItem.MinerAddress[] = Object.entries(minerAddressDistribution).map(
+        ([key, val]) => ({
+          address: key,
+          radio: (Number(val) / blockSum).toFixed(3),
+        }),
+      )
+      return statisticMinerAddresses
+    }),
 
   fetchStatisticMinerVersionDistribution: () =>
     requesterV2(`/blocks/ckb_node_versions`).then((res: AxiosResponse) =>
@@ -322,7 +324,7 @@ export const apiFetcher = {
       .then(res => toCamelcase<FeeRateTracker.TransactionFeesStatistic>(res.data)),
 
   fetchStatisticCellCount: () =>
-    v1GetUnwrappedList<Omit<State.StatisticCellCount, 'allCellsCount'>>(
+    v1GetUnwrappedList<Omit<ChartItem.CellCount, 'allCellsCount'>>(
       `/daily_statistics/live_cells_count-dead_cells_count`,
     ).then(items => {
       return items.map(item => ({
@@ -332,18 +334,18 @@ export const apiFetcher = {
     }),
 
   fetchStatisticDifficultyUncleRateEpoch: () =>
-    v1GetUnwrappedList<State.StatisticDifficultyUncleRateEpoch>(`/epoch_statistics/epoch_time-epoch_length`).then(
+    v1GetUnwrappedList<ChartItem.DifficultyUncleRateEpoch>(`/epoch_statistics/epoch_time-epoch_length`).then(
       // Data may enter the cache, so it is purify to reduce volume.
       items => items.map(item => pick(item, ['epochNumber', 'epochTime', 'epochLength'])),
     ),
 
   fetchStatisticAddressBalanceRank: () =>
-    v1GetUnwrapped<State.StatisticAddressBalanceRanking>(`/statistics/address_balance_ranking`).then(
-      res => res.addressBalanceRanking,
-    ),
+    v1GetUnwrapped<{ addressBalanceRanking: ChartItem.AddressBalanceRank[] }>(
+      `/statistics/address_balance_ranking`,
+    ).then(res => res.addressBalanceRanking),
 
   fetchStatisticBalanceDistribution: () =>
-    v1GetUnwrapped<State.StatisticAddressBalanceDistribution>(`/distribution_data/address_balance_distribution`).then(
+    v1GetUnwrapped<{ addressBalanceDistribution: string[][] }>(`/distribution_data/address_balance_distribution`).then(
       ({ addressBalanceDistribution }) => {
         const balanceDistributions = addressBalanceDistribution.map(distribution => {
           const [balance, addresses, sumAddresses] = distribution
@@ -357,10 +359,10 @@ export const apiFetcher = {
       },
     ),
 
-  fetchStatisticTxFeeHistory: () => v1GetUnwrappedList<State.StatisticTransactionFee>(`/daily_statistics/total_tx_fee`),
+  fetchStatisticTxFeeHistory: () => v1GetUnwrappedList<ChartItem.TransactionFee>(`/daily_statistics/total_tx_fee`),
 
   fetchStatisticBlockTimeDistribution: () =>
-    v1GetUnwrapped<State.StatisticBlockTimeDistributions>(`/distribution_data/block_time_distribution`).then(
+    v1GetUnwrapped<{ blockTimeDistribution: string[][] }>(`/distribution_data/block_time_distribution`).then(
       ({ blockTimeDistribution }) => {
         const sumBlocks = blockTimeDistribution
           .flatMap(data => Number(data[1]))
@@ -384,56 +386,63 @@ export const apiFetcher = {
     ),
 
   fetchStatisticAverageBlockTimes: () =>
-    v1GetUnwrapped<State.StatisticAverageBlockTimes>(`/distribution_data/average_block_time`).then(
+    v1GetUnwrapped<{ averageBlockTime: ChartItem.AverageBlockTime[] }>(`/distribution_data/average_block_time`).then(
       res => res.averageBlockTime,
     ),
 
   // Unused currently
   fetchStatisticOccupiedCapacity: () =>
-    v1Get<Response.Wrapper<State.StatisticOccupiedCapacity>[]>(`/daily_statistics/occupied_capacity`),
+    v1Get<Response.Wrapper<{ occupiedCapacity: string; createdAtUnixtimestamp: string }>[]>(
+      `/daily_statistics/occupied_capacity`,
+    ),
 
   fetchStatisticEpochTimeDistribution: () =>
-    v1GetUnwrapped<State.StatisticEpochTimeDistributions>(`/distribution_data/epoch_time_distribution`).then(
+    v1GetUnwrapped<{ epochTimeDistribution: string[][] }>(`/distribution_data/epoch_time_distribution`).then(
       ({ epochTimeDistribution }) => {
-        const statisticEpochTimeDistributions: State.StatisticEpochTimeDistribution[] = epochTimeDistribution.map(
-          data => {
-            const [time, epoch] = data
-            return {
-              time,
-              epoch,
-            }
-          },
-        )
+        const statisticEpochTimeDistributions: ChartItem.EpochTimeDistribution[] = epochTimeDistribution.map(data => {
+          const [time, epoch] = data
+          return {
+            time,
+            epoch,
+          }
+        })
         return statisticEpochTimeDistributions
       },
     ),
 
   // Unused currently
   fetchStatisticNewNodeCount: () =>
-    v1Get<Response.Wrapper<State.StatisticNewNodeCount>[]>(`/daily_statistics/nodes_count`),
+    v1Get<Response.Wrapper<{ nodesCount: string; createdAtUnixtimestamp: string }>[]>(`/daily_statistics/nodes_count`),
 
   // Unused currently
   fetchStatisticNodeDistribution: () =>
-    v1GetWrapped<State.StatisticNodeDistributions>(`/distribution_data/nodes_distribution`),
+    v1GetWrapped<{
+      nodesDistribution: {
+        city: string
+        count: number
+        postal: string
+        country: string
+        latitude: string
+        longitude: string
+      }[]
+    }>(`/distribution_data/nodes_distribution`),
 
   fetchStatisticTotalSupply: () =>
-    v1GetUnwrappedList<State.StatisticTotalSupply>(`/daily_statistics/circulating_supply-burnt-locked_capacity`),
+    v1GetUnwrappedList<ChartItem.TotalSupply>(`/daily_statistics/circulating_supply-burnt-locked_capacity`),
 
   fetchStatisticAnnualPercentageCompensation: () =>
-    v1GetUnwrapped<State.StatisticAnnualPercentageCompensations>(`/monetary_data/nominal_apc`).then(
-      ({ nominalApc }) => {
-        const statisticAnnualPercentageCompensations = nominalApc
-          .filter((_apc, index) => index % 3 === 0 || index === nominalApc.length - 1)
-          .map((apc, index) => ({
-            year: 0.25 * index,
-            apc,
-          }))
-        return statisticAnnualPercentageCompensations
-      },
-    ),
+    v1GetUnwrapped<{ nominalApc: string[] }>(`/monetary_data/nominal_apc`).then(({ nominalApc }) => {
+      const statisticAnnualPercentageCompensations = nominalApc
+        .filter((_apc, index) => index % 3 === 0 || index === nominalApc.length - 1)
+        .map((apc, index) => ({
+          year: 0.25 * index,
+          apc,
+        }))
+      return statisticAnnualPercentageCompensations
+    }),
 
   fetchStatisticSecondaryIssuance: () =>
-    v1GetUnwrappedList<State.StatisticSecondaryIssuance>(
+    v1GetUnwrappedList<ChartItem.SecondaryIssuance>(
       `/daily_statistics/treasury_amount-mining_reward-deposit_compensation`,
     ).then(items => {
       return items.map(item => {
@@ -452,7 +461,7 @@ export const apiFetcher = {
     }),
 
   fetchStatisticInflationRate: () =>
-    v1GetUnwrapped<State.StatisticInflationRates>(
+    v1GetUnwrapped<{ nominalApc: string[]; nominalInflationRate: string[]; realInflationRate: string[] }>(
       `/monetary_data/nominal_apc50-nominal_inflation_rate-real_inflation_rate`,
     ).then(({ nominalApc, nominalInflationRate, realInflationRate }) => {
       const statisticInflationRates = []
@@ -470,14 +479,14 @@ export const apiFetcher = {
     }),
 
   fetchStatisticLiquidity: () =>
-    v1GetUnwrappedList<State.StatisticLiquidity>(`/daily_statistics/circulating_supply-liquidity`).then(items => {
+    v1GetUnwrappedList<ChartItem.Liquidity>(`/daily_statistics/circulating_supply-liquidity`).then(items => {
       return items.map(item => ({
         ...item,
         daoDeposit: new BigNumber(item.circulatingSupply).minus(new BigNumber(item.liquidity)).toFixed(2),
       }))
     }),
 
-  fetchFlushChartCache: () => v1GetUnwrapped<State.StatisticCacheInfo>(`statistics/flush_cache_info`),
+  fetchFlushChartCache: () => v1GetUnwrapped<{ flushCacheInfo: string[] }>(`statistics/flush_cache_info`),
 
   fetchSimpleUDT: (typeHash: string) => v1GetUnwrapped<UDT>(`/udts/${typeHash}`),
 

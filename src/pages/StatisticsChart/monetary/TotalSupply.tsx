@@ -12,7 +12,7 @@ import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 
 const widthSpan = (value: string, currentLanguage: LanuageType) =>
   tooltipWidth(value, currentLanguage === 'en' ? 125 : 80)
@@ -45,7 +45,7 @@ const useTooltip = () => {
 }
 
 const useOption = (
-  statisticTotalSupplies: State.StatisticTotalSupply[],
+  statisticTotalSupplies: ChartItem.TotalSupply[],
   chartColor: State.ChartColor,
   isMobile: boolean,
 
@@ -187,7 +187,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticTotalSupplies: State.StatisticTotalSupply[]) =>
+const toCSV = (statisticTotalSupplies: ChartItem.TotalSupply[]) =>
   statisticTotalSupplies
     ? statisticTotalSupplies.map(data => [
         data.createdAtUnixtimestamp,

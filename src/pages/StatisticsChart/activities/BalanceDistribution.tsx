@@ -12,7 +12,7 @@ import {
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 
 const widthSpan = (value: string, currentLanguage: string) => tooltipWidth(value, currentLanguage === 'en' ? 270 : 110)
 
@@ -26,7 +26,7 @@ const parseTooltip = ({
 }
 
 const useOption = (
-  statisticBalanceDistributions: State.StatisticBalanceDistribution[],
+  statisticBalanceDistributions: ChartItem.BalanceDistribution[],
   chartColor: State.ChartColor,
   isMobile: boolean,
   isThumbnail = false,
@@ -165,7 +165,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticBalanceDistributions?: State.StatisticBalanceDistribution[]) =>
+const toCSV = (statisticBalanceDistributions?: ChartItem.BalanceDistribution[]) =>
   statisticBalanceDistributions
     ? statisticBalanceDistributions.map((data, index) => [
         `"${handleLogGroupAxis(

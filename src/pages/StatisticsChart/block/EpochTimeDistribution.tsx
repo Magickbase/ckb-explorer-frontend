@@ -3,12 +3,12 @@ import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
 import { parseHourFromMinute } from '../../../utils/date'
 import { DATA_ZOOM_CONFIG, assertIsArray } from '../../../utils/chart'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useCurrentLanguage } from '../../../utils/i18n'
 
 const useOption = (
-  statisticEpochTimeDistributions: State.StatisticEpochTimeDistribution[],
+  statisticEpochTimeDistributions: ChartItem.EpochTimeDistribution[],
   chartColor: State.ChartColor,
   isMobile: boolean,
 
@@ -96,7 +96,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticEpochTimeDistributions: State.StatisticEpochTimeDistribution[]) =>
+const toCSV = (statisticEpochTimeDistributions: ChartItem.EpochTimeDistribution[]) =>
   statisticEpochTimeDistributions
     ? statisticEpochTimeDistributions.map(data => [parseHourFromMinute(data.time), data.epoch])
     : []

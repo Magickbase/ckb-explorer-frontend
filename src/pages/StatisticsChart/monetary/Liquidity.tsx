@@ -11,10 +11,10 @@ import {
 } from '../../../utils/chart'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 
 const useOption = (
-  statisticLiquidity: State.StatisticLiquidity[],
+  statisticLiquidity: ChartItem.Liquidity[],
   chartColor: State.ChartColor,
   isMobile: boolean,
 
@@ -178,7 +178,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticLiquidity: State.StatisticLiquidity[]) =>
+const toCSV = (statisticLiquidity: ChartItem.Liquidity[]) =>
   statisticLiquidity
     ? statisticLiquidity.map(data => [
         data.createdAtUnixtimestamp,

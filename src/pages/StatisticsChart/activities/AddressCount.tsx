@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { DATA_ZOOM_CONFIG, assertIsArray, handleAxis } from '../../../utils/chart'
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useCurrentLanguage } from '../../../utils/i18n'
 
 const useOption = (
-  statisticAddressCounts: State.StatisticAddressCount[],
+  statisticAddressCounts: ChartItem.AddressCount[],
   chartColor: State.ChartColor,
   isMobile: boolean,
   isThumbnail = false,
@@ -95,7 +95,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticAddressCounts?: State.StatisticAddressCount[]) =>
+const toCSV = (statisticAddressCounts?: ChartItem.AddressCount[]) =>
   statisticAddressCounts ? statisticAddressCounts.map(data => [data.createdAtUnixtimestamp, data.addressesCount]) : []
 
 export const AddressCountChart = ({ isThumbnail = false }: { isThumbnail?: boolean }) => {

@@ -9,12 +9,12 @@ import {
 } from '../../../utils/chart'
 import { handleDifficulty, handleHashRate } from '../../../utils/number'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useCurrentLanguage } from '../../../utils/i18n'
 
 const useOption = (
-  statisticDifficultyHashRates: State.StatisticDifficultyHashRate[],
+  statisticDifficultyHashRates: ChartItem.DifficultyHashRate[],
   chartColor: State.ChartColor,
   isMobile: boolean,
   isThumbnail = false,
@@ -187,7 +187,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticDifficultyHashRates: State.StatisticDifficultyHashRate[]) =>
+const toCSV = (statisticDifficultyHashRates: ChartItem.DifficultyHashRate[]) =>
   statisticDifficultyHashRates
     ? statisticDifficultyHashRates.map(data => [data.epochNumber, data.difficulty, data.hashRate, data.uncleRate])
     : []

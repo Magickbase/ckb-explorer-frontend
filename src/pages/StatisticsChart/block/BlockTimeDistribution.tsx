@@ -2,11 +2,11 @@ import { useTranslation } from 'react-i18next'
 import { DATA_ZOOM_CONFIG, assertIsArray } from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { useCurrentLanguage } from '../../../utils/i18n'
 
 const useOption = (
-  statisticBlockTimeDistributions: State.StatisticBlockTimeDistribution[],
+  statisticBlockTimeDistributions: ChartItem.BlockTimeDistribution[],
   chartColor: State.ChartColor,
   isMobile: boolean,
 
@@ -89,7 +89,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticBlockTimeDistributions: State.StatisticBlockTimeDistribution[]) =>
+const toCSV = (statisticBlockTimeDistributions: ChartItem.BlockTimeDistribution[]) =>
   statisticBlockTimeDistributions
     ? statisticBlockTimeDistributions.map(data => [data.time, Number(data.ratio).toFixed(4)])
     : []

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { tooltipColor, tooltipWidth, SmartChartPage, SmartChartPageProps } from '../common'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { useAdaptMobileEllipsis, useAdaptPCEllipsis, useIsMobile } from '../../../utils/hook'
 import { useCurrentLanguage } from '../../../utils/i18n'
 import { assertNotArray } from '../../../utils/chart'
@@ -25,7 +25,7 @@ const useOption = () => {
   const { t } = useTranslation()
   const currentLanguage = useCurrentLanguage()
   return (
-    statisticMinerAddresses: State.StatisticMinerAddress[],
+    statisticMinerAddresses: ChartItem.MinerAddress[],
     chartColor: State.ChartColor,
     isMobile: boolean,
     isThumbnail = false,
@@ -88,7 +88,7 @@ const useOption = () => {
   }
 }
 
-const toCSV = (statisticMinerAddresses: State.StatisticMinerAddress[]) =>
+const toCSV = (statisticMinerAddresses: ChartItem.MinerAddress[]) =>
   statisticMinerAddresses ? statisticMinerAddresses.map(data => [data.address, data.radio]) : []
 
 export const MinerAddressDistributionChart = ({ isThumbnail = false }: { isThumbnail?: boolean }) => {
@@ -108,7 +108,7 @@ export const MinerAddressDistributionChart = ({ isThumbnail = false }: { isThumb
   const adaptMobileEllipsis = useAdaptMobileEllipsis()
   const adaptPCEllipsis = useAdaptPCEllipsis(80)
   const parseOption = useOption()
-  const getEChartOption: SmartChartPageProps<State.StatisticMinerAddress>['getEChartOption'] = useCallback(
+  const getEChartOption: SmartChartPageProps<ChartItem.MinerAddress>['getEChartOption'] = useCallback(
     (...args) =>
       parseOption(...args, address => (isMobile ? adaptMobileEllipsis(address, 4) : adaptPCEllipsis(address, 2))),
     [adaptMobileEllipsis, adaptPCEllipsis, isMobile, parseOption],

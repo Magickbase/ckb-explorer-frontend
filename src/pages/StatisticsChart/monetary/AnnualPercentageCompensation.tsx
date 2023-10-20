@@ -3,10 +3,10 @@ import { useCurrentLanguage } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG, assertIsArray } from '../../../utils/chart'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 
 const useOption = (
-  statisticAnnualPercentageCompensations: State.StatisticAnnualPercentageCompensation[],
+  statisticAnnualPercentageCompensations: ChartItem.AnnualPercentageCompensation[],
   chartColor: State.ChartColor,
   isMobile: boolean,
 
@@ -93,7 +93,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticAnnualPercentageCompensations: State.StatisticAnnualPercentageCompensation[]) =>
+const toCSV = (statisticAnnualPercentageCompensations: ChartItem.AnnualPercentageCompensation[]) =>
   statisticAnnualPercentageCompensations
     ? statisticAnnualPercentageCompensations.map(data => [data.year, (Number(data.apc) / 100).toFixed(4)])
     : []

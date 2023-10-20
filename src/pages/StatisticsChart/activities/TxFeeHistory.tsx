@@ -6,11 +6,11 @@ import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { shannonToCkbDecimal } from '../../../utils/util'
 import { isMainnet } from '../../../utils/chain'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { useCurrentLanguage } from '../../../utils/i18n'
 
 const useOption = (
-  statisticTxFeeHistories: State.StatisticTransactionFee[],
+  statisticTxFeeHistories: ChartItem.TransactionFee[],
   chartColor: State.ChartColor,
   isMobile: boolean,
 
@@ -97,7 +97,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticTxFeeHistories: State.StatisticTransactionFee[]) =>
+const toCSV = (statisticTxFeeHistories: ChartItem.TransactionFee[]) =>
   statisticTxFeeHistories
     ? statisticTxFeeHistories.map(data => [data.createdAtUnixtimestamp, shannonToCkbDecimal(data.totalTxFee, 8)])
     : []

@@ -4,10 +4,10 @@ import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
 import { DATA_ZOOM_CONFIG, assertIsArray } from '../../../utils/chart'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 
 const useOption = (
-  statisticCirculationRatios: State.StatisticCirculationRatio[],
+  statisticCirculationRatios: ChartItem.CirculationRatio[],
   chartColor: State.ChartColor,
   isMobile: boolean,
   isThumbnail = false,
@@ -94,7 +94,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticCirculationRatios: State.StatisticCirculationRatio[]) =>
+const toCSV = (statisticCirculationRatios: ChartItem.CirculationRatio[]) =>
   statisticCirculationRatios
     ? statisticCirculationRatios.map(data => [data.createdAtUnixtimestamp, data.circulationRatio])
     : []

@@ -5,7 +5,7 @@ import { assertSerialsDataIsString, assertIsArray, assertSerialsItem, handleAxis
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { parseHourFromMillisecond } from '../../../utils/date'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
 
 const widthSpan = (value: string, currentLanguage: LanuageType) =>
@@ -26,7 +26,7 @@ const useTooltip = () => {
 }
 
 const useOption = (
-  statisticChartData: State.StatisticDifficultyUncleRateEpoch[],
+  statisticChartData: ChartItem.DifficultyUncleRateEpoch[],
   chartColor: State.ChartColor,
   isMobile: boolean,
 
@@ -202,7 +202,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticDifficultyUncleRateEpochs: State.StatisticDifficultyUncleRateEpoch[]) =>
+const toCSV = (statisticDifficultyUncleRateEpochs: ChartItem.DifficultyUncleRateEpoch[]) =>
   statisticDifficultyUncleRateEpochs
     ? statisticDifficultyUncleRateEpochs.map(data => [data.epochNumber, data.epochTime, data.epochLength])
     : []
