@@ -58,16 +58,30 @@ const handleSearchResult = async (
     const { data } = await explorerService.api.fetchSearchResult(addPrefixForHash(query))
     clearSearchInput(inputElement)
     setSearchValue('')
-    if (data.type === SearchResultType.Block) {
-      history.push(`/block/${data.attributes.blockHash}`)
-    } else if (data.type === SearchResultType.Transaction) {
-      history.push(`/transaction/${data.attributes.transactionHash}`)
-    } else if (data.type === SearchResultType.Address) {
-      history.push(`/address/${data.attributes.addressHash}`)
-    } else if (data.type === SearchResultType.LockHash) {
-      history.push(`/address/${data.attributes.lockHash}`)
-    } else if (data.type === SearchResultType.UDT) {
-      history.push(`/sudt/${query}`)
+
+    switch (data.type) {
+      case SearchResultType.Block:
+        history.push(`/block/${data.attributes.blockHash}`)
+        break
+
+      case SearchResultType.Transaction:
+        history.push(`/transaction/${data.attributes.transactionHash}`)
+        break
+
+      case SearchResultType.Address:
+        history.push(`/address/${data.attributes.addressHash}`)
+        break
+
+      case SearchResultType.LockHash:
+        history.push(`/address/${data.attributes.lockHash}`)
+        break
+
+      case SearchResultType.UDT:
+        history.push(`/sudt/${query}`)
+        break
+
+      default:
+        break
     }
   } catch (error) {
     setSearchContent(inputElement, query)
