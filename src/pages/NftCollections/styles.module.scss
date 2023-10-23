@@ -179,6 +179,8 @@
 
 .transactionsHeader {
   > span {
+    cursor: pointer;
+
     &.sortActive {
       color: var(--primary-color);
     }
