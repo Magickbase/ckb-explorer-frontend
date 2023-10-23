@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react'
+import { ReactNode, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as XIcon } from '../../assets/footer_X.svg'
 import { ReactComponent as MediumIcon } from '../../assets/footer_medium.svg'
@@ -15,7 +15,7 @@ import { udtSubmitEmail } from '../../utils/util'
 interface FooterLinkItem {
   label?: string
   url?: string
-  icon?: React.ReactNode
+  icon?: ReactNode
 }
 
 interface FooterLink {

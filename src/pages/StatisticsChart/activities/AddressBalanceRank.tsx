@@ -121,7 +121,7 @@ export const AddressBalanceRankChart = ({ isThumbnail = false }: { isThumbnail?:
   const [statisticAddressBalanceRanks, setStatisticAddressBalanceRanks] = useState<State.StatisticAddressBalanceRank[]>(
     [],
   )
-  const clickEvent = useCallback(
+  const handleClick = useCallback(
     param => {
       if (param && param.name && statisticAddressBalanceRanks.length > 0) {
         const address = getAddressWithRanking(statisticAddressBalanceRanks, param.name)
@@ -145,7 +145,7 @@ export const AddressBalanceRankChart = ({ isThumbnail = false }: { isThumbnail?:
       title={t('statistic.balance_ranking')}
       description={t('statistic.balance_ranking_description')}
       isThumbnail={isThumbnail}
-      chartProps={{ onClick: !isThumbnail ? clickEvent : undefined }}
+      chartProps={{ onClick: !isThumbnail ? handleClick : undefined }}
       fetchData={fetchStatisticAddressBalanceRanks}
       onFetched={setStatisticAddressBalanceRanks}
       getEChartOption={getEChartOption}

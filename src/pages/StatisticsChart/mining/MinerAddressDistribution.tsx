@@ -109,7 +109,7 @@ export const MinerAddressDistributionChart = ({ isThumbnail = false }: { isThumb
   const [t] = useTranslation()
 
   const history = useHistory()
-  const clickEvent = useCallback(
+  const onClick = useCallback(
     param => {
       if (param && param.data.title) {
         history.push(`/address/${param.data.title}`)
@@ -132,7 +132,7 @@ export const MinerAddressDistributionChart = ({ isThumbnail = false }: { isThumb
     <SmartChartPage
       title={t('statistic.miner_addresses_rank')}
       isThumbnail={isThumbnail}
-      chartProps={{ onClick: !isThumbnail ? clickEvent : undefined }}
+      chartProps={{ onClick: !isThumbnail ? onClick : undefined }}
       fetchData={fetchStatisticMinerAddresses}
       getEChartOption={getEChartOption}
       toCSV={toCSV}

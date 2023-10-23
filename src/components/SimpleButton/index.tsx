@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { MouseEventHandler, ReactNode } from 'react'
 import styled from 'styled-components'
 
 const ButtonPanel = styled.div`
@@ -14,8 +14,8 @@ export default ({
 }: {
   id?: string
   className?: string
-  onClick?: React.MouseEventHandler<HTMLDivElement>
-  onMouseOver?: React.MouseEventHandler<HTMLDivElement>
+  onClick?: MouseEventHandler<HTMLDivElement>
+  onMouseOver?: MouseEventHandler<HTMLDivElement>
   children: ReactNode | string
 }) => (
   <ButtonPanel
