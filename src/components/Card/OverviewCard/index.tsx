@@ -17,8 +17,8 @@ export type OverviewItemData = {
 } | null
 
 const handleOverviewItems = (items: OverviewItemData[], isMobile: boolean) => ({
-  leftItems: isMobile ? items : items.filter((_item: OverviewItemData, index: number) => index % 2 === 0),
-  rightItems: isMobile ? [] : items.filter((_item: OverviewItemData, index: number) => index % 2 !== 0),
+  leftItems: isMobile ? items : items.filter((_item, index) => index % 2 === 0),
+  rightItems: isMobile ? [] : items.filter((_item, index) => index % 2 !== 0),
 })
 
 export const OverviewItem = ({ item, hideLine }: { item: OverviewItemData; hideLine: boolean }) =>

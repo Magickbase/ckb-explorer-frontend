@@ -18,7 +18,7 @@ interface MenuData {
 
 const useMenuDataList = () => {
   const { t } = useTranslation()
-  const list = [
+  const list: MenuData[] = [
     {
       type: LinkType.Inner,
       name: t('navbar.home'),

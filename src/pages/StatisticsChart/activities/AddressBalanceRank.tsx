@@ -145,7 +145,7 @@ export const AddressBalanceRankChart = ({ isThumbnail = false }: { isThumbnail?:
       title={t('statistic.balance_ranking')}
       description={t('statistic.balance_ranking_description')}
       isThumbnail={isThumbnail}
-      chartProps={{ clickEvent: !isThumbnail ? clickEvent : undefined }}
+      chartProps={{ onClick: !isThumbnail ? clickEvent : undefined }}
       fetchData={fetchStatisticAddressBalanceRanks}
       onFetched={setStatisticAddressBalanceRanks}
       getEChartOption={getEChartOption}

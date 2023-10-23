@@ -20,7 +20,7 @@ enum SearchResultType {
 }
 
 const clearSearchInput = (inputElement: RefObject<HTMLInputElement>) => {
-  const input: HTMLInputElement | null = inputElement.current
+  const input = inputElement.current
   if (input) {
     input.value = ''
     input.blur()
@@ -28,14 +28,14 @@ const clearSearchInput = (inputElement: RefObject<HTMLInputElement>) => {
 }
 
 const setSearchLoading = (inputElement: RefObject<HTMLInputElement>, t: TFunction) => {
-  const input: HTMLInputElement | null = inputElement.current
+  const input = inputElement.current
   if (input) {
     input.value = t('search.loading')
   }
 }
 
 const setSearchContent = (inputElement: RefObject<HTMLInputElement>, content: string) => {
-  const input: HTMLInputElement | null = inputElement.current
+  const input = inputElement.current
   if (input) {
     input.value = content
   }

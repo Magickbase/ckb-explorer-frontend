@@ -40,7 +40,7 @@ const useOption = (
             assertIsArray(dataList)
             const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 80 : 80)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.time_hour'))} ${parseHourFromMinute(
-              dataList[0].name,
+              dataList[0].name ?? '0',
             )}</div>`
             result += `\
             <div>${tooltipColor(chartColor.colors[0])}\

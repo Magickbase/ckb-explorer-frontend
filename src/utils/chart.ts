@@ -168,32 +168,21 @@ export const assertSerialsDataIsString: (value: EChartOption.Tooltip.Format) => 
   value: EChartOption.Tooltip.Format,
 ) => {
   if (typeof value.data !== 'string') {
-    throw new Error('data is not string')
+    throw new Error(`Value is expected to be an array, but got a ${typeof value.data}`)
   }
 }
 
 export const assertSerialsDataIsStringArrayOf3: (
   value: EChartOption.Tooltip.Format,
 ) => asserts value is { data: [string, string, string] } = (value: EChartOption.Tooltip.Format) => {
-  if (
-    Array.isArray(value.data) ||
-    typeof value.data[0] !== 'string' ||
-    typeof value.data[1] !== 'string' ||
-    typeof value.data[2] !== 'string'
-  ) {
+  if (!Array.isArray(value.data) || value.data.length !== 3 || value.data.every(item => typeof item !== 'string')) {
     throw new Error('invalid SeriesItem length of 3')
   }
 }
 export const assertSerialsDataIsStringArrayOf4: (
   value: EChartOption.Tooltip.Format,
 ) => asserts value is { data: [string, string, string, string] } = (value: EChartOption.Tooltip.Format) => {
-  if (
-    Array.isArray(value.data) ||
-    typeof value.data[0] !== 'string' ||
-    typeof value.data[1] !== 'string' ||
-    typeof value.data[2] !== 'string' ||
-    typeof value.data[3] !== 'string'
-  ) {
+  if (!Array.isArray(value.data) || value.data.length !== 4 || value.data.every(item => typeof item !== 'string')) {
     throw new Error('invalid SeriesItem length of 4')
   }
 }

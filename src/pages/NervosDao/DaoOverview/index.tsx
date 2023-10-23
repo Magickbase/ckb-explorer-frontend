@@ -28,6 +28,7 @@ import { useIsLGScreen, useIsMobile } from '../../../utils/hook'
 import { ReactChartCore } from '../../StatisticsChart/common'
 import { HelpTip } from '../../../components/HelpTip'
 import { ChartColor } from '../../../constants/common'
+import { assertNotArray } from '../../../utils/chart'
 
 interface NervosDaoItemContent {
   title: string
@@ -215,9 +216,7 @@ const useOption = (nervosDao: State.NervosDao, colors: string[], isMobile: boole
     tooltip: {
       trigger: 'item',
       formatter: value => {
-        if (Array.isArray(value)) {
-          throw new Error('value should not be array')
-        }
+        assertNotArray(value)
         return `${value.data.title}: ${localeNumberString(value.data.value)} ${t('common.ckb_unit')} (${
           value.data.name
         })`

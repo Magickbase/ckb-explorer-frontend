@@ -49,7 +49,7 @@ export const MobileSubMenuPanel = styled.div`
   }
 
   .mobileMenusMainItemContent {
-    color: ${(props: { showSubMenu: boolean; theme: { primary: string } }) =>
+    color: ${(props: { showSubMenu: boolean; theme: State.Theme }) =>
       props.showSubMenu ? props.theme.primary : 'white'};
   }
 
