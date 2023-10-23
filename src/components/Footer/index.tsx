@@ -1,4 +1,4 @@
-import { ReactNode, memo, useMemo } from 'react'
+import { FunctionComponent, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as XIcon } from '../../assets/footer_X.svg'
 import { ReactComponent as MediumIcon } from '../../assets/footer_medium.svg'
@@ -15,7 +15,7 @@ import { udtSubmitEmail } from '../../utils/util'
 interface FooterLinkItem {
   label?: string
   url?: string
-  icon?: ReactNode
+  icon?: FunctionComponent
 }
 
 interface FooterLink {
@@ -34,9 +34,10 @@ const FooterItem = ({ item }: { item: FooterLinkItem }) => {
 
 const FooterImageItem = ({ item }: { item: FooterLinkItem }) => {
   const { label, url, icon: IconComponent } = item
+
   return (
     <FooterImageItemPanel key={label} href={url} rel="noopener noreferrer" target="_blank">
-      {IconComponent}
+      {IconComponent && <IconComponent />}
       <span>{label}</span>
     </FooterImageItemPanel>
   )
