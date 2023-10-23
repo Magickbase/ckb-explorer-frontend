@@ -36,7 +36,7 @@ export const HalvingBanner = () => {
   const { estimatedDate, halvingCount, inCelebration, isLoading } = useHalving()
   const [days, hours, minutes, seconds, expired] = useCountdown(estimatedDate)
   const isMobile = useIsMobile()
-  const { t } = useTranslation()
+  const [t, { language }] = useTranslation()
 
   const shortCountdown = () => {
     if (isLoading || Number.isNaN(seconds)) {
@@ -101,7 +101,9 @@ export const HalvingBanner = () => {
             </div>
           ) : (
             <div className={classnames(styles.halvingBannerText, styles.linear)}>
-              Nervos CKB Layer 1 {t('halving.halving')}
+              {`Nervos CKB ${t(`ordinal.${numberToOrdinal(halvingCount)}`)}${language === 'en' ? ' ' : ''}${t(
+                'halving.halving',
+              )}`}
             </div>
           )}
           <a href="/halving">

@@ -252,10 +252,10 @@ export const HalvingCountdownPage = () => {
       <div className={styles.halvingBanner} style={{ backgroundImage: `url(${halvingBg})` }}>
         <div className={classnames(styles.halvingBannerWrapper, 'container')}>
           <div className={styles.halvingBannerContent}>
-            <div className={styles.halvingTitle}>Nervos CKB Layer 1 {t('halving.halving_countdown')}</div>
+            <div className={styles.halvingTitle}>Nervos CKB {t('halving.halving_countdown')}</div>
             <div className={styles.halvingSubtitle}>
-              Nervos CKB Layer 1 {t('halving.halving_desc_prefix')}{' '}
-              <strong>{t('halving.base_issuance_rewards')}</strong> {t('halving.halving_desc_suffix')}
+              Nervos CKB {t('halving.halving_desc_prefix')} <strong>{t('halving.base_issuance_rewards')}</strong>{' '}
+              {t('halving.halving_desc_suffix')}
             </div>
             {renderHalvingPanel()}
           </div>
