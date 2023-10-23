@@ -30,11 +30,12 @@ export const transformToTransaction = (tx: CkbTransactionInScript): State.Transa
   }
 }
 
-export type CellBasicInfo = Pick<State.Cell, 'id' | 'isGenesisOutput' | 'capacity'>
+export type CellBasicInfo = Pick<State.Cell, 'id' | 'isGenesisOutput' | 'capacity' | 'occupiedCapacity'>
 export const transformToCellBasicInfo = (cell: CellInScript): CellBasicInfo => {
   return {
     id: cell.id,
     capacity: cell.capacity,
+    occupiedCapacity: String(cell.occupiedCapacity),
     isGenesisOutput: false,
   }
 }

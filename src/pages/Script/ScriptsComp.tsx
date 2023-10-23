@@ -194,6 +194,7 @@ export const ScriptCells = ({
                               id: record.id,
                               capacity: record.capacity,
                               isGenesisOutput: false,
+                              occupiedCapacity: String(record.occupiedCapacity),
                             }}
                           />
                         </div>

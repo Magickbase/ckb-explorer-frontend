@@ -1,6 +1,12 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import { DATA_ZOOM_CONFIG, assertIsArray, handleAxis } from '../../../utils/chart'
+import {
+  DATA_ZOOM_CONFIG,
+  assertIsArray,
+  assertSerialsDataIsString,
+  assertSerialsItem,
+  handleAxis,
+} from '../../../utils/chart'
 import { handleDifficulty, handleHashRate } from '../../../utils/number'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { explorerService } from '../../../services/ExplorerService'
@@ -54,9 +60,10 @@ const useOption = (
           trigger: 'axis',
           formatter: (dataList): string => {
             assertIsArray(dataList)
-            const list = dataList as Array<SeriesItem & { data: string }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('block.epoch'))} ${list[0].name}</div>`
-            list.forEach(data => {
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('block.epoch'))} ${dataList[0].name}</div>`
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              assertSerialsDataIsString(data)
               result += parseTooltip(data)
             })
             return result

@@ -65,11 +65,10 @@ const useOption = (
           trigger: 'axis',
           formatter: dataList => {
             assertIsArray(dataList)
-            const list = dataList
             let result = `<div>${tooltipColor('#333333')}${widthSpan(t('block.epoch'), currentLanguage)} ${
-              list[0].name
+              dataList[0].name
             }</div>`
-            list.forEach(data => {
+            dataList.forEach(data => {
               assertSerialsItem(data)
               assertSerialsDataIsString(data)
               result += parseTooltip(data)

@@ -1,7 +1,14 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
-import { DATA_ZOOM_CONFIG, assertIsArray, handleAxis, handleLogGroupAxis } from '../../../utils/chart'
+import {
+  DATA_ZOOM_CONFIG,
+  assertIsArray,
+  assertSerialsDataIsString,
+  assertSerialsItem,
+  handleAxis,
+  handleLogGroupAxis,
+} from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
 import { ChartCachedKeys } from '../../../constants/cache'
@@ -47,15 +54,18 @@ const useOption = (
           trigger: 'axis',
           formatter: dataList => {
             assertIsArray(dataList)
-            const list = dataList as (SeriesItem & { data: string })[]
+            const firstData = dataList[0]
+            assertSerialsItem(firstData)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(
               t('statistic.addresses_balance'),
               currentLanguage,
             )} ${handleLogGroupAxis(
-              new BigNumber(list[0].name),
-              list[0].dataIndex === statisticBalanceDistributions.length - 1 ? '+' : '',
+              new BigNumber(firstData.name),
+              firstData.dataIndex === statisticBalanceDistributions.length - 1 ? '+' : '',
             )} ${t('common.ckb_unit')}</div>`
-            list.forEach(data => {
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              assertSerialsDataIsString(data)
               result += parseTooltip({ ...data, currentLanguage })
             })
             return result
