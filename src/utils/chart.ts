@@ -128,26 +128,14 @@ export const getFeeRateSamples = (feeRates: Array<FeeRateTracker.TransactionFeeR
   return samples
 }
 
-type AssertIsArray = (
-  value: EChartOption.Tooltip.Format | EChartOption.Tooltip.Format[],
-) => asserts value is EChartOption.Tooltip.Format[]
-
-export const assertIsArray: AssertIsArray = (value: EChartOption.Tooltip.Format | EChartOption.Tooltip.Format[]) => {
-  const isArray = Array.isArray(value)
-  if (!isArray) {
+export function assertIsArray<T>(value: T | T[]): asserts value is T[] {
+  if (!Array.isArray(value)) {
     throw new Error('value is not an array')
   }
 }
 
-type AssertIsNotArray = (
-  value: EChartOption.Tooltip.Format | EChartOption.Tooltip.Format[],
-) => asserts value is EChartOption.Tooltip.Format
-
-export const assertNotArray: AssertIsNotArray = (
-  value: EChartOption.Tooltip.Format | EChartOption.Tooltip.Format[],
-) => {
-  const isArray = Array.isArray(value)
-  if (isArray) {
+export function assertNotArray<T>(value: T | T[]): asserts value is T {
+  if (Array.isArray(value)) {
     throw new Error('value is an array')
   }
 }
