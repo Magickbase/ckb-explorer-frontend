@@ -1,4 +1,4 @@
-import { FunctionComponent, memo, useMemo } from 'react'
+import { ReactNode, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as XIcon } from '../../assets/footer_X.svg'
 import { ReactComponent as MediumIcon } from '../../assets/footer_medium.svg'
@@ -15,7 +15,7 @@ import { udtSubmitEmail } from '../../utils/util'
 interface FooterLinkItem {
   label?: string
   url?: string
-  icon?: FunctionComponent
+  icon?: ReactNode
 }
 
 interface FooterLink {
@@ -37,7 +37,7 @@ const FooterImageItem = ({ item }: { item: FooterLinkItem }) => {
 
   return (
     <FooterImageItemPanel key={label} href={url} rel="noopener noreferrer" target="_blank">
-      {IconComponent && <IconComponent />}
+      {IconComponent}
       <span>{label}</span>
     </FooterImageItemPanel>
   )
@@ -87,37 +87,37 @@ export default memo(() => {
         items: [
           {
             label: t('footer.discord'),
-            icon: Discord,
+            icon: <Discord />,
             url: 'https://discord.com/invite/FKh8Zzvwqa',
           },
           {
             label: t('footer.X'),
-            icon: XIcon,
+            icon: <XIcon />,
             url: 'https://x.com/nervosnetwork',
           },
           {
             label: t('footer.blog'),
-            icon: MediumIcon,
+            icon: <MediumIcon />,
             url: 'https://medium.com/nervosnetwork',
           },
           {
             label: t('footer.telegram'),
-            icon: TelegramIcon,
+            icon: <TelegramIcon />,
             url: 'https://t.me/nervosnetwork',
           },
           {
             label: t('footer.reddit'),
-            icon: RedditIcon,
+            icon: <RedditIcon />,
             url: 'https://www.reddit.com/r/NervosNetwork/',
           },
           {
             label: t('footer.youtube'),
-            icon: YoutubeIcon,
+            icon: <YoutubeIcon />,
             url: 'https://www.youtube.com/channel/UCONuJGdMzUY0Y6jrPBOzH7A',
           },
           {
             label: t('footer.forum'),
-            icon: ForumIcon,
+            icon: <ForumIcon />,
             url: 'https://talk.nervos.org/',
           },
         ],
