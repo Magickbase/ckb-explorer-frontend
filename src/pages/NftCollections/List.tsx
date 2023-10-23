@@ -6,7 +6,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import SortButton from '../../components/SortButton'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { ReactComponent as SelectedCheckIcon } from '../../assets/selected_check_icon.svg'
-import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
+import { ReactComponent as FilterIcon } from './filter.svg'
 import { getPrimaryColor } from '../../constants/common'
 import { useIsMobile, useSearchParams, useSortParam } from '../../utils/hook'
 import styles from './styles.module.scss'
@@ -94,8 +94,9 @@ const HolderMinterSort = () => {
         aria-hidden
       >
         {t('nft.holder')}
+        {sortBy === 'holder' && <SortButton field="holder" />}
       </div>
-      &nbsp;/&nbsp;
+      <span className={styles.divider}>/</span>
       <div
         className={classNames({
           [styles.sortActive]: sortBy === 'minted',
@@ -104,6 +105,7 @@ const HolderMinterSort = () => {
         aria-hidden
       >
         {t('nft.minted')}
+        {sortBy !== 'holder' && <SortButton field="minted" />}
       </div>
     </div>
   )
@@ -251,6 +253,10 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
     <div data-role="mobile-list">
       <div className={styles.listHeader}>
         <TypeFilter />
+        <span>
+          {t('nft.transactions')}
+          <SortButton field="transactions" />
+        </span>
         <HolderMinterSort />
       </div>
       <div>

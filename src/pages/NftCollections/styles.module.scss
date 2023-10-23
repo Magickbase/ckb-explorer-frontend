@@ -25,27 +25,19 @@
     position: relative;
     width: 100%;
     margin-bottom: 4px;
-
-    .typeFilter,
-    .holderMinted {
-      justify-content: end;
-    }
+    color: #333;
   }
 
   thead {
-    position: relative;
-    font-size: 14px;
-    font-weight: 700;
-
     tr {
       background: #fff;
       border-bottom: 4px solid var(--table-separator-color);
     }
 
     th {
-      vertical-align: middle;
-      padding-top: 12px;
-      padding-bottom: 12px;
+      line-height: 56px;
+      font-size: 16px;
+      font-weight: 400;
       text-transform: capitalize;
       white-space: nowrap;
     }
@@ -61,8 +53,7 @@
     }
 
     td {
-      padding-top: 15px;
-      padding-bottom: 15px;
+      line-height: 64px;
       font-size: 14px;
     }
   }
@@ -70,19 +61,8 @@
   th,
   td {
     text-align: left;
-    padding-left: 25px;
-    padding-right: 25px;
+    padding: 0 24px;
     max-width: 0.25vw;
-
-    &:not(:first-of-type) {
-      text-align: right;
-    }
-
-    &:first-child,
-    &:last-child {
-      padding-left: 25px;
-      padding-right: 25px;
-    }
   }
 
   .name {
@@ -123,8 +103,8 @@
     }
 
     &[data-is-active='true'] {
-      svg path {
-        fill: var(--primary-color);
+      .filter {
+        color: var(--primary-color);
       }
     }
   }
@@ -140,7 +120,8 @@
   }
 
   .filter {
-    height: 1rem;
+    margin-left: 8px;
+    color: #999;
   }
 }
 
@@ -211,10 +192,19 @@
 .holderMinted {
   display: flex;
   align-items: center;
-  cursor: pointer;
 
   .sortActive {
     color: var(--primary-color);
+  }
+
+  .divider {
+    margin: 0 4px;
+  }
+
+  & > div {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
   }
 }
 
@@ -224,18 +214,20 @@ div[data-role='mobile-list'] {
 
   .listHeader {
     display: flex;
-    height: 3rem;
+    flex-wrap: wrap;
+    row-gap: 20px;
+    padding: 16px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
     background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
 
     & > div {
       white-space: nowrap;
-      flex: 1;
+      flex: 1 50%;
     }
-
-    padding: 0 1rem;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 10px;
   }
 
   dl {
@@ -279,10 +271,6 @@ div[data-role='mobile-list'] {
     }
   }
 
-  .holderMinted {
-    padding-left: 36px;
-  }
-
   .loading {
     text-align: center;
   }
@@ -302,7 +290,7 @@ div[data-role='mobile-list'] {
 
 @media screen and (width <= 1000px) {
   .container {
-    margin: 40px 8px 60px;
+    margin: 20px 16px 60px;
 
     table[data-role='desktop-list'] {
       display: none;
