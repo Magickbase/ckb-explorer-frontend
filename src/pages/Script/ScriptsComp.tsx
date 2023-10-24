@@ -4,10 +4,10 @@ import { useQuery } from 'react-query'
 import { AxiosResponse } from 'axios'
 import camelcase from 'camelcase'
 import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Pagination from '../../components/Pagination'
 import TransactionItem from '../../components/TransactionItem/index'
 import { explorerService, Response } from '../../services/ExplorerService'
-import i18n from '../../utils/i18n'
 import { TransactionCellDetailModal, TransactionCellInfoPanel } from '../Transaction/TransactionCell/styled'
 import SimpleButton from '../../components/SimpleButton'
 import SimpleModal from '../../components/Modal'
@@ -15,7 +15,7 @@ import TransactionCellScript from '../Transaction/TransactionCellScript'
 import { shannonToCkb, toCamelcase } from '../../utils/util'
 import { localeNumberString } from '../../utils/number'
 import DecimalCapacity from '../../components/DecimalCapacity'
-import { CellInScript, CkbTransactionInScript } from './types'
+import { CellInScript, CkbTransactionInScript, PageInfo } from './types'
 import styles from './styles.module.scss'
 import { QueryResult } from '../../components/QueryResult'
 import AddressText from '../../components/AddressText'
@@ -28,7 +28,7 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
   const { codeHash, hashType } = useParams<{ codeHash: string; hashType: string }>()
 
   const transactionsQuery = useQuery(['scripts_ckb_transactions', codeHash, hashType, page, size], async () => {
-    const { data, meta } = await explorerService.api.requesterV2
+    const { data } = await explorerService.api.requesterV2
       .get(`scripts/ckb_transactions`, {
         params: {
           code_hash: codeHash,
@@ -38,14 +38,14 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
         },
       })
       .then((res: AxiosResponse) =>
-        toCamelcase<Response.Response<{ ckbTransactions: CkbTransactionInScript[] }>>(res.data),
+        toCamelcase<Response.Response<{ ckbTransactions: CkbTransactionInScript[]; meta: PageInfo }>>(res.data),
       )
 
     if (data == null || data.ckbTransactions == null || data.ckbTransactions.length === 0) {
       throw new Error('Transactions empty')
     }
     return {
-      total: meta?.total ?? 0,
+      total: data.meta.total,
       ckbTransactions: data.ckbTransactions,
     }
   })
@@ -120,11 +120,12 @@ export const ScriptCells = ({
   size: number
   cellType: 'deployed_cells' | 'referring_cells'
 }) => {
+  const { t } = useTranslation()
   const history = useHistory()
   const { codeHash, hashType } = useParams<{ codeHash: string; hashType: string }>()
 
   const cellsQuery = useQuery([`scripts_${cellType}`, codeHash, hashType, page, size], async () => {
-    const { data, meta } = await explorerService.api.requesterV2
+    const { data } = await explorerService.api.requesterV2
       .get(`scripts/${cellType}`, {
         params: {
           code_hash: codeHash,
@@ -134,7 +135,9 @@ export const ScriptCells = ({
         },
       })
       .then((res: AxiosResponse) =>
-        toCamelcase<Response.Response<{ deployedCells?: CellInScript[]; referringCells?: CellInScript[] }>>(res.data),
+        toCamelcase<
+          Response.Response<{ deployedCells?: CellInScript[]; referringCells?: CellInScript[]; meta: PageInfo }>
+        >(res.data),
       )
     const camelCellType = camelcase(cellType) as 'deployedCells' | 'referringCells'
     if (data == null) {
@@ -145,7 +148,7 @@ export const ScriptCells = ({
       throw new Error('Cells empty')
     }
     return {
-      total: meta?.total ?? 0,
+      total: data.meta.total ?? 0,
       cells,
     }
   })
@@ -164,10 +167,10 @@ export const ScriptCells = ({
             <table>
               <thead>
                 <tr>
-                  <th align="left">{i18n.t('transaction.transaction')}</th>
-                  <th>{i18n.t('scripts.index')}</th>
-                  <th align="left">{i18n.t('transaction.capacity')}</th>
-                  <th align="right">{i18n.t('scripts.cell_info')}</th>
+                  <th align="left">{t('transaction.transaction')}</th>
+                  <th>{t('scripts.index')}</th>
+                  <th align="left">{t('transaction.capacity')}</th>
+                  <th align="right">{t('scripts.cell_info')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -213,6 +216,7 @@ export const ScriptCells = ({
 
 export const CodeHashMessage = ({ codeHash }: { codeHash: string }) => {
   const setToast = useSetToast()
+  const { t } = useTranslation()
   return (
     <div className={styles.codeHashMessagePanel}>
       <div className={styles.codeHash}>
@@ -223,7 +227,7 @@ export const CodeHashMessage = ({ codeHash }: { codeHash: string }) => {
         onClick={() => {
           navigator.clipboard.writeText(codeHash).then(
             () => {
-              setToast({ message: i18n.t('common.copied') })
+              setToast({ message: t('common.copied') })
             },
             error => {
               console.error(error)
