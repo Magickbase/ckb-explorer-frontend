@@ -1,13 +1,4 @@
-import {
-  ComponentProps,
-  CSSProperties,
-  MouseEventHandler,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react'
+import { ComponentProps, CSSProperties, ReactElement, ReactNode, useEffect, useMemo, useRef } from 'react'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 import 'echarts/lib/chart/pie'
@@ -64,7 +55,7 @@ const ReactChartCore = ({
 }: {
   option: EChartOption
   isThumbnail?: boolean
-  onClick?: MouseEventHandler<HTMLDivElement>
+  onClick?: (param: echarts.CallbackDataParams) => void
   notMerge?: boolean
   lazyUpdate?: boolean
   style?: CSSProperties

@@ -122,7 +122,7 @@ export const AddressBalanceRankChart = ({ isThumbnail = false }: { isThumbnail?:
     [],
   )
   const handleClick = useCallback(
-    param => {
+    (param: echarts.CallbackDataParams) => {
       if (param && param.name && statisticAddressBalanceRanks.length > 0) {
         const address = getAddressWithRanking(statisticAddressBalanceRanks, param.name)
         if (address) {

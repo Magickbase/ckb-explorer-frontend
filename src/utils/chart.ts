@@ -130,13 +130,13 @@ export const getFeeRateSamples = (feeRates: Array<FeeRateTracker.TransactionFeeR
 
 export function assertIsArray<T>(value: T | T[]): asserts value is T[] {
   if (!Array.isArray(value)) {
-    throw new Error('value is not an array')
+    throw new Error(`Value is expected to be an array, but got a ${typeof value}`)
   }
 }
 
 export function assertNotArray<T>(value: T | T[]): asserts value is T {
   if (Array.isArray(value)) {
-    throw new Error('value is an array')
+    throw new Error('value should not be an array')
   }
 }
 
