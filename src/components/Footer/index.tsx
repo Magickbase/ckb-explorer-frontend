@@ -46,7 +46,7 @@ const FooterImageItem = ({ item }: { item: FooterLinkItem }) => {
 export default memo(() => {
   const isMobile = useIsMobile()
   const [t] = useTranslation()
-  const Footers: FooterLink[] = useMemo(
+  const Footers = useMemo<FooterLink[]>(
     () => [
       {
         name: t('footer.nervos_foundation'),
