@@ -25,7 +25,7 @@ interface VersionRecord {
 }
 
 const useOption = (
-  list: Array<VersionRecord>,
+  list: VersionRecord[],
   chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
@@ -110,7 +110,7 @@ const fetchData = async () => {
   }))
 }
 
-const toCSV = (versionList: Array<VersionRecord>) => versionList?.map(r => [r.version, `${r.percent}%`]) ?? []
+const toCSV = (versionList: VersionRecord[]) => versionList?.map(r => [r.version, `${r.percent}%`]) ?? []
 
 export const MinerVersionDistributionChart = ({ isThumbnail = false }: { isThumbnail?: boolean }) => {
   const [t] = useTranslation()

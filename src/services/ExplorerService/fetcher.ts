@@ -345,7 +345,7 @@ export const apiFetcher = {
 
   fetchStatisticMinerVersionDistribution: () =>
     requesterV2(`/blocks/ckb_node_versions`).then((res: AxiosResponse) =>
-      toCamelcase<{ data: Array<{ version: string; blocksCount: number }> }>(res.data),
+      toCamelcase<{ data: { version: string; blocksCount: number }[] }>(res.data),
     ),
 
   fetchStatisticTransactionFees: () =>
@@ -582,7 +582,7 @@ export const apiFetcher = {
   fetchNFTCollections: (page: string, sort: string, type?: string) =>
     requesterV2
       .get<{
-        data: Array<NFTCollection>
+        data: NFTCollection[]
         pagination: {
           count: number
           page: number
@@ -618,7 +618,7 @@ export const apiFetcher = {
   fetchNFTCollectionItems: (id: string, page: string) =>
     requesterV2
       .get<{
-        data: Array<NFTItem>
+        data: NFTItem[]
         pagination: {
           count: number
           page: number
@@ -639,9 +639,9 @@ export const apiFetcher = {
   fetchNFTItemByOwner: (owner: string, standard: string, page?: string) =>
     requesterV2
       .get<{
-        data: Array<NFTItem>
+        data: NFTItem[]
         pagination: {
-          series: Array<string>
+          series: string[]
         }
       }>('nft/items', {
         params: {
@@ -889,7 +889,7 @@ export interface TransferRes {
 }
 
 export interface TransferListRes {
-  data: Array<TransferRes>
+  data: TransferRes[]
   pagination: {
     count: number
     page: number

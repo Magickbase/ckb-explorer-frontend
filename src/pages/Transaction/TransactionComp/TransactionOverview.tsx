@@ -228,7 +228,7 @@ export const TransactionOverview: FC<{ transaction: Transaction; layout: LayoutL
     title: t('transaction.cycles'),
     content: liteTxCyclesDataContent,
   }
-  const overviewItems: Array<OverviewItemData> = []
+  const overviewItems: OverviewItemData[] = []
   if (txStatus === 'committed') {
     overviewItems.push(blockHeightData, timestampData)
     if (confirmation >= 0) {

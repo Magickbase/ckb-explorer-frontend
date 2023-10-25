@@ -25,7 +25,7 @@ export interface Address {
   minedBlocksCount: string
   isSpecial: boolean
   specialAddress: string
-  udtAccounts?: Array<UDTAccount>
+  udtAccounts?: UDTAccount[]
 }
 
 export * from './UDTAccount'
