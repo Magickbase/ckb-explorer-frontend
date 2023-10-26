@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import styles from './TransactionLite.module.scss'
 import DecimalCapacity from '../../../../components/DecimalCapacity'
-import { parseCKBAmount, localeNumberString } from '../../../../utils/number'
+import { parseCKBAmount, localeNumberString, parseUDTAmount } from '../../../../utils/number'
 import { shannonToCkb } from '../../../../utils/util'
 import { Addr } from '../../TransactionCell'
 import { defaultTransactionLiteDetails } from '../../state'
@@ -119,7 +119,7 @@ const TransferAmount: FC<{ transfer: TransactionRecordTransfer }> = ({ transfer 
   const isIncome = isUdt ? transferAmount.isPositive() : transferCapacity.isPositive()
   const decimalPanelType = isIncome ? 'income' : 'payment'
 
-  const amountChange = localeNumberString(shannonToCkb(transferAmount))
+  const amountChange = parseUDTAmount(transferAmount.toString(), transfer.udtInfo?.decimal ?? 18)
   const capacityChange = localeNumberString(shannonToCkb(transferCapacity))
   const isIncomeColor = isIncome ? styles.add : styles.subtraction
 
