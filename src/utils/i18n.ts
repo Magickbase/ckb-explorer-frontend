@@ -2,13 +2,13 @@ import i18n from 'i18next'
 import { initReactI18next, useTranslation } from 'react-i18next'
 import en from '../locales/en.json'
 import zh from '../locales/zh.json'
-import { storeCachedData, fetchCachedData } from './cache'
-import { AppCachedKeys } from '../constants/cache'
+// TODO: utils should not import anything from services, this file may need to be refactored into services.
+import { LanuageType, appSettings } from '../services/AppSettings'
 
-export type LanuageType = 'en' | 'zh'
+export type { LanuageType } from '../services/AppSettings'
 
-const getDefaultLanguage = () => fetchCachedData<LanuageType>(AppCachedKeys.AppLanguage) ?? 'en'
-const setDefaultLanguage = (lng: LanuageType) => storeCachedData(AppCachedKeys.AppLanguage, lng)
+const getDefaultLanguage = () => appSettings.defaultLanguage$.value
+const setDefaultLanguage = appSettings.defaultLanguage$.next.bind(appSettings.defaultLanguage$)
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -21,8 +21,12 @@ i18n.use(initReactI18next).init({
   },
 })
 
-i18n.on('languageChanged', (lng: LanuageType) => {
-  setDefaultLanguage(lng)
+i18n.on('languageChanged', lng => {
+  if (lng === 'en' || lng === 'zh') {
+    setDefaultLanguage(lng)
+  } else {
+    setDefaultLanguage('en')
+  }
 })
 
 export const useCurrentLanguage = (): LanuageType => {

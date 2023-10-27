@@ -44,7 +44,9 @@ class ExplorerService {
   }
 
   start() {
+    this.callbacksAtStop?.unsubscribe()
     this.callbacksAtStop = new Subscription()
+
     this.callbacksAtStop.add(
       timer(0, BLOCK_POLLING_TIME).pipe(switchMap(this.api.fetchStatistics)).subscribe(this.latestStatistics$),
     )

@@ -11,7 +11,6 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useResizeDetector } from 'react-resize-detector'
 import { interval, share } from 'rxjs'
-import { AppCachedKeys } from '../constants/cache'
 import { deprecatedAddrToNewAddr } from './util'
 import { startEndEllipsis } from './string'
 import { ListPageParams, PageParams, THEORETICAL_EPOCH_TIME, EPOCHS_PER_HALVING } from '../constants/common'
@@ -424,18 +423,6 @@ export function useAdaptPCEllipsis(factor = 40) {
   return adaptPCEllipsis
 }
 
-export const useAddrFormatToggle = () => {
-  const [isNew, setIsNew] = useState(localStorage.getItem(AppCachedKeys.NewAddrFormat) !== 'false')
-
-  return {
-    isNew,
-    setIsNew: (is: boolean) => {
-      localStorage.setItem(AppCachedKeys.NewAddrFormat, `${is}`)
-      setIsNew(is)
-    },
-  }
-}
-
 export const useNewAddr = (addr: string) =>
   useMemo(() => {
     if (addr.startsWith('0x')) {
@@ -654,6 +641,5 @@ export default {
   useInterval,
   useTimeout,
   useTimeoutWithUnmount,
-  useAddrFormatToggle,
   useNewAddr,
 }
