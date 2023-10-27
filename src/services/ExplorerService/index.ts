@@ -1,6 +1,7 @@
 import { BehaviorSubject, Subscription, map, switchMap, timer } from 'rxjs'
-import { BLOCK_POLLING_TIME } from '../../constants/common'
+import { BLOCKCHAIN_ALERT_POLLING_TIME, BLOCK_POLLING_TIME } from '../../constants/common'
 import { APIReturn, apiFetcher } from './fetcher'
+import { networkErrMsgs$ } from './requester'
 
 const initStatistics: APIReturn<'fetchStatistics'> = {
   tipBlockNumber: '0',
@@ -32,6 +33,10 @@ class ExplorerService {
   // so another API is used here to obtain it separately.
   latestBlockNumber$ = new BehaviorSubject<number>(0)
 
+  blockchainAlerts$ = new BehaviorSubject<string[]>([])
+
+  networkErrMsgs$ = networkErrMsgs$
+
   private callbacksAtStop?: Subscription
 
   constructor() {
@@ -51,6 +56,15 @@ class ExplorerService {
           map(tipBlockNumber => Number(tipBlockNumber)),
         )
         .subscribe(this.latestBlockNumber$),
+    )
+
+    this.callbacksAtStop.add(
+      timer(0, BLOCKCHAIN_ALERT_POLLING_TIME)
+        .pipe(
+          switchMap(this.api.fetchBlockchainInfo),
+          map(wrapper => (wrapper?.attributes.blockchainInfo.alerts ?? []).map(alert => alert.message)),
+        )
+        .subscribe(this.blockchainAlerts$),
     )
   }
 

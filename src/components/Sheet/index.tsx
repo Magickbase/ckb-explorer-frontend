@@ -1,18 +1,19 @@
 import { useTranslation } from 'react-i18next'
+import { useMemo } from 'react'
 import { SheetPanel, SheetPointPanel, SheetItem } from './styled'
-import { createGlobalState, createGlobalStateSetter, useGlobalState } from '../../utils/state'
+import { useBlockchainAlerts, useNetworkErrMsgs } from '../../services/ExplorerService'
 
-const globalNetworkErrMsgs = createGlobalState<string[]>([])
-const globalChainAlerts = createGlobalState<string[]>([])
-
-export const setNetworkErrMsgs = createGlobalStateSetter(globalNetworkErrMsgs)
-export const setChainAlerts = createGlobalStateSetter(globalChainAlerts)
+const ALERT_TO_FILTER_OUT = 'CKB v0.105.* have bugs. Please upgrade to the latest version.'
 
 const Sheet = () => {
   const { t } = useTranslation()
-  const [networkErrMsgs] = useGlobalState(globalNetworkErrMsgs)
-  const [chainAlerts] = useGlobalState(globalChainAlerts)
-  const messages: string[] = chainAlerts.concat(networkErrMsgs)
+  const networkErrMsgs = useNetworkErrMsgs()
+  const chainAlerts = useBlockchainAlerts()
+
+  const messages = useMemo<string[]>(
+    () => [...chainAlerts.filter(msg => msg !== ALERT_TO_FILTER_OUT), ...networkErrMsgs],
+    [chainAlerts, networkErrMsgs],
+  )
 
   return messages.length > 0 ? (
     <SheetPanel>
