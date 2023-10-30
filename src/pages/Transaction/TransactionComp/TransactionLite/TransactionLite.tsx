@@ -14,7 +14,7 @@ import { TransactionBadge } from './TransactionBadge'
 import { TransactionRecord, TransactionRecordTransfer, explorerService } from '../../../../services/ExplorerService'
 import { useIsMobile } from '../../../../utils/hook'
 
-const useTransferItemTag = () => {
+const useGetTransferItemTag = () => {
   const { t } = useTranslation()
   return (transfer: TransactionRecordTransfer) => {
     const { cellType, udtInfo, mNftInfo } = transfer
@@ -71,7 +71,7 @@ export const TransactionCompLite: FC<{ isCellbase: boolean }> = ({ isCellbase })
 export const DesktopTransferItems = (props: { details: TransactionRecord }) => {
   const { details } = props
   const { transfers } = details
-  const getTransferItemTag = useTransferItemTag()
+  const getTransferItemTag = useGetTransferItemTag()
   return (
     <div className={styles.transactionLiteBoxContent}>
       {transfers.map((transfer, index) => {
@@ -92,7 +92,7 @@ export const DesktopTransferItems = (props: { details: TransactionRecord }) => {
 export const MobileTransferItems = (props: { details: TransactionRecord }) => {
   const { details } = props
   const { transfers } = details
-  const getTransferItemTag = useTransferItemTag()
+  const getTransferItemTag = useGetTransferItemTag()
   return (
     <div className={styles.transactionLiteBoxContent}>
       {transfers.map((transfer, index) => {
