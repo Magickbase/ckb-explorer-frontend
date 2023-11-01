@@ -1,30 +1,17 @@
-import type { AxiosResponse } from 'axios'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
-import { NFTCollection, ListOnDesktop, ListOnMobile, isTxFilterType } from './List'
+import { ListOnDesktop, ListOnMobile, isTxFilterType } from './List'
 import Pagination from '../../components/Pagination'
 import { getPrimaryColor } from '../../constants/common'
 import { explorerService } from '../../services/ExplorerService'
 import { udtSubmitEmail } from '../../utils/util'
-import { useSearchParams, useSortParam } from '../../utils/hook'
+import { useSearchParams } from '../../utils/hook'
 import styles from './styles.module.scss'
+import { useNFTCollectionsSortParam } from './util'
 
 const primaryColor = getPrimaryColor()
-
-type NftSortByType = 'transactions' | 'holder' | 'minted'
-
-interface Res {
-  data: Array<NFTCollection>
-  pagination: {
-    count: number
-    page: number
-    next: number | null
-    prev: number | null
-    last: number
-  }
-}
 
 const submitTokenInfoUrl = udtSubmitEmail()
 
@@ -33,22 +20,15 @@ const NftCollections = () => {
   const { t } = useTranslation()
   const { search } = useLocation()
   const { page = '1', type } = useSearchParams('page', 'type')
-
-  const { sort = 'holder' } = useSortParam<NftSortByType>(s => s === 'transactions' || s === 'holder' || s === 'minted')
+  const { sort } = useNFTCollectionsSortParam()
 
   const isValidFilter = isTxFilterType(type) && type !== 'all'
 
-  const { isLoading, data } = useQuery<AxiosResponse<Res>>(['nft-collections', page, sort, type], () =>
-    explorerService.api.requesterV2('nft/collections', {
-      params: {
-        page,
-        sort,
-        type: isValidFilter ? type : undefined,
-      },
-    }),
+  const { isLoading, data } = useQuery(['nft-collections', page, sort, type], () =>
+    explorerService.api.fetchNFTCollections(page, sort, isValidFilter ? type : undefined),
   )
 
-  const list = data?.data.data ?? []
+  const list = data?.data ?? []
 
   const handlePageChange = (pageNo: number) => {
     if (pageNo === +page) {
@@ -80,8 +60,8 @@ const NftCollections = () => {
         </div>
 
         <Pagination
-          currentPage={data?.data.pagination.page ?? 1}
-          totalPages={data?.data.pagination.last ?? 1}
+          currentPage={data?.pagination.page ?? 1}
+          totalPages={data?.pagination.last ?? 1}
           onChange={handlePageChange}
         />
       </div>

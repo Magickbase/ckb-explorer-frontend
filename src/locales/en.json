@@ -422,6 +422,7 @@
       "cota": "CoTA",
       "spore_cluster": "Spore Cluster",
       "spore": "Spore",
+      "joy_id": "JoyID",
       "unknown_nft": "anonymous",
       "nft_limited": "Limited",
       "nft_unlimited": "Unlimited",
@@ -453,7 +454,9 @@
         }
       },
       "professional": "Professional",
-      "lite": "Lite"
+      "lite": "Lite",
+      "unknown_assets": "Unknown Assets",
+      "mint": "Mint"
     },
     "block": {
       "block": "Block",
@@ -557,6 +560,7 @@
       "decimal": "Decimal",
       "search_placeholder": "Transaction / Address",
       "unknown_token": "Unknown Token",
+      "unknown_amount": "Unknown Amount",
       "submit_token_info": "Submit Token Info",
       "unknown_token_description": "The token’s information is incomplete. If you are the owner of this token, please submit token info.",
       "tokens": "Tokens",
@@ -616,6 +620,7 @@
       "link": {
         "rfc": "RFC",
         "code": "Source Code",
+        "doc": "Documentation",
         "deprecated": "Deprecated",
         "website": "Website",
         "detail": "Detail"

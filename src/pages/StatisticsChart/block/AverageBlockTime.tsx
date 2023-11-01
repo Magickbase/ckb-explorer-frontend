@@ -2,14 +2,15 @@ import { useTranslation } from 'react-i18next'
 import { parseDateNoTime, parseSimpleDate, parseSimpleDateNoSecond } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
-import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
-import { explorerService } from '../../../services/ExplorerService'
+import { DATA_ZOOM_CONFIG, assertIsArray, assertSerialsDataIsString, assertSerialsItem } from '../../../utils/chart'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
 const useOption = (
-  statisticAverageBlockTimes: State.StatisticAverageBlockTime[],
-  chartColor: State.ChartColor,
+  statisticAverageBlockTimes: ChartItem.AverageBlockTime[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {
@@ -30,7 +31,7 @@ const useOption = (
     containLabel: true,
   }
 
-  const maxAndMinAxis = (statisticAverageBlockTimes: State.StatisticAverageBlockTime[]) => {
+  const maxAndMinAxis = (statisticAverageBlockTimes: ChartItem.AverageBlockTime[]) => {
     const array = statisticAverageBlockTimes.flatMap(data => parseFloat(data.avgBlockTimeDaily))
     return {
       max: Math.ceil(Math.max(...array) / 1000),
@@ -58,14 +59,16 @@ const useOption = (
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const list = dataList as Array<SeriesItem & { data: string }>
+          formatter: dataList => {
+            assertIsArray(dataList)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'))} ${parseSimpleDateNoSecond(
-              new Date(list[0].data[0]),
+              new Date(dataList[0].data[0]),
               '/',
               false,
             )}</div>`
-            list.forEach(data => {
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              assertSerialsDataIsString(data)
               result += parseTooltip(data)
             })
             return result
@@ -176,7 +179,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticAverageBlockTimes: State.StatisticAverageBlockTime[]) =>
+const toCSV = (statisticAverageBlockTimes: ChartItem.AverageBlockTime[]) =>
   statisticAverageBlockTimes
     ? statisticAverageBlockTimes.map(data => [data.timestamp, data.avgBlockTimeDaily, data.avgBlockTimeWeekly])
     : []

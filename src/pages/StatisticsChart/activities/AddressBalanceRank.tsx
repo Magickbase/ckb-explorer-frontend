@@ -2,15 +2,17 @@ import { useCallback, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useCurrentLanguage } from '../../../utils/i18n'
-import { DATA_ZOOM_CONFIG, parseNumericAbbr } from '../../../utils/chart'
+import { DATA_ZOOM_CONFIG, assertIsArray, parseNumericAbbr } from '../../../utils/chart'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import { localeNumberString } from '../../../utils/number'
 import { tooltipColor, tooltipWidth, SmartChartPage, SmartChartPageProps } from '../common'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartCachedKeys } from '../../../constants/cache'
 import { useAdaptPCEllipsis } from '../../../utils/hook'
+import { ChartColorConfig } from '../../../constants/common'
 
-const getAddressWithRanking = (statisticAddressBalanceRanks: State.StatisticAddressBalanceRank[], ranking: string) => {
+const getAddressWithRanking = (statisticAddressBalanceRanks: ChartItem.AddressBalanceRank[], ranking?: string) => {
+  if (!ranking) return ''
   const addressBalanceRank = statisticAddressBalanceRanks.find(rank => rank.ranking === ranking)
   return addressBalanceRank ? addressBalanceRank.address : ''
 }
@@ -19,8 +21,8 @@ const useOption = () => {
   const { t } = useTranslation()
   const currentLanguage = useCurrentLanguage()
   return (
-    statisticAddressBalanceRanks: State.StatisticAddressBalanceRank[],
-    chartColor: State.ChartColor,
+    statisticAddressBalanceRanks: ChartItem.AddressBalanceRank[],
+    chartColor: ChartColorConfig,
     isMobile: boolean,
     isThumbnail = false,
     getAdaptAddressText: (address: string) => string,
@@ -44,7 +46,8 @@ const useOption = () => {
       tooltip: !isThumbnail
         ? {
             trigger: 'axis',
-            formatter: (dataList: any) => {
+            formatter: dataList => {
+              assertIsArray(dataList)
               const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 60 : 35)
               let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.address'))} ${getAdaptAddressText(
                 getAddressWithRanking(statisticAddressBalanceRanks, dataList[0].name),
@@ -102,12 +105,7 @@ const useOption = () => {
   }
 }
 
-const fetchStatisticAddressBalanceRanks = async () => {
-  const resp = await explorerService.api.fetchStatisticAddressBalanceRank()
-  return resp.attributes.addressBalanceRanking
-}
-
-const toCSV = (statisticAddressBalanceRanks: State.StatisticAddressBalanceRank[]) =>
+const toCSV = (statisticAddressBalanceRanks: ChartItem.AddressBalanceRank[]) =>
   statisticAddressBalanceRanks
     ? statisticAddressBalanceRanks.map(data => [data.ranking, shannonToCkbDecimal(data.balance, 8)])
     : []
@@ -116,11 +114,9 @@ export const AddressBalanceRankChart = ({ isThumbnail = false }: { isThumbnail?:
   const history = useHistory()
   const [t] = useTranslation()
 
-  const [statisticAddressBalanceRanks, setStatisticAddressBalanceRanks] = useState<State.StatisticAddressBalanceRank[]>(
-    [],
-  )
-  const clickEvent = useCallback(
-    (param: any) => {
+  const [statisticAddressBalanceRanks, setStatisticAddressBalanceRanks] = useState<ChartItem.AddressBalanceRank[]>([])
+  const handleClick = useCallback(
+    (param: echarts.CallbackDataParams) => {
       if (param && param.name && statisticAddressBalanceRanks.length > 0) {
         const address = getAddressWithRanking(statisticAddressBalanceRanks, param.name)
         if (address) {
@@ -133,7 +129,7 @@ export const AddressBalanceRankChart = ({ isThumbnail = false }: { isThumbnail?:
 
   const adaptPCEllipsis = useAdaptPCEllipsis(60)
   const parseOption = useOption()
-  const getEChartOption: SmartChartPageProps<State.StatisticAddressBalanceRank>['getEChartOption'] = useCallback(
+  const getEChartOption: SmartChartPageProps<ChartItem.AddressBalanceRank>['getEChartOption'] = useCallback(
     (...args) => parseOption(...args, address => adaptPCEllipsis(address, 6)),
     [adaptPCEllipsis, parseOption],
   )
@@ -143,8 +139,8 @@ export const AddressBalanceRankChart = ({ isThumbnail = false }: { isThumbnail?:
       title={t('statistic.balance_ranking')}
       description={t('statistic.balance_ranking_description')}
       isThumbnail={isThumbnail}
-      chartProps={{ clickEvent: !isThumbnail ? clickEvent : undefined }}
-      fetchData={fetchStatisticAddressBalanceRanks}
+      chartProps={{ onClick: !isThumbnail ? handleClick : undefined }}
+      fetchData={explorerService.api.fetchStatisticAddressBalanceRank}
       onFetched={setStatisticAddressBalanceRanks}
       getEChartOption={getEChartOption}
       toCSV={toCSV}

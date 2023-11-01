@@ -9,6 +9,7 @@ import { ReactComponent as DeprecatedAddrOn } from '../../../assets/deprecated_a
 import { ReactComponent as DeprecatedAddrOff } from '../../../assets/deprecated_addr_off.svg'
 import { ReactComponent as Warning } from '../../../assets/warning.svg'
 import styles from './styles.module.scss'
+import { Cell } from '../../../models/Cell'
 
 const SCROLL_BOTTOM_OFFSET = 5
 const SCROLL_LOADING_TIME = 400
@@ -20,8 +21,8 @@ export default ({
   showReward,
   addrToggle: { isAddrNew, setIsAddrNew },
 }: {
-  inputs?: State.Cell[]
-  outputs?: State.Cell[]
+  inputs?: Cell[]
+  outputs?: Cell[]
   txHash?: string
   showReward?: boolean
   addrToggle: {
@@ -37,7 +38,7 @@ export default ({
   const isScroll = cells.length > PAGE_CELL_COUNT
 
   const handleScroll = useCallback(
-    (event: Event) => {
+    (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
       if (cells.length <= offset) {
         setIsEnd(true)
         return
@@ -94,7 +95,7 @@ export default ({
       </TransactionCellListTitlePanel>
       <TransactionCellsPanel isScroll={isScroll}>
         <div className="transactionCellTitle">{cellTitle()}</div>
-        <div className="transactionCellListContainer" onScroll={(event: any) => handleScroll(event)}>
+        <div className="transactionCellListContainer" onScroll={event => handleScroll(event)}>
           {cells &&
             cells
               .slice(0, offset)

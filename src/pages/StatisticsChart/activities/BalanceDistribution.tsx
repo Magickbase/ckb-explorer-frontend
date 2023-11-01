@@ -1,11 +1,19 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
-import { DATA_ZOOM_CONFIG, handleAxis, handleLogGroupAxis } from '../../../utils/chart'
+import {
+  DATA_ZOOM_CONFIG,
+  assertIsArray,
+  assertSerialsDataIsString,
+  assertSerialsItem,
+  handleAxis,
+  handleLogGroupAxis,
+} from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
 const widthSpan = (value: string, currentLanguage: string) => tooltipWidth(value, currentLanguage === 'en' ? 270 : 110)
 
@@ -19,8 +27,8 @@ const parseTooltip = ({
 }
 
 const useOption = (
-  statisticBalanceDistributions: State.StatisticBalanceDistribution[],
-  chartColor: State.ChartColor,
+  statisticBalanceDistributions: ChartItem.BalanceDistribution[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {
@@ -45,16 +53,20 @@ const useOption = (
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const list = dataList as (SeriesItem & { data: string })[]
+          formatter: dataList => {
+            assertIsArray(dataList)
+            const firstData = dataList[0]
+            assertSerialsItem(firstData)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(
               t('statistic.addresses_balance'),
               currentLanguage,
             )} ${handleLogGroupAxis(
-              new BigNumber(list[0].name),
-              list[0].dataIndex === statisticBalanceDistributions.length - 1 ? '+' : '',
+              new BigNumber(firstData.name),
+              firstData.dataIndex === statisticBalanceDistributions.length - 1 ? '+' : '',
             )} ${t('common.ckb_unit')}</div>`
-            list.forEach(data => {
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              assertSerialsDataIsString(data)
               result += parseTooltip({ ...data, currentLanguage })
             })
             return result
@@ -154,21 +166,7 @@ const useOption = (
   }
 }
 
-const fetchStatisticBalanceDistributions = async () => {
-  const wrapper = await explorerService.api.fetchStatisticBalanceDistribution()
-  const balanceDistributionArray = wrapper.attributes.addressBalanceDistribution
-  const balanceDistributions = balanceDistributionArray.map(distribution => {
-    const [balance, addresses, sumAddresses] = distribution
-    return {
-      balance,
-      addresses,
-      sumAddresses,
-    }
-  })
-  return balanceDistributions
-}
-
-const toCSV = (statisticBalanceDistributions?: State.StatisticBalanceDistribution[]) =>
+const toCSV = (statisticBalanceDistributions?: ChartItem.BalanceDistribution[]) =>
   statisticBalanceDistributions
     ? statisticBalanceDistributions.map((data, index) => [
         `"${handleLogGroupAxis(
@@ -187,7 +185,7 @@ export const BalanceDistributionChart = ({ isThumbnail = false }: { isThumbnail?
       title={t('statistic.balance_distribution')}
       description={t('statistic.balance_distribution_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticBalanceDistributions}
+      fetchData={explorerService.api.fetchStatisticBalanceDistribution}
       getEChartOption={useOption}
       toCSV={toCSV}
       cacheKey={ChartCachedKeys.BalanceDistribution}

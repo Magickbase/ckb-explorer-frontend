@@ -1,45 +1,33 @@
 import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { AxiosResponse } from 'axios'
 import camelcase from 'camelcase'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Pagination from '../../components/Pagination'
 import TransactionItem from '../../components/TransactionItem/index'
-import { explorerService, Response } from '../../services/ExplorerService'
+import { explorerService } from '../../services/ExplorerService'
 import { TransactionCellDetailModal, TransactionCellInfoPanel } from '../Transaction/TransactionCell/styled'
 import SimpleButton from '../../components/SimpleButton'
 import SimpleModal from '../../components/Modal'
 import TransactionCellScript from '../Transaction/TransactionCellScript'
-import { shannonToCkb, toCamelcase } from '../../utils/util'
+import { shannonToCkb } from '../../utils/util'
 import { localeNumberString } from '../../utils/number'
 import DecimalCapacity from '../../components/DecimalCapacity'
-import { CellInScript, CkbTransactionInScript, PageInfo } from './types'
 import styles from './styles.module.scss'
 import { QueryResult } from '../../components/QueryResult'
 import AddressText from '../../components/AddressText'
 import { ReactComponent as CopyIcon } from '../../assets/copy_icon.svg'
 import { ReactComponent as InfoMoreIcon } from '../../assets/info_more_icon.svg'
 import { useSetToast } from '../../components/Toast'
+import { CellBasicInfo, transformToTransaction } from '../../utils/transformer'
 
 export const ScriptTransactions = ({ page, size }: { page: number; size: number }) => {
   const history = useHistory()
   const { codeHash, hashType } = useParams<{ codeHash: string; hashType: string }>()
 
   const transactionsQuery = useQuery(['scripts_ckb_transactions', codeHash, hashType, page, size], async () => {
-    const { data } = await explorerService.api.requesterV2
-      .get(`scripts/ckb_transactions`, {
-        params: {
-          code_hash: codeHash,
-          hash_type: hashType,
-          page,
-          page_size: size,
-        },
-      })
-      .then((res: AxiosResponse) =>
-        toCamelcase<Response.Response<{ ckbTransactions: CkbTransactionInScript[]; meta: PageInfo }>>(res.data),
-      )
+    const { data } = await explorerService.api.fetchScriptCKBTransactions(codeHash, hashType, page, size)
 
     if (data == null || data.ckbTransactions == null || data.ckbTransactions.length === 0) {
       throw new Error('Transactions empty')
@@ -61,23 +49,17 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
       <QueryResult query={transactionsQuery} delayLoading>
         {data => (
           <div className={styles.scriptTransactionsPanel}>
-            {data.ckbTransactions &&
-              data.ckbTransactions.map(tr => {
-                const transaction = {
-                  ...tr,
-                  transactionHash: tr.txHash,
-                } as any as State.Transaction
-                return (
-                  <TransactionItem
-                    address=""
-                    transaction={transaction}
-                    key={tr.txHash}
-                    circleCorner={{
-                      bottom: false,
-                    }}
-                  />
-                )
-              })}
+            {data?.ckbTransactions &&
+              data.ckbTransactions.map(tr => (
+                <TransactionItem
+                  address=""
+                  transaction={transformToTransaction(tr)}
+                  key={tr.txHash}
+                  circleCorner={{
+                    bottom: false,
+                  }}
+                />
+              ))}
           </div>
         )}
       </QueryResult>
@@ -90,7 +72,7 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
   )
 }
 
-export const CellInfo = ({ cell }: { cell: State.Cell }) => {
+export const CellInfo = ({ cell }: { cell: CellBasicInfo }) => {
   const [showModal, setShowModal] = useState(false)
   return (
     <TransactionCellInfoPanel>
@@ -125,20 +107,7 @@ export const ScriptCells = ({
   const { codeHash, hashType } = useParams<{ codeHash: string; hashType: string }>()
 
   const cellsQuery = useQuery([`scripts_${cellType}`, codeHash, hashType, page, size], async () => {
-    const { data } = await explorerService.api.requesterV2
-      .get(`scripts/${cellType}`, {
-        params: {
-          code_hash: codeHash,
-          hash_type: hashType,
-          page,
-          page_size: size,
-        },
-      })
-      .then((res: AxiosResponse) =>
-        toCamelcase<
-          Response.Response<{ deployedCells?: CellInScript[]; referringCells?: CellInScript[]; meta: PageInfo }>
-        >(res.data),
-      )
+    const { data } = await explorerService.api.fetchScriptCells(cellType, codeHash, hashType, page, size)
     const camelCellType = camelcase(cellType) as 'deployedCells' | 'referringCells'
     if (data == null) {
       throw new Error('Fetch Cells null')
@@ -174,7 +143,7 @@ export const ScriptCells = ({
                 </tr>
               </thead>
               <tbody>
-                {data.cells.map(record => {
+                {data?.cells.map(record => {
                   return (
                     <tr key={`${record.txHash}_${record.cellIndex}`}>
                       <td align="left">
@@ -194,7 +163,14 @@ export const ScriptCells = ({
                       </td>
                       <td>
                         <div className={styles.cellInfoMore}>
-                          <CellInfo cell={record as any as State.Cell} />
+                          <CellInfo
+                            cell={{
+                              id: record.id,
+                              capacity: record.capacity,
+                              isGenesisOutput: false,
+                              occupiedCapacity: String(record.occupiedCapacity),
+                            }}
+                          />
                         </div>
                       </td>
                     </tr>

@@ -1,12 +1,13 @@
 import { FC } from 'react'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import { handleAxis } from '../../../utils/chart'
+import { assertSerialsDataIsString, assertIsArray, assertSerialsItem, handleAxis } from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { parseHourFromMillisecond } from '../../../utils/date'
 import { ChartCachedKeys } from '../../../constants/cache'
-import { explorerService } from '../../../services/ExplorerService'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
 const widthSpan = (value: string, currentLanguage: LanuageType) =>
   tooltipWidth(value, currentLanguage === 'en' ? 90 : 80)
@@ -26,8 +27,8 @@ const useTooltip = () => {
 }
 
 const useOption = (
-  statisticChartData: State.StatisticDifficultyUncleRateEpoch[],
-  chartColor: State.ChartColor,
+  statisticChartData: ChartItem.DifficultyUncleRateEpoch[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
 
   isThumbnail = false,
@@ -63,12 +64,14 @@ const useOption = (
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const list = dataList as Array<SeriesItem & { data: string }>
+          formatter: dataList => {
+            assertIsArray(dataList)
             let result = `<div>${tooltipColor('#333333')}${widthSpan(t('block.epoch'), currentLanguage)} ${
-              list[0].name
+              dataList[0].name
             }</div>`
-            list.forEach(data => {
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              assertSerialsDataIsString(data)
               result += parseTooltip(data)
             })
             return result
@@ -200,7 +203,7 @@ const useOption = (
   }
 }
 
-const toCSV = (statisticDifficultyUncleRateEpochs: State.StatisticDifficultyUncleRateEpoch[]) =>
+const toCSV = (statisticDifficultyUncleRateEpochs: ChartItem.DifficultyUncleRateEpoch[]) =>
   statisticDifficultyUncleRateEpochs
     ? statisticDifficultyUncleRateEpochs.map(data => [data.epochNumber, data.epochTime, data.epochLength])
     : []

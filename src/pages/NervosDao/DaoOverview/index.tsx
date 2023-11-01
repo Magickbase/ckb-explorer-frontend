@@ -28,6 +28,10 @@ import { useIsLGScreen, useIsMobile } from '../../../utils/hook'
 import { ReactChartCore } from '../../StatisticsChart/common'
 import { HelpTip } from '../../../components/HelpTip'
 import { ChartColor } from '../../../constants/common'
+import { assertNotArray } from '../../../utils/chart'
+import { APIReturn } from '../../../services/ExplorerService'
+
+type NervosDaoInfo = APIReturn<'fetchNervosDao'>
 
 interface NervosDaoItemContent {
   title: string
@@ -41,7 +45,7 @@ interface NervosDaoItemContent {
 interface NervosDaoPieItemContent {
   title: string
   content: ReactNode
-  color: any
+  color: string
 }
 
 const numberSymbol = (num: number, isCapacity = true) => {
@@ -66,7 +70,7 @@ const daoIcon = (symbol: 'positive' | 'negative' | 'zero' | undefined) => {
   }
 }
 
-const useNervosDaoItemContents = (nervosDao: State.NervosDao): NervosDaoItemContent[] => {
+const useNervosDaoItemContents = (nervosDao: NervosDaoInfo): NervosDaoItemContent[] => {
   const { t } = useTranslation()
   return [
     {
@@ -132,7 +136,7 @@ const NervosDaoLeftItem = ({ item, firstLine }: { item: NervosDaoItemContent; fi
   </DaoOverviewLeftItemPanel>
 )
 
-const NervosDaoOverviewLeftComp: FC<{ nervosDao: State.NervosDao }> = ({ nervosDao }) => {
+const NervosDaoOverviewLeftComp: FC<{ nervosDao: NervosDaoInfo }> = ({ nervosDao }) => {
   const isMobile = useIsMobile()
   const leftItems = useNervosDaoItemContents(nervosDao)
 
@@ -182,7 +186,7 @@ const NervosDaoOverviewLeftComp: FC<{ nervosDao: State.NervosDao }> = ({ nervosD
   )
 }
 
-const useOption = (nervosDao: State.NervosDao, colors: string[], isMobile: boolean): echarts.EChartOption => {
+const useOption = (nervosDao: NervosDaoInfo, colors: string[], isMobile: boolean): echarts.EChartOption => {
   const { t } = useTranslation()
   const { miningReward, depositCompensation, treasuryAmount } = nervosDao
   const sum =
@@ -209,19 +213,17 @@ const useOption = (nervosDao: State.NervosDao, colors: string[], isMobile: boole
       title: t('nervos_dao.burnt'),
     },
   ]
-  const selectedData: any = {
-    first: true,
-  }
-  selectedData[names[0]] = true
-  selectedData[names[1]] = true
-  selectedData[names[2]] = true
 
   return {
     color: colors,
     tooltip: {
       trigger: 'item',
-      formatter: (value: any) =>
-        `${value.data.title}: ${localeNumberString(value.data.value)} ${t('common.ckb_unit')} (${value.data.name})`,
+      formatter: value => {
+        assertNotArray(value)
+        return `${value.data.title}: ${localeNumberString(value.data.value)} ${t('common.ckb_unit')} (${
+          value.data.name
+        })`
+      },
       position: ['10%', '50%'],
     },
     series: [
@@ -282,13 +284,13 @@ const NervosDaoPieItem = ({ item }: { item: NervosDaoPieItemContent }) => (
   </NervosDaoPieItemPanel>
 )
 
-export default ({ nervosDao }: { nervosDao: State.NervosDao }) => {
+export default ({ nervosDao }: { nervosDao: NervosDaoInfo }) => {
   const isMobile = useIsMobile()
   const { t } = useTranslation()
   const isExactLG = useIsLGScreen(true)
 
   const nervosDaoPieItemContents = useCallback(
-    (nervosDao: State.NervosDao): NervosDaoPieItemContent[] => [
+    (nervosDao: NervosDaoInfo): NervosDaoPieItemContent[] => [
       {
         title: t('nervos_dao.mining_reward'),
         content: <NervosDaoRightCapacity reward={nervosDao.miningReward} />,

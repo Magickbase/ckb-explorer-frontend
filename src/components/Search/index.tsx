@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect, FC, memo } from 'react'
+import { useState, useRef, useEffect, FC, memo, RefObject, ChangeEvent } from 'react'
 import { useHistory } from 'react-router'
-import { AxiosError } from 'axios'
 import { TFunction, useTranslation } from 'react-i18next'
 import { SearchImage, SearchInputPanel, SearchPanel, SearchButton, SearchContainer } from './styled'
 import { explorerService, Response } from '../../services/ExplorerService'
@@ -10,38 +9,35 @@ import { addPrefixForHash, containSpecialChar } from '../../utils/string'
 import { HttpErrorCode, SearchFailType } from '../../constants/common'
 import { useIsMobile } from '../../utils/hook'
 import { isChainTypeError } from '../../utils/chain'
+import { isAxiosError } from '../../utils/error'
+// TODO: Refactor is needed. Should not directly import anything from the descendants of ExplorerService.
+import { SearchResultType } from '../../services/ExplorerService/fetcher'
 
-enum SearchResultType {
-  Block = 'block',
-  Transaction = 'ckb_transaction',
-  Address = 'address',
-  LockHash = 'lock_hash',
-  UDT = 'udt',
-}
-
-const clearSearchInput = (inputElement: any) => {
-  const input: HTMLInputElement = inputElement.current
+const clearSearchInput = (inputElement: RefObject<HTMLInputElement>) => {
+  const input = inputElement.current
   if (input) {
     input.value = ''
     input.blur()
   }
 }
 
-const setSearchLoading = (inputElement: any, t: TFunction) => {
-  const input: HTMLInputElement = inputElement.current
-  input.value = t('search.loading')
+const setSearchLoading = (inputElement: RefObject<HTMLInputElement>, t: TFunction) => {
+  const input = inputElement.current
+  if (input) {
+    input.value = t('search.loading')
+  }
 }
 
-const setSearchContent = (inputElement: any, content: string) => {
-  const input: HTMLInputElement = inputElement.current
+const setSearchContent = (inputElement: RefObject<HTMLInputElement>, content: string) => {
+  const input = inputElement.current
   if (input) {
     input.value = content
   }
 }
 
-const handleSearchResult = (
+const handleSearchResult = async (
   searchValue: string,
-  inputElement: any,
+  inputElement: RefObject<HTMLInputElement>,
   setSearchValue: Function,
   history: ReturnType<typeof useHistory>,
   t: TFunction,
@@ -57,44 +53,53 @@ const handleSearchResult = (
   }
 
   setSearchLoading(inputElement, t)
-  explorerService.api
-    .fetchSearchResult(addPrefixForHash(query))
-    .then((response: any) => {
-      const { data } = response
-      if (!response || !data.type) {
-        history.push(`/search/fail?q=${query}`)
-        return
-      }
-      clearSearchInput(inputElement)
-      setSearchValue('')
-      if (data.type === SearchResultType.Block) {
-        history.push(`/block/${(data as Response.Wrapper<State.Block>).attributes.blockHash}`)
-      } else if (data.type === SearchResultType.Transaction) {
-        history.push(`/transaction/${(data as Response.Wrapper<State.Transaction>).attributes.transactionHash}`)
-      } else if (data.type === SearchResultType.Address) {
-        history.push(`/address/${(data as Response.Wrapper<State.Address>).attributes.addressHash}`)
-      } else if (data.type === SearchResultType.LockHash) {
-        history.push(`/address/${(data as Response.Wrapper<State.Address>).attributes.lockHash}`)
-      } else if (data.type === SearchResultType.UDT) {
+
+  try {
+    const { data } = await explorerService.api.fetchSearchResult(addPrefixForHash(query))
+    clearSearchInput(inputElement)
+    setSearchValue('')
+
+    switch (data.type) {
+      case SearchResultType.Block:
+        history.push(`/block/${data.attributes.blockHash}`)
+        break
+
+      case SearchResultType.Transaction:
+        history.push(`/transaction/${data.attributes.transactionHash}`)
+        break
+
+      case SearchResultType.Address:
+        history.push(`/address/${data.attributes.addressHash}`)
+        break
+
+      case SearchResultType.LockHash:
+        history.push(`/address/${data.attributes.lockHash}`)
+        break
+
+      case SearchResultType.UDT:
         history.push(`/sudt/${query}`)
-      }
-    })
-    .catch((error: AxiosError) => {
-      setSearchContent(inputElement, query)
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.status === 404 &&
-        (error.response.data as Response.Error[]).find(
-          (errorData: Response.Error) => errorData.code === HttpErrorCode.NOT_FOUND_ADDRESS,
-        )
-      ) {
-        clearSearchInput(inputElement)
-        history.push(`/address/${query}`)
-      } else {
-        history.push(`/search/fail?q=${query}`)
-      }
-    })
+        break
+
+      default:
+        break
+    }
+  } catch (error) {
+    setSearchContent(inputElement, query)
+
+    if (
+      isAxiosError(error) &&
+      error.response?.data &&
+      error.response.status === 404 &&
+      (error.response.data as Response.Error[]).find(
+        (errorData: Response.Error) => errorData.code === HttpErrorCode.NOT_FOUND_ADDRESS,
+      )
+    ) {
+      clearSearchInput(inputElement)
+      history.push(`/address/${query}`)
+    } else {
+      history.push(`/search/fail?q=${query}`)
+    }
+  }
 }
 
 const Search: FC<{
@@ -131,12 +136,12 @@ const Search: FC<{
     }
   }
 
-  const inputChangeAction = (event: any) => {
+  const inputChangeAction = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(event.target.value)
     if (!event.target.value) onEditEnd?.()
   }
 
-  const searchKeyAction = (event: any) => {
+  const searchKeyAction = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.keyCode === 13) {
       handleSearchResult(searchValue, inputElement, setSearchValue, history, t)
       onEditEnd?.()
@@ -157,8 +162,8 @@ const Search: FC<{
           ref={inputElement}
           placeholder={placeholder}
           defaultValue={searchValue || ''}
-          onChange={(event: any) => inputChangeAction(event)}
-          onKeyUp={(event: any) => searchKeyAction(event)}
+          onChange={event => inputChangeAction(event)}
+          onKeyUp={event => searchKeyAction(event)}
         />
         {searchValue && <ImageIcon isClear />}
       </SearchPanel>

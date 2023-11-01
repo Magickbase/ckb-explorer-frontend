@@ -4,7 +4,8 @@ export const HeaderLanguagePanel = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
-  color: ${(props: { theme: any; showLanguage: boolean }) => (props.showLanguage ? props.theme.secondary : 'white')};
+  color: ${(props: { theme: { primary: string; secondary: string }; showLanguage: boolean }) =>
+    props.showLanguage ? props.theme.secondary : 'white'};
   padding: 10px 0;
   margin-bottom: 4px;
 
@@ -34,7 +35,7 @@ export const HeaderLanguagePanel = styled.div`
   }
 `
 
-export const MobileSubMenuPanel = styled.div`
+export const MobileSubMenuPanel = styled.div<{ showSubMenu: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -48,7 +49,7 @@ export const MobileSubMenuPanel = styled.div`
   }
 
   .mobileMenusMainItemContent {
-    color: ${(props: { showSubMenu: boolean; theme: any }) => (props.showSubMenu ? props.theme.primary : 'white')};
+    color: ${props => (props.showSubMenu ? props.theme.primary : 'white')};
   }
 
   .mobileMenusMainItemContentHighlight {

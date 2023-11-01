@@ -1,4 +1,7 @@
 import BigNumber from 'bignumber.js'
+import { EChartOption } from 'echarts'
+import { SeriesItem } from '../pages/StatisticsChart/common'
+import type { FeeRateTracker } from '../services/ExplorerService/fetcher'
 
 export const DATA_ZOOM_CONFIG = [
   {
@@ -103,7 +106,7 @@ export const parseInterval = (max: number, min: number) => {
 // This is a hotfix to avoid outliers in production environment, final algorithm will be decided later at
 // https://github.com/Magickbase/ckb-explorer-public-issues/issues/394
 // TODO: add tests for the sample function
-export const getFeeRateSamples = (feeRates: Array<FeeRateTracker.TransactionFeeRate>, TPM: number) => {
+export const getFeeRateSamples = (feeRates: FeeRateTracker.TransactionFeeRate[], TPM: number) => {
   if (feeRates.length === 0) return feeRates
 
   const SAMPLES_MIN_COUNT = 100
@@ -113,7 +116,7 @@ export const getFeeRateSamples = (feeRates: Array<FeeRateTracker.TransactionFeeR
   const samples = feeRates
     .filter(i => i.confirmationTime)
     .sort((a, b) => a.confirmationTime - b.confirmationTime)
-    .reduce<Array<FeeRateTracker.TransactionFeeRate>>((acc, cur) => {
+    .reduce<FeeRateTracker.TransactionFeeRate[]>((acc, cur) => {
       const last = acc[acc.length - 1]
       if (!last || last.feeRate >= cur.feeRate) {
         return [...acc, cur]
@@ -124,4 +127,51 @@ export const getFeeRateSamples = (feeRates: Array<FeeRateTracker.TransactionFeeR
     .slice(0, sampleCount)
 
   return samples
+}
+
+export function assertIsArray<T>(value: T | T[]): asserts value is T[] {
+  if (!Array.isArray(value)) {
+    throw new Error(`Value is expected to be an array, but got a ${typeof value}`)
+  }
+}
+
+export function assertNotArray<T>(value: T | T[]): asserts value is T {
+  if (Array.isArray(value)) {
+    throw new Error('value should not be an array')
+  }
+}
+
+type AssertSerialsItem = (value: EChartOption.Tooltip.Format) => asserts value is SeriesItem
+export const assertSerialsItem: AssertSerialsItem = (value: EChartOption.Tooltip.Format) => {
+  if (
+    typeof value.seriesName !== 'string' ||
+    typeof value.name !== 'string' ||
+    typeof value.color !== 'string' ||
+    typeof value.dataIndex !== 'number'
+  ) {
+    throw new Error('invalid SeriesItem')
+  }
+}
+
+export const assertSerialsDataIsString: (value: EChartOption.Tooltip.Format) => asserts value is { data: string } = (
+  value: EChartOption.Tooltip.Format,
+) => {
+  if (typeof value.data !== 'string') {
+    throw new Error(`Value is expected to be an array, but got a ${typeof value.data}`)
+  }
+}
+
+export const assertSerialsDataIsStringArrayOf3: (
+  value: EChartOption.Tooltip.Format,
+) => asserts value is { data: [string, string, string] } = (value: EChartOption.Tooltip.Format) => {
+  if (!Array.isArray(value.data) || value.data.length !== 3 || value.data.every(item => typeof item !== 'string')) {
+    throw new Error('invalid SeriesItem length of 3')
+  }
+}
+export const assertSerialsDataIsStringArrayOf4: (
+  value: EChartOption.Tooltip.Format,
+) => asserts value is { data: [string, string, string, string] } = (value: EChartOption.Tooltip.Format) => {
+  if (!Array.isArray(value.data) || value.data.length !== 4 || value.data.every(item => typeof item !== 'string')) {
+    throw new Error('invalid SeriesItem length of 4')
+  }
 }
