@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useHistory } from 'react-router'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { AxiosResponse } from 'axios'
 import camelcase from 'camelcase'
 import { useParams } from 'react-router-dom'

@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import Content from '../../components/Content'
 import { DaoContentPanel, DaoTabBarPanel } from './styled'
 import DaoTransactions from './DaoTransactions'
