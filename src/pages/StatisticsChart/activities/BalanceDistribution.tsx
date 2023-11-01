@@ -11,7 +11,6 @@ import {
 } from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
-import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../constants/common'
 
@@ -188,7 +187,7 @@ export const BalanceDistributionChart = ({ isThumbnail = false }: { isThumbnail?
       fetchData={explorerService.api.fetchStatisticBalanceDistribution}
       getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.BalanceDistribution}
+      cacheKey="BalanceDistribution"
       cacheMode="date"
     />
   )

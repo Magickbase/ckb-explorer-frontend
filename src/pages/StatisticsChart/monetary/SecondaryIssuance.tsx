@@ -8,7 +8,6 @@ import {
   assertSerialsDataIsStringArrayOf4,
   assertSerialsItem,
 } from '../../../utils/chart'
-import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../constants/common'
 
@@ -192,7 +191,7 @@ export const SecondaryIssuanceChart = ({ isThumbnail = false }: { isThumbnail?: 
       fetchData={explorerService.api.fetchStatisticSecondaryIssuance}
       getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.SecondaryIssuance}
+      cacheKey="SecondaryIssuance"
       cacheMode="date"
     />
   )

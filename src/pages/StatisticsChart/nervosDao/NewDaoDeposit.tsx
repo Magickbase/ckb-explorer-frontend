@@ -12,7 +12,6 @@ import { parseDateNoTime } from '../../../utils/date'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import { isMainnet } from '../../../utils/chain'
 import { tooltipWidth, tooltipColor, SeriesItem, SmartChartPage } from '../common'
-import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../constants/common'
 
@@ -197,7 +196,7 @@ export const NewDaoDepositChart = ({ isThumbnail = false }: { isThumbnail?: bool
       fetchData={explorerService.api.fetchStatisticNewDaoDeposit}
       getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.DailyDeposit}
+      cacheKey="DailyDeposit"
       cacheMode="date"
     />
   )

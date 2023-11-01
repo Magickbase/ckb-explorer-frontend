@@ -11,7 +11,6 @@ import {
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
-import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../constants/common'
 
@@ -208,7 +207,7 @@ export const TotalSupplyChart = ({ isThumbnail = false }: { isThumbnail?: boolea
       fetchData={explorerService.api.fetchStatisticTotalSupply}
       getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.TotalSupply}
+      cacheKey="TotalSupply"
       cacheMode="date"
     />
   )

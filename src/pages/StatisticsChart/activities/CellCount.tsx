@@ -10,7 +10,6 @@ import {
 } from '../../../utils/chart'
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
-import { ChartCachedKeys } from '../../../constants/cache'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../constants/common'
 
@@ -195,7 +194,7 @@ export const CellCountChart = ({ isThumbnail = false }: { isThumbnail?: boolean 
       fetchData={explorerService.api.fetchStatisticCellCount}
       getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.CellCount}
+      cacheKey="CellCount"
       cacheMode="date"
     />
   )
