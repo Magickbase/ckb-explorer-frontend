@@ -1,7 +1,12 @@
 import { BehaviorSubject, Subscription, map, switchMap, timer } from 'rxjs'
-import { BLOCKCHAIN_ALERT_POLLING_TIME, BLOCK_POLLING_TIME } from '../../constants/common'
+import {
+  BLOCKCHAIN_ALERT_POLLING_TIME,
+  BLOCK_POLLING_TIME,
+  FLUSH_CHART_CACHE_POLLING_TIME,
+} from '../../constants/common'
 import { APIReturn, apiFetcher } from './fetcher'
 import { networkErrMsgs$ } from './requester'
+import { CacheService, cacheService } from '../CacheService'
 
 const initStatistics: APIReturn<'fetchStatistics'> = {
   tipBlockNumber: '0',
@@ -39,7 +44,7 @@ class ExplorerService {
 
   private callbacksAtStop?: Subscription
 
-  constructor() {
+  constructor(private cacheService: CacheService) {
     this.start()
   }
 
@@ -68,6 +73,19 @@ class ExplorerService {
         )
         .subscribe(this.blockchainAlerts$),
     )
+
+    this.callbacksAtStop.add(
+      timer(0, FLUSH_CHART_CACHE_POLLING_TIME)
+        .pipe(
+          switchMap(this.api.fetchFlushChartCache),
+          map(({ flushCacheInfo }) => {
+            if (flushCacheInfo.length === 0) return
+
+            this.cacheService.clear()
+          }),
+        )
+        .subscribe(),
+    )
   }
 
   stop() {
@@ -75,7 +93,7 @@ class ExplorerService {
   }
 }
 
-export const explorerService = new ExplorerService()
+export const explorerService = new ExplorerService(cacheService)
 
 export * from './hooks'
 export * from './types'
