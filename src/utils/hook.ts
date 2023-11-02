@@ -8,7 +8,6 @@ import {
   systemScripts,
 } from '@nervosnetwork/ckb-sdk-utils'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { useResizeDetector } from 'react-resize-detector'
 import { interval, share } from 'rxjs'
 import { deprecatedAddrToNewAddr } from './util'
@@ -17,7 +16,7 @@ import { ListPageParams, PageParams, THEORETICAL_EPOCH_TIME, EPOCHS_PER_HALVING 
 import { omit } from './object'
 // TODO: This file depends on higher-level abstractions, so it should not be in the utils folder. It should be moved to `src/hooks/index.ts`.
 import { useParseDate } from './date'
-import { Response, useStatistics } from '../services/ExplorerService'
+import { useStatistics } from '../services/ExplorerService'
 import { cacheService } from '../services/CacheService'
 
 /**
@@ -500,23 +499,6 @@ export const useDeprecatedAddr = (addr: string) =>
       return null
     }
   }, [addr])
-
-export function useChartQueryWithCache<T>(
-  fetchData: () => Promise<T[] | Response.Response<Response.Wrapper<T>[]>>,
-  queryKey?: string,
-) {
-  return useQuery(
-    [queryKey],
-    async () => {
-      let dataList = await fetchData()
-      if ('data' in dataList) {
-        dataList = dataList.data.map(wrapper => wrapper.attributes)
-      }
-      return dataList
-    },
-    { refetchOnWindowFocus: false },
-  )
-}
 
 export const useAnimationFrame = (callback: () => void, running: boolean = true) => {
   const savedCallback = useRef(callback)
