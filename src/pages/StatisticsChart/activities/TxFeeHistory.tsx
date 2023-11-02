@@ -112,7 +112,7 @@ export const TxFeeHistoryChart = ({ isThumbnail = false }: { isThumbnail?: boole
       fetchData={explorerService.api.fetchStatisticTxFeeHistory}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="TransactionFee"
+      queryKey="fetchStatisticTxFeeHistory"
     />
   )
 }

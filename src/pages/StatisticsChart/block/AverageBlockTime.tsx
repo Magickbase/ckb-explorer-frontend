@@ -193,7 +193,7 @@ export const AverageBlockTimeChart = ({ isThumbnail = false }: { isThumbnail?: b
       fetchData={explorerService.api.fetchStatisticAverageBlockTimes}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="AverageBlockTime"
+      queryKey="fetchStatisticAverageBlockTimes"
     />
   )
 }

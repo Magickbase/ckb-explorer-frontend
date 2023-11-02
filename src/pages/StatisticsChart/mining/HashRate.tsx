@@ -107,7 +107,7 @@ export const HashRateChart = ({ isThumbnail = false }: { isThumbnail?: boolean }
       fetchData={explorerService.api.fetchStatisticHashRate}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="HashRate"
+      queryKey="fetchStatisticHashRate"
     />
   )
 }

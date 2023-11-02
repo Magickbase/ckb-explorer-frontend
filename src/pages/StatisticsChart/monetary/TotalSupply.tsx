@@ -207,7 +207,7 @@ export const TotalSupplyChart = ({ isThumbnail = false }: { isThumbnail?: boolea
       fetchData={explorerService.api.fetchStatisticTotalSupply}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="TotalSupply"
+      queryKey="fetchStatisticTotalSupply"
     />
   )
 }

@@ -191,7 +191,7 @@ export const SecondaryIssuanceChart = ({ isThumbnail = false }: { isThumbnail?: 
       fetchData={explorerService.api.fetchStatisticSecondaryIssuance}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="SecondaryIssuance"
+      queryKey="fetchStatisticSecondaryIssuance"
     />
   )
 }

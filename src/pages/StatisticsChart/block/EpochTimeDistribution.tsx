@@ -111,7 +111,7 @@ export const EpochTimeDistributionChart = ({ isThumbnail = false }: { isThumbnai
       fetchData={explorerService.api.fetchStatisticEpochTimeDistribution}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="EpochTimeDistribution"
+      queryKey="fetchStatisticEpochTimeDistribution"
     />
   )
 }

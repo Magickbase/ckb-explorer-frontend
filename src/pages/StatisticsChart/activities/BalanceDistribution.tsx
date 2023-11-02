@@ -187,7 +187,7 @@ export const BalanceDistributionChart = ({ isThumbnail = false }: { isThumbnail?
       fetchData={explorerService.api.fetchStatisticBalanceDistribution}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="BalanceDistribution"
+      queryKey="fetchStatisticBalanceDistribution"
     />
   )
 }

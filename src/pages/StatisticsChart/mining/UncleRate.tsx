@@ -123,7 +123,7 @@ export const UncleRateChart = ({ isThumbnail = false }: { isThumbnail?: boolean 
       fetchData={explorerService.api.fetchStatisticUncleRate}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="UncleRate"
+      queryKey="fetchStatisticUncleRate"
     />
   )
 }

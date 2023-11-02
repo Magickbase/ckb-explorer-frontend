@@ -197,7 +197,7 @@ export const LiquidityChart = ({ isThumbnail = false }: { isThumbnail?: boolean 
       fetchData={explorerService.api.fetchStatisticLiquidity}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="Liquidity"
+      queryKey="fetchStatisticLiquidity"
     />
   )
 }

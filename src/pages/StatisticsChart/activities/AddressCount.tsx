@@ -108,7 +108,7 @@ export const AddressCountChart = ({ isThumbnail = false }: { isThumbnail?: boole
       fetchData={explorerService.api.fetchStatisticAddressCount}
       getEChartOption={useOption}
       toCSV={toCSV}
-      queryKey="AddressCount"
+      queryKey="fetchStatisticAddressCount"
     />
   )
 }
