@@ -216,8 +216,7 @@ export const DifficultyUncleRateEpochChart: FC<{ isThumbnail?: boolean }> = ({ i
       fetchData={explorerService.api.fetchStatisticDifficultyUncleRateEpoch}
       getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey="DifficultyUncleRateEpoch"
-      cacheMode="epoch"
+      queryKey="DifficultyUncleRateEpoch"
     />
   )
 }

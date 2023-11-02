@@ -109,11 +109,7 @@ export default memo(() => {
   const isLG = useIsLGScreen()
   const parseOption = useOption()
 
-  const query = useChartQueryWithCache(
-    explorerService.api.fetchStatisticAverageBlockTimes,
-    AverageBlockTimeCacheKey,
-    'date',
-  )
+  const query = useChartQueryWithCache(explorerService.api.fetchStatisticAverageBlockTimes, AverageBlockTimeCacheKey)
   const fullStatisticAverageBlockTimes = useMemo(() => query.data ?? [], [query.data])
 
   const statisticAverageBlockTimes = useMemo(() => {

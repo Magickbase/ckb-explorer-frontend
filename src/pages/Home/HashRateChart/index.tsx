@@ -103,7 +103,7 @@ const useOption = () => {
 }
 export default memo(() => {
   const isLG = useIsLGScreen()
-  const query = useChartQueryWithCache(explorerService.api.fetchStatisticHashRate, HashRateCacheKey, 'date')
+  const query = useChartQueryWithCache(explorerService.api.fetchStatisticHashRate, HashRateCacheKey)
   const fullStatisticHashRates = useMemo(() => query.data ?? [], [query.data])
   const parseOption = useOption()
 

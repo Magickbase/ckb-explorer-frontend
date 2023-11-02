@@ -170,8 +170,7 @@ export interface SmartChartPageProps<T> {
     isThumbnail?: boolean,
   ) => echarts.EChartOption
   toCSV: (dataList: T[]) => (string | number)[][]
-  cacheKey?: string
-  cacheMode?: 'forever' | 'date' | 'epoch'
+  queryKey?: string
 }
 
 export function SmartChartPage<T>({
@@ -184,12 +183,11 @@ export function SmartChartPage<T>({
   onFetched,
   getEChartOption,
   toCSV,
-  cacheKey,
-  cacheMode = 'forever',
+  queryKey,
 }: SmartChartPageProps<T>): ReactElement {
   const isMobile = useIsMobile()
 
-  const query = useChartQueryWithCache(fetchData, cacheKey, cacheMode)
+  const query = useChartQueryWithCache(fetchData, queryKey)
   const dataList = useMemo(() => query.data ?? [], [query.data])
   useEffect(() => {
     if (onFetched && query.data) {
