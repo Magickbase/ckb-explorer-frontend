@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
+import { SupportedLng, useCurrentLanguage } from '../../../utils/i18n'
 import {
   DATA_ZOOM_CONFIG,
   assertIsArray,
@@ -13,7 +13,7 @@ import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../commo
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../constants/common'
 
-const widthSpan = (value: string, currentLanguage: LanuageType) =>
+const widthSpan = (value: string, currentLanguage: SupportedLng) =>
   tooltipWidth(value, currentLanguage === 'en' ? 125 : 80)
 
 const useTooltip = () => {

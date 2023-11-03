@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
+import { SupportedLng, useCurrentLanguage } from '../../../utils/i18n'
 import { parseDateNoTime } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import {
@@ -11,7 +11,7 @@ import {
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../constants/common'
 
-const widthSpan = (value: string, currentLanguage: LanuageType) =>
+const widthSpan = (value: string, currentLanguage: SupportedLng) =>
   tooltipWidth(value, currentLanguage === 'en' ? 155 : 70)
 
 const useTooltip = () => {

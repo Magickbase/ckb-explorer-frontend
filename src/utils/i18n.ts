@@ -2,10 +2,12 @@ import i18n from 'i18next'
 import { initReactI18next, useTranslation } from 'react-i18next'
 import en from '../locales/en.json'
 import zh from '../locales/zh.json'
-// TODO: utils should not import anything from services, this file may need to be refactored into services.
-import { LanuageType, appSettings } from '../services/AppSettings'
+import { appSettings } from '../services/AppSettings'
+import { includes } from './array'
 
-export type { LanuageType } from '../services/AppSettings'
+export const SupportedLngs = ['en', 'zh'] as const
+export type SupportedLng = (typeof SupportedLngs)[number]
+export const isSupportedLng = (value: unknown): value is SupportedLng => includes(SupportedLngs, value)
 
 const getDefaultLanguage = () => appSettings.defaultLanguage$.value
 const setDefaultLanguage = appSettings.defaultLanguage$.next.bind(appSettings.defaultLanguage$)
@@ -15,6 +17,8 @@ i18n.use(initReactI18next).init({
     en,
     zh,
   },
+  supportedLngs: SupportedLngs,
+  // Here, `fallbackLng` is used instead of `lng`, perhaps to continue using the results of automatic region checking?
   fallbackLng: getDefaultLanguage(),
   interpolation: {
     escapeValue: false,
@@ -22,14 +26,10 @@ i18n.use(initReactI18next).init({
 })
 
 i18n.on('languageChanged', lng => {
-  if (lng === 'en' || lng === 'zh') {
-    setDefaultLanguage(lng)
-  } else {
-    setDefaultLanguage('en')
-  }
+  setDefaultLanguage(isSupportedLng(lng) ? lng : 'en')
 })
 
-export const useCurrentLanguage = (): LanuageType => {
+export const useCurrentLanguage = (): SupportedLng => {
   const { i18n } = useTranslation()
   const currentLanguage = i18n.language
   if (currentLanguage !== 'en' && currentLanguage !== 'zh') {

@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
+import { SupportedLng, useCurrentLanguage } from '../../../utils/i18n'
 import {
   DATA_ZOOM_CONFIG,
   assertIsArray,
@@ -21,7 +21,7 @@ const parseTooltip = ({
   data,
   color,
   currentLanguage,
-}: SeriesItem & { data: string; currentLanguage: LanuageType }): string => {
+}: SeriesItem & { data: string; currentLanguage: SupportedLng }): string => {
   return `<div>${tooltipColor(color)}${widthSpan(seriesName, currentLanguage)} ${localeNumberString(data)}</div>`
 }
 

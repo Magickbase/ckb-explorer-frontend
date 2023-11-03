@@ -5,10 +5,10 @@ import { assertSerialsDataIsString, assertIsArray, assertSerialsItem, handleAxis
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { parseHourFromMillisecond } from '../../../utils/date'
 import { ChartItem, explorerService } from '../../../services/ExplorerService'
-import { LanuageType, useCurrentLanguage } from '../../../utils/i18n'
+import { SupportedLng, useCurrentLanguage } from '../../../utils/i18n'
 import { ChartColorConfig } from '../../../constants/common'
 
-const widthSpan = (value: string, currentLanguage: LanuageType) =>
+const widthSpan = (value: string, currentLanguage: SupportedLng) =>
   tooltipWidth(value, currentLanguage === 'en' ? 90 : 80)
 
 const useTooltip = () => {
