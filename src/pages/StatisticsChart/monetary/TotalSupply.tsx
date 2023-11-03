@@ -192,9 +192,9 @@ const toCSV = (statisticTotalSupplies: ChartItem.TotalSupply[]) =>
   statisticTotalSupplies
     ? statisticTotalSupplies.map(data => [
         data.createdAtUnixtimestamp,
-        shannonToCkbDecimal(data.circulatingSupply, 8),
-        shannonToCkbDecimal(data.lockedCapacity, 8),
-        shannonToCkbDecimal(data.burnt, 8),
+        shannonToCkbDecimal(data.circulatingSupply, 8).toString(),
+        shannonToCkbDecimal(data.lockedCapacity, 8).toString(),
+        shannonToCkbDecimal(data.burnt, 8).toString(),
       ])
     : []
 
