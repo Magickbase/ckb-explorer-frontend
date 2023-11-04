@@ -88,7 +88,8 @@ const useOption = (
         }
       : undefined,
     grid: isThumbnail ? gridThumbnail : grid,
-    dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
+    /* Selection starts from 1% because the average block time is extremely high on launch */
+    dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG.map(zoom => ({ ...zoom, start: 1 })),
     xAxis: [
       {
         name: isMobile || isThumbnail ? '' : t('statistic.date'),
