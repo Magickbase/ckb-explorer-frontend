@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import { assertSerialsDataIsString, assertIsArray, assertSerialsItem, handleAxis } from '../../../utils/chart'
+import { assertIsArray, assertSerialsItem, handleAxis } from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { parseHourFromMillisecond } from '../../../utils/date'
 import { ChartCachedKeys } from '../../../constants/cache'
@@ -15,11 +15,11 @@ const widthSpan = (value: string, currentLanguage: LanuageType) =>
 const useTooltip = () => {
   const { t } = useTranslation()
   const currentLanguage = useCurrentLanguage()
-  return ({ seriesName, data, color }: SeriesItem & { data: string }) => {
-    if (seriesName === t('block.epoch_time')) {
+  return ({ seriesName, data, color }: SeriesItem & { data?: number }) => {
+    if (seriesName === t('block.epoch_time') && typeof data === 'number') {
       return `<div>${tooltipColor(color)}${widthSpan(t('block.epoch_time'), currentLanguage)} ${data} h</div>`
     }
-    if (seriesName === t('block.epoch_length')) {
+    if (seriesName === t('block.epoch_length') && typeof data === 'number') {
       return `<div>${tooltipColor(color)}${widthSpan(t('block.epoch_length'), currentLanguage)} ${data}</div>`
     }
     return ''
@@ -71,7 +71,6 @@ const useOption = (
             }</div>`
             dataList.forEach(data => {
               assertSerialsItem(data)
-              assertSerialsDataIsString(data)
               result += parseTooltip(data)
             })
             return result
