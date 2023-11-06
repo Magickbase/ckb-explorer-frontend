@@ -531,9 +531,9 @@ export function useChartQueryWithCache<T>(
           expireAt = Date.now() + ONE_HOUR_MILLISECOND * 3
           break
         case 'date': {
-          // Chart data will be updated at 0:10(CST) every day
+          // Chart data will be updated at 08:10(CST) every day
           const now = dayjs().utc()
-          const todayUpdateTime = now.hour(0).minute(11).second(0).millisecond(0)
+          const todayUpdateTime = now.hour(8).minute(11).second(0).millisecond(0)
           const nextUpdateTime = now.isBefore(todayUpdateTime) ? todayUpdateTime : todayUpdateTime.add(1, 'day')
           expireAt = nextUpdateTime.toDate()
           break
