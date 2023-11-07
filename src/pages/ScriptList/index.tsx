@@ -210,6 +210,7 @@ const ScriptList: FC = () => {
       <div className={styles.container}>
         {[...scripts].map(([label, meta]) => {
           const script = scriptDataList.find(s => s.tag === label)
+          if (!script) return null
           return (
             <details key={label} id={label} open={label === defaultOpenLabel}>
               <summary data-deprecated={!!meta.deprecated} title={meta.deprecated ? 'Deprecated' : undefined}>
