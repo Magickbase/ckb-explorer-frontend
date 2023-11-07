@@ -15,11 +15,13 @@ const widthSpan = (value: string, currentLanguage: LanuageType) =>
 const useTooltip = () => {
   const { t } = useTranslation()
   const currentLanguage = useCurrentLanguage()
-  return ({ seriesName, data, color }: SeriesItem & { data?: number }) => {
-    if (seriesName === t('block.epoch_time') && typeof data === 'number') {
+  return ({ seriesName, data, color }: SeriesItem & { data?: unknown }) => {
+    // empty epoch time is invalid and could be hidden, epoch time is expected to be around 4 hours
+    if (seriesName === t('block.epoch_time') && !data) {
       return `<div>${tooltipColor(color)}${widthSpan(t('block.epoch_time'), currentLanguage)} ${data} h</div>`
     }
-    if (seriesName === t('block.epoch_length') && typeof data === 'number') {
+    // empty epoch length is invalid and could be hidden, epoch length is determined by avg block time, it's expected to be 4h / avg_block_time
+    if (seriesName === t('block.epoch_length') && !data) {
       return `<div>${tooltipColor(color)}${widthSpan(t('block.epoch_length'), currentLanguage)} ${data}</div>`
     }
     return ''
