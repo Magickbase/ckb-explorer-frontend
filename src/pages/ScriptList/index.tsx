@@ -227,22 +227,19 @@ const ScriptList: FC = () => {
                       </a>
                     ) : null,
                   )}
-                  {script ? (
-                    <a
-                      href={`/script/${script.codeHashes[0]}/${script.hashType}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {t('script_list.link.detail')}
-                    </a>
-                  ) : null}
+                  <a
+                    href={`/script/${script.codeHashes[0]}/${script.hashType}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t('script_list.link.detail')}
+                  </a>
                 </div>
-                {script ? (
-                  <>
-                    <h3>{`${t(`script_list.on_chain_data`)}:`}</h3>
-                    {script.codeHashes.map((codeHash: string, idx: number) => (
-                      <pre key={codeHash}>
-                        {`{
+                <>
+                  <h3>{`${t(`script_list.on_chain_data`)}:`}</h3>
+                  {script.codeHashes.map((codeHash: string, idx: number) => (
+                    <pre key={codeHash}>
+                      {`{
   "code_hash": "${codeHash}",
   "hash_type": "${script.hashType}",
   "out_point": {
@@ -251,10 +248,9 @@ const ScriptList: FC = () => {
   },
   "dep_type": "${script.depType}"
 }`}
-                      </pre>
-                    ))}
-                  </>
-                ) : null}
+                    </pre>
+                  ))}
+                </>
               </div>
             </details>
           )
