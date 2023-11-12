@@ -18,6 +18,7 @@ export const TransactionDetailItem = styled.div<{ selected?: boolean }>`
   font-weight: 600;
   font-size: 16px;
   align-items: center;
+  white-space: pre-wrap;
 
   @media (max-width: 750px) {
     margin-top: 5px;
