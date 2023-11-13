@@ -136,6 +136,10 @@ export const TransactionInfoContentContainer = styled.div`
 export const TransactionInfoContentTag = styled.div`
   margin-left: 10px;
   margin-top: 3px;
+
+  @media (max-width: 1150px) {
+    margin-left: 0;
+  }
 `
 
 export const TransactionInfoContentItem = styled.div`
