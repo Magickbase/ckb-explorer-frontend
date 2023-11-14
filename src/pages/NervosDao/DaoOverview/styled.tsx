@@ -9,7 +9,6 @@ export const DaoOverviewPanel = styled.div`
   background-color: #fff;
   display: flex;
   color: #000;
-  font-size: 16px;
 
   @media (max-width: 1200px) {
     flex-direction: column;
@@ -121,13 +120,9 @@ export const DaoOverviewPieChartPanel = styled.div`
     font-size: 14px;
     color: #555;
 
-    @media (max-width: 1200px) {
-      margin-right: 22%;
-    }
-
     @media (max-width: 750px) {
       font-size: 12px;
-      margin: 8px 22% 8px 0;
+      margin: 8px 0;
     }
   }
 `
@@ -245,6 +240,11 @@ export const NervosDaoPieItemPanel = styled.div`
     height: 9px;
     margin-right: 10px;
     border-radius: 9px;
+    margin-top: -20px;
+
+    @media (max-width: 750px) {
+      margin-top: -14px;
+    }
   }
 
   > div {
@@ -271,7 +271,6 @@ export const NervosDaoPieItemPanel = styled.div`
 
 export const NervosDaoPieCapacityPanel = styled.div`
   width: 180px;
-  text-align: right;
 
   @media (max-width: 750px) {
     width: 130px;
