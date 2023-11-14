@@ -1,3 +1,5 @@
+import { Tabs } from 'antd'
+import TabPane from 'antd/lib/tabs/TabPane'
 import styled from 'styled-components'
 
 export const TransactionDetailContainer = styled.div`
@@ -72,6 +74,23 @@ export const TransactionDetailCapacityUsage = styled(TransactionDetailItem)`
   @media screen and (min-width: 751px) and (max-width: 1300px) {
     margin-left: 50px;
   }
+`
+
+export const TransactionCellDetailTab = styled(Tabs)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 6px 6px 0 0;
+`
+
+export const TransactionCellDetailTitle = styled.span`
+  font-size: 16px;
+`
+
+export const TransactionCellDetailPane = styled(TabPane)`
+  color: #333;
 `
 
 export const TransactionCellDetailPanel = styled.div`
