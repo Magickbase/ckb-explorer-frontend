@@ -7,6 +7,7 @@ import {
   parseAddress,
   systemScripts,
 } from '@nervosnetwork/ckb-sdk-utils'
+import { useQuery } from '@tanstack/react-query'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useResizeDetector } from 'react-resize-detector'
 import { interval, share } from 'rxjs'
@@ -16,7 +17,7 @@ import { ListPageParams, PageParams, THEORETICAL_EPOCH_TIME, EPOCHS_PER_HALVING 
 import { omit } from './object'
 import { useParseDate } from './date'
 // TODO: This file depends on higher-level abstractions, so it should not be in the utils folder. It should be moved to `src/hooks/index.ts`.
-import { useStatistics } from '../services/ExplorerService'
+import { useStatistics, explorerService } from '../services/ExplorerService'
 import { cacheService } from '../services/CacheService'
 
 /**
@@ -566,6 +567,38 @@ export const useCountdown = (targetDate: Date): [number, number, number, number,
   return [days, hours, minutes, seconds, isComingSoon]
 }
 
+export const useCurrentEpochOverTime = (theoretical: boolean) => {
+  const statistics = useStatistics()
+  const epochLength = Number(statistics.epochInfo.epochLength)
+  const epochBlockIndex = Number(statistics.epochInfo.index)
+  const tipBlockNumber = Number(statistics.tipBlockNumber)
+  const firstBlockHeight = (tipBlockNumber - epochBlockIndex).toString()
+  const firstBlock = useQuery(['block', firstBlockHeight], () => explorerService.api.fetchBlock(firstBlockHeight), {
+    enabled: !theoretical,
+  })
+  const current = useMemo(() => new Date().getTime(), [])
+
+  if (!theoretical && firstBlock.data) {
+    // Extrapolate the end time based on how much time has elapsed since the current epoch.
+    const startedAt = firstBlock.data.timestamp
+    const currentEpochUsedTime = current - startedAt
+    const averageBlockTime = currentEpochUsedTime / epochBlockIndex
+    const currentEpochEstimatedTime = (epochLength - epochBlockIndex) * averageBlockTime
+
+    return {
+      currentEpochUsedTime,
+      currentEpochEstimatedTime,
+    }
+  }
+
+  const currentEpochUsedTime = (epochBlockIndex / epochLength) * THEORETICAL_EPOCH_TIME
+  const currentEpochEstimatedTime = THEORETICAL_EPOCH_TIME - currentEpochUsedTime
+  return {
+    currentEpochUsedTime,
+    currentEpochEstimatedTime,
+  }
+}
+
 export const useSingleHalving = (_halvingCount = 1) => {
   const halvingCount = Math.max(Math.floor(_halvingCount) || 1, 1) // halvingCount should be a positive integer greater than 1.
   const statistics = useStatistics()
@@ -577,12 +610,17 @@ export const useSingleHalving = (_halvingCount = 1) => {
 
   const currentEpoch = Number(statistics.epochInfo.epochNumber)
   const targetEpoch = EPOCHS_PER_HALVING * halvingCount
-  const currentEpochUsedTime =
-    (Number(statistics.epochInfo.index) / Number(statistics.epochInfo.epochLength)) * THEORETICAL_EPOCH_TIME
+  const epochLength = Number(statistics.epochInfo.epochLength)
+  const epochBlockIndex = Number(statistics.epochInfo.index)
+  const current = useMemo(() => new Date().getTime(), [])
 
-  const estimatedTime = (targetEpoch - currentEpoch) * THEORETICAL_EPOCH_TIME - currentEpochUsedTime
-  const estimatedDate = useMemo(() => new Date(new Date().getTime() + estimatedTime), [estimatedTime])
+  // special handling for last epoch: https://github.com/Magickbase/ckb-explorer-public-issues/issues/483
+  const { currentEpochEstimatedTime, currentEpochUsedTime } = useCurrentEpochOverTime(
+    !(currentEpoch === targetEpoch - 1 && epochBlockIndex / epochLength > 0.5),
+  )
 
+  const estimatedTime = currentEpochEstimatedTime + THEORETICAL_EPOCH_TIME * (targetEpoch - currentEpoch - 1)
+  const estimatedDate = new Date(current + estimatedTime)
   const haveDone = currentEpoch >= targetEpoch
   const celebrationOverEpoch = targetEpoch + 30 * 6 // Every 6 epochs is theoretically 1 day.
   const inCelebration = haveDone && currentEpoch < celebrationOverEpoch && !celebrationSkipped
