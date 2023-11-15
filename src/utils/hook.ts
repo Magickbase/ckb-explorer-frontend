@@ -578,7 +578,14 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
   })
   const current = useMemo(() => new Date().getTime(), [])
 
-  if (!theoretical && firstBlock.data) {
+  if (!theoretical) {
+    if (!firstBlock.data) {
+      return {
+        currentEpochUsedTime: 0,
+        currentEpochEstimatedTime: 0,
+        isLoading: true,
+      }
+    }
     // Extrapolate the end time based on how much time has elapsed since the current epoch.
     const startedAt = firstBlock.data.timestamp
     const currentEpochUsedTime = current - startedAt
@@ -588,6 +595,7 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
     return {
       currentEpochUsedTime,
       currentEpochEstimatedTime,
+      isLoading: statistics.epochInfo.index === '0',
     }
   }
 
@@ -596,6 +604,7 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
   return {
     currentEpochUsedTime,
     currentEpochEstimatedTime,
+    isLoading: statistics.epochInfo.index === '0',
   }
 }
 
@@ -615,7 +624,7 @@ export const useSingleHalving = (_halvingCount = 1) => {
   const current = useMemo(() => new Date().getTime(), [])
 
   // special handling for last epoch: https://github.com/Magickbase/ckb-explorer-public-issues/issues/483
-  const { currentEpochEstimatedTime, currentEpochUsedTime } = useCurrentEpochOverTime(
+  const { currentEpochEstimatedTime, currentEpochUsedTime, isLoading } = useCurrentEpochOverTime(
     !(currentEpoch === targetEpoch - 1 && epochBlockIndex / epochLength > 0.5),
   )
 
@@ -626,7 +635,7 @@ export const useSingleHalving = (_halvingCount = 1) => {
   const inCelebration = haveDone && currentEpoch < celebrationOverEpoch && !celebrationSkipped
 
   return {
-    isLoading: statistics.epochInfo.index === '0',
+    isLoading,
     halvingCount,
     currentEpoch,
     targetEpoch,
