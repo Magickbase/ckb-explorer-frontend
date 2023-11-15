@@ -14,10 +14,6 @@ export const HeaderPanel = styled.div`
   flex-wrap: wrap;
   padding: 0 120px;
 
-  @media (max-width: ${variables.xxlBreakPoint}) {
-    padding: 0 100px;
-  }
-
   @media (max-width: ${variables.extraLargeBreakPoint}) {
     padding: 0 45px;
   }

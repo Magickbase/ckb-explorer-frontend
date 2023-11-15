@@ -13,10 +13,6 @@ export const HeaderBlockchainPanel = styled.div`
     margin-right: 40px;
   }
 
-  @media (max-width: ${variables.xxlBreakPoint}) {
-    margin-right: 24px;
-  }
-
   @media (max-width: ${variables.mobileBreakPoint}) {
     margin-right: 0;
   }

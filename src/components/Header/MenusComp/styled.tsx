@@ -38,10 +38,6 @@ export const HeaderMenuPanel = styled.div`
       padding-left: 40px;
     }
 
-    @media (max-width: ${variables.xxlBreakPoint}) {
-      padding-left: 24px;
-    }
-
     @media (max-width: 960px) {
       padding-left: 16px;
     }
