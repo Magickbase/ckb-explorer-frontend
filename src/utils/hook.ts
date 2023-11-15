@@ -543,7 +543,7 @@ export function useParsedDate(timestamp: number): string {
   return parseDate(timestamp, now)
 }
 
-export const useCountdown = (targetDate: Date): [number, number, number, number, boolean] => {
+export const useCountdown = (targetDate: Date): [number, number, number, number, number] => {
   const countdownDate = new Date(targetDate).getTime()
 
   const [countdown, setCountdown] = useState(countdownDate - new Date().getTime())
@@ -562,9 +562,7 @@ export const useCountdown = (targetDate: Date): [number, number, number, number,
   const minutes = expired ? 0 : Math.floor((countdown % (1000 * 60 * 60)) / (1000 * 60))
   const seconds = expired ? 0 : Math.floor((countdown % (1000 * 60)) / 1000)
 
-  const isComingSoon = countdown <= 3_000 // show coming soon when countdown is less than 3s
-
-  return [days, hours, minutes, seconds, isComingSoon]
+  return [days, hours, minutes, seconds, countdown]
 }
 
 export const useCurrentEpochOverTime = (theoretical: boolean) => {
@@ -625,7 +623,7 @@ export const useSingleHalving = (_halvingCount = 1) => {
 
   // special handling for last epoch: https://github.com/Magickbase/ckb-explorer-public-issues/issues/483
   const { currentEpochEstimatedTime, currentEpochUsedTime, isLoading } = useCurrentEpochOverTime(
-    !(currentEpoch === targetEpoch - 1 && epochBlockIndex / epochLength > 0.5),
+    !(currentEpoch === targetEpoch - 1 && epochBlockIndex / epochLength > 0.2),
   )
 
   const estimatedTime = currentEpochEstimatedTime + THEORETICAL_EPOCH_TIME * (targetEpoch - currentEpoch - 1)
