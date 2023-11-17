@@ -574,7 +574,10 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
   const firstBlock = useQuery(['block', firstBlockHeight], () => explorerService.api.fetchBlock(firstBlockHeight), {
     enabled: !theoretical,
   })
-  const current = useMemo(() => new Date().getTime(), [])
+  const passedTime = useMemo(
+    () => new Date().getTime() - (firstBlock.data?.timestamp || 0),
+    [firstBlock.data?.timestamp, epochBlockIndex],
+  )
 
   if (!theoretical) {
     if (!firstBlock.data) {
@@ -586,13 +589,11 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
       }
     }
     // Extrapolate the end time based on how much time has elapsed since the current epoch.
-    const startedAt = firstBlock.data.timestamp
-    const currentEpochUsedTime = current - startedAt
-    const averageBlockTime = currentEpochUsedTime / epochBlockIndex
+    const averageBlockTime = passedTime / epochBlockIndex
     const currentEpochEstimatedTime = (epochLength - epochBlockIndex) * averageBlockTime
 
     return {
-      currentEpochUsedTime,
+      currentEpochUsedTime: passedTime,
       currentEpochEstimatedTime,
       averageBlockTime,
       isLoading: statistics.epochInfo.index === '0',
@@ -622,7 +623,6 @@ export const useSingleHalving = (_halvingCount = 1) => {
   const targetEpoch = EPOCHS_PER_HALVING * halvingCount
   const epochLength = Number(statistics.epochInfo.epochLength)
   const epochBlockIndex = Number(statistics.epochInfo.index)
-  const current = useMemo(() => new Date().getTime(), [])
 
   // special handling for last epoch: https://github.com/Magickbase/ckb-explorer-public-issues/issues/483
   const { currentEpochEstimatedTime, currentEpochUsedTime, isLoading } = useCurrentEpochOverTime(
@@ -630,7 +630,7 @@ export const useSingleHalving = (_halvingCount = 1) => {
   )
 
   const estimatedTime = currentEpochEstimatedTime + THEORETICAL_EPOCH_TIME * (targetEpoch - currentEpoch - 1)
-  const estimatedDate = new Date(current + estimatedTime)
+  const estimatedDate = useMemo(() => new Date(new Date().getTime() + estimatedTime), [estimatedTime])
   const haveDone = currentEpoch >= targetEpoch
   const celebrationOverEpoch = targetEpoch + 30 * 6 // Every 6 epochs is theoretically 1 day.
   const inCelebration = haveDone && currentEpoch < celebrationOverEpoch && !celebrationSkipped
