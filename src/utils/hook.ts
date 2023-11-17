@@ -581,6 +581,7 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
       return {
         currentEpochUsedTime: 0,
         currentEpochEstimatedTime: 0,
+        averageBlockTime: 0,
         isLoading: true,
       }
     }
@@ -593,6 +594,7 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
     return {
       currentEpochUsedTime,
       currentEpochEstimatedTime,
+      averageBlockTime,
       isLoading: statistics.epochInfo.index === '0',
     }
   }
@@ -602,6 +604,7 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
   return {
     currentEpochUsedTime,
     currentEpochEstimatedTime,
+    averageBlockTime: THEORETICAL_EPOCH_TIME / epochLength,
     isLoading: statistics.epochInfo.index === '0',
   }
 }
@@ -609,7 +612,7 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
 export const useSingleHalving = (_halvingCount = 1) => {
   const halvingCount = Math.max(Math.floor(_halvingCount) || 1, 1) // halvingCount should be a positive integer greater than 1.
   const statistics = useStatistics()
-  const celebrationSkipKey = `having-celebration-${halvingCount}`
+  const celebrationSkipKey = `having-celebration-#${halvingCount}`
   const celebrationSkipped = cacheService.get<boolean>(celebrationSkipKey) ?? false
   function skipCelebration() {
     cacheService.set(celebrationSkipKey, true)
@@ -623,7 +626,7 @@ export const useSingleHalving = (_halvingCount = 1) => {
 
   // special handling for last epoch: https://github.com/Magickbase/ckb-explorer-public-issues/issues/483
   const { currentEpochEstimatedTime, currentEpochUsedTime, isLoading } = useCurrentEpochOverTime(
-    !(currentEpoch === targetEpoch - 1 && epochBlockIndex / epochLength > 0.2),
+    !(currentEpoch === targetEpoch - 1 && epochBlockIndex / epochLength > 0.5),
   )
 
   const estimatedTime = currentEpochEstimatedTime + THEORETICAL_EPOCH_TIME * (targetEpoch - currentEpoch - 1)
