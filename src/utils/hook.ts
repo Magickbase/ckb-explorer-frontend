@@ -574,8 +574,8 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
   const firstBlock = useQuery(['block', firstBlockHeight], () => explorerService.api.fetchBlock(firstBlockHeight), {
     enabled: !theoretical,
   })
-  const passedTime = useMemo(
-    () => new Date().getTime() - (firstBlock.data?.timestamp || 0),
+  const averageBlockTime = useMemo(
+    () => (new Date().getTime() - (firstBlock.data?.timestamp || 0)) / epochBlockIndex,
     [firstBlock.data?.timestamp, epochBlockIndex],
   )
 
@@ -589,11 +589,10 @@ export const useCurrentEpochOverTime = (theoretical: boolean) => {
       }
     }
     // Extrapolate the end time based on how much time has elapsed since the current epoch.
-    const averageBlockTime = passedTime / epochBlockIndex
     const currentEpochEstimatedTime = (epochLength - epochBlockIndex) * averageBlockTime
 
     return {
-      currentEpochUsedTime: passedTime,
+      currentEpochUsedTime: new Date().getTime() - firstBlock.data.timestamp,
       currentEpochEstimatedTime,
       averageBlockTime,
       isLoading: statistics.epochInfo.index === '0',
