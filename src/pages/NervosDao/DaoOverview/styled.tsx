@@ -224,7 +224,6 @@ export const DaoOverviewLeftItemPanel = styled.div<{ symbol?: string; hasChange?
 
 export const NervosDaoPieItemPanel = styled.div`
   display: flex;
-  align-items: center;
   flex: 1;
 
   @media (max-width: 1200px) {
@@ -240,11 +239,7 @@ export const NervosDaoPieItemPanel = styled.div`
     height: 9px;
     margin-right: 10px;
     border-radius: 9px;
-    margin-top: -20px;
-
-    @media (max-width: 750px) {
-      margin-top: -14px;
-    }
+    margin-top: 9px;
   }
 
   > div {
