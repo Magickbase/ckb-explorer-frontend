@@ -289,11 +289,10 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
             }
             key={CellInfo.CAPACITY}
           />
-
-          <div className="transactionDetailModalClose">
-            <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
-          </div>
         </TransactionCellDetailTab>
+        <div className="transactionDetailModalClose">
+          <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
+        </div>
       </TransactionCellDetailPanel>
 
       <div className="transactionDetailSeparate" />
