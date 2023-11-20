@@ -45,6 +45,14 @@ const useOption = (
     }
     return ''
   }
+
+  const daily = statisticAverageBlockTimes.map(data => Math.ceil(Number(data.avgBlockTimeDaily) / 1000))
+  const dailyMax = Math.max(...daily)
+  const dailyMin = Math.min(...daily)
+  const weekly = statisticAverageBlockTimes.map(data => Math.ceil(Number(data.avgBlockTimeWeekly) / 1000))
+  const weeklyMax = Math.max(...weekly)
+  const weeklyMin = Math.min(...weekly)
+
   return {
     color: chartColor.colors,
     tooltip: !isThumbnail
@@ -97,6 +105,10 @@ const useOption = (
     ],
     yAxis: [
       {
+        splitNumber: 5,
+        max: dailyMax,
+        min: dailyMin,
+        interval: (dailyMax - dailyMin) / 5,
         position: 'left',
         name: isMobile || isThumbnail ? '' : t('statistic.daily_moving_average'),
         type: 'value',
@@ -114,6 +126,10 @@ const useOption = (
         },
       },
       {
+        splitNumber: 5,
+        max: weeklyMax,
+        min: weeklyMin,
+        interval: (weeklyMax - weeklyMin) / 5,
         position: 'right',
         name: isMobile || isThumbnail ? '' : t('statistic.weekly_moving_average'),
         type: 'value',
