@@ -75,9 +75,6 @@ export const HalvingCountdownPage = () => {
   })
   const shareUrl = `https://x.com/share?text=${encodeURIComponent(shareText)}&hashtags=CKB%2CPoW%2CHalving`
   const getTargetBlockByHavingCount = (count: number) => {
-    // eslint-disable-next-line no-console
-    console.log(epochBlockMap, EPOCHS_PER_HALVING * count, epochBlockMap.get(EPOCHS_PER_HALVING * count))
-
     return epochBlockMap.get(EPOCHS_PER_HALVING * count)
   }
 
