@@ -15,7 +15,7 @@ import { HalvingTable } from './HalvingTable'
 import { HalvingInfo } from './HalvingInfo'
 import SmallLoading from '../../components/Loading/SmallLoading'
 import { HalvingCountdown } from './HalvingCountdown'
-import { useCountdown, useHalving, useIsMobile, useEpochStartBlock } from '../../utils/hook'
+import { useCountdown, useHalving, useIsMobile, useEpochBlockMap } from '../../utils/hook'
 import { getPrimaryColor, EPOCHS_PER_HALVING, THEORETICAL_EPOCH_TIME } from '../../constants/common'
 import styles from './index.module.scss'
 import { useCurrentLanguage } from '../../utils/i18n'
@@ -47,7 +47,7 @@ export const HalvingCountdownPage = () => {
   const isMobile = useIsMobile()
   const { currentEpoch, estimatedDate, currentEpochUsedTime, halvingCount, inCelebration, skipCelebration, isLoading } =
     useHalving()
-  const { epochStartMap, isLoading: epochStartLoading } = useEpochStartBlock()
+  const { epochBlockMap } = useEpochBlockMap()
 
   const percent =
     (((currentEpoch % EPOCHS_PER_HALVING) * THEORETICAL_EPOCH_TIME - currentEpochUsedTime) /
@@ -75,15 +75,14 @@ export const HalvingCountdownPage = () => {
   })
   const shareUrl = `https://x.com/share?text=${encodeURIComponent(shareText)}&hashtags=CKB%2CPoW%2CHalving`
   const getTargetBlockByHavingCount = (count: number) => {
-    if (epochStartMap[EPOCHS_PER_HALVING * count]) {
-      return epochStartMap[EPOCHS_PER_HALVING * count]
-    }
+    // eslint-disable-next-line no-console
+    console.log(epochBlockMap, EPOCHS_PER_HALVING * count, epochBlockMap.get(EPOCHS_PER_HALVING * count))
 
-    return undefined
+    return epochBlockMap.get(EPOCHS_PER_HALVING * count)
   }
 
   const renderHalvingPanel = () => {
-    if (isLoading || epochStartLoading || Number.isNaN(seconds)) {
+    if (isLoading || Number.isNaN(seconds)) {
       return (
         <div className={styles.halvingPanelWrapper}>
           <div className={classnames(styles.halvingPanel, styles.loadingPanel)}>

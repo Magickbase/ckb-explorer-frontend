@@ -646,33 +646,25 @@ export const useSingleHalving = (_halvingCount = 1) => {
   }
 }
 
-export const useEpochStartBlock = () => {
+export const useEpochBlockMap = () => {
   const statistics = useStatistics()
   const currentEpoch = Number(statistics.epochInfo.epochNumber)
   const { data: epochStatistic } = useQuery(['fetchStatisticDifficultyUncleRateEpoch', currentEpoch], () =>
     explorerService.api.fetchStatisticDifficultyUncleRateEpoch(),
   )
 
-  const lastEpoch = epochStatistic ? Number(epochStatistic[epochStatistic.length - 1].epochNumber) : 0
+  const epochBlockMap = useMemo(() => {
+    const r = new Map<number, number>([[0, 0]])
+    epochStatistic?.forEach(i => {
+      const last = r.get(+i.epochNumber) ?? 0
+      r.set(+i.epochNumber + 1, +i.epochLength + last)
+    })
 
-  const epochStartMap: {
-    [key: number]: number
-    pointer: number
-  } = useMemo(
-    () =>
-      (epochStatistic || []).reduce(
-        (a, b) => ({ ...a, [Number(b.epochNumber)]: a.pointer, pointer: a.pointer + Number(b.epochLength) }),
-        { pointer: 0 },
-      ),
-    [epochStatistic],
-  )
-
-  epochStartMap[lastEpoch + 1] = epochStartMap.pointer
+    return r
+  }, [epochStatistic])
 
   return {
-    isLoading: epochStatistic === undefined,
-    epochStartMap: epochStatistic ? omit(epochStartMap, ['pointer']) : {},
-    lastEpoch,
+    epochBlockMap,
   }
 }
 
