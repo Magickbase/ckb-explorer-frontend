@@ -646,6 +646,36 @@ export const useSingleHalving = (_halvingCount = 1) => {
   }
 }
 
+export const useEpochStartBlock = () => {
+  const statistics = useStatistics()
+  const currentEpoch = Number(statistics.epochInfo.epochNumber)
+  const { data: epochStatistic } = useQuery(['fetchStatisticDifficultyUncleRateEpoch', currentEpoch], () =>
+    explorerService.api.fetchStatisticDifficultyUncleRateEpoch(),
+  )
+
+  const lastEpoch = epochStatistic ? Number(epochStatistic[epochStatistic.length - 1].epochNumber) : 0
+
+  const epochStartMap: {
+    [key: number]: number
+    pointer: number
+  } = useMemo(
+    () =>
+      (epochStatistic || []).reduce(
+        (a, b) => ({ ...a, [Number(b.epochNumber)]: a.pointer, pointer: a.pointer + Number(b.epochLength) }),
+        { pointer: 0 },
+      ),
+    [epochStatistic],
+  )
+
+  epochStartMap[lastEpoch + 1] = epochStartMap.pointer
+
+  return {
+    isLoading: epochStatistic === undefined,
+    epochStartMap: epochStatistic ? omit(epochStartMap, ['pointer']) : {},
+    lastEpoch,
+  }
+}
+
 export const useHalving = () => {
   const statistics = useStatistics()
   const currentEpoch = Number(statistics.epochInfo.epochNumber)
