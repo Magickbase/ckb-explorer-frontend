@@ -1,4 +1,4 @@
-import { FC, ReactElement, isValidElement, useMemo } from 'react'
+import { ComponentProps, FC, ReactElement, isValidElement, useMemo } from 'react'
 import classNames from 'classnames'
 import { CardCell, CardCellProps } from './CardCell'
 import styles from './CardCellsLayout.module.scss'
@@ -21,11 +21,18 @@ function renderCell(info: CardCellInfo$WithoutSlot) {
   return <CardCell {...info} />
 }
 
-export const CardCellsLayout: FC<{
+interface CardCellsLayoutProps extends ComponentProps<'div'> {
   type: LayoutType
   cells: CardCellInfo[]
   defaultDisplayCountInMobile?: number
-}> = ({ type, cells, defaultDisplayCountInMobile = 10 }) => {
+}
+
+export const CardCellsLayout: FC<CardCellsLayoutProps> = ({
+  type,
+  cells,
+  defaultDisplayCountInMobile = 10,
+  ...elProps
+}) => {
   const isMobile = useIsMobile()
   const showExpandCtl = isMobile && cells.length > defaultDisplayCountInMobile
   const [isExpanded, expandCtl] = useBoolean(false)
@@ -58,7 +65,7 @@ export const CardCellsLayout: FC<{
   }, [cells, displayCount, type])
 
   return (
-    <div className={styles.cardCellsLayout}>
+    <div {...elProps} className={classNames(styles.cardCellsLayout, elProps.className)}>
       {type === 'left-right' ? (
         <div className={styles.left}>{leftCells.map(renderCell)}</div>
       ) : (
