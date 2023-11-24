@@ -7,6 +7,7 @@ export const ScriptTab = styled(Tabs)`
   flex-direction: column;
   justify-content: center;
   width: 100%;
+  margin-top: 24px;
   background-color: #fff;
   border-radius: 6px 6px 0 0;
 
@@ -55,6 +56,10 @@ export const ScriptTab = styled(Tabs)`
     );
     height: 3px;
     bottom: 3px;
+  }
+
+  @media (max-width: 750px) {
+    margin-top: 20px;
   }
 `
 export const ScriptTabTitle = styled.span`

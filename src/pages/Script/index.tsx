@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
 import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import { useCurrentLanguage } from '../../utils/i18n'
-import { HashCardPanel } from '../../components/Card/HashCard/styled'
 import { localeNumberString } from '../../utils/number'
 import { CodeHashMessage, ScriptCells, ScriptTransactions } from './ScriptsComp'
 import { MainnetContractHashTags, TestnetContractHashTags } from '../../constants/scripts'
@@ -19,6 +18,7 @@ import styles from './styles.module.scss'
 import { explorerService } from '../../services/ExplorerService'
 import type { ScriptInfo } from '../../services/ExplorerService/fetcher'
 import { ScriptTab, ScriptTabPane, ScriptTabTitle } from './styled'
+import { Card } from '../../components/Card'
 
 const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
 
@@ -150,9 +150,9 @@ export const ScriptPage = () => {
   return (
     <Content>
       <div className={`${styles.scriptContentPanel} container`}>
-        <HashCardPanel isColumn={false}>
+        <Card>
           <ScriptsTitleOverview scriptInfo={scriptInfo} />
-        </HashCardPanel>
+        </Card>
         <ScriptTab
           key={currentLanguage + countOfTransactions + countOfDeployedCells + countOfReferringCells}
           activeKey={tab ?? 'transactions'}
