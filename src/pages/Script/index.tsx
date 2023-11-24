@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
-import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
 import { useCurrentLanguage } from '../../utils/i18n'
 import { localeNumberString } from '../../utils/number'
 import { CodeHashMessage, ScriptCells, ScriptTransactions } from './ScriptsComp'
@@ -18,7 +17,7 @@ import styles from './styles.module.scss'
 import { explorerService } from '../../services/ExplorerService'
 import type { ScriptInfo } from '../../services/ExplorerService/fetcher'
 import { ScriptTab, ScriptTabPane, ScriptTabTitle } from './styled'
-import { Card } from '../../components/Card'
+import { Card, CardCellInfo, CardCellsLayout } from '../../components/Card'
 
 const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
 
@@ -45,7 +44,7 @@ const useScriptInfo = (scriptInfo: ScriptInfo) => {
   const { t } = useTranslation()
   const { scriptName, scriptType, id, codeHash, hashType, capacityOfDeployedCells, capacityOfReferringCells } =
     scriptInfo
-  const items: OverviewItemData[] = [
+  const items: CardCellInfo[] = [
     {
       title: t('scripts.script_name'),
       tooltip: t('glossary.script_name'),
@@ -75,24 +74,15 @@ const useScriptInfo = (scriptInfo: ScriptInfo) => {
       content: <DecimalCapacity value={localeNumberString(shannonToCkb(capacityOfDeployedCells))} hideZero />,
     },
     {
-      title: '',
-      content: '',
-    },
-    {
-      title: t('scripts.capacity_of_referring_cells'),
-      content: <DecimalCapacity value={localeNumberString(shannonToCkb(capacityOfReferringCells))} hideZero />,
+      slot: 'right',
+      cell: {
+        title: t('scripts.capacity_of_referring_cells'),
+        content: <DecimalCapacity value={localeNumberString(shannonToCkb(capacityOfReferringCells))} hideZero />,
+      },
     },
   ]
 
   return items
-}
-
-const ScriptsTitleOverview = ({ scriptInfo }: { scriptInfo: ScriptInfo }) => {
-  return (
-    <div className={styles.scriptsTitleOverviewPanel}>
-      <OverviewCard items={useScriptInfo(scriptInfo)} hideShadow />
-    </div>
-  )
 }
 
 const useSeekScriptName = (codeHash: string, hashType: string): string => {
@@ -151,8 +141,9 @@ export const ScriptPage = () => {
     <Content>
       <div className={`${styles.scriptContentPanel} container`}>
         <Card>
-          <ScriptsTitleOverview scriptInfo={scriptInfo} />
+          <CardCellsLayout type="left-right" cells={useScriptInfo(scriptInfo)} />
         </Card>
+
         <ScriptTab
           key={currentLanguage + countOfTransactions + countOfDeployedCells + countOfReferringCells}
           activeKey={tab ?? 'transactions'}
