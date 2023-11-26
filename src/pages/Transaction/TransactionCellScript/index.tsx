@@ -250,6 +250,11 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
     <TransactionDetailContainer ref={ref}>
       <TransactionCellDetailPanel>
         <TransactionCellDetailTab
+          tabBarExtraContent={
+            <div className="transactionDetailModalClose">
+              <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
+            </div>
+          }
           tabBarStyle={{ fontSize: '10px' }}
           onTabClick={key => {
             const state = parseInt(key, 10)
@@ -290,12 +295,7 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
             key={CellInfo.CAPACITY}
           />
         </TransactionCellDetailTab>
-        <div className="transactionDetailModalClose">
-          <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
-        </div>
       </TransactionCellDetailPanel>
-
-      <div className="transactionDetailSeparate" />
 
       <TransactionDetailPanel>
         {isFetched ? (

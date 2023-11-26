@@ -112,11 +112,7 @@ export const TransactionCellDetailPanel = styled.div`
   }
 
   .transactionDetailModalClose {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding-bottom: 17px;
+    padding: 17px 0 17px 17px;
 
     > img {
       cursor: pointer;
@@ -125,7 +121,7 @@ export const TransactionCellDetailPanel = styled.div`
     }
 
     @media (max-width: 750px) {
-      padding-bottom: 15px;
+      padding: 15px 0 15px 15px;
 
       > img {
         width: 12px;
