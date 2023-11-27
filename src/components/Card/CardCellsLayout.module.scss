@@ -33,6 +33,12 @@
     gap: 20px;
   }
 
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
   .expand {
     display: flex;
     align-items: center;
@@ -68,6 +74,10 @@
     }
 
     .right {
+      gap: 0;
+    }
+
+    .list {
       gap: 0;
     }
 

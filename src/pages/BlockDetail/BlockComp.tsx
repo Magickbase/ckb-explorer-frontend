@@ -101,7 +101,7 @@ export const BlockOverviewCard: FC<{ blockHeightOrHash: string; block: Block }> 
     content: <AddressText>{block.transactionsRoot}</AddressText>,
   }
   const sentBlockNumber = `${Number(block.number) + DELAY_BLOCK_NUMBER}`
-  const overviewItems: CardCellInfo[] = [
+  const overviewItems: CardCellInfo<'left' | 'right'>[] = [
     {
       title: t('block.block_height'),
       tooltip: t('glossary.block_height'),

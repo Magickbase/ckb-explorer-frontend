@@ -81,7 +81,7 @@ export const SimpleUDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt
   } = udt
   const [showType, setShowType] = useState(false)
 
-  const items: CardCellInfo[] = [
+  const items: CardCellInfo<'left' | 'right'>[] = [
     {
       title: t('udt.name'),
       content: displayName || fullName,

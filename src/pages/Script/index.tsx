@@ -44,7 +44,7 @@ const useScriptInfo = (scriptInfo: ScriptInfo) => {
   const { t } = useTranslation()
   const { scriptName, scriptType, id, codeHash, hashType, capacityOfDeployedCells, capacityOfReferringCells } =
     scriptInfo
-  const items: CardCellInfo[] = [
+  const items: CardCellInfo<'left' | 'right'>[] = [
     {
       title: t('scripts.script_name'),
       tooltip: t('glossary.script_name'),

@@ -159,7 +159,7 @@ const AddressLockScript: FC<{ address: Address }> = ({ address }) => {
   const { t } = useTranslation()
 
   const { liveCellsCount, minedBlocksCount, type, addressHash, lockInfo } = address
-  const overviewItems: CardCellInfo[] = [
+  const overviewItems: CardCellInfo<'left' | 'right'>[] = [
     {
       title: t('address.live_cells'),
       tooltip: t('glossary.live_cells'),
@@ -228,7 +228,7 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
     ).then(resList => resList.flatMap(res => res.data)),
   )
 
-  const overviewItems: CardCellInfo[] = [
+  const overviewItems: CardCellInfo<'left' | 'right'>[] = [
     {
       slot: 'left',
       cell: {

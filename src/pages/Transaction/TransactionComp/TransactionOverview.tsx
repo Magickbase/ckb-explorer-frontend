@@ -239,7 +239,7 @@ export const TransactionOverviewCard: FC<{
     title: t('transaction.cycles'),
     content: liteTxCyclesDataContent,
   }
-  const overviewItems: CardCellInfo[] = []
+  const overviewItems: CardCellInfo<'left' | 'right'>[] = []
   if (txStatus === 'committed') {
     overviewItems.push(blockHeightData, timestampData)
     if (confirmation >= 0) {
