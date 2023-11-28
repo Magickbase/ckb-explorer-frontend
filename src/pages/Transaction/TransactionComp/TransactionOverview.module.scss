@@ -1,4 +1,6 @@
-.transactionOverviewCard {
+.transactionOverviewCard:not(
+    [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.']
+  ) {
   padding-bottom: 40px;
 
   .exportTxAction {
@@ -6,14 +8,6 @@
     align-items: center;
     width: 100%;
     height: 100%;
-  }
-
-  .firstCardCell:not(
-      [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.']
-    ) {
-    @media (width <= 750px) {
-      border-top: 0;
-    }
   }
 
   @media (width <= 750px) {

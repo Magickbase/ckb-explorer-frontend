@@ -25,6 +25,7 @@ function renderCell(info: CardCellInfo$WithoutSlot) {
 
 interface CardCellsLayoutProps$Common {
   defaultDisplayCountInMobile?: number
+  borderTop?: boolean
 }
 
 interface CardCellsLayoutProps$LeftRight extends CardCellsLayoutProps$Common {
@@ -113,6 +114,7 @@ export const CardCellsLayout: FC<CardCellsLayoutProps> = ({
   type,
   cells,
   defaultDisplayCountInMobile = 10,
+  borderTop,
   ...elProps
 }) => {
   const isMobile = useIsMobile()
@@ -121,7 +123,16 @@ export const CardCellsLayout: FC<CardCellsLayoutProps> = ({
   const displayCount = isMobile && !isExpanded ? defaultDisplayCountInMobile : Infinity
 
   return (
-    <div {...elProps} className={classNames(styles.cardCellsLayout, elProps.className)}>
+    <div
+      {...elProps}
+      className={classNames(
+        styles.cardCellsLayout,
+        {
+          [styles.borderTop]: borderTop,
+        },
+        elProps.className,
+      )}
+    >
       {(type === 'left-right' || type === 'leftSingle-right') && (
         <CardCellsLayout$LeftRightOrLeftSingleRight type={type} cells={cells} displayCount={displayCount} />
       )}

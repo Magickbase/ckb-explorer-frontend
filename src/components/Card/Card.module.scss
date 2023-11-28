@@ -1,5 +1,3 @@
-@value cardCellsLayout from "./CardCellsLayout.module.scss";
-
 .card {
   width: 100%;
   height: auto;
@@ -7,21 +5,15 @@
   flex-direction: column;
   justify-content: flex-start;
   padding: 0 40px;
-  border-radius: 4px;
   background: #fff;
   box-shadow: 0 4px 4px 0 rgb(16 16 16 / 5%);
 
-  * + .cardCellsLayout {
-    border-top: 1px solid #e5e5e5;
+  &.rounded {
+    border-radius: 4px;
   }
 
   @media (width <= 750px) {
     padding: 0 16px;
     box-shadow: 1px 1px 3px 0 #dfdfdf;
-
-    .cardCellsLayout {
-      border-top: 0;
-      padding: 0;
-    }
   }
 }

@@ -5,6 +5,10 @@
   justify-content: space-between;
   padding: 20px 0;
 
+  &.borderTop {
+    border-top: 1px solid #e5e5e5;
+  }
+
   .left,
   .leftSingle {
     display: flex;
@@ -68,6 +72,11 @@
 
   @media (width <= 750px) {
     gap: 0;
+    padding: 0;
+
+    &.borderTop {
+      border-top: 0;
+    }
 
     .left {
       gap: 0;
@@ -83,6 +92,17 @@
 
     .cardCell {
       border-top: 1px solid #e5e5e5;
+    }
+
+    &:not(.borderTop) {
+      .left,
+      .list {
+        .cardCell {
+          &:first-child {
+            border-top: 0;
+          }
+        }
+      }
     }
   }
 }

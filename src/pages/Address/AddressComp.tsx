@@ -198,7 +198,7 @@ const AddressLockScript: FC<{ address: Address }> = ({ address }) => {
 
   return (
     <AddressLockScriptPanel className={styles.addressLockScriptPanel}>
-      <CardCellsLayout className={styles.lockScriptCardCells} type="left-right" cells={overviewItems} />
+      <CardCellsLayout type="left-right" cells={overviewItems} borderTop />
       <AddressLockScriptController onClick={() => setShowLock(!showLock)}>
         <div>{t('address.lock_script')}</div>
         <img alt="lock script" src={lockScriptIcon(showLock)} />
@@ -258,7 +258,7 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
     <Card className={styles.addressOverviewCard}>
       <div className={styles.cardTitle}>{t('address.overview')}</div>
 
-      <CardCellsLayout type="leftSingle-right" cells={overviewItems} />
+      <CardCellsLayout type="leftSingle-right" cells={overviewItems} borderTop />
 
       {udtAccounts.length || cotaList?.length ? (
         <AddressUDTAssetsPanel className={styles.addressUDTAssetsPanel}>

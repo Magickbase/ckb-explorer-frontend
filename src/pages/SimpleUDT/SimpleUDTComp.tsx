@@ -134,7 +134,7 @@ export const SimpleUDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt
         rightContent={!isMobile && modifyTokenInfo}
       />
 
-      <CardCellsLayout type="left-right" cells={items} />
+      <CardCellsLayout type="left-right" cells={items} borderTop />
 
       <TypeScriptController onClick={() => setShowType(!showType)}>
         <div>{t('udt.type_script')}</div>

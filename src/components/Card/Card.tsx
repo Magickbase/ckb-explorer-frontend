@@ -2,10 +2,22 @@ import { ComponentProps, FC } from 'react'
 import classNames from 'classnames'
 import styles from './Card.module.scss'
 
-// TODO: childrenGap / splitType
-export const Card: FC<ComponentProps<'div'>> = ({ children, ...elProps }) => {
+export interface CardProps extends ComponentProps<'div'> {
+  rounded?: boolean
+}
+
+export const Card: FC<CardProps> = ({ children, rounded = true, ...elProps }) => {
   return (
-    <div {...elProps} className={classNames(styles.card, elProps.className)}>
+    <div
+      {...elProps}
+      className={classNames(
+        styles.card,
+        {
+          [styles.rounded]: rounded,
+        },
+        elProps.className,
+      )}
+    >
       {children}
     </div>
   )

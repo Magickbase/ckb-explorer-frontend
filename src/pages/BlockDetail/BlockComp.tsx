@@ -267,7 +267,7 @@ export const BlockOverviewCard: FC<{ blockHeightOrHash: string; block: Block }> 
   return (
     <Card>
       <HashCardHeader title={t('block.block')} hash={blockHeightOrHash} />
-      <CardCellsLayout type="left-right" cells={overviewItems} />
+      <CardCellsLayout type="left-right" cells={overviewItems} borderTop />
       {!isMobile && <CardCell {...rootInfoItem} className={styles.cellTransactionsRoot} />}
     </Card>
   )

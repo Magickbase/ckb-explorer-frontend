@@ -433,7 +433,7 @@ export const TransactionOverviewCard: FC<{
 
       {(txStatus !== 'committed' || blockTimestamp > 0) && (
         <TransactionOverviewPanel>
-          <CardCellsLayout type="left-right" cells={overviewItems} />
+          <CardCellsLayout type="left-right" cells={overviewItems} borderTop={!isMobile} />
           {isProfessional && (
             <div className="transactionOverviewInfo">
               <SimpleButton className="transactionOverviewParameters" onClick={() => setShowParams(!showParams)}>
