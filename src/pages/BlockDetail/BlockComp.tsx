@@ -18,7 +18,6 @@ import { ReactComponent as LeftArrow } from './prev_block.svg'
 import DecimalCapacity from '../../components/DecimalCapacity'
 import { DELAY_BLOCK_NUMBER } from '../../constants/common'
 import { Card, CardCell, CardCellInfo, CardCellsLayout, HashCardHeader } from '../../components/Card'
-import TitleCard from '../../components/Card/TitleCard'
 import styles from './styles.module.scss'
 import AddressText from '../../components/AddressText'
 import ComparedToMaxTooltip from '../../components/Tooltip/ComparedToMaxTooltip'
@@ -26,6 +25,7 @@ import Filter from '../../components/Search/Filter'
 import { useLatestBlockNumber } from '../../services/ExplorerService'
 import { Block } from '../../models/Block'
 import { Transaction } from '../../models/Transaction'
+import { CardHeader } from '../../components/Card/CardHeader'
 
 const CELL_BASE_ANCHOR = 'cellbase'
 
@@ -296,25 +296,27 @@ export const BlockComp = ({
 
   return (
     <>
-      <TitleCard
-        title={`${t('transaction.transactions')} (${localeNumberString(total)})`}
-        className={styles.transactionTitleCard}
-        isSingle
-        rearClassName={styles.rear}
-        rear={
-          <Filter
-            showReset={!!filter}
-            defaultValue={filter ?? ''}
-            placeholder={t('block.address_or_hash')}
-            onFilter={filter => {
-              push(`/block/${blockId}?${new URLSearchParams({ filter })}`)
-            }}
-            onReset={() => {
-              push(`/block/${blockId}`)
-            }}
-          />
-        }
-      />
+      <Card className={styles.transactionListOptionsCard} rounded="top">
+        <CardHeader
+          className={styles.cardHeader}
+          leftContent={`${t('transaction.transactions')} (${localeNumberString(total)})`}
+          rightProps={{ className: styles.rear }}
+          rightContent={
+            <Filter
+              showReset={!!filter}
+              defaultValue={filter ?? ''}
+              placeholder={t('block.address_or_hash')}
+              onFilter={filter => {
+                push(`/block/${blockId}?${new URLSearchParams({ filter })}`)
+              }}
+              onReset={() => {
+                push(`/block/${blockId}`)
+              }}
+            />
+          }
+        />
+      </Card>
+
       {transactions.map(
         (transaction, index) =>
           transaction && (

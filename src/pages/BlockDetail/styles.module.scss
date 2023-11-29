@@ -69,30 +69,23 @@
   }
 }
 
-.transactionTitleCard {
+.transactionListOptionsCard {
   margin-top: 24px;
 
-  @media (width <= 750px) {
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    height: 110px;
-    margin-top: 20px;
+  .cardHeader {
+    padding: 8px 0;
 
-    .rear {
-      > div:first-child {
-        padding: 0;
-        justify-content: space-between;
+    @media (width <= 750px) {
+      padding: 16px 0;
+
+      img {
+        height: 12px;
+        width: 12px;
       }
-    }
 
-    img {
-      height: 12px;
-      width: 12px;
-    }
-
-    input {
-      padding-left: 38px;
+      input {
+        padding-left: 38px;
+      }
     }
   }
 }

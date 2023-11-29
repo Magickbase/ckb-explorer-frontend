@@ -18,7 +18,6 @@ import {
   AddressUDTItemPanel,
 } from './styled'
 import DecimalCapacity from '../../components/DecimalCapacity'
-import TitleCard from '../../components/Card/TitleCard'
 import CKBTokenIcon from './ckb_token_icon.png'
 import SUDTTokenIcon from '../../assets/sudt_token.png'
 import { ReactComponent as TimeDownIcon } from './time_down.svg'
@@ -49,6 +48,7 @@ import PaginationWithRear from '../../components/PaginationWithRear'
 import { Transaction } from '../../models/Transaction'
 import { Address, SUDT, UDTAccount } from '../../models/Address'
 import { Card, CardCellInfo, CardCellsLayout } from '../../components/Card'
+import { CardHeader } from '../../components/Card/CardHeader'
 
 const UDT_LABEL: Record<UDTAccount['udtType'], string> = {
   sudt: 'sudt',
@@ -346,35 +346,36 @@ export const AddressTransactions = ({
       }))
     : transactions
 
+  const searchOptionsAndModeSwitch = (
+    <div className={styles.searchOptionsAndModeSwitch}>
+      <div className={styles.sortAndFilter} data-is-active={timeOrderBy === 'asc'}>
+        {timeOrderBy === 'asc' ? <TimeDownIcon onClick={handleTimeSort} /> : <TimeUpIcon onClick={handleTimeSort} />}
+      </div>
+      <Radio.Group
+        className={styles.layoutButtons}
+        options={[
+          { label: t('transaction.professional'), value: Professional },
+          { label: t('transaction.lite'), value: Lite },
+        ]}
+        onChange={({ target: { value } }) => onChangeLayout(value)}
+        value={layout}
+        optionType="button"
+        buttonStyle="solid"
+      />
+    </div>
+  )
+
   return (
     <>
-      <TitleCard
-        title={`${t('transaction.transactions')} (${localeNumberString(total)})`}
-        className={styles.transactionTitleCard}
-        isSingle
-        rear={
-          <>
-            <div className={styles.sortAndFilter} data-is-active={timeOrderBy === 'asc'}>
-              {timeOrderBy === 'asc' ? (
-                <TimeDownIcon onClick={handleTimeSort} />
-              ) : (
-                <TimeUpIcon onClick={handleTimeSort} />
-              )}
-            </div>
-            <Radio.Group
-              className={styles.layoutButtons}
-              options={[
-                { label: t('transaction.professional'), value: Professional },
-                { label: t('transaction.lite'), value: Lite },
-              ]}
-              onChange={({ target: { value } }) => onChangeLayout(value)}
-              value={layout}
-              optionType="button"
-              buttonStyle="solid"
-            />
-          </>
-        }
-      />
+      <Card className={styles.transactionListOptionsCard} rounded="top">
+        <CardHeader
+          className={styles.cardHeader}
+          leftContent={`${t('transaction.transactions')} (${localeNumberString(total)})`}
+          rightContent={!isMobile && searchOptionsAndModeSwitch}
+        />
+        {isMobile && searchOptionsAndModeSwitch}
+      </Card>
+
       <AddressTransactionsPanel>
         {layout === 'lite' ? (
           <>

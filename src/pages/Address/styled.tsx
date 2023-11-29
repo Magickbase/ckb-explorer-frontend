@@ -72,6 +72,7 @@ export const AddressLockScriptController = styled(SimpleButton)`
 
 export const AddressTransactionsPanel = styled.div`
   width: 100%;
+  margin-top: 4px;
 
   @media (max-width: 750px) {
     ${TransactionPanel}:first-child {

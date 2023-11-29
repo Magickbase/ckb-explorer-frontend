@@ -12,6 +12,14 @@
     border-radius: 4px;
   }
 
+  &.roundedTop {
+    border-radius: 4px 4px 0 0;
+  }
+
+  &.roundedBottom {
+    border-radius: 0 0 4px 4px;
+  }
+
   @media (width <= 750px) {
     padding: 0 16px;
     box-shadow: 1px 1px 3px 0 #dfdfdf;

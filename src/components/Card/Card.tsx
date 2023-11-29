@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import styles from './Card.module.scss'
 
 export interface CardProps extends ComponentProps<'div'> {
-  rounded?: boolean
+  rounded?: boolean | 'top' | 'bottom'
 }
 
 export const Card: FC<CardProps> = ({ children, rounded = true, ...elProps }) => {
@@ -13,7 +13,9 @@ export const Card: FC<CardProps> = ({ children, rounded = true, ...elProps }) =>
       className={classNames(
         styles.card,
         {
-          [styles.rounded]: rounded,
+          [styles.rounded]: rounded === true,
+          [styles.roundedTop]: rounded === 'top',
+          [styles.roundedBottom]: rounded === 'bottom',
         },
         elProps.className,
       )}
