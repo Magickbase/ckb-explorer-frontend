@@ -83,6 +83,21 @@ export const TransactionCellDetailTab = styled(Tabs)`
   width: 100%;
   background-color: #fff;
   border-radius: 6px 6px 0 0;
+
+  /* stylelint-disable-next-line selector-class-pattern */
+  .ant-tabs-tab.ant-tabs-tab-active {
+    /* stylelint-disable-next-line selector-class-pattern */
+    .ant-tabs-tab-btn {
+      color: var(--primary-color);
+    }
+  }
+
+  /* stylelint-disable-next-line selector-class-pattern */
+  .ant-tabs-nav .ant-tabs-ink-bar {
+    background: linear-gradient(to right, var(--primary-color) 100%, transparent 100%);
+    height: 3px;
+    bottom: 3px;
+  }
 `
 
 export const TransactionCellDetailTitle = styled.span`
