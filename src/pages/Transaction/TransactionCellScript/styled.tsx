@@ -85,6 +85,11 @@ export const TransactionCellDetailTab = styled(Tabs)`
   border-radius: 6px 6px 0 0;
 
   /* stylelint-disable-next-line selector-class-pattern */
+  .ant-tabs-nav-operations {
+    display: none !important;
+  }
+
+  /* stylelint-disable-next-line selector-class-pattern */
   .ant-tabs-tab.ant-tabs-tab-active {
     /* stylelint-disable-next-line selector-class-pattern */
     .ant-tabs-tab-btn {
