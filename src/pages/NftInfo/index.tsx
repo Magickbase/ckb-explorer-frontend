@@ -12,7 +12,7 @@ import { getPrimaryColor } from '../../constants/common'
 import styles from './styles.module.scss'
 import { patchMibaoImg, handleNftImgError } from '../../utils/util'
 import { parseSporeCellData } from '../../utils/spore'
-import { useSearchParams } from '../../utils/hook'
+import { useSearchParams } from '../../hooks'
 
 const primaryColor = getPrimaryColor()
 

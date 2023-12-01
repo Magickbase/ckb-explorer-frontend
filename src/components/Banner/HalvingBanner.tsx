@@ -8,7 +8,7 @@ import { ReactComponent as MoveIcon } from './move.svg'
 import LoadingWhiteImage from '../../assets/loading_white.gif'
 import halvingSuccessAni from './halving_success_ani.gif'
 import SimpleButton from '../SimpleButton'
-import { useCountdown, useHalving, useIsMobile } from '../../utils/hook'
+import { useCountdown, useHalving, useIsMobile } from '../../hooks'
 
 function numberToOrdinal(number: number) {
   switch (number) {

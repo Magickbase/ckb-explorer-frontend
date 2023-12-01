@@ -13,7 +13,7 @@ import { getPrimaryColor } from '../../constants/common'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import { explorerService } from '../../services/ExplorerService'
 import { dayjs } from '../../utils/date'
-import { useParsedDate, useTimestamp } from '../../utils/hook'
+import { useParsedDate, useTimestamp } from '../../hooks'
 import { useCurrentLanguage } from '../../utils/i18n'
 
 const primaryColor = getPrimaryColor()

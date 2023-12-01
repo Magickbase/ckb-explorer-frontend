@@ -3,7 +3,7 @@ import { DefinedUseQueryResult } from '@tanstack/react-query'
 import { LOADING_WAITING_TIME } from '../../constants/common'
 import Error from '../Error'
 import Loading from '../Loading'
-import { useDelayLoading } from '../../utils/hook'
+import { useDelayLoading } from '../../hooks'
 
 export function QueryResult<TData, TError>({
   query,
