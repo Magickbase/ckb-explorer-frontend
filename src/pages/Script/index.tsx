@@ -146,13 +146,9 @@ export const ScriptPage = () => {
 
         <ScriptTab
           key={currentLanguage + countOfTransactions + countOfDeployedCells + countOfReferringCells}
+          className={styles.scriptTabs}
           activeKey={tab ?? 'transactions'}
           animated={{ inkBar: false }}
-          tabBarStyle={{
-            marginLeft: 40,
-            marginBottom: 0,
-            height: 56,
-          }}
           onTabClick={key => {
             const currentTab = tab ?? 'transactions'
             if (currentTab === key) return
@@ -175,6 +171,13 @@ export const ScriptPage = () => {
             } else if (key === 'transactions') {
               history.push(`/script/${codeHash}/${hashType}?page=${pageOfTransactions}&size=${pageSize}`)
             }
+          }}
+          renderTabBar={(props, DefaultTabBar) => {
+            return (
+              <Card rounded="top" className={styles.cardHeader}>
+                <DefaultTabBar {...props} className={styles.tablist} />
+              </Card>
+            )
           }}
         >
           <ScriptTabPane
