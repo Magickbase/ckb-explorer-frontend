@@ -135,7 +135,6 @@ export const ScriptCells = ({
     try {
       const { data } = await explorerService.api.fetchScriptCells(cellType, codeHash, hashType, page, size)
       const cells = data[camelCellType]
-      console.log(cells)
       if (cells == null || cells.length === 0) {
         setCellsEmpty(prev => ({ ...prev, [camelCellType]: true }))
       }
