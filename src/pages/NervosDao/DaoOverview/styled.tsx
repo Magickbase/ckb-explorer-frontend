@@ -119,8 +119,10 @@ export const DaoOverviewPieChartPanel = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
 
   @media (max-width: 1200px) {
+    align-items: flex-start;
     padding-right: 10px;
   }
 `
