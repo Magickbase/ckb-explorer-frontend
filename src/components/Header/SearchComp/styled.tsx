@@ -4,12 +4,11 @@ import variables from '../../../styles/variables.module.scss'
 export const HeaderSearchPanel = styled.div`
   display: flex;
   align-items: center;
-  margin: 0 40px;
+  margin-right: 20px;
   height: 38px;
   width: 440px;
 
   @media (max-width: 1200px) {
-    padding: 40px 15px;
     height: 38px;
     width: 100%;
   }
@@ -27,7 +26,6 @@ export const HeaderSearchPanel = styled.div`
 export const HeaderSearchBarPanel = styled.div`
   display: flex;
   align-items: center;
-  margin: 0 20px;
 
   > img {
     width: 18px;

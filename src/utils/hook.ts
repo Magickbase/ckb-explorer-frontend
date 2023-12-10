@@ -367,7 +367,7 @@ export function useMediaQuery(query: string): boolean {
 }
 
 export const MOBILE_DEVICE_MAX_WIDTH = 750
-export const useIsMobile = (max?: number) => useMediaQuery(`(max-width: ${max ?? MOBILE_DEVICE_MAX_WIDTH}px)`)
+export const useIsMobile = () => useMediaQuery(`(max-width: ${MOBILE_DEVICE_MAX_WIDTH}px)`)
 export const useIsLGScreen = (exact = false) => {
   const isMobile = useIsMobile()
   const isLG = useMediaQuery(`(max-width: 1200px)`)

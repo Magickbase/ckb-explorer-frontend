@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import variables from '../../../styles/variables.module.scss'
 
 export const MobileMenuItem = styled.div`
   display: flex;
@@ -30,28 +29,16 @@ export const HeaderMenuPanel = styled.div`
     color: white;
     display: flex;
     align-items: center;
-    padding-left: 60px;
+    margin-right: 56px;
     font-size: 14px;
     font-weight: regular;
 
-    @media (max-width: 1920px) {
-      padding-left: 40px;
+    @media (max-width: 1505px) and (min-width: 1025px) {
+      margin-right: calc(56px - (1505px - 100vw) / 8);
     }
 
-    @media (max-width: 960px) {
-      padding-left: 16px;
-    }
-
-    @media (max-width: 900px) {
-      padding-left: 10px;
-    }
-
-    @media (max-width: 840px) {
-      padding-left: 4px;
-    }
-
-    @media (max-width: ${variables.mobileBreakPoint}) {
-      padding-left: 0;
+    @media (max-width: 1024px) {
+      margin-right: 8px;
     }
 
     &:hover {

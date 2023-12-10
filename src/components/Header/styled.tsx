@@ -2,7 +2,6 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import SimpleButton from '../SimpleButton'
-import variables from '../../styles/variables.module.scss'
 
 export const HeaderPanel = styled.div`
   width: 100%;
@@ -14,11 +13,15 @@ export const HeaderPanel = styled.div`
   flex-wrap: wrap;
   padding: 0 120px;
 
-  @media (max-width: ${variables.extraLargeBreakPoint}) {
+  @media (max-width: 1440px) {
+    padding: 0 100px;
+  }
+
+  @media (max-width: 1200px) {
     padding: 0 45px;
   }
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: 780px) {
     padding: 0 18px;
   }
 `
@@ -27,6 +30,15 @@ export const HeaderLogoPanel = styled(Link)`
   display: flex;
   align-items: center;
   margin-top: 2px;
+  margin-right: 56px;
+
+  @media (max-width: 1505px) and (min-width: 1025px) {
+    margin-right: calc(56px - (1505px - 100vw) / 8);
+  }
+
+  @media (max-width: 1024px) {
+    margin-right: 8px;
+  }
 
   > img {
     width: 114px;

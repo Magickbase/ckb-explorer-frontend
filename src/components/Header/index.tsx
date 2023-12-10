@@ -8,7 +8,7 @@ import MenusComp from './MenusComp'
 import { SearchComp } from './SearchComp'
 import { LanguageDropdown } from './LanguageComp'
 import BlockchainComp from './BlockchainComp'
-import { useIsMobile } from '../../utils/hook'
+import { useMediaQuery } from '../../utils/hook'
 import styles from './index.module.scss'
 import MaintainAlert from './MaintainAlert'
 import Sheet from './Sheet'
@@ -74,7 +74,7 @@ const useRouterLocation = (callback: () => void) => {
 }
 
 export default () => {
-  const isMobile = useIsMobile(1285)
+  const isMobile = useMediaQuery(`(max-width: 1023px)`)
   const { pathname } = useLocation()
   // TODO: This hard-coded implementation is not ideal, but currently the header is loaded before the page component,
   // so we can only handle it this way temporarily, otherwise there will be flickering during loading.
