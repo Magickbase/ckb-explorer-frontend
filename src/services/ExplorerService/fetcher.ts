@@ -160,7 +160,7 @@ export const apiFetcher = {
       | Response.Wrapper<Address, SearchResultType.Address>
       | Response.Wrapper<Address, SearchResultType.LockHash>
       | Response.Wrapper<unknown, SearchResultType.UDT>
-      | { args: string }
+      | SearchTypeIdResult
     >('suggest_queries', {
       params: {
         q: param,
