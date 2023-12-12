@@ -67,7 +67,8 @@ const TransactionItem = ({
           >
             {transaction.transactionHash}
           </AddressText>
-          {!isBlock && (
+          {/* transactio.blockNumber is empty string when the transaction is pending or rejected */}
+          {!isBlock && transaction.blockNumber !== '' && (
             <div className="transactionItemBlock">
               {`(${t('block.block')} ${localeNumberString(transaction.blockNumber)})  ${parsedBlockCreateAt}`}
             </div>

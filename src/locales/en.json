@@ -375,6 +375,7 @@
     "transaction": {
       "transaction": "Transaction",
       "transactions": "Transactions",
+      "pending_transactions": "Pending Transactions",
       "transaction_fee": "Transaction Fee",
       "fee_rate": "Fee Rate",
       "cell_deps": "CellDeps",

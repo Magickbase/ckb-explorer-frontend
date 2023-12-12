@@ -10,8 +10,8 @@ export interface CellDep {
 
 export interface Transaction {
   transactionHash: string
-  blockNumber: number
-  blockTimestamp: number
+  blockNumber: number | string
+  blockTimestamp: number | string
   transactionFee: string
   income: string
   isCellbase: boolean

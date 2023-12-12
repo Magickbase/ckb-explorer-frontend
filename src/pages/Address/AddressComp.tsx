@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { useState, useEffect, FC } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Radio } from 'antd'
 import { Base64 } from 'js-base64'
@@ -297,13 +298,13 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
 export const AddressTransactions = ({
   address,
   transactions,
-  transactionsTotal: total,
   timeOrderBy,
+  meta: { counts },
 }: {
   address: string
   transactions: Transaction[]
-  transactionsTotal: number
   timeOrderBy: OrderByType
+  meta: { counts: Record<'committed' | 'pending', number | '-'> }
 }) => {
   const isMobile = useIsMobile()
   const { t } = useTranslation()
@@ -313,7 +314,11 @@ export const AddressTransactions = ({
   const defaultLayout = Professional
   const updateSearchParams = useUpdateSearchParams<'layout' | 'sort' | 'tx_type'>()
   const layout = searchParams.layout === Lite ? Lite : defaultLayout
-  const totalPages = Math.ceil(total / pageSize)
+
+  const { tx_status: txStatus } = useSearchParams('tx_status')
+  const isPendingListActive = txStatus === 'pending'
+  const total = isPendingListActive ? counts.pending : counts.committed
+  const totalPages = total === '-' ? 0 : Math.ceil(total / pageSize)
 
   const onChangeLayout = (layoutType: LayoutLiteProfessional) => {
     updateSearchParams(params =>
@@ -370,7 +375,16 @@ export const AddressTransactions = ({
       <Card className={styles.transactionListOptionsCard} rounded="top">
         <CardHeader
           className={styles.cardHeader}
-          leftContent={`${t('transaction.transactions')} (${localeNumberString(total)})`}
+          leftContent={
+            <div className={styles.txHeaderLabels}>
+              <Link to={`/address/${address}`} data-is-active={!isPendingListActive}>{`${t(
+                'transaction.transactions',
+              )} (${counts.committed === '-' ? counts.committed : localeNumberString(counts.committed)})`}</Link>
+              <Link to={`/address/${address}?tx_status=pending`} data-is-active={isPendingListActive}>{`${t(
+                'transaction.pending_transactions',
+              )} (${counts.pending === '-' ? counts.pending : localeNumberString(counts.pending)})`}</Link>
+            </div>
+          }
           rightContent={!isMobile && searchOptionsAndModeSwitch}
         />
         {isMobile && searchOptionsAndModeSwitch}

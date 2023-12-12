@@ -144,13 +144,13 @@ export const TransactionOverviewCard: FC<{
   const isProfessional = layout === LayoutLiteProfessional.Professional
 
   if (tipBlockNumber && blockNumber) {
-    confirmation = tipBlockNumber - blockNumber
+    confirmation = Number(tipBlockNumber) - Number(blockNumber)
   }
 
   const blockHeightData: CardCellInfo = {
     title: t('block.block_height'),
     tooltip: t('glossary.block_height'),
-    content: <TransactionBlockHeight blockNumber={blockNumber} txStatus={txStatus} />,
+    content: <TransactionBlockHeight blockNumber={Number(blockNumber)} txStatus={txStatus} />,
     className: styles.firstCardCell,
   }
   const timestampData: CardCellInfo = {

@@ -298,6 +298,7 @@
     "home": {
       "height": "高度",
       "transactions": "交易",
+      "pending_transactions": "待处理交易",
       "block_reward": "奖励 (CKB)",
       "time": "时间戳",
       "more": "更多",
