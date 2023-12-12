@@ -49,6 +49,10 @@ export enum SearchResultType {
   UDT = 'udt',
 }
 
+export type SearchTypeIdResult = {
+  args: string
+}
+
 export const apiFetcher = {
   fetchBlocks: (page: number, size: number, sort?: string) =>
     v1Get<Response.Wrapper<Block>[]>('blocks', {
@@ -156,6 +160,7 @@ export const apiFetcher = {
       | Response.Wrapper<Address, SearchResultType.Address>
       | Response.Wrapper<Address, SearchResultType.LockHash>
       | Response.Wrapper<unknown, SearchResultType.UDT>
+      | { args: string }
     >('suggest_queries', {
       params: {
         q: param,
