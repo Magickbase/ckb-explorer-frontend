@@ -6,14 +6,14 @@
   margin: var(--margin-top) auto var(--margin-bottom);
   flex: 1;
 
-  @media screen and (width <= 1232px) {
+  @media (width <= 1232px) {
     box-sizing: border-box;
     width: 100%;
     padding-left: 16px;
     padding-right: 16px;
   }
 
-  @media screen and (width <= 750px) {
+  @media (width <= 750px) {
     --margin-top: 84px;
     --margin-bottom: 20px;
   }
@@ -72,7 +72,7 @@
     }
   }
 
-  @media screen and (width <= 800px) {
+  @media (width <= 800px) {
     flex-direction: column;
     align-items: center;
 
@@ -87,7 +87,7 @@
     }
   }
 
-  @media screen and (width <= 472px) {
+  @media (width <= 472px) {
     .cover {
       width: 320px;
       height: 320px;

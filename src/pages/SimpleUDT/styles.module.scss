@@ -57,7 +57,7 @@
     }
   }
 
-  @media screen and (width <= 750px) {
+  @media (width <= 750px) {
     margin-left: 2px;
   }
 }
@@ -82,7 +82,7 @@
     margin-left: 8px;
   }
 
-  @media screen and (width <= 750px) {
+  @media (width <= 750px) {
     width: 100%;
   }
 }

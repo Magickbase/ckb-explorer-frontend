@@ -51,7 +51,7 @@
     max-width: 0.25vw;
 
     &:last-child {
-      @media screen and (width <= 750px) {
+      @media (width <= 750px) {
         text-align: right;
       }
     }
@@ -61,7 +61,7 @@
       padding-left: 40px;
       padding-right: 40px;
 
-      @media screen and (width <= 750px) {
+      @media (width <= 750px) {
         padding-left: 16px;
         padding-right: 16px;
       }
@@ -78,13 +78,13 @@
   font-family: inherit;
 }
 
-@media screen and (width >= 1024px) {
+@media (width >= 1024px) {
   .addr:last-child {
     display: none;
   }
 }
 
-@media screen and (width <= 1024px) {
+@media (width <= 1024px) {
   .addr:first-child {
     display: none;
   }

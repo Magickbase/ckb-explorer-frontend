@@ -73,7 +73,7 @@
 .scriptCellsPanel {
   padding: 0 40px;
 
-  @media screen and (width <= 1200px) {
+  @media (width <= 1200px) {
     padding: 0 10px;
   }
 }
@@ -111,13 +111,13 @@
     margin-right: 16px;
   }
 
-  @media screen and (width <= 1300px) {
+  @media (width <= 1300px) {
     .codeHash {
       width: 280px;
     }
   }
 
-  @media screen and (width <= 750px) {
+  @media (width <= 750px) {
     .codeHash {
       width: 270px;
     }

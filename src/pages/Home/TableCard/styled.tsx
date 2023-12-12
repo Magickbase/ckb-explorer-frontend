@@ -162,7 +162,7 @@ export const TransactionCardPanel = styled.div`
   font-weight: 500;
   max-height: 83px;
 
-  @media screen and (max-width: 790px) {
+  @media (max-width: 790px) {
     max-height: unset;
   }
 
