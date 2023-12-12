@@ -61,7 +61,7 @@ const handleSearchResult = async (
     setSearchValue('')
 
     const isNormalSearchResult = (input: unknown): input is Response.Wrapper<unknown, any> =>
-      !!(input as Response.Wrapper<unknown, any>).type && !!(input as Response.Wrapper<unknown, any>).attributes
+      !!(input as Response.Wrapper<unknown, unknown>).type && !!(input as Response.Wrapper<unknown, unknown>).attributes
     const isSearchTypeIdResult = (input: unknown): input is SearchTypeIdResult => !!(input as SearchTypeIdResult).args
 
     if (isSearchTypeIdResult(data)) {
