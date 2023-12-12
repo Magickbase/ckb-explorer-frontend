@@ -2,7 +2,7 @@ const package = require('./package.json')
 
 module.exports = {
   customSyntax: 'postcss-scss',
-  extends: ['stylelint-config-standard'],
+  extends: ['stylelint-config-standard', 'stylelint-config-css-modules'],
   rules: {
     'no-empty-source': null,
     // Based on the discussion in https://github.com/Magickbase/ckb-explorer-public-issues/issues/442, we have decided to use lower camel case.
@@ -11,20 +11,12 @@ module.exports = {
     'custom-property-pattern': null,
     // This rule provides little benefit relative to the cost of implementing it, so it has been disabled.
     'no-descending-specificity': null,
-
-    'selector-pseudo-class-no-unknown': [
-      true,
-      {
-        // to support `:global`
-        ignorePseudoClasses: ['global'],
-      },
-    ],
   },
 
   overrides: [
     {
       files: ['*.scss', '**/*.scss'],
-      extends: ['stylelint-config-standard-scss'],
+      extends: ['stylelint-config-standard-scss', 'stylelint-config-css-modules'],
       rules: {
         'scss/dollar-variable-pattern': null,
         'scss/at-rule-no-unknown': [
