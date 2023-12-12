@@ -1,3 +1,5 @@
+@import '../../../styles/variables.module';
+
 .list {
   background: #fff;
 
@@ -19,7 +21,7 @@
       text-transform: capitalize;
       white-space: nowrap;
 
-      @media (width <= 750px) {
+      @media (width <= $mobileBreakPoint) {
         &:first-child {
           padding-right: 0;
         }
@@ -51,7 +53,7 @@
     max-width: 0.25vw;
 
     &:last-child {
-      @media (width <= 750px) {
+      @media (width <= $mobileBreakPoint) {
         text-align: right;
       }
     }
@@ -61,7 +63,7 @@
       padding-left: 40px;
       padding-right: 40px;
 
-      @media (width <= 750px) {
+      @media (width <= $mobileBreakPoint) {
         padding-left: 16px;
         padding-right: 16px;
       }

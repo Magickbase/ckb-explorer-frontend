@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import variables from '../../styles/variables.module.scss'
 
 export const FooterPanel = styled.div`
   background-color: #000;
@@ -6,7 +7,7 @@ export const FooterPanel = styled.div`
   flex-direction: column;
   align-items: center;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     align-items: flex-start;
   }
 
@@ -19,7 +20,7 @@ export const FooterPanel = styled.div`
     flex-direction: row;
     justify-content: center;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       margin-left: 30px;
       flex-direction: column;
       justify-content: center;
@@ -38,7 +39,7 @@ export const FooterMenuPanel = styled.div`
   flex-direction: row;
   justify-content: center;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     flex-direction: column;
     align-items: flex-start;
     margin-left: 30px;
@@ -58,15 +59,15 @@ export const FooterMenuPanel = styled.div`
       margin-left: 178px;
     }
 
-    @media (max-width: 1440px) {
+    @media (max-width: ${variables.xxlBreakPoint}) {
       margin-left: 138px;
     }
 
-    @media (max-width: 1200px) {
+    @media (max-width: ${variables.extraLargeBreakPoint}) {
       margin-left: 78px;
     }
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       margin-left: 0;
       margin-top: 30px;
     }
@@ -81,15 +82,15 @@ export const FooterMenuPanel = styled.div`
       margin-left: 178px;
     }
 
-    @media (max-width: 1440px) {
+    @media (max-width: ${variables.xxlBreakPoint}) {
       margin-left: 138px;
     }
 
-    @media (max-width: 1200px) {
+    @media (max-width: ${variables.extraLargeBreakPoint}) {
       margin-left: 78px;
     }
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       margin-left: 0;
       margin-top: 30px;
     }
@@ -98,7 +99,7 @@ export const FooterMenuPanel = styled.div`
       display: flex;
       flex-direction: row;
 
-      @media (max-width: 750px) {
+      @media (max-width: ${variables.mobileBreakPoint}) {
         flex-wrap: wrap;
         margin-right: 100px;
       }
@@ -110,7 +111,7 @@ export const FooterMenuPanel = styled.div`
     font-weight: bold;
     color: #fff;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       font-size: 26px;
     }
   }

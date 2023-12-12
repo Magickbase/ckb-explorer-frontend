@@ -2,6 +2,7 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import SimpleButton from '../SimpleButton'
+import variables from '../../styles/variables.module.scss'
 
 export const HeaderPanel = styled.div`
   width: 100%;
@@ -13,11 +14,11 @@ export const HeaderPanel = styled.div`
   flex-wrap: wrap;
   padding: 0 120px;
 
-  @media (max-width: 1440px) {
+  @media (max-width: ${variables.xxlBreakPoint}) {
     padding: 0 100px;
   }
 
-  @media (max-width: 1200px) {
+  @media (max-width: ${variables.extraLargeBreakPoint}) {
     padding: 0 45px;
   }
 

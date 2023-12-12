@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import variables from '../../styles/variables.module.scss'
 
 export const ScriptPanel = styled.div`
   width: 100%;
@@ -7,7 +8,7 @@ export const ScriptPanel = styled.div`
   padding: 12px 24px;
   overflow: auto;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin-top: 5px;
     padding: 6px 12px;
   }
@@ -20,12 +21,12 @@ export const ScriptItemPanel = styled.div`
   margin-bottom: 10px;
   font-size: 16px;
 
-  @media (min-width: 750px) {
+  @media (min-width: ${variables.mobileBreakPoint}) {
     min-height: 20px;
     max-height: 120px;
   }
 
-  @media (max-width: 1200px) {
+  @media (max-width: ${variables.extraLargeBreakPoint}) {
     font-size: 14px;
   }
 
@@ -33,7 +34,7 @@ export const ScriptItemPanel = styled.div`
     font-size: 12px;
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     flex-direction: column;
     font-size: 14px;
   }
@@ -51,7 +52,7 @@ export const ScriptItemPanel = styled.div`
       &:first-child {
         margin-left: 10px;
 
-        @media (max-width: 750px) {
+        @media (max-width: ${variables.mobileBreakPoint}) {
           margin-left: 5px;
         }
       }
@@ -68,7 +69,7 @@ export const ScriptItemPanel = styled.div`
     word-break: break-all;
     color: #000;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       margin-left: 5px;
       transform: translateY(0);
     }
@@ -84,7 +85,7 @@ export const ScriptItemPanel = styled.div`
       margin-bottom: 0;
     }
 
-    @media (max-width: 1440px) {
+    @media (max-width: ${variables.xxlBreakPoint}) {
       flex-direction: column;
       align-items: flex-start;
 

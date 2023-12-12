@@ -1,3 +1,5 @@
+@import '../../styles/variables.module';
+
 .container {
   padding: 0 2rem;
   background: #fff;
@@ -91,7 +93,7 @@
     }
   }
 
-  @media (width <= 1200px) {
+  @media (width <= $extraLargeBreakPoint) {
     padding: 0;
 
     table {

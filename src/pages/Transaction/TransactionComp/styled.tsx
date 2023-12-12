@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import variables from '../../../styles/variables.module.scss'
 
 export const TransactionDiv = styled.div.attrs({
   className: 'container',
@@ -9,7 +10,7 @@ export const TransactionDiv = styled.div.attrs({
   margin-top: 40px;
   margin-bottom: 40px;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin: 0;
     padding: 20px;
   }
@@ -18,7 +19,7 @@ export const TransactionDiv = styled.div.attrs({
     width: 100%;
     margin-top: 24px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       margin-top: 20px;
     }
   }
@@ -27,7 +28,7 @@ export const TransactionDiv = styled.div.attrs({
     width: 100%;
     margin-top: 24px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       margin-top: 20px;
     }
   }
@@ -40,7 +41,7 @@ export const TransactionDiv = styled.div.attrs({
     margin-bottom: 10px;
     padding: 16px 36px 12px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       padding: 16px 18px;
     }
   }
@@ -67,7 +68,7 @@ export const TransactionOverviewPanel = styled.div`
         margin: 2px 0 0 5px;
       }
 
-      @media (max-width: 750px) {
+      @media (max-width: ${variables.mobileBreakPoint}) {
         font-size: 14px;
         margin-top: 8px;
 
@@ -84,7 +85,7 @@ export const TransactionOverviewPanel = styled.div`
     padding: 0 12px;
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin-top: 8px;
   }
 `
@@ -100,7 +101,7 @@ export const TransactionBlockHeightPanel = styled.div`
 export const TransactionInfoItemPanel = styled.div`
   flex: 1;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin-top: 3px;
   }
 
@@ -110,7 +111,7 @@ export const TransactionInfoItemPanel = styled.div`
     margin-top: 10px;
     font-weight: 500;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       margin-top: 5px;
     }
   }
@@ -121,7 +122,7 @@ export const TransactionInfoItemPanel = styled.div`
     font-size: 16px;
     overflow-y: scroll;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       margin-left: 0;
       margin-top: 2px;
     }
@@ -175,7 +176,7 @@ export const TransactionInfoContentItem = styled.div`
     color: #333;
     font-size: 14px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       font-size: 12px;
     }
   }
@@ -191,7 +192,7 @@ export const TransactionInfoContentItem = styled.div`
     flex-wrap: wrap;
     gap: 0 12px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       font-size: 12px;
     }
 

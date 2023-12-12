@@ -39,6 +39,8 @@ module.exports = {
       plugins: ['stylelint-no-unsupported-browser-features'],
       rules: {
         'media-feature-range-notation': null,
+        // This is to support the syntax `@media (max-width: ${variables.mobileBreakPoint})`.
+        'media-query-no-invalid': null,
         'plugin/no-unsupported-browser-features': [
           true,
           {

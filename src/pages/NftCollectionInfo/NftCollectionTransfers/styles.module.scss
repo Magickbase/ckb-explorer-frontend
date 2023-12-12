@@ -1,3 +1,5 @@
+@import '../../../styles/variables.module';
+
 .list {
   background: #fff;
 
@@ -110,7 +112,7 @@
     flex: 1;
   }
 
-  @media (width <= 1200px) {
+  @media (width <= $extraLargeBreakPoint) {
     table {
       display: none;
     }
@@ -137,7 +139,7 @@
     max-width: 120px;
   }
 
-  @media (width <= 1200px) {
+  @media (width <= $extraLargeBreakPoint) {
     max-width: 80px;
   }
 }
