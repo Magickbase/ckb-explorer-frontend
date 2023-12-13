@@ -84,7 +84,7 @@ export const Address = () => {
       addressInfoQuery.isFetched && addressInfoQuery.data
         ? Number(addressInfoQuery.data.transactionsCount) ?? '-'
         : '-',
-    pending: pendingTransactionCountQuery.isFetched ? pendingTransactionCountQuery.data ?? '-' : '-',
+    pending: pendingTransactionCountQuery.data ?? '-',
   }
 
   const newAddr = useNewAddr(address)
