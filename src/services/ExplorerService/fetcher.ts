@@ -50,10 +50,6 @@ export enum SearchResultType {
   TypeScript = 'type_script',
 }
 
-export type SearchTypeIdResult = {
-  args: string
-}
-
 export const apiFetcher = {
   fetchBlocks: (page: number, size: number, sort?: string) =>
     v1Get<Response.Wrapper<Block>[]>('blocks', {
