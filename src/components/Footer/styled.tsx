@@ -12,18 +12,16 @@ export const FooterPanel = styled.div`
   }
 
   .footerCopyright {
-    height: 15px;
-    font-size: 12px;
-    color: #acacac;
-    margin-bottom: 28px;
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: #acacac;
 
     @media (max-width: ${variables.mobileBreakPoint}) {
-      margin-left: 30px;
+      margin: 0 0 20px 20px;
       flex-direction: column;
-      justify-content: center;
     }
   }
 
@@ -34,15 +32,25 @@ export const FooterPanel = styled.div`
 
 export const FooterMenuPanel = styled.div`
   overflow: hidden;
-  margin: 38px auto 34px;
+  margin: 44px auto 52px;
   display: flex;
   flex-direction: row;
   justify-content: center;
+  gap: 280px;
+
+  @media (max-width: ${variables.xxlBreakPoint}) {
+    gap: 200px;
+  }
+
+  @media (max-width: ${variables.largeBreakPoint}) {
+    gap: 100px;
+  }
 
   @media (max-width: ${variables.mobileBreakPoint}) {
     flex-direction: column;
     align-items: flex-start;
-    margin-left: 30px;
+    gap: 50px;
+    margin: 32px 20px;
   }
 
   .footerFoundation {
@@ -53,56 +61,16 @@ export const FooterMenuPanel = styled.div`
   .footerDeveloper {
     display: flex;
     flex-direction: column;
-    margin-left: 280px;
-
-    @media (max-width: 1980px) {
-      margin-left: 178px;
-    }
-
-    @media (max-width: ${variables.xxlBreakPoint}) {
-      margin-left: 138px;
-    }
-
-    @media (max-width: ${variables.extraLargeBreakPoint}) {
-      margin-left: 78px;
-    }
-
-    @media (max-width: ${variables.mobileBreakPoint}) {
-      margin-left: 0;
-      margin-top: 30px;
-    }
   }
 
   .footerCommunity {
-    display: flex;
-    flex-direction: column;
-    margin-left: 280px;
-
-    @media (max-width: 1980px) {
-      margin-left: 178px;
-    }
-
-    @media (max-width: ${variables.xxlBreakPoint}) {
-      margin-left: 138px;
-    }
-
-    @media (max-width: ${variables.extraLargeBreakPoint}) {
-      margin-left: 78px;
-    }
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    gap: 20px 32px;
 
     @media (max-width: ${variables.mobileBreakPoint}) {
-      margin-left: 0;
-      margin-top: 30px;
-    }
-
-    > div {
-      display: flex;
-      flex-direction: row;
-
-      @media (max-width: ${variables.mobileBreakPoint}) {
-        flex-wrap: wrap;
-        margin-right: 100px;
-      }
+      grid-template-columns: repeat(4, max-content);
+      gap: 32px;
     }
   }
 
@@ -125,12 +93,11 @@ export const FooterItemPanel = styled.a`
 `
 
 export const FooterImageItemPanel = styled.a`
-  width: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 12px;
+  gap: 8px;
   color: #acacac;
 
   > svg {
@@ -139,9 +106,7 @@ export const FooterImageItemPanel = styled.a`
   }
 
   > span {
-    height: 15px;
     font-size: 12px;
-    margin-top: 5px;
   }
 
   &:hover {

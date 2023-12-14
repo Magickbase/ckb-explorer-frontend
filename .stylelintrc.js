@@ -47,6 +47,7 @@ module.exports = {
             browsers: package.browserslist,
             // TODO: Perhaps the browserslist should be adjusted to a more reasonable range, at least to a level that is compatible with CSS variables.
             ignore: [
+              'css-grid',
               'css-nesting',
               'css-sticky',
               'css-variables',
