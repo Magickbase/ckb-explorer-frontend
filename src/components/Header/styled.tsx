@@ -22,7 +22,7 @@ export const HeaderPanel = styled.div`
     padding: 0 45px;
   }
 
-  @media (max-width: 780px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     padding: 0 18px;
   }
 `
