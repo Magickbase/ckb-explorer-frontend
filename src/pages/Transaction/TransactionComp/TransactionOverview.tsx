@@ -26,7 +26,6 @@ import {
   TransactionInfoItemPanel,
   TransactionInfoContentContainer,
   TransactionInfoContentTitle,
-  TransactionInfoContentTag,
 } from './styled'
 import { explorerService, useLatestBlockNumber } from '../../../services/ExplorerService'
 import { Transaction } from '../../../models/Transaction'
@@ -92,7 +91,7 @@ const TransactionInfoItem = ({
         )}
         {valueTooltip && <HelpTip title={valueTooltip} />}
       </div>
-      {tag && <TransactionInfoContentTag>{tag}</TransactionInfoContentTag>}
+      {tag && <div>{tag}</div>}
     </TransactionInfoContentContainer>
   </TransactionInfoContentItem>
 )

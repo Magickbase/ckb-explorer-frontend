@@ -80,9 +80,9 @@ export const TransactionOverviewPanel = styled.div`
   }
 
   .transactionOverviewParams {
-    background: #f1f1f1;
+    background: #f5f5f5;
     margin-top: 8px;
-    padding: 0 12px;
+    padding: 24px 40px;
   }
 
   @media (max-width: ${variables.mobileBreakPoint}) {
@@ -116,11 +116,19 @@ export const TransactionInfoItemPanel = styled.div`
     }
   }
 
+  &:first-child {
+    .transactionInfoTitle {
+      margin-top: 0;
+    }
+  }
+
   .transactionInfoValue {
     margin-top: 5px;
+    padding: 12px;
     max-height: 250px;
     font-size: 16px;
-    overflow-y: scroll;
+    overflow-y: auto;
+    background: #eee;
 
     @media (max-width: ${variables.mobileBreakPoint}) {
       margin-left: 0;
@@ -140,24 +148,14 @@ export const TransactionInfoContentTitle = styled.div`
 
 export const TransactionInfoContentContainer = styled.div`
   display: flex;
-
-  @media (max-width: 1150px) {
-    display: block;
-  }
-`
-
-export const TransactionInfoContentTag = styled.div`
-  margin-left: 10px;
-  margin-top: 3px;
-
-  @media (max-width: 1150px) {
-    margin-left: 0;
-  }
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 16px;
 `
 
 export const TransactionInfoContentItem = styled.div`
   display: flex;
-  margin: 5px 0;
+  margin: 12px 0;
 
   a {
     color: ${props => props.theme.primary};
