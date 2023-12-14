@@ -82,10 +82,10 @@ export const Address = () => {
   const transactionCounts: Record<'committed' | 'pending', number | '-'> = {
     committed:
       addressInfoQuery.isFetched && addressInfoQuery.data
-        ? // FIXME: this type convertion could be removed once the type declaration of Transaction is fixed
+        ? // FIXME: this type conversion could be removed once the type declaration of Transaction is fixed
           Number(addressInfoQuery.data.transactionsCount) ?? '-'
         : '-',
-    pending: pendingTransactionCountQuery.isFetched ? pendingTransactionCountQuery.data ?? '-' : '-',
+    pending: pendingTransactionCountQuery.data ?? '-',
   }
 
   const newAddr = useNewAddr(address)

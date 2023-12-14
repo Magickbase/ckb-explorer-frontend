@@ -144,12 +144,14 @@ export const TransactionOverviewCard: FC<{
   const isProfessional = layout === LayoutLiteProfessional.Professional
 
   if (tipBlockNumber && blockNumber) {
+    // FIXME: the type conversion should be removed once the type declaration is fixed to number
     confirmation = Number(tipBlockNumber) - Number(blockNumber)
   }
 
   const blockHeightData: CardCellInfo = {
     title: t('block.block_height'),
     tooltip: t('glossary.block_height'),
+    // FIXME: the type conversion should be removed once the type declaration is fixed to number
     content: <TransactionBlockHeight blockNumber={Number(blockNumber)} txStatus={txStatus} />,
     className: styles.firstCardCell,
   }
