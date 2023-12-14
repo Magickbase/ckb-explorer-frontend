@@ -130,16 +130,5 @@
 .tokenId {
   overflow: hidden;
   text-overflow: ellipsis;
-
-  @media (width <= 1800px) {
-    max-width: 200px;
-  }
-
-  @media (width <= 1400px) {
-    max-width: 120px;
-  }
-
-  @media (width <= $extraLargeBreakPoint) {
-    max-width: 80px;
-  }
+  max-width: 80px;
 }

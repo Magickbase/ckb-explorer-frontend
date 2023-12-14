@@ -77,17 +77,5 @@
 
 .addr {
   font-weight: 700;
-  font-family: inherit;
-}
-
-@media (width >= 1024px) {
-  .addr:last-child {
-    display: none;
-  }
-}
-
-@media (width <= 1024px) {
-  .addr:first-child {
-    display: none;
-  }
+  color: var(--primary-color);
 }
