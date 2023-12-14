@@ -82,7 +82,8 @@ export const Address = () => {
   const transactionCounts: Record<'committed' | 'pending', number | '-'> = {
     committed:
       addressInfoQuery.isFetched && addressInfoQuery.data
-        ? Number(addressInfoQuery.data.transactionsCount) ?? '-'
+        ? // FIXME: this type convertion could be removed once the type declaration of Transaction is fixed
+          Number(addressInfoQuery.data.transactionsCount) ?? '-'
         : '-',
     pending: pendingTransactionCountQuery.isFetched ? pendingTransactionCountQuery.data ?? '-' : '-',
   }
