@@ -11,7 +11,7 @@ import { useIsMobile } from '../../hooks'
 import { isChainTypeError } from '../../utils/chain'
 import { isAxiosError } from '../../utils/error'
 // TODO: Refactor is needed. Should not directly import anything from the descendants of ExplorerService.
-import { SearchResultType, SearchTypeIdResult } from '../../services/ExplorerService/fetcher'
+import { SearchResultType } from '../../services/ExplorerService/fetcher'
 
 const clearSearchInput = (inputElement: RefObject<HTMLInputElement>) => {
   const input = inputElement.current
@@ -60,40 +60,34 @@ const handleSearchResult = async (
     clearSearchInput(inputElement)
     setSearchValue('')
 
-    const isNormalSearchResult = (input: unknown): input is Response.Wrapper<unknown, any> =>
-      !!(input as Response.Wrapper<unknown, unknown>).type && !!(input as Response.Wrapper<unknown, unknown>).attributes
-    const isSearchTypeIdResult = (input: unknown): input is SearchTypeIdResult => !!(input as SearchTypeIdResult).args
+    const { type, attributes } = data
+    switch (type) {
+      case SearchResultType.TypeScript:
+        history.push(`/script/${attributes.scriptHash}/type`)
+        break
 
-    if (isSearchTypeIdResult(data)) {
-      history.push(`/script/${queryKey}/type`)
-    } else if (isNormalSearchResult(data)) {
-      const { type, attributes } = data
-      switch (type) {
-        case SearchResultType.Block:
-          history.push(`/block/${attributes.blockHash}`)
-          break
+      case SearchResultType.Block:
+        history.push(`/block/${attributes.blockHash}`)
+        break
 
-        case SearchResultType.Transaction:
-          history.push(`/transaction/${attributes.transactionHash}`)
-          break
+      case SearchResultType.Transaction:
+        history.push(`/transaction/${attributes.transactionHash}`)
+        break
 
-        case SearchResultType.Address:
-          history.push(`/address/${attributes.addressHash}`)
-          break
+      case SearchResultType.Address:
+        history.push(`/address/${attributes.addressHash}`)
+        break
 
-        case SearchResultType.LockHash:
-          history.push(`/address/${attributes.lockHash}`)
-          break
+      case SearchResultType.LockHash:
+        history.push(`/address/${attributes.lockHash}`)
+        break
 
-        case SearchResultType.UDT:
-          history.push(`/sudt/${query}`)
-          break
+      case SearchResultType.UDT:
+        history.push(`/sudt/${query}`)
+        break
 
-        default:
-          break
-      }
-    } else {
-      throw new Error('unknown fetchSearchResult type')
+      default:
+        break
     }
   } catch (error) {
     setSearchContent(inputElement, query)
