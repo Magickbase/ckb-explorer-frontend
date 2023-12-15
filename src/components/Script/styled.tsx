@@ -30,10 +30,6 @@ export const ScriptItemPanel = styled.div`
     font-size: 14px;
   }
 
-  @media (max-width: 900px) {
-    font-size: 12px;
-  }
-
   @media (max-width: ${variables.mobileBreakPoint}) {
     flex-direction: column;
     font-size: 14px;
