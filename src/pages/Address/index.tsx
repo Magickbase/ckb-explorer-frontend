@@ -65,10 +65,15 @@ export const Address = () => {
   })
 
   const pendingTransactionCountQuery = useQuery(
-    ['address_pending_transactions', address],
+    ['address_pending_transactions', address, currentPage, pageSize, sort],
     async () => {
       try {
-        const { total } = await explorerService.api.fetchPendingTransactionsByAddress(address, 1, 10)
+        const { total } = await explorerService.api.fetchPendingTransactionsByAddress(
+          address,
+          currentPage,
+          pageSize,
+          sort,
+        )
         return total
       } catch (err) {
         return '-'
