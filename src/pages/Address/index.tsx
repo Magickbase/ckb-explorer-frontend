@@ -8,6 +8,7 @@ import { AddressContentPanel } from './styled'
 import { AddressTransactions, AddressOverviewCard } from './AddressComp'
 import { explorerService } from '../../services/ExplorerService'
 import { QueryResult } from '../../components/QueryResult'
+import type { Transaction } from '../../models/Transaction'
 import {
   useDeprecatedAddr,
   useNewAddr,
@@ -64,23 +65,27 @@ export const Address = () => {
     }
   })
 
-  const pendingTransactionCountQuery = useQuery(
+  /* reuse the cache of address_pending_transactions query by using the same query key */
+  const pendingTransactionCountQuery = useQuery<{ transactions: Transaction[]; total: number | '-' }>(
     ['address_pending_transactions', address, currentPage, pageSize, sort],
     async () => {
       try {
-        const { total } = await explorerService.api.fetchPendingTransactionsByAddress(
+        const { data: transactions, total } = await explorerService.api.fetchPendingTransactionsByAddress(
           address,
           currentPage,
           pageSize,
           sort,
         )
-        return total
+        return {
+          transactions,
+          total,
+        }
       } catch (err) {
-        return '-'
+        return { transactions: [], total: '-' }
       }
     },
     {
-      initialData: '-',
+      initialData: { transactions: [], total: '-' },
     },
   )
 
@@ -90,7 +95,7 @@ export const Address = () => {
         ? // FIXME: this type conversion could be removed once the type declaration of Transaction is fixed
           Number(addressInfoQuery.data.transactionsCount) ?? '-'
         : '-',
-    pending: pendingTransactionCountQuery.data ?? '-',
+    pending: pendingTransactionCountQuery.data.total ?? '-',
   }
 
   const newAddr = useNewAddr(address)
