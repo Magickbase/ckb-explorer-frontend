@@ -95,7 +95,7 @@ export const Address = () => {
         ? // FIXME: this type conversion could be removed once the type declaration of Transaction is fixed
           Number(addressInfoQuery.data.transactionsCount) ?? '-'
         : '-',
-    pending: pendingTransactionCountQuery.data.total ?? '-',
+    pending: pendingTransactionCountQuery.data?.total ?? '-',
   }
 
   const newAddr = useNewAddr(address)

@@ -33,7 +33,7 @@ import {
   useUpdateSearchParams,
 } from '../../hooks'
 import styles from './styles.module.scss'
-import TransactionLiteItem from '../../components/TransactionItem/TransactionLiteItem'
+import LiteTransactionList from '../../components/LiteTransactionList'
 import Script from '../../components/Script'
 import AddressText from '../../components/AddressText'
 import { parseSimpleDateNoSecond } from '../../utils/date'
@@ -295,6 +295,7 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
   )
 }
 
+// TODO: Adding loading
 export const AddressTransactions = ({
   address,
   transactions,
@@ -310,12 +311,12 @@ export const AddressTransactions = ({
   const { t } = useTranslation()
   const { currentPage, pageSize, setPage } = usePaginationParamsInListPage()
   const { Professional, Lite } = LayoutLiteProfessional
-  const searchParams = useSearchParams('layout')
+  const searchParams = useSearchParams('layout', 'tx_status')
   const defaultLayout = Professional
   const updateSearchParams = useUpdateSearchParams<'layout' | 'sort' | 'tx_type'>()
   const layout = searchParams.layout === Lite ? Lite : defaultLayout
 
-  const { tx_status: txStatus } = useSearchParams('tx_status')
+  const txStatus = searchParams.tx_status
   const isPendingListActive = txStatus === 'pending'
   const total = isPendingListActive ? counts.pending : counts.committed
   const totalPages = total === '-' ? 0 : Math.ceil(total / pageSize)
@@ -377,12 +378,18 @@ export const AddressTransactions = ({
           className={styles.cardHeader}
           leftContent={
             <div className={styles.txHeaderLabels}>
-              <Link to={`/address/${address}`} data-is-active={!isPendingListActive}>{`${t(
-                'transaction.transactions',
-              )} (${counts.committed === '-' ? counts.committed : localeNumberString(counts.committed)})`}</Link>
-              <Link to={`/address/${address}?tx_status=pending`} data-is-active={isPendingListActive}>{`${t(
-                'transaction.pending_transactions',
-              )} (${counts.pending === '-' ? counts.pending : localeNumberString(counts.pending)})`}</Link>
+              <Link
+                to={`/address/${address}?${new URLSearchParams({ ...searchParams, tx_status: 'committed' })}`}
+                data-is-active={!isPendingListActive}
+              >{`${t('transaction.transactions')} (${
+                counts.committed === '-' ? counts.committed : localeNumberString(counts.committed)
+              })`}</Link>
+              <Link
+                to={`/address/${address}?${new URLSearchParams({ ...searchParams, tx_status: 'pending' })}`}
+                data-is-active={isPendingListActive}
+              >{`${t('transaction.pending_transactions')} (${
+                counts.pending === '-' ? counts.pending : localeNumberString(counts.pending)
+              })`}</Link>
             </div>
           }
           rightContent={!isMobile && searchOptionsAndModeSwitch}
@@ -392,31 +399,21 @@ export const AddressTransactions = ({
 
       <AddressTransactionsPanel>
         {layout === 'lite' ? (
-          <>
-            {!isMobile && (
-              <div className={styles.liteTransactionHeader}>
-                <div>{t('transaction.transaction_hash')}</div>
-                <div>{t('transaction.height')}</div>
-                <div>{t('transaction.time')}</div>
-                <div>{`${t('transaction.input')} & ${t('transaction.output')}`}</div>
-                <div>{t('transaction.capacity_change')}</div>
-              </div>
-            )}
-            {txList.map((transaction: Transaction) => (
-              <TransactionLiteItem address={address} transaction={transaction} key={transaction.transactionHash} />
-            ))}
-          </>
+          <LiteTransactionList address={address} list={transactions} />
         ) : (
-          txList.map((transaction: Transaction, index: number) => (
-            <TransactionItem
-              address={address}
-              transaction={transaction}
-              key={transaction.transactionHash}
-              circleCorner={{
-                bottom: index === transactions.length - 1 && totalPages === 1,
-              }}
-            />
-          ))
+          <>
+            {txList.map((transaction: Transaction, index: number) => (
+              <TransactionItem
+                address={address}
+                transaction={transaction}
+                key={transaction.transactionHash}
+                circleCorner={{
+                  bottom: index === transactions.length - 1 && totalPages === 1,
+                }}
+              />
+            ))}
+            {txList.length === 0 ? <div className={styles.noRecords}>{t(`transaction.no_records`)}</div> : null}
+          </>
         )}
       </AddressTransactionsPanel>
       <PaginationWithRear

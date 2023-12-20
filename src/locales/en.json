@@ -457,7 +457,8 @@
       "professional": "Professional",
       "lite": "Lite",
       "unknown_assets": "Unknown Assets",
-      "mint": "Mint"
+      "mint": "Mint",
+      "no_records": "No records"
     },
     "block": {
       "block": "Block",
