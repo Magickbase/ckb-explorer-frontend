@@ -420,7 +420,7 @@ export const AddressTransactions = ({
         currentPage={currentPage}
         totalPages={totalPages}
         onChange={setPage}
-        rear={<CsvExport type="address_transactions" id={address} />}
+        rear={isPendingListActive ? null : <CsvExport type="address_transactions" id={address} />}
       />
     </>
   )
