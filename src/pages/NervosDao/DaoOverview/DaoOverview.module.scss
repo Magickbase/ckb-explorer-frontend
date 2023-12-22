@@ -1,0 +1,23 @@
+.capacity {
+  display: inline-flex;
+  align-items: flex-end;
+  font-size: 1rem;
+
+  span[data-role='dec'] {
+    font-size: 0.75em;
+    color: var(--decimal-color);
+  }
+
+  // FIXME: use css variable later
+  @media screen and (width <= 1000px) {
+    font-size: 0.75rem;
+
+    span[data-role='dec'] {
+      font-size: 0.9em;
+    }
+
+    .unit {
+      font-size: 1rem;
+    }
+  }
+}
