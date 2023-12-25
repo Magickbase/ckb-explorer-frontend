@@ -1,3 +1,5 @@
+@import '../../../styles/variables.module';
+
 .capacity {
   display: inline-flex;
   align-items: flex-end;
@@ -8,8 +10,7 @@
     color: var(--decimal-color);
   }
 
-  // FIXME: use css variable later
-  @media screen and (width <= 1000px) {
+  @media screen and (width <= $largeBreakPoint) {
     font-size: 0.75rem;
 
     span[data-role='dec'] {

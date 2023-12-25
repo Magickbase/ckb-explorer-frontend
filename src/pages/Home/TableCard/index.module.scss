@@ -31,8 +31,7 @@
     font-size: 13px;
   }
 
-  // FIXME: use css variable later
-  @media screen and (width<=1000px) {
+  @media screen and (width <= $largeBreakPoint) {
     display: flex;
     align-items: flex-end;
 
