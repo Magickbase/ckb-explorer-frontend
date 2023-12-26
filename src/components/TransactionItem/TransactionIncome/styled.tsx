@@ -22,9 +22,6 @@ export const TransactionCapacityValuePanel = styled.div<{ increased: boolean }>`
   justify-content: flex-end;
   color: ${props => (props.increased ? props.theme.primary : '#FF6347')};
   font-size: 16px;
-  .monospace {
-    color: inherit;
-  }
 
   img {
     width: 13px;
