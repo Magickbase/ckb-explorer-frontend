@@ -66,6 +66,11 @@
     .addressDetailLite {
       text-align: right;
       font-size: 14px;
+      column-gap: 6px;
+
+      & > div:last-child {
+        margin-left: 6px;
+      }
     }
 
     & > div {
