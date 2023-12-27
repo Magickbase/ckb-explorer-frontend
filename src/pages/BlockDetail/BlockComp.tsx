@@ -90,11 +90,12 @@ const BlockMinerReward = ({
   )
 }
 
-export const BlockOverviewCard: FC<{ blockHeightOrHash: string; block: Block; blockNumber: number }> = ({
-  blockHeightOrHash,
-  block,
-  blockNumber,
-}) => {
+export const BlockOverviewCard: FC<{
+  blockHeightOrHash: string
+  block: Block
+  blockNumber: number
+  switchBlockNumber?: (step: number) => number
+}> = ({ blockHeightOrHash, blockNumber, block, switchBlockNumber }) => {
   const isMobile = useIsMobile()
   const { t } = useTranslation()
   const tipBlockNumber = useLatestBlockNumber()
@@ -112,16 +113,20 @@ export const BlockOverviewCard: FC<{ blockHeightOrHash: string; block: Block; bl
       content: (
         <div className={styles.blockNumber}>
           <Tooltip placement="top" title={t('block.view_prev_block')}>
-            <Link to={`/block/${+blockNumber - 1}`} className={styles.prev} data-disabled={+blockNumber <= 0}>
+            <Link
+              to={`/block/${switchBlockNumber?.(-1)}`}
+              className={styles.prev}
+              data-disabled={!switchBlockNumber || +blockNumber <= 0}
+            >
               <LeftArrow />
             </Link>
           </Tooltip>
           {localeNumberString(blockNumber)}
           <Tooltip title={t('block.view_next_block')}>
             <Link
-              to={`/block/${+blockNumber + 1}`}
+              to={`/block/${switchBlockNumber?.(1) ?? 0}`}
               className={styles.next}
-              data-disabled={+blockNumber >= +tipBlockNumber}
+              data-disabled={!switchBlockNumber || +blockNumber >= +tipBlockNumber}
             >
               <LeftArrow />
             </Link>

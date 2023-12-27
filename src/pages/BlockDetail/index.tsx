@@ -49,8 +49,10 @@ export default () => {
     },
   )
 
-  const blockHeight = Number(blockHeightOrHash)
   const pageSize = queryBlockTransactions.data?.pageSize ?? pageSizeParam
+
+  const blockHeight = !isTransactionHash(blockHeightOrHash) ? blockHeightOrHash : queryBlock.data?.number
+  const switchBlockNumber = blockHeight == null ? undefined : (step: number) => Number(blockHeight) + step
 
   return (
     <Content>
@@ -58,7 +60,8 @@ export default () => {
         <BlockOverviewCard
           blockHeightOrHash={blockHash ?? blockHeightOrHash}
           block={block}
-          blockNumber={isTransactionHash(blockHeightOrHash) || Number.isNaN(blockHeight) ? block.number : blockHeight}
+          switchBlockNumber={switchBlockNumber}
+          blockNumber={Number(blockHeight ?? 0)}
         />
 
         <QueryResult query={queryBlockTransactions} delayLoading>
