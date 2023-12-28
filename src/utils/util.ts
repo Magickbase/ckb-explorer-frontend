@@ -344,6 +344,10 @@ export const isTransactionHash = (hash: string) => {
   return /^0x([0-9a-fA-F]{64})$/.test(hash)
 }
 
+export const isNumber = (value: string) => {
+  return /^\d+$/.test(value)
+}
+
 export default {
   copyElementValue,
   shannonToCkb,

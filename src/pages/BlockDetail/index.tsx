@@ -8,7 +8,7 @@ import { explorerService } from '../../services/ExplorerService'
 import { assert } from '../../utils/error'
 import { QueryResult } from '../../components/QueryResult'
 import { defaultBlockInfo } from './state'
-import { isTransactionHash } from '../../utils/util'
+import { isNumber, isTransactionHash } from '../../utils/util'
 
 export default () => {
   const { search } = useLocation()
@@ -52,7 +52,10 @@ export default () => {
   const pageSize = queryBlockTransactions.data?.pageSize ?? pageSizeParam
 
   const blockHeight = !isTransactionHash(blockHeightOrHash) ? blockHeightOrHash : queryBlock.data?.number
-  const switchBlockNumber = blockHeight == null ? undefined : (step: number) => Number(blockHeight) + step
+  const blockNumber = Number(
+    !blockHeight || (typeof blockHeight === 'string' && !isNumber(blockHeight)) ? 0 : blockHeight,
+  )
+  const switchBlockNumber = blockHeight == null ? undefined : (step: number) => blockNumber + step
 
   return (
     <Content>
@@ -61,7 +64,7 @@ export default () => {
           blockHeightOrHash={blockHash ?? blockHeightOrHash}
           block={block}
           switchBlockNumber={switchBlockNumber}
-          blockNumber={Number(blockHeight ?? 0)}
+          blockNumber={blockNumber}
         />
 
         <QueryResult query={queryBlockTransactions} delayLoading>
