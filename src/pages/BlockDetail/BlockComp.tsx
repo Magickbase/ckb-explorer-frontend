@@ -114,7 +114,7 @@ export const BlockOverviewCard: FC<{
         <div className={styles.blockNumber}>
           <Tooltip placement="top" title={t('block.view_prev_block')}>
             <Link
-              to={`/block/${switchBlockNumber?.(-1)}`}
+              to={`/block/${switchBlockNumber?.(-1) ?? 0}`}
               className={styles.prev}
               data-disabled={!switchBlockNumber || +blockNumber <= 0}
             >
