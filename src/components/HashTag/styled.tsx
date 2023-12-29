@@ -10,7 +10,7 @@ export const TagPanel = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  padding: 0 4px;
+  padding: 0 8px;
 
   @media (max-width: ${variables.mobileBreakPoint}) {
     height: 16px;
