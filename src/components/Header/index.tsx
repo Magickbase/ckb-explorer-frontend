@@ -87,7 +87,7 @@ export default () => {
   return (
     <div
       className={classNames(styles.stickyContainer, {
-        [styles.expanded]: mobileMenuVisible,
+        [styles.expanded]: isMobile && mobileMenuVisible,
       })}
     >
       <MaintainAlert />
@@ -113,7 +113,7 @@ export default () => {
         )}
       </HeaderPanel>
       <Sheet />
-      {mobileMenuVisible && <MobileMenu hideMobileMenu={() => setMobileMenuVisible(false)} />}
+      {mobileMenuVisible && isMobile && <MobileMenu hideMobileMenu={() => setMobileMenuVisible(false)} />}
     </div>
   )
 }

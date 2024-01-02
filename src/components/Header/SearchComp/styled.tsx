@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import variables from '../../../styles/variables.module.scss'
 
 export const HeaderSearchPanel = styled.div`
   display: flex;
@@ -18,7 +17,7 @@ export const HeaderSearchPanel = styled.div`
     margin-right: 16px;
   }
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: 1024px) {
     margin: 40px 56px;
   }
 `
