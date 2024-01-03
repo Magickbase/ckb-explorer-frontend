@@ -9,15 +9,13 @@ export const HeaderSearchPanel = styled.div`
 
   @media (max-width: 1200px) {
     height: 38px;
-    width: 100%;
   }
 
   @media (max-width: 1600px) {
-    width: 360px;
     margin-right: 16px;
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1023px) {
     margin: 40px 56px;
   }
 `

@@ -33,8 +33,16 @@ export const HeaderMenuPanel = styled.div`
     font-size: 14px;
     font-weight: regular;
 
-    @media (max-width: 1505px) and (min-width: 1025px) {
+    @media (max-width: 1505px) {
       margin-right: calc(56px - (1505px - 100vw) / 8);
+    }
+
+    @media (max-width: 1200px) {
+      margin-right: 20px;
+    }
+
+    @media (min-width: 1025px) and (max-width: 1044px) {
+      margin-right: calc(20px - (1044px - 100vw) / 8);
     }
 
     @media (max-width: 1024px) {
