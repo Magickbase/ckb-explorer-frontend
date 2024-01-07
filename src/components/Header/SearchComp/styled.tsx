@@ -17,6 +17,9 @@ export const HeaderSearchPanel = styled.div`
 
   @media (max-width: 1023px) {
     margin: 40px 56px;
+    align-items: flex-start;
+    flex-direction: column;
+    width: auto;
   }
 `
 
