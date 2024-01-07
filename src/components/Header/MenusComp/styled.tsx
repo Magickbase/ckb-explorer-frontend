@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+const MARGIN_PER_ITEM_JUSTIFY = (56 - 8) / (1440 - 1024)
+
 export const MobileMenuItem = styled.div`
   display: flex;
   flex-direction: column;
@@ -41,12 +43,8 @@ export const HeaderMenuPanel = styled.div`
       margin-right: 20px;
     }
 
-    @media (min-width: 1025px) and (max-width: 1044px) {
-      margin-right: calc(20px - (1044px - 100vw) / 8);
-    }
-
-    @media (max-width: 1024px) {
-      margin-right: 8px;
+    @media (min-width: 1024px) and (max-width: 1044px) {
+      margin-right: calc(56px - ((1440px - 100vw) * ${MARGIN_PER_ITEM_JUSTIFY}));
     }
 
     &:hover {

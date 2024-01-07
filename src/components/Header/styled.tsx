@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import SimpleButton from '../SimpleButton'
 
+const MARGIN_PER_ITEM_JUSTIFY = (56 - 8) / (1440 - 1024)
+
 export const HeaderPanel = styled.div`
   width: 100%;
   min-height: var(--navbar-height);
@@ -32,12 +34,8 @@ export const HeaderLogoPanel = styled(Link)`
   margin-top: 2px;
   margin-right: 56px;
 
-  @media (max-width: 1505px) and (min-width: 1025px) {
-    margin-right: calc(56px - (1505px - 100vw) / 8);
-  }
-
-  @media (max-width: 1024px) {
-    margin-right: 8px;
+  @media (max-width: 1044px) and (min-width: 1024px) {
+    margin-right: calc(56px - ((1440px - 100vw) * ${MARGIN_PER_ITEM_JUSTIFY}));
   }
 
   > img {
