@@ -581,7 +581,14 @@
       "view-transfer-txns": "View Transfer Txns",
       "view-burn-txns": "View Burn Txns",
       "address-or-hash": "Transaction Hash / Address",
-      "address": "Address"
+      "address": "Address",
+      "status": "Status",
+      "progress": "Progress",
+      "expected_supply": "Expected Supply",
+      "mint_limit": "Mint Limit",
+      "mint_status_minting": "Minting",
+      "mint_status_closed": "Closed",
+      "mint_status_rebase_start": "Rebase Start"
     },
     "nft": {
       "nft_collection": "NFT Collection",

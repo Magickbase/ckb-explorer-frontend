@@ -17,3 +17,20 @@ export interface UDT {
   displayName?: string
   uan?: string
 }
+
+export enum MintStatus {
+  Minting = 'minting',
+  Closed = 'closed',
+  RebaseStart = 'rebase_start',
+}
+
+export interface OmigaInscriptionCollection extends UDT {
+  mintStatus: MintStatus
+  mintLimit: string
+  expectedSupply: string
+  inscriptionInfoId: string
+}
+
+export function isOmigaInscriptionCollection(udt: UDT): udt is OmigaInscriptionCollection {
+  return 'mintStatus' in udt && 'mintLimit' in udt && 'expectedSupply' in udt && 'inscriptionInfoId' in udt
+}

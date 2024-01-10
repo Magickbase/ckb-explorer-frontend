@@ -2,6 +2,7 @@ import { Link, useHistory, useLocation, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { Popover } from 'antd'
+import { FC } from 'react'
 import Content from '../../components/Content'
 import { UDTContentPanel, UDTTransactionTitlePanel } from './styled'
 import UDTComp, { UDTOverviewCard } from './UDTComp'
@@ -23,7 +24,7 @@ enum TransactionType {
   Burn = 'destruction',
 }
 
-export const UDT = () => {
+export const UDT: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   const { push } = useHistory()
@@ -35,8 +36,10 @@ export const UDT = () => {
   const filter = query.get('filter')
   const type = query.get('type')
 
-  const querySimpleUDT = useQuery(['simple-udt'], () => explorerService.api.fetchSimpleUDT(typeHash))
-  const udt = querySimpleUDT.data ?? defaultUDTInfo
+  const queryUDT = useQuery(['udt', isInscription], () =>
+    isInscription ? explorerService.api.fetchOmigaInscription(typeHash) : explorerService.api.fetchSimpleUDT(typeHash),
+  )
+  const udt = queryUDT.data ?? defaultUDTInfo
 
   const querySimpleUDTTransactions = useQuery(
     ['simple-udt-transactions', typeHash, currentPage, _pageSize, filter, type],
@@ -45,7 +48,7 @@ export const UDT = () => {
         data: transactions,
         total,
         pageSize: resPageSize,
-      } = await explorerService.api.fetchSimpleUDTTransactions({
+      } = await explorerService.api.fetchUDTTransactions({
         typeHash,
         page: currentPage,
         size: pageSize,

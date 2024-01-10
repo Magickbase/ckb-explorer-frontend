@@ -581,7 +581,14 @@
       "view-transfer-txns": "查看转帐交易",
       "view-burn-txns": "查看销毁交易",
       "address-or-hash": "交易哈希 / 地址",
-      "address": "地址"
+      "address": "地址",
+      "status": "状态",
+      "progress": "进度",
+      "expected_supply": "预期供应量",
+      "mint_limit": "铸造限制",
+      "mint_status_minting": "铸造中",
+      "mint_status_closed": "已关闭",
+      "mint_status_rebase_start": "重铸开始"
     },
     "nft": {
       "nft_collection": "NFT 藏品",

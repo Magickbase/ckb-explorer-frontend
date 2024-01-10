@@ -97,6 +97,12 @@ const routes: RouteProps[] = [
     component: UDT,
   },
   {
+    path: '/inscription/:hash',
+    render: routeProps => {
+      return <UDT {...routeProps} isInscription />
+    },
+  },
+  {
     path: '/nft-collections',
     component: NftCollections,
   },

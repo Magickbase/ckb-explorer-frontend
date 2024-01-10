@@ -1,7 +1,8 @@
 import { Tooltip } from 'antd'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
+import { FC, useState } from 'react'
+import BigNumber from 'bignumber.js'
 import TransactionItem from '../../components/TransactionItem/index'
 import { UDTTransactionsPagination, UDTTransactionsPanel, TypeScriptController, UDTNoResultPanel } from './styled'
 import { parseUDTAmount } from '../../utils/number'
@@ -12,7 +13,7 @@ import AddressText from '../../components/AddressText'
 import PaginationWithRear from '../../components/PaginationWithRear'
 import { CsvExport } from '../../components/CsvExport'
 import { Transaction } from '../../models/Transaction'
-import { UDT } from '../../models/UDT'
+import { OmigaInscriptionCollection, UDT, isOmigaInscriptionCollection } from '../../models/UDT'
 import { Card, CardCellInfo, CardCellsLayout, HashCardHeader } from '../../components/Card'
 import { useIsMobile } from '../../hooks'
 import SUDTTokenIcon from '../../assets/sudt_token.png'
@@ -23,6 +24,7 @@ import ArrowDownIcon from '../../assets/arrow_down.png'
 import ArrowUpBlueIcon from '../../assets/arrow_up_blue.png'
 import ArrowDownBlueIcon from '../../assets/arrow_down_blue.png'
 import Script from '../../components/Script'
+import Capacity from '../../components/Capacity'
 
 const typeScriptIcon = (show: boolean) => {
   if (show) {
@@ -31,7 +33,7 @@ const typeScriptIcon = (show: boolean) => {
   return isMainnet() ? ArrowDownIcon : ArrowDownBlueIcon
 }
 
-const useAddressContent = (address: string) => {
+const IssuerContent: FC<{ address: string }> = ({ address }) => {
   const { t } = useTranslation()
   if (!address) {
     return t('address.unable_decode_address')
@@ -59,7 +61,7 @@ const useAddressContent = (address: string) => {
   )
 }
 
-export const UDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt: UDT }) => {
+export const UDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt: UDT | OmigaInscriptionCollection }) => {
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   const {
@@ -76,33 +78,71 @@ export const UDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt: UDT 
   } = udt
   const [showType, setShowType] = useState(false)
 
-  const items: CardCellInfo<'left' | 'right'>[] = [
-    {
-      title: t('udt.name'),
-      content: displayName || fullName,
-    },
-    {
-      title: t('udt.issuer'),
-      contentWrapperClass: styles.addressWidthModify,
-      content: useAddressContent(issuerAddress),
-    },
-    {
-      title: t('udt.holder_addresses'),
-      content: addressesCount,
-    },
-    {
-      title: t(uan ? 'udt.uan' : 'udt.symbol'),
-      content: uan || symbol,
-    },
-    {
-      title: t('udt.decimal'),
-      content: decimal,
-    },
-    {
-      title: t('udt.total_amount'),
-      content: parseUDTAmount(totalAmount, decimal),
-    },
-  ]
+  const items: CardCellInfo<'left' | 'right'>[] = !isOmigaInscriptionCollection(udt)
+    ? [
+        {
+          title: t('udt.name'),
+          content: displayName || fullName,
+        },
+        {
+          title: t('udt.issuer'),
+          contentWrapperClass: styles.addressWidthModify,
+          content: <IssuerContent address={issuerAddress} />,
+        },
+        {
+          title: t('udt.holder_addresses'),
+          content: addressesCount,
+        },
+        {
+          title: t(uan ? 'udt.uan' : 'udt.symbol'),
+          content: uan || symbol,
+        },
+        {
+          title: t('udt.decimal'),
+          content: decimal,
+        },
+        {
+          title: t('udt.total_amount'),
+          content: parseUDTAmount(totalAmount, decimal),
+        },
+      ]
+    : [
+        {
+          title: t('udt.name'),
+          content: displayName || fullName || <span className={styles.noneName}>(None)</span>,
+        },
+        {
+          title: t('udt.status'),
+          content: t(`udt.mint_status_${udt.mintStatus}`),
+        },
+        {
+          title: t('udt.progress'),
+          content: `${parseUDTAmount(udt.totalAmount, decimal)}/${parseUDTAmount(udt.expectedSupply, decimal)}`,
+        },
+        {
+          title: t('udt.holder_addresses'),
+          content: addressesCount,
+        },
+        {
+          title: t('udt.expected_supply'),
+          content: (
+            <Capacity
+              capacity={BigNumber(udt.expectedSupply)
+                .div(new BigNumber(10).pow(parseInt(decimal, 10)))
+                .toString()}
+              unit={null}
+            />
+          ),
+        },
+        {
+          title: t('udt.decimal'),
+          content: decimal,
+        },
+        {
+          title: t('udt.mint_limit'),
+          content: parseUDTAmount(udt.mintLimit, decimal),
+        },
+      ]
 
   // TODO: To be implemented.
   const modifyTokenInfo = false && <div>Modify Token Info</div>
