@@ -3,12 +3,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import TransactionItem from '../../components/TransactionItem/index'
-import {
-  SimpleUDTTransactionsPagination,
-  SimpleUDTTransactionsPanel,
-  TypeScriptController,
-  UDTNoResultPanel,
-} from './styled'
+import { UDTTransactionsPagination, UDTTransactionsPanel, TypeScriptController, UDTNoResultPanel } from './styled'
 import { parseUDTAmount } from '../../utils/number'
 import { ReactComponent as OpenInNew } from '../../assets/open_in_new.svg'
 import { deprecatedAddrToNewAddr } from '../../utils/util'
@@ -64,7 +59,7 @@ const useAddressContent = (address: string) => {
   )
 }
 
-export const SimpleUDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt: UDT }) => {
+export const UDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt: UDT }) => {
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   const {
@@ -123,7 +118,7 @@ export const SimpleUDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt
   )
 
   return (
-    <Card className={styles.simpleUDTOverviewCard} style={{ marginBottom: 16 }}>
+    <Card className={styles.udtOverviewCard} style={{ marginBottom: 16 }}>
       {/* When encountering more complex requirements, consider extracting the components within HashCardHeader
       into smaller components. Then, implement a completely new variant or freely assemble them externally. */}
       {isMobile && cardTitle}
@@ -145,7 +140,7 @@ export const SimpleUDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt
   )
 }
 
-export const SimpleUDTComp = ({
+export const UDTComp = ({
   currentPage,
   pageSize,
   transactions,
@@ -174,7 +169,7 @@ export const SimpleUDTComp = ({
   }
   return (
     <>
-      <SimpleUDTTransactionsPanel>
+      <UDTTransactionsPanel>
         {transactions.map(
           (transaction: Transaction, index: number) =>
             transaction && (
@@ -187,17 +182,17 @@ export const SimpleUDTComp = ({
               />
             ),
         )}
-      </SimpleUDTTransactionsPanel>
-      <SimpleUDTTransactionsPagination>
+      </UDTTransactionsPanel>
+      <UDTTransactionsPagination>
         <PaginationWithRear
           currentPage={currentPage}
           totalPages={totalPages}
           onChange={onPageChange}
           rear={<CsvExport type="udts" id={id} />}
         />
-      </SimpleUDTTransactionsPagination>
+      </UDTTransactionsPagination>
     </>
   )
 }
 
-export default SimpleUDTComp
+export default UDTComp

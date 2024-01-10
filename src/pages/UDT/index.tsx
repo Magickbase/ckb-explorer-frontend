@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { Popover } from 'antd'
 import Content from '../../components/Content'
-import { SimpleUDTContentPanel, UDTTransactionTitlePanel } from './styled'
-import SimpleUDTComp, { SimpleUDTOverviewCard } from './SimpleUDTComp'
+import { UDTContentPanel, UDTTransactionTitlePanel } from './styled'
+import UDTComp, { UDTOverviewCard } from './UDTComp'
 import { useIsMobile, usePaginationParamsInPage } from '../../hooks'
 import Filter from '../../components/Search/Filter'
 import { localeNumberString } from '../../utils/number'
@@ -23,7 +23,7 @@ enum TransactionType {
   Burn = 'destruction',
 }
 
-export const SimpleUDT = () => {
+export const UDT = () => {
   const { t } = useTranslation()
   const isMobile = useIsMobile()
   const { push } = useHistory()
@@ -92,8 +92,8 @@ export const SimpleUDT = () => {
 
   return (
     <Content>
-      <SimpleUDTContentPanel className="container">
-        <SimpleUDTOverviewCard typeHash={typeHash} udt={udt} />
+      <UDTContentPanel className="container">
+        <UDTOverviewCard typeHash={typeHash} udt={udt} />
 
         <UDTTransactionTitlePanel>
           <div className="udtTransactionContainer">
@@ -141,7 +141,7 @@ export const SimpleUDT = () => {
 
         <QueryResult query={querySimpleUDTTransactions} delayLoading>
           {data => (
-            <SimpleUDTComp
+            <UDTComp
               currentPage={currentPage}
               pageSize={pageSize}
               transactions={data?.transactions ?? []}
@@ -152,9 +152,9 @@ export const SimpleUDT = () => {
             />
           )}
         </QueryResult>
-      </SimpleUDTContentPanel>
+      </UDTContentPanel>
     </Content>
   )
 }
 
-export default SimpleUDT
+export default UDT
