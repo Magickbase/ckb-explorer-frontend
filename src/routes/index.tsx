@@ -123,6 +123,12 @@ const routes: RouteProps[] = [
     component: Tokens,
   },
   {
+    path: '/inscriptions',
+    render: routeProps => {
+      return <Tokens {...routeProps} isInscription />
+    },
+  },
+  {
     path: '/charts',
     component: StatisticsChart,
   },

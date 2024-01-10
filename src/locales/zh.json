@@ -582,6 +582,7 @@
       "view-burn-txns": "查看销毁交易",
       "address-or-hash": "交易哈希 / 地址",
       "address": "地址",
+      "inscriptions": "铭文",
       "status": "状态",
       "progress": "进度",
       "expected_supply": "预期供应量",

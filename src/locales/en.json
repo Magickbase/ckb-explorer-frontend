@@ -582,6 +582,7 @@
       "view-burn-txns": "View Burn Txns",
       "address-or-hash": "Transaction Hash / Address",
       "address": "Address",
+      "inscriptions": "Inscriptions",
       "status": "Status",
       "progress": "Progress",
       "expected_supply": "Expected Supply",
