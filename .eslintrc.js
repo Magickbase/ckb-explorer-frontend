@@ -58,6 +58,7 @@ module.exports = {
         extensions: ['.ts', '.tsx'],
       },
     ],
+    'jsx-a11y/control-has-associated-label': [0],
     'import/extensions': [
       'error',
       'ignorePackages',
