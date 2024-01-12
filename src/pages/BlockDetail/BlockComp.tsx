@@ -9,7 +9,7 @@ import { parseSimpleDate } from '../../utils/date'
 import { localeNumberString, handleDifficulty } from '../../utils/number'
 import { useIsMobile, useSearchParams } from '../../hooks'
 import { hexToUtf8 } from '../../utils/string'
-import { deprecatedAddrToNewAddr, shannonToCkb } from '../../utils/util'
+import { deprecatedAddrToNewAddr, isNumber, shannonToCkb } from '../../utils/util'
 import { BlockLinkPanel, BlockMinerRewardPanel, BlockMinerMessagePanel, BlockTransactionsPagination } from './styled'
 import HelpIcon from '../../assets/qa_help.png'
 import MoreIcon from '../../assets/more.png'
@@ -93,9 +93,8 @@ const BlockMinerReward = ({
 export const BlockOverviewCard: FC<{
   blockHeightOrHash: string
   block: Block
-  blockNumber: number
-  switchBlockNumber?: (step: number) => number
-}> = ({ blockHeightOrHash, blockNumber, block, switchBlockNumber }) => {
+  blockHeight?: string | number
+}> = ({ blockHeightOrHash, blockHeight, block }) => {
   const isMobile = useIsMobile()
   const { t } = useTranslation()
   const tipBlockNumber = useLatestBlockNumber()
@@ -106,6 +105,9 @@ export const BlockOverviewCard: FC<{
     content: <AddressText>{block.transactionsRoot}</AddressText>,
   }
   const sentBlockNumber = `${Number(block.number) + DELAY_BLOCK_NUMBER}`
+  const blockNumber = Number(
+    !blockHeight || (typeof blockHeight === 'string' && !isNumber(blockHeight)) ? 0 : blockHeight,
+  )
   const overviewItems: CardCellInfo<'left' | 'right'>[] = [
     {
       title: t('block.block_height'),
@@ -114,9 +116,9 @@ export const BlockOverviewCard: FC<{
         <div className={styles.blockNumber}>
           <Tooltip placement="top" title={t('block.view_prev_block')}>
             <Link
-              to={`/block/${switchBlockNumber?.(-1) ?? 0}`}
+              to={`/block/${blockNumber - 1}`}
               className={styles.prev}
-              data-disabled={!switchBlockNumber || +blockNumber <= 0}
+              data-disabled={!blockHeight || +blockNumber <= 0}
             >
               <LeftArrow />
             </Link>
@@ -124,9 +126,9 @@ export const BlockOverviewCard: FC<{
           {localeNumberString(blockNumber)}
           <Tooltip title={t('block.view_next_block')}>
             <Link
-              to={`/block/${switchBlockNumber?.(1) ?? 0}`}
+              to={`/block/${blockNumber + 1}`}
               className={styles.next}
-              data-disabled={!switchBlockNumber || +blockNumber >= +tipBlockNumber}
+              data-disabled={!blockHeight || +blockNumber >= +tipBlockNumber}
             >
               <LeftArrow />
             </Link>
