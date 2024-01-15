@@ -18,6 +18,7 @@ export const defaultUDTInfo: UDT = {
     codeHash: '',
     hashType: '',
   },
+  udtType: 'sudt',
 }
 
 export const defaultOmigaInscriptionInfo: OmigaInscriptionCollection = {

@@ -92,6 +92,7 @@ export const UDT: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
   ]
 
   const isFilteredByType = filterList.some(f => f.value === type)
+  const udtLinkPrefix = !isInscription ? '/sudt' : '/inscription'
 
   return (
     <Content>
@@ -109,10 +110,10 @@ export const UDT: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
                 showReset={!!filter}
                 placeholder={t('udt.search_placeholder')}
                 onFilter={filter => {
-                  push(`/sudt/${typeHash}?${new URLSearchParams({ filter })}`)
+                  push(`${udtLinkPrefix}/${typeHash}?${new URLSearchParams({ filter })}`)
                 }}
                 onReset={() => {
-                  push(`/sudt/${typeHash}`)
+                  push(`${udtLinkPrefix}/${typeHash}`)
                 }}
               />
               <div className={styles.typeFilter} data-is-active={isFilteredByType}>
@@ -125,7 +126,7 @@ export const UDT: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
                       {filterList.map(f => (
                         <Link
                           key={f.value}
-                          to={`/sudt/${typeHash}?${new URLSearchParams({ type: f.value })}`}
+                          to={`${udtLinkPrefix}/${typeHash}?${new URLSearchParams({ type: f.value })}`}
                           data-is-active={f.value === type}
                         >
                           {f.title}

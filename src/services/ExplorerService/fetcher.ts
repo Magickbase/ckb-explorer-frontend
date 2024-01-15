@@ -172,7 +172,7 @@ export const apiFetcher = {
       | Response.Wrapper<Transaction, SearchResultType.Transaction>
       | Response.Wrapper<Address, SearchResultType.Address>
       | Response.Wrapper<Address, SearchResultType.LockHash>
-      | Response.Wrapper<unknown, SearchResultType.UDT>
+      | Response.Wrapper<UDT, SearchResultType.UDT>
       | Response.Wrapper<Script & { scriptHash: string }, SearchResultType.TypeScript>
     >('suggest_queries', {
       params: {
@@ -945,4 +945,5 @@ export type UDTQueryResult = {
   symbol: string | null
   typeHash: string
   iconFile: string | null
+  udtType: UDT['udtType']
 }
