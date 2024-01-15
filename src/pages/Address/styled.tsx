@@ -109,8 +109,10 @@ export const AddressAssetsTab = styled(Tabs)`
   /* stylelint-disable-next-line selector-class-pattern */
   .ant-tabs-nav .ant-tabs-ink-bar {
     background: linear-gradient(to right, var(--primary-color) 100%, transparent 100%);
-    height: 3px;
+    height: 4px;
     bottom: 3px;
+    left: calc((100% - 72px) / 2) !important;
+    width: 72px !important;
   }
 `
 
