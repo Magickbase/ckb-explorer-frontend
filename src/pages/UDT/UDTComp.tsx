@@ -188,6 +188,7 @@ export const UDTComp = ({
   onPageChange,
   filterNoResult,
   id,
+  isInscription,
 }: {
   currentPage: number
   pageSize: number
@@ -196,6 +197,7 @@ export const UDTComp = ({
   onPageChange: (page: number) => void
   filterNoResult?: boolean
   id: string
+  isInscription?: boolean
 }) => {
   const { t } = useTranslation()
   const totalPages = Math.ceil(total / pageSize)
@@ -228,7 +230,8 @@ export const UDTComp = ({
           currentPage={currentPage}
           totalPages={totalPages}
           onChange={onPageChange}
-          rear={<CsvExport type="udts" id={id} />}
+          // TODO: The backend has not yet implemented export support for Inscription (xUDT), so it is disabled for now.
+          rear={!isInscription && <CsvExport type="udts" id={id} />}
         />
       </UDTTransactionsPagination>
     </>

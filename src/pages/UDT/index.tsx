@@ -152,6 +152,7 @@ export const UDT: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
               onPageChange={setPage}
               filterNoResult={filterNoResult}
               id={typeHash}
+              isInscription={isInscription}
             />
           )}
         </QueryResult>
