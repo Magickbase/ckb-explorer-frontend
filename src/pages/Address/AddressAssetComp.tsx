@@ -197,7 +197,7 @@ export const AddressOmigaInscriptionComp = ({ account }: { account: OmigaInscrip
   const { decimal, expectedSupply, mintStatus, amount, symbol, typeHash, udtAmount } = account
   return (
     <AddressAssetComp
-      href={`/sudt/${typeHash}`}
+      href={`/inscription/${typeHash}`}
       name={parseUDTAmount(amount, decimal)}
       property={`${mintStatus.charAt(0).toUpperCase()}${mintStatus
         .replace(/_[a-z]/g, letter => letter.toUpperCase().replace('_', ''))
