@@ -198,10 +198,10 @@ export const AddressOmigaInscriptionComp = ({ account }: { account: OmigaInscrip
   return (
     <AddressAssetComp
       href={`/sudt/${typeHash}`}
-      name={parseUDTAmount(udtAmount, decimal)}
+      name={parseUDTAmount(amount, decimal)}
       property={`${mintStatus.charAt(0).toUpperCase()}${mintStatus
         .replace(/_[a-z]/g, letter => letter.toUpperCase().replace('_', ''))
-        .slice(1)}(${parseUDTAmount(amount, decimal)}/${parseUDTAmount(expectedSupply, decimal)})`}
+        .slice(1)}(${parseUDTAmount(udtAmount, decimal)}/${parseUDTAmount(expectedSupply, decimal)})`}
       udtLabel={symbol!}
     />
   )
