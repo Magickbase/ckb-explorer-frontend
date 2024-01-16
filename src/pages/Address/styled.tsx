@@ -108,11 +108,21 @@ export const AddressAssetsTab = styled(Tabs)`
 
   /* stylelint-disable-next-line selector-class-pattern */
   .ant-tabs-nav .ant-tabs-ink-bar {
-    background: linear-gradient(to right, var(--primary-color) 100%, transparent 100%);
     height: 4px;
     bottom: 3px;
-    left: calc((100% - 72px) / 2) !important;
-    width: 72px !important;
+    background: transparent;
+
+    ::after {
+      content: ' ';
+      position: absolute;
+      left: 50%;
+      right: 0;
+      height: 100%;
+      max-width: 72px;
+      width: 100%;
+      background: linear-gradient(to right, var(--primary-color) 100%, transparent 100%);
+      transform: translateX(-50%);
+    }
   }
 `
 
