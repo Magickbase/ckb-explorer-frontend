@@ -195,13 +195,15 @@ export const AddressCoTAComp = ({ account }: { account: CoTA }) => {
 
 export const AddressOmigaInscriptionComp = ({ account }: { account: OmigaInscription }) => {
   const { decimal, expectedSupply, mintStatus, amount, symbol, typeHash, udtAmount } = account
+  const { t } = useTranslation()
   return (
     <AddressAssetComp
       href={`/inscription/${typeHash}`}
       name={parseUDTAmount(amount, decimal)}
-      property={`${mintStatus.charAt(0).toUpperCase()}${mintStatus
-        .replace(/_[a-z]/g, letter => letter.toUpperCase().replace('_', ''))
-        .slice(1)}(${parseUDTAmount(udtAmount, decimal)}/${parseUDTAmount(expectedSupply, decimal)})`}
+      property={`${t(`udt.mint_status_${mintStatus}`)}(${parseUDTAmount(udtAmount, decimal)}/${parseUDTAmount(
+        expectedSupply,
+        decimal,
+      )})`}
       udtLabel={symbol!}
     />
   )
