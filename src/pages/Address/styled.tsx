@@ -116,8 +116,8 @@ export const AddressAssetsTab = styled(Tabs)`
 
   /* stylelint-disable-next-line selector-class-pattern */
   .ant-tabs-tab-btn {
-    :active,
-    :focus {
+    &:active,
+    &:focus {
       color: var(--primary-color);
     }
   }
@@ -202,6 +202,8 @@ export const AddressUDTItemPanel = styled.a`
   pointer-events: ${(props: { isLink: boolean }) => (props.isLink ? 'auto' : 'none')};
 
   .addressUdtLabel {
+    text-overflow: ellipsis;
+    overflow: hidden;
     text-align: left;
     font-size: 12px;
     padding: 2px 8px;
