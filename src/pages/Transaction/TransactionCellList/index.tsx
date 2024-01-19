@@ -20,11 +20,13 @@ export default ({
   outputs,
   txHash,
   showReward,
+  startIndex,
 }: {
   inputs?: Cell[]
   outputs?: Cell[]
   txHash?: string
   showReward?: boolean
+  startIndex: number
 }) => {
   const { t } = useTranslation()
   const [offset, setOffset] = useState(PAGE_CELL_COUNT)
@@ -99,7 +101,7 @@ export default ({
                   key={cell.id}
                   cell={cell}
                   cellType={inputs ? CellType.Input : CellType.Output}
-                  index={index}
+                  index={index + startIndex}
                   txHash={txHash}
                   showReward={showReward}
                   isAddrNew={!isDeprecatedAddressesDisplayed}
