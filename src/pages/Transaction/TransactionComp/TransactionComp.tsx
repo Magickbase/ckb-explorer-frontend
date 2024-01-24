@@ -93,6 +93,11 @@ export const TransactionComp = ({
     searchParams.set(pageField, `${page}`)
     if (size) {
       searchParams.set('page_size', `${size}`)
+      const total = (type === 'inputs' ? displayInputs.meta?.total : displayOutputs.meta?.total) ?? 0
+      const maxPage = Math.ceil(total / size)
+      if (page > maxPage) {
+        searchParams.set(pageField, `${maxPage}`)
+      }
     }
     const url = `${pathname}?${searchParams.toString()}`
     history.push(url)
