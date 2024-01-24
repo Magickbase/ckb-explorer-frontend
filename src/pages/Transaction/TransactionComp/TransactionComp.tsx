@@ -109,6 +109,7 @@ export const TransactionComp = ({
       <div className="transactionInputs">
         <Loading show={isInputsLoading} />
         <TransactionCellList
+          total={displayInputs.meta?.total}
           inputs={inputs}
           startIndex={(inputsPage - 1) * pageSize}
           showReward={blockNumber > 0 && isCellbase}
@@ -124,7 +125,12 @@ export const TransactionComp = ({
       </div>
       <div className="transactionOutputs">
         <Loading show={isOutputsLoading} />
-        <TransactionCellList outputs={displayOutputs.data} startIndex={(outputsPage - 1) * pageSize} txHash={txHash} />
+        <TransactionCellList
+          total={displayOutputs.meta?.total}
+          outputs={displayOutputs.data}
+          startIndex={(outputsPage - 1) * pageSize}
+          txHash={txHash}
+        />
         <div style={{ height: 4 }} />
         <Pagination
           currentPage={outputsPage}
