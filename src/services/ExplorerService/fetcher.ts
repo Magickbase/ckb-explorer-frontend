@@ -550,13 +550,11 @@ export const apiFetcher = {
     page,
     size,
     filter,
-    type,
   }: {
     typeHash: string
     page: number
     size: number
     filter?: string | null
-    type?: string | null
   }) =>
     v1GetUnwrappedPagedList<Transaction>(`/udt_transactions/${typeHash}`, {
       params: {
@@ -564,7 +562,6 @@ export const apiFetcher = {
         page_size: size,
         address_hash: filter?.startsWith('0x') ? undefined : filter,
         tx_hash: filter?.startsWith('0x') ? filter : undefined,
-        transfer_action: type,
       },
     }),
 
