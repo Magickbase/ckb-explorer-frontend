@@ -90,14 +90,12 @@ export const TransactionComp = ({
   const handlePageChange = (type: 'inputs' | 'outputs') => (page: number, size?: number) => {
     const pageField = `page_of_${type}`
     const searchParams = new URLSearchParams(search)
-    searchParams.set(pageField, `${page}`)
     if (size) {
       searchParams.set('page_size', `${size}`)
-      const total = (type === 'inputs' ? displayInputs.meta?.total : displayOutputs.meta?.total) ?? 0
-      const maxPage = Math.ceil(total / size)
-      if (page > maxPage) {
-        searchParams.set(pageField, `${maxPage}`)
-      }
+      searchParams.delete('page_of_inputs')
+      searchParams.delete('page_of_outputs')
+    } else {
+      searchParams.set(pageField, `${page}`)
     }
     const url = `${pathname}?${searchParams.toString()}`
     history.push(url)
