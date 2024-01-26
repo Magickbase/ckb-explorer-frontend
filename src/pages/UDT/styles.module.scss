@@ -68,6 +68,17 @@
   }
 }
 
+.viewOriginal {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
 .addressWidthModify {
   max-width: 80%;
 
