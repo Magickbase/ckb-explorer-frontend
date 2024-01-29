@@ -38,11 +38,11 @@
     "styled-components": "5.3.11"
   },
   "devDependencies": {
-    "@sentry/webpack-plugin": "2.10.2",
+    "@sentry/webpack-plugin": "2.10.3",
     "@storybook/addon-essentials": "7.6.10",
     "@storybook/addon-interactions": "7.6.10",
     "@storybook/addon-links": "7.6.10",
-    "@storybook/addon-onboarding": "1.0.10",
+    "@storybook/addon-onboarding": "1.0.11",
     "@storybook/addon-storysource": "^7.5.3",
     "@storybook/blocks": "7.6.10",
     "@storybook/preset-create-react-app": "7.6.10",
@@ -87,7 +87,7 @@
     "react-test-renderer": "^17.0.2",
     "rxjs": "7.8.1",
     "storybook": "7.6.10",
-    "stylelint": "^15.10.1",
+    "stylelint": "^16.0.0",
     "stylelint-config-css-modules": "^4.3.0",
     "stylelint-config-standard": "^35.0.0",
     "stylelint-config-standard-scss": "^12.0.0",
