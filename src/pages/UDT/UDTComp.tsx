@@ -171,7 +171,7 @@ export const UDTOverviewCard = ({ typeHash, udt }: { typeHash: string; udt: UDT 
           isOmigaInscriptionCollection(udt) && udt.mintStatus === MintStatus.RebaseStart ? (
             <Tooltip placement="top" title={t('udt.view_original')}>
               <Link
-                to={`/inscription/${udt.infoTypeHash}?view_original=1`}
+                to={`/inscription/${udt.infoTypeHash}?view=original`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.viewOriginal}

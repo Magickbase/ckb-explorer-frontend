@@ -23,8 +23,8 @@ export const UDT: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
   const { hash: typeHash } = useParams<{ hash: string }>()
   const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
 
-  const { filter, view_original } = useSearchParams('filter', 'view_original')
-  const isViewOriginal = view_original === '1'
+  const { filter, view } = useSearchParams('filter', 'view')
+  const isViewOriginal = view === 'original'
 
   const queryUDT = useQuery(['udt', isInscription, isViewOriginal], () =>
     isInscription

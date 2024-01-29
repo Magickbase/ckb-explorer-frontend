@@ -30,9 +30,9 @@ const ExportTransactions = () => {
     'end-date': endDateStr,
     'from-height': fromHeightStr,
     'to-height': toHeightStr,
-    view_original,
-  } = useSearchParams('type', 'id', 'tab', 'start-date', 'end-date', 'from-height', 'to-height', 'view_original')
-  const isViewOriginal = view_original === '1'
+    view,
+  } = useSearchParams('type', 'id', 'tab', 'start-date', 'end-date', 'from-height', 'to-height', 'view')
+  const isViewOriginal = view === 'original'
 
   function isTransactionCsvExportType(s?: string): s is SupportedExportTransactionType {
     return !!s && ['address_transactions', 'blocks', 'udts', 'nft', 'omiga_inscriptions'].includes(s)
