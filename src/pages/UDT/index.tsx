@@ -1,11 +1,11 @@
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
 import Content from '../../components/Content'
 import { UDTContentPanel, UDTTransactionTitlePanel } from './styled'
 import UDTComp, { UDTOverviewCard } from './UDTComp'
-import { usePaginationParamsInPage, useSearchParams } from '../../hooks'
+import { usePaginationParamsInPage, useSearchParams, useUpdateSearchParams } from '../../hooks'
 import Filter from '../../components/Search/Filter'
 import { localeNumberString } from '../../utils/number'
 import { explorerService } from '../../services/ExplorerService'
@@ -18,13 +18,14 @@ import { assert } from '../../utils/error'
 
 export const UDT: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
   const { t } = useTranslation()
-  const { push } = useHistory()
   // The typeHash here could be either udtTypeHash or omigaInscriptionInfoTypeHash.
   const { hash: typeHash } = useParams<{ hash: string }>()
   const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
 
   const { filter, view } = useSearchParams('filter', 'view')
   const isViewOriginal = view === 'original'
+
+  const updateSearchParams = useUpdateSearchParams<'filter' | 'page'>()
 
   const queryUDT = useQuery(['udt', isInscription, isViewOriginal], () =>
     isInscription
@@ -72,8 +73,6 @@ export const UDT: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
   const filterNoResult = !!filter && querySimpleUDTTransactions.isError
   const pageSize: number = querySimpleUDTTransactions.data?.pageSize ?? _pageSize
 
-  const udtLinkPrefix = !isInscription ? '/sudt' : '/inscription'
-
   return (
     <Content>
       <UDTContentPanel className="container">
@@ -89,12 +88,8 @@ export const UDT: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
                 defaultValue={filter ?? ''}
                 showReset={!!filter}
                 placeholder={t('udt.search_placeholder')}
-                onFilter={filter => {
-                  push(`${udtLinkPrefix}/${typeHash}?${new URLSearchParams({ filter })}`)
-                }}
-                onReset={() => {
-                  push(`${udtLinkPrefix}/${typeHash}`)
-                }}
+                onFilter={filter => updateSearchParams(params => ({ ...params, filter }))}
+                onReset={() => updateSearchParams(params => ({ ...params, filter: null }))}
               />
             </div>
           </div>
