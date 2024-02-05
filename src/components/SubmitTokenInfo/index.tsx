@@ -101,11 +101,9 @@ const useCountdown = () => {
 
 export const SubmitTokenInfo = ({
   onClose,
-  isOpen,
   initialInfo,
   onSuccess,
 }: {
-  isOpen: boolean
   onClose: () => void
   initialInfo?: TokenInfo
   onSuccess?: Function
@@ -177,10 +175,8 @@ export const SubmitTokenInfo = ({
 
   useEffect(() => {
     // scroll to top when open modal
-    if (isOpen) {
-      window.scrollTo(0, 0)
-    }
-  }, [isOpen])
+    window.scrollTo(0, 0)
+  }, [])
 
   const handleImgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -301,7 +297,7 @@ export const SubmitTokenInfo = ({
   }
 
   return (
-    <CommonModal isOpen={isOpen} onClose={handleClose}>
+    <CommonModal isOpen onClose={handleClose}>
       <div className={styles.modalWrapper}>
         <div className={styles.contentWrapper}>
           <div className={styles.modalTitle}>
