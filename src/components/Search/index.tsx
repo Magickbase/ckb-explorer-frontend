@@ -13,10 +13,9 @@ import { useHistory } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import debounce from 'lodash.debounce'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { ImageButton, SearchPanel, SearchButton, SearchContainer } from './styled'
+import classNames from 'classnames'
+import { SearchPanel, SearchButton } from './styled'
 import { explorerService, Response, SearchResultType } from '../../services/ExplorerService'
-import SearchLogo from '../../assets/search_black.png'
-import ClearLogo from '../../assets/clear.png'
 import { addPrefixForHash, containSpecialChar } from '../../utils/string'
 import { HttpErrorCode, SearchFailType } from '../../constants/common'
 import { useForkedState, useIsMobile } from '../../hooks'
@@ -25,7 +24,10 @@ import { isAxiosError } from '../../utils/error'
 import styles from './index.module.scss'
 import { SearchByNameResults } from './SearchByNameResults'
 import { useSearchType } from '../../services/AppSettings/hooks'
+import { ReactComponent as SearchIcon } from './search.svg'
 import { ReactComponent as SpinnerIcon } from './spinner.svg'
+import { ReactComponent as ClearIcon } from './clear.svg'
+import SimpleButton from '../SimpleButton'
 
 // Currently, the API returns all search results, which could be extremely large in quantity.
 // Since the rendering component does not implement virtual scrolling, this leads to a significant decrease in page performance.
@@ -120,39 +122,39 @@ const Search: FC<{
   }, [resetSearchByName, setEditEnded])
 
   return (
-    <SearchContainer>
-      <SearchPanel moreHeight={hasButton} hasButton={hasButton}>
-        {isFetchingById ? (
-          <SpinnerIcon width="22px" height="22px" className={styles.spinner} />
-        ) : (
-          <ImageButton>
-            <img src={SearchLogo} alt="search logo" />
-          </ImageButton>
-        )}
+    <SearchPanel moreHeight={hasButton} hasButton={hasButton}>
+      {isFetchingById ? (
+        <SpinnerIcon className={classNames(styles.preIcon, styles.spinner)} />
+      ) : (
+        <SearchIcon className={styles.preIcon} />
+      )}
 
-        <SearchInput
-          autoFocus={!isMobile}
-          loading={isFetchingById}
-          value={keyword}
-          onChange={event => setKeyword(event.target.value)}
-          onEditEndedChange={setEditEnded}
-          placeholder={isSearchByName ? t('navbar.search_by_name_placeholder') : t('navbar.search_placeholder')}
-        />
-        <button type="button" className={styles.byNameOrId} onClick={switchSearchType}>
-          {isSearchByName ? t('search.by_name') : t('search.by_id')}
-        </button>
-        {searchValue && (
-          <ImageButton onClick={onClear} isClear>
-            <img src={ClearLogo} alt="clearButton" />
-          </ImageButton>
-        )}
+      <SearchInput
+        autoFocus={!isMobile}
+        loading={isFetchingById}
+        value={keyword}
+        onChange={event => setKeyword(event.target.value)}
+        onEditEndedChange={setEditEnded}
+        placeholder={isSearchByName ? t('navbar.search_by_name_placeholder') : t('navbar.search_placeholder')}
+      />
+
+      {searchValue && (
+        <SimpleButton className={styles.clear} title="clear" onClick={onClear}>
+          <ClearIcon />
+        </SimpleButton>
+      )}
+      <SimpleButton className={styles.byNameOrId} onClick={switchSearchType}>
+        {isSearchByName ? t('search.by_name') : t('search.by_id')}
+      </SimpleButton>
+      {hasButton && <SearchButton onClick={() => setEditEnded(true)}>{t('search.search')}</SearchButton>}
+
+      {(isFetchingByName || searchByNameResults) && (
         <SearchByNameResults
-          udtQueryResults={searchByNameResults ? searchByNameResults.slice(0, DISPLAY_COUNT) : null}
+          udtQueryResults={searchByNameResults?.slice(0, DISPLAY_COUNT) ?? []}
           loading={isFetchingByName}
         />
-      </SearchPanel>
-      {hasButton && <SearchButton onClick={() => setEditEnded(true)}>{t('search.search')}</SearchButton>}
-    </SearchContainer>
+      )}
+    </SearchPanel>
   )
 })
 
