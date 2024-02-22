@@ -10,7 +10,7 @@ import { parseSporeCellData } from '../../../utils/spore'
 import type { TransferListRes, TransferRes } from '../../../services/ExplorerService/fetcher'
 import styles from './styles.module.scss'
 import { getPrimaryColor } from '../../../constants/common'
-import { handleNftImgError, patchMibaoImg } from '../../../utils/util'
+import { formatNftDisplayId, handleNftImgError, patchMibaoImg } from '../../../utils/util'
 import { explorerService } from '../../../services/ExplorerService'
 import { dayjs } from '../../../utils/date'
 import { useParsedDate, useTimestamp } from '../../../hooks'
@@ -154,7 +154,7 @@ const TransferTableRow: FC<{
             }}
             className={styles.tokenId}
           >
-            {`id: ${item.item.token_id}`}
+            {`id: ${formatNftDisplayId(item.item.token_id, item.item.standard)}`}
           </Link>
         </div>
       </td>
@@ -284,7 +284,7 @@ const TransferCard: FC<{
             textOverflow: 'ellipsis',
           }}
         >
-          {`id: ${item.item.token_id}`}
+          {`id: ${formatNftDisplayId(item.item.token_id, item.item.standard)}`}
         </Link>
       </div>
       <dl>

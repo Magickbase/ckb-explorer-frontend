@@ -8,7 +8,7 @@ import { ReactComponent as Cover } from '../../../assets/nft_cover.svg'
 import styles from './styles.module.scss'
 import { getPrimaryColor } from '../../../constants/common'
 import { explorerService } from '../../../services/ExplorerService'
-import { handleNftImgError, patchMibaoImg } from '../../../utils/util'
+import { formatNftDisplayId, handleNftImgError, patchMibaoImg } from '../../../utils/util'
 import type { NFTItem } from '../../../services/ExplorerService/fetcher'
 
 const primaryColor = getPrimaryColor()
@@ -90,7 +90,7 @@ const NftCollectionInventory: React.FC<{
                   color: primaryColor,
                 }}
               >
-                {item.token_id}
+                {formatNftDisplayId(item.token_id, item.standard)}
               </Link>
             </div>
             <div className={styles.owner}>

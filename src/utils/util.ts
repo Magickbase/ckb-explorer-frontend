@@ -355,6 +355,17 @@ export function assertIsHashType(value: string): asserts value is HashType {
   }
 }
 
+export const formatNftDisplayId = (id: string, type: string | null) => {
+  switch (type) {
+    case 'spore': {
+      return `0x${BigNumber(id).toString(16).padStart(64, '0')}`
+    }
+    default: {
+      return id
+    }
+  }
+}
+
 export default {
   copyElementValue,
   shannonToCkb,
@@ -364,4 +375,5 @@ export default {
   deprecatedAddrToNewAddr,
   handleRedirectFromAggron,
   assertIsHashType,
+  formatNftItemId: formatNftDisplayId,
 }
