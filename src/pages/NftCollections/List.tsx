@@ -206,12 +206,12 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: NFTCollection[]
                     )}
                     <Link
                       to={`/nft-collections/${typeHash || item.id}`}
-                      title={item.name}
+                      title={item.standard === 'spore' && item.creator === '' ? 'Unique items' : item.name}
                       style={{
                         color: primaryColor,
                       }}
                     >
-                      {item.name}
+                      {item.standard === 'spore' && item.creator === '' ? 'Unique items' : item.name}
                     </Link>
                   </div>
                 </td>
@@ -304,12 +304,12 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
                     )}
                     <Link
                       to={`/nft-collections/${typeHash || item.id}`}
-                      title={item.name}
+                      title={item.standard === 'spore' && item.creator === '' ? 'Unique items' : item.name}
                       style={{
                         color: primaryColor,
                       }}
                     >
-                      {item.name}
+                      {item.standard === 'spore' && item.creator === '' ? 'Unique items' : item.name}
                     </Link>
                   </div>
                 </div>
