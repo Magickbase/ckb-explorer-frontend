@@ -2,6 +2,7 @@ import { Transaction } from '../../models/Transaction'
 import { TransactionRecord } from '../../services/ExplorerService'
 
 export const defaultTransactionInfo: Transaction = {
+  isRgbTransaction: false,
   transactionHash: '',
   blockNumber: 0,
   blockTimestamp: 0,

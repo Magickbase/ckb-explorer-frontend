@@ -1,36 +1,22 @@
 import { useState, FC, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Radio } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { Link } from '../../components/Link'
-import TransactionItem from '../../components/TransactionItem/index'
 import { explorerService } from '../../services/ExplorerService'
 import { localeNumberString } from '../../utils/number'
-import { shannonToCkb, deprecatedAddrToNewAddr } from '../../utils/util'
+import { shannonToCkb } from '../../utils/util'
 import {
   AddressAssetsTab,
   AddressAssetsTabPane,
   AddressAssetsTabPaneTitle,
   AddressLockScriptController,
   AddressLockScriptPanel,
-  AddressTransactionsPanel,
+  AddressUDTAssetsContent,
   AddressUDTAssetsList,
   AddressUDTAssetsPanel,
 } from './styled'
 import Capacity from '../../components/Capacity'
 import CKBTokenIcon from './ckb_token_icon.png'
-import { ReactComponent as TimeDownIcon } from './time_down.svg'
-import { ReactComponent as TimeUpIcon } from './time_up.svg'
-import {
-  OrderByType,
-  useIsMobile,
-  useNewAddr,
-  usePaginationParamsInListPage,
-  useSearchParams,
-  useUpdateSearchParams,
-} from '../../hooks'
 import styles from './styles.module.scss'
-import LiteTransactionList from '../../components/LiteTransactionList'
 import Script from '../../components/Script'
 import AddressText from '../../components/AddressText'
 import { parseSimpleDateNoSecond } from '../../utils/date'
@@ -39,14 +25,8 @@ import ArrowUpIcon from '../../assets/arrow_up.png'
 import ArrowUpBlueIcon from '../../assets/arrow_up_blue.png'
 import ArrowDownIcon from '../../assets/arrow_down.png'
 import ArrowDownBlueIcon from '../../assets/arrow_down_blue.png'
-import { LayoutLiteProfessional } from '../../constants/common'
-import { omit } from '../../utils/object'
-import { CsvExport } from '../../components/CsvExport'
-import PaginationWithRear from '../../components/PaginationWithRear'
-import { Transaction } from '../../models/Transaction'
 import { Address, UDTAccount } from '../../models/Address'
 import { Card, CardCellInfo, CardCellsLayout } from '../../components/Card'
-import { CardHeader } from '../../components/Card/CardHeader'
 import Cells from './Cells'
 import {
   AddressCoTAComp,
@@ -60,6 +40,7 @@ enum AssetInfo {
   UDT = 1,
   INSCRIPTION,
   CELLs,
+  RGBPP,
 }
 
 const lockScriptIcon = (show: boolean) => {
@@ -123,7 +104,7 @@ const AddressLockScript: FC<{ address: Address }> = ({ address }) => {
   )
 }
 
-export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
+export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
   const { t, i18n } = useTranslation()
   const { udtAccounts = [] } = address
   const [activeTab, setActiveTab] = useState<AssetInfo>(AssetInfo.UDT)
@@ -226,36 +207,57 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                 }
                 key={AssetInfo.UDT}
               >
-                <div className="addressUdtAssetsGrid">
-                  {udts.map(udt => {
-                    switch (udt.udtType) {
-                      case 'sudt':
-                        return <AddressSudtComp account={udt} key={udt.symbol + udt.udtType + udt.amount} />
+                <AddressUDTAssetsContent>
+                  <AddressUDTAssetsList>
+                    {udts.map(udt => {
+                      switch (udt.udtType) {
+                        case 'sudt':
+                          return (
+                            <AddressSudtComp
+                              isRGBPP={false}
+                              account={udt}
+                              key={udt.symbol + udt.udtType + udt.amount}
+                            />
+                          )
 
-                      case 'spore_cell':
-                        return <AddressSporeComp account={udt} key={udt.symbol + udt.udtType + udt.amount} />
+                        case 'spore_cell':
+                          return (
+                            <AddressSporeComp
+                              isRGBPP={false}
+                              account={udt}
+                              key={udt.symbol + udt.udtType + udt.amount}
+                            />
+                          )
 
-                      case 'm_nft_token':
-                        return <AddressMNFTComp account={udt} key={udt.symbol + udt.udtType + udt.amount} />
-                      default:
-                        return null
-                    }
-                  })}
-                  {cotaList?.map(cota => (
-                    <AddressCoTAComp
-                      account={{
-                        udtType: 'cota',
-                        symbol: cota.collection.name,
-                        udtIconFile: cota.collection.icon_url ?? '',
-                        cota: {
-                          cotaId: cota.collection.id,
-                          tokenId: Number(cota.token_id),
-                        },
-                      }}
-                      key={cota.collection.id + cota.token_id}
-                    />
-                  )) ?? null}
-                </div>
+                        case 'm_nft_token':
+                          return (
+                            <AddressMNFTComp
+                              isRGBPP={false}
+                              account={udt}
+                              key={udt.symbol + udt.udtType + udt.amount}
+                            />
+                          )
+                        default:
+                          return null
+                      }
+                    })}
+                    {cotaList?.map(cota => (
+                      <AddressCoTAComp
+                        isRGBPP={false}
+                        account={{
+                          udtType: 'cota',
+                          symbol: cota.collection.name,
+                          udtIconFile: cota.collection.icon_url ?? '',
+                          cota: {
+                            cotaId: cota.collection.id,
+                            tokenId: Number(cota.token_id),
+                          },
+                        }}
+                        key={cota.collection.id + cota.token_id}
+                      />
+                    )) ?? null}
+                  </AddressUDTAssetsList>
+                </AddressUDTAssetsContent>
               </AddressAssetsTabPane>
             )}
             {hasInscriptions ? (
@@ -267,24 +269,86 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                 }
                 key={AssetInfo.INSCRIPTION}
               >
-                <div className="addressUdtAssetsGrid">
-                  {inscriptions.map(inscription => {
-                    switch (inscription.udtType) {
-                      case 'omiga_inscription':
-                        return (
-                          <AddressOmigaInscriptionComp
-                            account={inscription}
-                            key={`${inscription.symbol + inscription.udtType + inscription.udtAmount}`}
-                          />
-                        )
+                <AddressUDTAssetsContent>
+                  <AddressUDTAssetsList>
+                    {inscriptions.map(inscription => {
+                      switch (inscription.udtType) {
+                        case 'omiga_inscription':
+                          return (
+                            <AddressOmigaInscriptionComp
+                              isRGBPP={false}
+                              account={inscription}
+                              key={`${inscription.symbol + inscription.udtType + inscription.udtAmount}`}
+                            />
+                          )
 
-                      default:
-                        return null
-                    }
-                  })}
-                </div>
+                        default:
+                          return null
+                      }
+                    })}
+                  </AddressUDTAssetsList>
+                </AddressUDTAssetsContent>
               </AddressAssetsTabPane>
             ) : null}
+            {(hasInscriptions || hasAssets) && (
+              <AddressAssetsTabPane
+                tab={
+                  <AddressAssetsTabPaneTitle onClick={() => setActiveTab(AssetInfo.RGBPP)}>
+                    {t('address.rgb_plus_plus')}
+                  </AddressAssetsTabPaneTitle>
+                }
+                key={AssetInfo.RGBPP}
+              >
+                <AddressUDTAssetsContent>
+                  <AddressUDTAssetsList>
+                    {udts.map(udt => {
+                      switch (udt.udtType) {
+                        case 'sudt':
+                          return <AddressSudtComp isRGBPP account={udt} key={udt.symbol + udt.udtType + udt.amount} />
+
+                        case 'spore_cell':
+                          return <AddressSporeComp isRGBPP account={udt} key={udt.symbol + udt.udtType + udt.amount} />
+
+                        case 'm_nft_token':
+                          return <AddressMNFTComp isRGBPP account={udt} key={udt.symbol + udt.udtType + udt.amount} />
+                        default:
+                          return null
+                      }
+                    })}
+                    {cotaList?.map(cota => (
+                      <AddressCoTAComp
+                        isRGBPP
+                        account={{
+                          udtType: 'cota',
+                          symbol: cota.collection.name,
+                          udtIconFile: cota.collection.icon_url ?? '',
+                          cota: {
+                            cotaId: cota.collection.id,
+                            tokenId: Number(cota.token_id),
+                          },
+                        }}
+                        key={cota.collection.id + cota.token_id}
+                      />
+                    )) ?? null}
+                    {inscriptions.map(inscription => {
+                      switch (inscription.udtType) {
+                        case 'omiga_inscription':
+                          return (
+                            <AddressOmigaInscriptionComp
+                              isRGBPP
+                              account={inscription}
+                              key={`${inscription.symbol + inscription.udtType + inscription.udtAmount}`}
+                            />
+                          )
+
+                        default:
+                          return null
+                      }
+                    })}
+                  </AddressUDTAssetsList>
+                </AddressUDTAssetsContent>
+              </AddressAssetsTabPane>
+            )}
 
             {hasCells ? (
               <AddressAssetsTabPane
@@ -306,137 +370,6 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
 
       <AddressLockScript address={address} />
     </Card>
-  )
-}
-
-// TODO: Adding loading
-export const AddressTransactions = ({
-  address,
-  transactions,
-  timeOrderBy,
-  meta: { counts },
-}: {
-  address: string
-  transactions: Transaction[]
-  timeOrderBy: OrderByType
-  meta: { counts: Record<'committed' | 'pending', number | '-'> }
-}) => {
-  const isMobile = useIsMobile()
-  const { t } = useTranslation()
-  const { currentPage, pageSize, setPage } = usePaginationParamsInListPage()
-  const { Professional, Lite } = LayoutLiteProfessional
-  const searchParams = useSearchParams('layout', 'tx_status')
-  const defaultLayout = Professional
-  const updateSearchParams = useUpdateSearchParams<'layout' | 'sort' | 'tx_type'>()
-  const layout = searchParams.layout === Lite ? Lite : defaultLayout
-
-  const txStatus = searchParams.tx_status
-  const isPendingListActive = txStatus === 'pending'
-  const total = isPendingListActive ? counts.pending : counts.committed
-  const totalPages = total === '-' ? 0 : Math.ceil(total / pageSize)
-
-  const onChangeLayout = (layoutType: LayoutLiteProfessional) => {
-    updateSearchParams(params =>
-      layoutType === defaultLayout
-        ? Object.fromEntries(Object.entries(params).filter(entry => entry[0] !== 'layout'))
-        : { ...params, layout: layoutType },
-    )
-  }
-  const handleTimeSort = () => {
-    updateSearchParams(
-      params =>
-        timeOrderBy === 'asc' ? omit(params, ['sort', 'tx_type']) : omit({ ...params, sort: 'time' }, ['tx_type']),
-      true,
-    )
-  }
-
-  const newAddr = useNewAddr(address)
-  const isNewAddr = newAddr === address
-  const txList = isNewAddr
-    ? transactions.map(tx => ({
-        ...tx,
-        displayInputs: tx.displayInputs.map(i => ({
-          ...i,
-          addressHash: deprecatedAddrToNewAddr(i.addressHash),
-        })),
-        displayOutputs: tx.displayOutputs.map(o => ({
-          ...o,
-          addressHash: deprecatedAddrToNewAddr(o.addressHash),
-        })),
-      }))
-    : transactions
-
-  const searchOptionsAndModeSwitch = (
-    <div className={styles.searchOptionsAndModeSwitch}>
-      <div className={styles.sortAndFilter} data-is-active={timeOrderBy === 'asc'}>
-        {timeOrderBy === 'asc' ? <TimeDownIcon onClick={handleTimeSort} /> : <TimeUpIcon onClick={handleTimeSort} />}
-      </div>
-      <Radio.Group
-        className={styles.layoutButtons}
-        options={[
-          { label: t('transaction.professional'), value: Professional },
-          { label: t('transaction.lite'), value: Lite },
-        ]}
-        onChange={({ target: { value } }) => onChangeLayout(value)}
-        value={layout}
-        optionType="button"
-        buttonStyle="solid"
-      />
-    </div>
-  )
-
-  return (
-    <>
-      <Card className={styles.transactionListOptionsCard} rounded="top">
-        <CardHeader
-          className={styles.cardHeader}
-          leftContent={
-            <div className={styles.txHeaderLabels}>
-              <Link
-                to={`/address/${address}?${new URLSearchParams({ ...searchParams, tx_status: 'committed' })}`}
-                data-is-active={!isPendingListActive}
-              >{`${t('transaction.transactions')} (${
-                counts.committed === '-' ? counts.committed : localeNumberString(counts.committed)
-              })`}</Link>
-              <Link
-                to={`/address/${address}?${new URLSearchParams({ ...searchParams, tx_status: 'pending' })}`}
-                data-is-active={isPendingListActive}
-              >{`${t('transaction.pending_transactions')} (${
-                counts.pending === '-' ? counts.pending : localeNumberString(counts.pending)
-              })`}</Link>
-            </div>
-          }
-          rightContent={!isMobile && searchOptionsAndModeSwitch}
-        />
-        {isMobile && searchOptionsAndModeSwitch}
-      </Card>
-
-      <AddressTransactionsPanel>
-        {layout === 'lite' ? (
-          <LiteTransactionList address={address} list={transactions} />
-        ) : (
-          <>
-            {txList.map((transaction: Transaction, index: number) => (
-              <TransactionItem
-                address={address}
-                transaction={transaction}
-                key={transaction.transactionHash}
-                circleCorner={{
-                  bottom: index === transactions.length - 1 && totalPages === 1,
-                }}
-              />
-            ))}
-            {txList.length === 0 ? <div className={styles.noRecords}>{t(`transaction.no_records`)}</div> : null}
-          </>
-        )}
-      </AddressTransactionsPanel>
-      <PaginationWithRear
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onChange={setPage}
-        rear={isPendingListActive ? null : <CsvExport type="address_transactions" id={address} />}
-      />
-    </>
   )
 }
 
