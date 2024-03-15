@@ -41,7 +41,7 @@ const SearchByNameResult: FC<{ keyword?: string; item: UDTQueryResult }> = ({ it
     return (
       <span className={styles.highlightText} style={{ maxWidth: 'min(200px, 60%)' }}>
         <span className={styles.ellipsisText}>{text.slice(0, keywordIndex - 1)}</span>
-        <span className={styles.ellipsisText} style={{ maxWidth: '60%', textOverflow: 'clip' }}>
+        <span style={{ textOverflow: 'clip' }}>
           {text.slice(keywordIndex - 1, keywordIndex)}
           <span className={styles.highlight}>{text.slice(keywordIndex, keywordIndex + keyword.length)}</span>
           {text.slice(keywordIndex + keyword.length, keywordIndex + keyword.length + 1)}
