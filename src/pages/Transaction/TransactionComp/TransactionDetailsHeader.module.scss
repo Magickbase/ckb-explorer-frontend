@@ -87,3 +87,19 @@
     margin: 0;
   }
 }
+
+.viewBtcTxContainer {
+  margin-top: 1rem;
+
+  summary {
+    cursor: pointer;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+
+  .btcTxContent {
+    padding: 1rem;
+  }
+}

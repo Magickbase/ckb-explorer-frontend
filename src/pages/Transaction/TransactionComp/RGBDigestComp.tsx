@@ -4,6 +4,7 @@ import { Card } from '../../../components/Card'
 import styles from './TransactionDetailsHeader.module.scss'
 import { TransactionRGBPPDigestContent } from '../../../components/TransactionItem/TransactionRGBPPDigestModal/TransactionRGBPPDigestContent'
 import { TransactionLeapDirection } from '../../../components/TransactionItem/TransactionRGBPPDigestModal/types'
+import BtcTransaction from '../../../components/Btc/Transaction'
 
 export const RGBDigestComp = ({ hash, leapDirection }: { hash: string; leapDirection: TransactionLeapDirection }) => {
   const { t } = useTranslation()
@@ -16,6 +17,12 @@ export const RGBDigestComp = ({ hash, leapDirection }: { hash: string; leapDirec
       </Card>
       <Card className={styles.digestContent}>
         <TransactionRGBPPDigestContent hash={hash} leapDirection={leapDirection} />
+        <details className={styles.viewBtcTxContainer}>
+          <summary>{t('transaction.view-btc-utxos')}</summary>
+          <div className={styles.btcTxContent}>
+            <BtcTransaction hash={hash} showId={false} />
+          </div>
+        </details>
       </Card>
     </>
   )

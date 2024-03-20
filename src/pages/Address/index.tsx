@@ -146,7 +146,7 @@ export const Address = () => {
                 >
                   <Link
                     className={styles.openInNew}
-                    to={`${isRGBPP ? config.BTCOIN_EXPLORER : ''}/address/${counterpartAddr}`}
+                    to={`${isRGBPP ? config.BITCOIN_EXPLORER : ''}/address/${counterpartAddr}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

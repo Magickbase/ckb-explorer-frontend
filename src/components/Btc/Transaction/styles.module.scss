@@ -1,0 +1,83 @@
+@import '../../../styles/variables.module';
+
+.container {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  cursor: default;
+
+  .txid {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 1rem;
+
+    a {
+      flex: 1;
+      overflow: hidden;
+    }
+  }
+
+  .utxos {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    white-space: nowrap;
+
+    h5 {
+      font-size: 1rem;
+    }
+
+    @media (width <= $largeBreakPoint) {
+      flex-direction: column;
+    }
+  }
+
+  .input,
+  .output {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+
+    & > a {
+      flex-shrink: 1;
+      overflow: hidden;
+    }
+
+    .btcAttr {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      cursor: default;
+
+      svg {
+        cursor: pointer;
+
+        &:hover {
+          color: var(--primary-color);
+        }
+      }
+    }
+  }
+
+  .newSeal {
+    svg:first-child {
+      display: inline;
+    }
+
+    svg:last-child {
+      display: none;
+    }
+
+    &:hover {
+      svg:first-child {
+        display: none;
+      }
+
+      svg:last-child {
+        display: inline;
+      }
+    }
+  }
+}
