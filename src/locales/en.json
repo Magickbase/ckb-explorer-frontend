@@ -485,7 +485,8 @@
       "mint": "Mint",
       "no_records": "No records",
       "data-being-processed": "Data is being processed, please wait...",
-      "view-btc-utxos": "Show BTC UTXOs"
+      "view-btc-utxos": "BTC UTXOs",
+      "view-btc-tx": "View BTC Tx"
     },
     "block": {
       "block": "Block",

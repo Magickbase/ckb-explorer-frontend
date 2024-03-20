@@ -2,14 +2,17 @@
 
 .container {
   width: 100%;
-  background: #fff;
   border-radius: 8px;
   cursor: default;
 
+  a {
+    color: var(--primary-color);
+  }
+
   .txid {
     display: flex;
-    gap: 0.5rem;
-    font-size: 1rem;
+    gap: 0.5em;
+    font-size: 1em;
 
     a {
       flex: 1;
@@ -21,14 +24,14 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    gap: 2rem;
+    gap: 2em;
     white-space: nowrap;
 
     h5 {
-      font-size: 1rem;
+      font-size: 1em;
     }
 
-    @media (width <= $largeBreakPoint) {
+    @media (width <= $extraLargeBreakPoint) {
       flex-direction: column;
     }
   }
@@ -36,7 +39,7 @@
   .input,
   .output {
     display: flex;
-    gap: 1rem;
+    gap: 1em;
     justify-content: space-between;
     align-items: center;
 
@@ -47,7 +50,7 @@
 
     .btcAttr {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.5em;
       align-items: center;
       cursor: default;
 

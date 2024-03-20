@@ -89,7 +89,8 @@ const NETWORK = {
 
 // learn from https://github.com/bitcoinjs/bitcoinjs-lib/blob/2f7c83b286e0a58962df38e606c516983903e1a0/src/address.js#L101
 export const parseBTCAddress = (address: string): Address | undefined => {
-  const network = IS_MAINNET ? NETWORK.bitcoin : NETWORK.testnet
+  // FIXME: the mock data from api come from mainnet
+  const network = !IS_MAINNET ? NETWORK.bitcoin : NETWORK.testnet
   let decodeBase58
   let decodeBech32
   try {

@@ -19,6 +19,7 @@ import TransactionRGBPPDigestModal from './TransactionRGBPPDigestModal'
 import { TransactionLeapDirection } from './TransactionRGBPPDigestModal/types'
 import { matchScript } from '../../utils/util'
 import { Cell } from '../../models/Cell'
+import BtcTransaction from '../Btc/Transaction'
 
 export interface CircleCorner {
   top?: boolean
@@ -178,6 +179,18 @@ const TransactionItem = ({
         </div>
       </TransactionCellPanel>
       {address && <TransactionIncome income={transaction.income} />}
+      {transaction.isRgbTransaction ? (
+        <details className={styles.viewBtcTx}>
+          <summary>
+            {t('transaction.view-btc-tx')}
+            <div className={styles.expandArrow} />
+          </summary>
+          <div className={styles.btcTxContent}>
+            <BtcTransaction hash={transaction.transactionHash} />
+          </div>
+        </details>
+      ) : null}
+      {/* {isR} */}
     </TransactionPanel>
   )
 }

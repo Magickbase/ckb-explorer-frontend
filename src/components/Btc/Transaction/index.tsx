@@ -52,7 +52,7 @@ const mock = [
   },
 ]
 
-const BtcTransaction: FC<{ hash: string; showId: boolean }> = ({ hash, showId }) => {
+const BtcTransaction: FC<{ hash: string; showId?: boolean }> = ({ hash, showId = true }) => {
   const { data, isFetching } = useQuery(['btc-tx', hash], () => getTxsByCkbTxHashes([hash]), {
     enabled: false,
   })

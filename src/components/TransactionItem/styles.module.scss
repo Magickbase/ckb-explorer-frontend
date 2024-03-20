@@ -14,3 +14,47 @@
   max-width: 100%;
   gap: 8px;
 }
+
+.viewBtcTx {
+  cursor: default;
+  font-size: 0.8rem;
+  position: relative;
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+    list-style: none;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+
+    .expandArrow {
+      margin-left: 4px;
+      transform: translateY(-2px) rotate(45deg);
+      width: 8px;
+      height: 8px;
+      box-shadow: 1px 1px 1px 0 currentcolor;
+    }
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .btcTxContent {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    background: #f1f1f1;
+    border-radius: 6px;
+  }
+
+  &[open] {
+    .expandArrow {
+      transform: translateY(5px) rotate(225deg);
+    }
+  }
+}

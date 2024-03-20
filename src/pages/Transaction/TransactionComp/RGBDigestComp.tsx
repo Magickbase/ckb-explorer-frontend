@@ -18,7 +18,10 @@ export const RGBDigestComp = ({ hash, leapDirection }: { hash: string; leapDirec
       <Card className={styles.digestContent}>
         <TransactionRGBPPDigestContent hash={hash} leapDirection={leapDirection} />
         <details className={styles.viewBtcTxContainer}>
-          <summary>{t('transaction.view-btc-utxos')}</summary>
+          <summary>
+            {t('transaction.view-btc-utxos')}
+            <div className={styles.expandArrow} />
+          </summary>
           <div className={styles.btcTxContent}>
             <BtcTransaction hash={hash} showId={false} />
           </div>
