@@ -27,10 +27,8 @@ export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: Li
       name = transfer.name
       break
     case 'm_nft_token':
-      name = transfer.name
-      break
     case 'nrc_721_token':
-      name = transfer.name
+      name = transfer.name || `${t('udt.unknown_token')} #${transfer.tokenId.substring(transfer.tokenId.length - 4)}`
       break
     case 'cota_regular':
       if (transfer.cotaInfo.length > 0) {
