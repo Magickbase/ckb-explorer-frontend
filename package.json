@@ -13,7 +13,9 @@
     "@tanstack/react-query": "4.0.5",
     "antd": "4.24.5",
     "axios": "1.6.7",
+    "bech32": "2.0.0",
     "bignumber.js": "9.1.2",
+    "bs58": "5.0.0",
     "camelcase": "7.0.1",
     "camelcase-keys": "7.0.2",
     "classnames": "2.5.1",
@@ -36,9 +38,7 @@
     "react-router-dom": "5.3.4",
     "react-scripts": "5.0.1",
     "sass": "1.70.0",
-    "styled-components": "5.3.11",
-    "bech32": "2.0.0",
-    "bs58": "5.0.0"
+    "styled-components": "5.3.11"
   },
   "devDependencies": {
     "@sentry/webpack-plugin": "2.10.3",

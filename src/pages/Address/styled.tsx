@@ -154,23 +154,6 @@ export const AddressAssetsTabPaneTitle = styled.span`
   text-align: left;
 `
 
-export const AddressUDTAssetsList = styled.div`
-  overflow-y: scroll;
-  width: 100%;
-  display: flex;
-  gap: 16px;
-  background-color: #f1f1f1;
-  flex-flow: row wrap;
-
-  @media (min-width: ${variables.extraLargeBreakPoint}) {
-    max-height: 153px;
-  }
-
-  @media (max-width: ${variables.extraLargeBreakPoint}) {
-    max-height: 252px;
-  }
-`
-
 export const AddressUDTAssetsContent = styled.div`
   background-color: #f1f1f1;
   padding: 16px 25px;
