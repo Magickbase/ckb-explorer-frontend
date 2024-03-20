@@ -199,7 +199,7 @@ export const AddressUDTItemPanel = styled.a`
     span {
       text-transform: uppercase;
       font-size: 12px;
-      font-family: jetbrains-mono, sans-serif;
+      font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
       font-weight: 500;
     }
   }
