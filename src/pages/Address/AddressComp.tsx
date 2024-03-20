@@ -14,7 +14,6 @@ import {
   AddressLockScriptController,
   AddressLockScriptPanel,
   AddressTransactionsPanel,
-  AddressUDTAssetsList,
   AddressUDTAssetsPanel,
 } from './styled'
 import Capacity from '../../components/Capacity'
@@ -226,7 +225,7 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                 }
                 key={AssetInfo.UDT}
               >
-                <div className="addressUdtAssetsGrid">
+                <div className={styles.assetCardList}>
                   {udts.map(udt => {
                     switch (udt.udtType) {
                       case 'sudt':
@@ -267,7 +266,7 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                 }
                 key={AssetInfo.INSCRIPTION}
               >
-                <div className="addressUdtAssetsGrid">
+                <div className={styles.assetCardList}>
                   {inscriptions.map(inscription => {
                     switch (inscription.udtType) {
                       case 'omiga_inscription':
@@ -295,9 +294,9 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                 }
                 key={AssetInfo.CELLs}
               >
-                <AddressUDTAssetsList>
+                <div className={styles.assetCardList}>
                   <Cells address={address.addressHash} count={+address.liveCellsCount} />
-                </AddressUDTAssetsList>
+                </div>
               </AddressAssetsTabPane>
             ) : null}
           </AddressAssetsTab>
