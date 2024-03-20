@@ -58,6 +58,7 @@ module.exports = function override(config) {
       }
     }
   }
+  console.log(config)
 
   return config
 }
