@@ -94,32 +94,19 @@ export const AddressAssetsTab = styled(Tabs)`
   border-radius: 6px 6px 0 0;
 
   /* stylelint-disable-next-line selector-class-pattern */
-  .ant-tabs-nav-operations {
-    display: none !important;
-  }
-
-  /* stylelint-disable-next-line selector-class-pattern */
-  .ant-tabs-tab.ant-tabs-tab-active {
-    /* stylelint-disable-next-line selector-class-pattern */
-    .ant-tabs-tab-btn {
-      color: var(--primary-color);
-    }
-  }
-
-  /* stylelint-disable-next-line selector-class-pattern */
-  .ant-tabs-tab-remove {
-    &:hover,
-    &:active {
-      color: var(--primary-color);
-    }
-  }
-
-  /* stylelint-disable-next-line selector-class-pattern */
   .ant-tabs-tab-btn {
     &:active,
     &:focus {
       color: var(--primary-color);
     }
+  }
+  /* stylelint-disable-next-line selector-class-pattern */
+  .ant-tabs-tab {
+    color: #000;
+  }
+  /* stylelint-disable-next-line selector-class-pattern */
+  .ant-tabs-tab-active span {
+    color: var(--primary-color);
   }
 
   /* stylelint-disable-next-line selector-class-pattern */
@@ -146,7 +133,7 @@ export const AddressAssetsTabPane = styled(TabPane)``
 
 export const AddressAssetsTabPaneTitle = styled.span`
   font-family: Roboto, sans-serif;
-  color: #000;
+  color: inherit;
   font-size: 16px;
   font-weight: 500;
   line-height: 19px;
