@@ -14,7 +14,6 @@ import {
   AddressLockScriptController,
   AddressLockScriptPanel,
   AddressTransactionsPanel,
-  AddressUDTAssetsList,
   AddressUDTAssetsPanel,
 } from './styled'
 import Capacity from '../../components/Capacity'
@@ -295,9 +294,9 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                 }
                 key={AssetInfo.CELLs}
               >
-                <AddressUDTAssetsList>
+                <div className="addressUdtAssetsGrid">
                   <Cells address={address.addressHash} count={+address.liveCellsCount} />
-                </AddressUDTAssetsList>
+                </div>
               </AddressAssetsTabPane>
             ) : null}
           </AddressAssetsTab>

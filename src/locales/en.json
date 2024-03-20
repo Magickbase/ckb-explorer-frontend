@@ -169,7 +169,7 @@
       "sUDT": "sUDT",
       "inscriptions": "Inscriptions",
       "docs": "Docs",
-      "search_placeholder": "Block/Transaction/Address/Lock Hash/Type Hash/Args",
+      "search_placeholder": "Block/Transaction/Address/Code Hash/Lock Hash/Type Hash/Args",
       "search_by_name_placeholder": "Token Name",
       "mainnet": "LINA",
       "testnet": "TESTNET",
@@ -297,7 +297,10 @@
       "nominal_rpc_description": "The nominal compensation rate provided by DAO when there is no burnt portion in the secondary issuance. The real compensation rate is always higher than the nominal compensation rate.",
       "secondary_issuance_description": "The secondary issuance is automatically divided into three parts, the compensation, the mining reward and the treasury (burnt by now). They are proportional to the DAO deposit, the storage occupation, and the rest of CKBytes.",
       "inflation_rate_description": "Nominal inflation rate: the inflation introduced by the the primary issuance and the secondary issuance. \nNominal APC: the anti-dilution compensation rate of Nervos DAO.\nReal inflation rate: the compound inflation rate that nominal inflation rate minus the nominal APC, which is gradually to zero.",
-      "node_count_in_total": "in total"
+      "node_count_in_total": "in total",
+      "ckb_amount": "CKB Amount",
+      "contract_resource_distributed": "Contract Resource Distribution",
+      "contract_resource_distributed_description": "The x axis represents contract's unique address count, the y axis represents the contract's CKB amount, the symbol size represents the contract's transaction count."
     },
     "home": {
       "height": "Height",
@@ -370,7 +373,6 @@
       "user_defined_token": "User Defined Token",
       "cell": "Cell",
       "cells": "Cells",
-      "rgb_plus_plus": "RGB++",
       "inscription": "Inscription",
       "confirmation": "Confirmation",
       "confirmations": "Confirmations",
@@ -380,13 +382,7 @@
       "visit-deprecated-address": "View in deprecated address format",
       "view-deprecated-address": "Display deprecated addresses",
       "displaying-deprecated-address": "Displaying in deprecated address format",
-      "current-address": "Current Address",
-      "transaction_rgbpp_digest": "RGB++ Digest",
-      "seal_tx_on_bitcoin": "Seal Tx On Bitcoin",
-      "leap_in": "Leap In",
-      "leap_out": "Leap Out",
-      "leap_in_tip": "This RGB++ transaction is marked as \"Leap In\", indicating that the number of cells with RGB++ lock in the output exceeds the number of cells with RGB++ lock in the input.",
-      "leap_out_tip": "This RGB++ transaction is marked as \"Leap Out\", indicating that the number of cells with RGB++ lock in the input exceeds the number of cells with RGB++ lock in the output."
+      "current-address": "Current Address"
     },
     "transaction": {
       "transaction": "Transaction",
@@ -476,8 +472,6 @@
       },
       "professional": "Professional",
       "lite": "Lite",
-      "rgb_digest": "RGB++ Digest",
-      "transaction_details": "Transaction Details",
       "unknown_assets": "Unknown Assets",
       "mint": "Mint",
       "no_records": "No records",
