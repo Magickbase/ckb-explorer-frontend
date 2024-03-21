@@ -3,6 +3,7 @@ import { TransactionRecord } from '../../services/ExplorerService'
 
 export const defaultTransactionInfo: Transaction = {
   isRgbTransaction: false,
+  rgbTxid: null,
   transactionHash: '',
   blockNumber: 0,
   blockTimestamp: 0,

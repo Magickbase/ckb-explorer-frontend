@@ -1,6 +1,5 @@
 import axios from 'axios'
 import config from '../../config'
-import { explorerService } from '../ExplorerService'
 
 const { BITCOIN_NODES: bitcoinNodes } = config
 
@@ -57,12 +56,4 @@ export const getTxList = async (idList: string[]): Promise<BtcTx[]> => {
     .post(node, body)
     .then(res => res.data.map((r: { result: object }) => r.result))
     .catch(() => null)
-}
-
-export const getTxsByCkbTxHashes = async (hashList: string[]) => {
-  const digestList = await Promise.allSettled(hashList.map(hash => explorerService.api.fetchRGBDigest(hash)))
-  const idList: string[] = digestList
-    .map(res => (res.status === 'fulfilled' ? res.value.data.txid : ''))
-    .filter(id => id)
-  return getTxList(idList)
 }

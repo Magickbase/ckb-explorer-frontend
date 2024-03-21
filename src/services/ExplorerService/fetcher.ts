@@ -959,6 +959,7 @@ export interface ScriptInfo {
 
 export interface CKBTransactionInScript {
   rgbTransaction: boolean
+  rgbTxid: string | null
   id: number
   txHash: string
   blockId: number

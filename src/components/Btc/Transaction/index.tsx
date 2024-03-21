@@ -2,7 +2,7 @@ import type { FC } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Tooltip } from 'antd'
 import SmallLoading from '../../Loading/SmallLoading'
-import { getTxsByCkbTxHashes } from '../../../services/BtcService'
+import { getTxList } from '../../../services/BtcService'
 import config from '../../../config'
 import styles from './styles.module.scss'
 import AddressText from '../../AddressText'
@@ -11,13 +11,13 @@ import { ReactComponent as UsedSeal } from './used-seal.svg'
 import { ReactComponent as NewSeal } from './new-seal.svg'
 import { ReactComponent as ViewNewSeal } from './view-new-seal.svg'
 
-const BtcTransaction: FC<{ hash: string; showId?: boolean }> = ({ hash, showId = true }) => {
-  const { data, isFetching } = useQuery(['btc-tx', hash], () => getTxsByCkbTxHashes([hash]), {
-    enabled: !!hash,
+const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId = true }) => {
+  const { data, isLoading } = useQuery(['btc-tx', txid], () => getTxList([txid]), {
+    enabled: !!txid,
   })
 
   const btcTx = data?.[0]
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div>
         <SmallLoading />

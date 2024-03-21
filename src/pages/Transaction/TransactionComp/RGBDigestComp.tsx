@@ -6,7 +6,15 @@ import { TransactionRGBPPDigestContent } from '../../../components/TransactionIt
 import { TransactionLeapDirection } from '../../../components/TransactionItem/TransactionRGBPPDigestModal/types'
 import BtcTransaction from '../../../components/Btc/Transaction'
 
-export const RGBDigestComp = ({ hash, leapDirection }: { hash: string; leapDirection: TransactionLeapDirection }) => {
+export const RGBDigestComp = ({
+  hash,
+  txid,
+  leapDirection,
+}: {
+  hash: string
+  txid: string
+  leapDirection: TransactionLeapDirection
+}) => {
   const { t } = useTranslation()
   return (
     <>
@@ -23,7 +31,7 @@ export const RGBDigestComp = ({ hash, leapDirection }: { hash: string; leapDirec
             <div className={styles.expandArrow} />
           </summary>
           <div className={styles.btcTxContent}>
-            <BtcTransaction hash={hash} showId={false} />
+            <BtcTransaction txid={txid} showId={false} />
           </div>
         </details>
       </Card>

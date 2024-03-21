@@ -179,14 +179,14 @@ const TransactionItem = ({
         </div>
       </TransactionCellPanel>
       {address && <TransactionIncome income={transaction.income} />}
-      {transaction.isRgbTransaction ? (
+      {transaction.rgbTxid ? (
         <details className={styles.viewBtcTx}>
           <summary>
             {t('transaction.view-btc-tx')}
             <div className={styles.expandArrow} />
           </summary>
           <div className={styles.btcTxContent}>
-            <BtcTransaction hash={transaction.transactionHash} />
+            <BtcTransaction txid={transaction.rgbTxid} />
           </div>
         </details>
       ) : null}

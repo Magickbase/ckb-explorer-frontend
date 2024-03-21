@@ -6,6 +6,7 @@ import type { CellInScript, CKBTransactionInScript } from '../services/ExplorerS
 export const transformToTransaction = (tx: CKBTransactionInScript): Transaction => {
   return {
     isRgbTransaction: tx.rgbTransaction,
+    rgbTxid: tx.rgbTxid,
     transactionHash: tx.txHash,
     blockNumber: tx.blockNumber,
     blockTimestamp: tx.blockTimestamp,

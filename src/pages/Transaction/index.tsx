@@ -67,9 +67,10 @@ export default () => {
           isRGB={transaction.isRgbTransaction}
         />
 
-        {transaction.isRgbTransaction && (
+        {transaction.rgbTxid && (
           <RGBDigestComp
             hash={txHash}
+            txid={transaction.rgbTxid}
             leapDirection={
               inputRGBAmount > outputRGBAmount ? TransactionLeapDirection.OUT : TransactionLeapDirection.IN
             }
