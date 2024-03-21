@@ -39,22 +39,24 @@ const SearchByNameResult: FC<{ keyword?: string; item: UDTQueryResult }> = ({ it
     const keywordIndex = text.toUpperCase().indexOf(keyword.toUpperCase())
     if (keywordIndex === -1) return text
     const startIndex = Math.max(0, keywordIndex - 1)
+    const keywordLength = Math.min(keyword.length, 5)
     const preLength = startIndex
-    const afterLength = text.length - (keyword.length + 1 + keywordIndex)
+    const afterLength = text.length - (keywordLength + 1 + keywordIndex)
+    const sideChar = Math.min(Math.max(1, 5 - keywordLength), 3)
     return (
       <span className={styles.highlightText} style={{ maxWidth: 'min(200px, 60%)' }}>
         <span>
-          {text.slice(0, preLength > 3 ? 3 : startIndex)}
-          {preLength > 3 ? '...' : ''}
+          {text.slice(0, preLength > sideChar ? sideChar : startIndex)}
+          {preLength > sideChar ? '...' : ''}
         </span>
         <span style={{ textOverflow: 'clip' }}>
           {text.slice(startIndex, keywordIndex)}
-          <span className={styles.highlight}>{text.slice(keywordIndex, keywordIndex + keyword.length)}</span>
-          {text.slice(keywordIndex + keyword.length, keywordIndex + keyword.length + 1)}
+          <span className={styles.highlight}>{text.slice(keywordIndex, keywordIndex + keywordLength)}</span>
+          {text.slice(keywordIndex + keywordLength, keywordIndex + keywordLength + 1)}
         </span>
         <span>
-          {afterLength > 3 ? '...' : ''}
-          {text.slice(afterLength > 3 ? -3 : keywordIndex + keyword.length + 1)}
+          {afterLength > sideChar ? '...' : ''}
+          {text.slice(afterLength > sideChar ? -sideChar : keywordIndex + keywordLength + 1)}
         </span>
       </span>
     )
@@ -69,7 +71,7 @@ const SearchByNameResult: FC<{ keyword?: string; item: UDTQueryResult }> = ({ it
         {!displayName ? t('udt.unknown_token') : HighlightText(displayName, keyword)}
         <EllipsisMiddle
           className={classNames(styles.typeHash, 'monospace')}
-          style={{ maxWidth: 'min(200px, 60%)' }}
+          style={{ maxWidth: 'min(200px, 40%)' }}
           useTextWidthForPlaceholderWidth
           title={typeHash}
         >
