@@ -10,6 +10,7 @@ import { localeNumberString } from '../../utils/number'
 import { useParseDate } from '../../utils/date'
 import Capacity from '../Capacity'
 import { shannonToCkb } from '../../utils/util'
+import RGBPP from '../RGBPP'
 
 const LiteTransactionList: React.FC<{
   address?: string
@@ -79,6 +80,7 @@ const LiteTransactionList: React.FC<{
                     >
                       {item.transactionHash}
                     </AddressText>
+                    <RGBPP transaction={item} />
                   </td>
                   {isPendingListActive ? null : (
                     <td className={styles.height} title={t('transaction.height')}>

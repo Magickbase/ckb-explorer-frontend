@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Card } from '../../../components/Card'
 import styles from './TransactionDetailsHeader.module.scss'
 import { TransactionRGBPPDigestContent } from '../../../components/TransactionItem/TransactionRGBPPDigestModal/TransactionRGBPPDigestContent'
-import { TransactionLeapDirection } from '../../../components/TransactionItem/TransactionRGBPPDigestModal/types'
 import BtcTransaction from '../../../components/Btc/Transaction'
+import { TransactionLeapDirection } from '../../../components/RGBPP/types'
 
 export const RGBDigestComp = ({
   hash,

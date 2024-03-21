@@ -50,6 +50,9 @@
   .hash {
     font-size: 0.875rem;
     max-width: 25vw;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .height {

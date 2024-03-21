@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styles from './styles.module.scss'
 import CloseIcon from '../../../assets/modal_close.png'
 import { TransactionRGBPPDigestContent } from './TransactionRGBPPDigestContent'
-import { TransactionLeapDirection } from './types'
+import { TransactionLeapDirection } from '../../RGBPP/types'
 
 const TransactionRGBPPDigestModal = ({
   hash,

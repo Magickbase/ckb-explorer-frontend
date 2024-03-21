@@ -13,9 +13,9 @@ import { TransactionComp } from './TransactionComp/TransactionComp'
 import { TransactionOverviewCard } from './TransactionComp/TransactionOverview'
 import { TransactionDetailsHeader } from './TransactionComp/TransactionDetailsHeader'
 import { RGBDigestComp } from './TransactionComp/RGBDigestComp'
-import { TransactionLeapDirection } from '../../components/TransactionItem/TransactionRGBPPDigestModal/types'
 import { matchScript } from '../../utils/util'
 import { Cell } from '../../models/Cell'
+import { TransactionLeapDirection } from '../../components/RGBPP/types'
 
 const computeRGBPPCellAmount = (cells: Cell[]) => {
   return cells.reduce((cur, cell) => {

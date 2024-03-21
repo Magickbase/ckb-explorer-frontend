@@ -3,12 +3,12 @@ import { Tooltip } from 'antd'
 import { useQuery } from '@tanstack/react-query'
 import styles from './styles.module.scss'
 import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
-import { TransactionLeapDirection } from './types'
 import { TransactionRGBPPDigestTransfer } from './TransactionRGBPPDigestTransfer'
 import { useSetToast } from '../../Toast'
 import { explorerService } from '../../../services/ExplorerService'
 import AddressText from '../../AddressText'
 import SmallLoading from '../../Loading/SmallLoading'
+import { TransactionLeapDirection } from '../../RGBPP/types'
 
 export const TransactionRGBPPDigestContent = ({
   leapDirection,
