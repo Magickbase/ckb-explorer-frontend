@@ -3,6 +3,7 @@ import { parseBTCAddress } from '../../../utils/bitcoin'
 import { TransactionRGBPPDigestTransferAsset } from './TransactionRGBPPDigestTransferAsset'
 import { TransactionRecord } from '../../../services/ExplorerService'
 import AddressText from '../../AddressText'
+import config from '../../../config'
 
 export const TransactionRGBPPDigestTransfer = ({ transfer }: { transfer: TransactionRecord }) => {
   const address = parseBTCAddress(transfer.address)
@@ -10,7 +11,9 @@ export const TransactionRGBPPDigestTransfer = ({ transfer }: { transfer: Transac
   return address ? (
     <div className={styles.script}>
       <div className={styles.addressInfo}>
-        <AddressText className={styles.address}>{transfer.address}</AddressText>
+        <a href={`${config.BITCOIN_EXPLORER}/address/${transfer.address}`} target="_blank" rel="noreferrer">
+          <AddressText className={styles.address}>{transfer.address}</AddressText>
+        </a>
         <span className={styles.addressType}>{`${address.encodeType} (${address.type})`}</span>
       </div>
       <div>
