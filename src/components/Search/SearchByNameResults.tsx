@@ -38,16 +38,23 @@ const SearchByNameResult: FC<{ keyword?: string; item: UDTQueryResult }> = ({ it
   const HighlightText = (text: string, keyword: string) => {
     const keywordIndex = text.toUpperCase().indexOf(keyword.toUpperCase())
     if (keywordIndex === -1) return text
+    const startIndex = Math.max(0, keywordIndex - 1)
+    const preLength = startIndex
+    const afterLength = text.length - (keyword.length + 1 + keywordIndex)
     return (
       <span className={styles.highlightText} style={{ maxWidth: 'min(200px, 60%)' }}>
-        <span className={styles.ellipsisText}>{text.slice(0, keywordIndex - 1)}</span>
+        <span>
+          {text.slice(0, preLength > 3 ? 3 : startIndex)}
+          {preLength > 3 ? '...' : ''}
+        </span>
         <span style={{ textOverflow: 'clip' }}>
-          {text.slice(keywordIndex - 1, keywordIndex)}
+          {text.slice(startIndex, keywordIndex)}
           <span className={styles.highlight}>{text.slice(keywordIndex, keywordIndex + keyword.length)}</span>
           {text.slice(keywordIndex + keyword.length, keywordIndex + keyword.length + 1)}
         </span>
-        <span className={styles.ellipsisText} style={{ direction: 'rtl' }}>
-          {text.slice(keywordIndex + keyword.length + 1)}
+        <span>
+          {afterLength > 3 ? '...' : ''}
+          {text.slice(afterLength > 3 ? -3 : keywordIndex + keyword.length + 1)}
         </span>
       </span>
     )
