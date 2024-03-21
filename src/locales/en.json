@@ -415,6 +415,7 @@
       "lock_script": "Lock Script",
       "type_script": "Type Script",
       "data": "Data",
+      "view_data_as": "View Data As",
       "base_reward": "Base Reward",
       "secondary_reward": "Secondary Reward",
       "commit_reward": "Commit Reward",

@@ -16,6 +16,7 @@ import {
   TransactionCellDetailTitle,
 } from './styled'
 import SmallLoading from '../../../components/Loading/SmallLoading'
+import { CellInfoDataView } from './CellInfoDataView'
 import CloseIcon from './modal_close.png'
 import config from '../../../config'
 import { getBtcUtxo, getContractHashTag } from '../../../utils/util'
@@ -212,8 +213,8 @@ const CellInfoValueRender = ({ content }: { content: CellInfoValue }) => {
   return <JSONKeyValueView title="null" />
 }
 
-const CellInfoValueJSONView = ({ content, state }: { content: CellInfoValue; state: CellInfo }) => (
-  <TransactionCellInfoValuePanel isData={state === CellInfo.DATA}>
+const CellInfoValueJSONView = ({ content }: { content: CellInfoValue }) => (
+  <TransactionCellInfoValuePanel>
     <span>{'{'}</span>
     <CellInfoValueRender content={content} />
     <span>{'}'}</span>
@@ -293,7 +294,7 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
               <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
             </div>
           }
-          tabBarStyle={{ fontSize: '10px' }}
+          tabBarStyle={{ fontSize: '10px', padding: '0 20px' }}
           onTabClick={key => {
             const state = parseInt(key, 10)
             if (state && !Number.isNaN(state)) {
@@ -338,7 +339,11 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
       <TransactionDetailPanel>
         {isFetched ? (
           <div className="transactionDetailContent">
-            <CellInfoValueJSONView content={content} state={selectedInfo} />
+            {selectedInfo === CellInfo.DATA && isCellData(content) ? (
+              <CellInfoDataView data={content.data} />
+            ) : (
+              <CellInfoValueJSONView content={content} />
+            )}
           </div>
         ) : (
           <div className="transactionDetailLoading">{!isFetched ? <SmallLoading /> : null}</div>

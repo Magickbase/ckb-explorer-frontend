@@ -415,6 +415,7 @@
       "lock_script": "Lock Script",
       "type_script": "Type Script",
       "data": "Data",
+      "view_data_as": "data 解码为",
       "base_reward": "基础奖励",
       "secondary_reward": "二级奖励",
       "commit_reward": "提交奖励",

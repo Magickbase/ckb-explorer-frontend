@@ -4,6 +4,9 @@ import styled from 'styled-components'
 import variables from '../../../styles/variables.module.scss'
 
 export const TransactionDetailContainer = styled.div`
+  background: #fafafa;
+  padding-bottom: 20px;
+
   .transactionDetailSeparate {
     width: auto;
     height: 1px;
@@ -82,7 +85,6 @@ export const TransactionCellDetailTab = styled(Tabs)`
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  background-color: #fff;
   border-radius: 6px 6px 0 0;
 
   /* stylelint-disable-next-line selector-class-pattern */
@@ -154,7 +156,6 @@ export const TransactionCellDetailPanel = styled.div`
 
 export const TransactionDetailPanel = styled.div`
   width: 100%;
-  margin-top: 20px;
 
   @media (max-width: ${variables.mobileBreakPoint}) {
     margin-top: 10px;
@@ -170,12 +171,10 @@ export const TransactionDetailPanel = styled.div`
     overflow-wrap: break-word;
     white-space: pre-wrap;
     word-break: break-all;
-    padding: 20px 6px;
-    margin-top: 5px;
+    padding: 0 18px;
     font-size: 16px;
     color: #888;
     font-weight: bold;
-    background-color: #f9f9f9;
     border-radius: 6px;
 
     @media (max-width: ${variables.mobileBreakPoint}) {
@@ -222,10 +221,10 @@ export const TransactionCellInfoValuePanel = styled.div`
     }
 
     > div:nth-child(1) {
-      min-width: ${(props: { isData: boolean }) => (props.isData ? '80px' : '120px')};
+      min-width: 120px;
 
       @media (max-width: ${variables.mobileBreakPoint}) {
-        min-width: ${(props: { isData: boolean }) => (props.isData ? '40px' : '70px')};
+        min-width: 70px;
       }
     }
 
