@@ -49,6 +49,7 @@ export enum SearchResultType {
   LockHash = 'lock_hash',
   UDT = 'udt',
   TypeScript = 'type_script',
+  LockScript = 'lock_script',
 }
 
 export const apiFetcher = {
@@ -70,6 +71,42 @@ export const apiFetcher = {
         type: wrapper.type === 'lock_hash' ? 'LockHash' : 'Address',
       }),
     ),
+
+  // sort field, block_timestamp, capacity
+  // sort type, asc, desc
+  fetchAddressLiveCells: (address: string, page: number, size: number, sort?: string) => {
+    return v1GetUnwrappedPagedList<{
+      cellType: 'spore_cell'
+      txHash: string
+      cellIndex: number
+      typeHash: string
+      data: string
+      capacity: string
+      occupiedCapacity: string
+      blockTimestamp: string
+      blockNumber: string
+      typeScript: Script
+      lockScript: Script
+      extraInfo: {
+        symbol: string
+        amount: string
+        decimal: string
+        typeHash: string
+        published: boolean
+        displayName: string
+        uan: string
+        type: 'ckb' | 'udt' | 'nrc_721' | 'm_nft'
+        className: string
+        tokenId: string
+      }
+    }>(`address_live_cells/${address}`, {
+      params: {
+        page,
+        page_size: size,
+        sort,
+      },
+    })
+  },
 
   fetchTransactionsByAddress: (address: string, page: number, size: number, sort?: string, txTypeFilter?: string) =>
     v1GetUnwrappedPagedList<Transaction>(`address_transactions/${address}`, {
@@ -98,6 +135,10 @@ export const apiFetcher = {
     }),
 
   fetchTransactionRaw: (hash: string) => requesterV2.get<unknown>(`transactions/${hash}/raw`).then(res => res.data),
+  fetchContractResourceDistributed: () =>
+    requesterV2
+      .get(`statistics/contract_resource_distributed`)
+      .then(res => toCamelcase<ChartItem.ContractResourceDistributed[]>(res.data)),
 
   fetchTransactionByHash: (hash: string, displayCells: boolean = false) =>
     v1GetUnwrapped<Transaction>(`transactions/${hash}?display_cells=${displayCells}`),
@@ -186,6 +227,7 @@ export const apiFetcher = {
       | Response.Wrapper<Address, SearchResultType.LockHash>
       | Response.Wrapper<UDT, SearchResultType.UDT>
       | Response.Wrapper<Script & { scriptHash: string }, SearchResultType.TypeScript>
+      | Response.Wrapper<Script, SearchResultType.LockScript>
     >('suggest_queries', {
       params: {
         q: param,

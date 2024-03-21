@@ -6,6 +6,7 @@ import { UDTQueryResult } from '../../services/ExplorerService/fetcher'
 import styles from './SearchByNameResults.module.scss'
 import EllipsisMiddle from '../EllipsisMiddle'
 import SmallLoading from '../Loading/SmallLoading'
+import { Link } from '../Link'
 
 type Props = {
   keyword?: string
@@ -63,9 +64,9 @@ const SearchByNameResult: FC<{ keyword?: string; item: UDTQueryResult }> = ({ it
   }
 
   return (
-    <a
+    <Link
       className={styles.searchResult}
-      href={`${window.origin}/${udtType === 'omiga_inscription' ? 'inscription' : 'sudt'}/${typeHash}`}
+      to={`/${udtType === 'omiga_inscription' ? 'inscription' : 'sudt'}/${typeHash}`}
     >
       <div className={styles.content}>
         {!displayName ? t('udt.unknown_token') : HighlightText(displayName, keyword)}
@@ -78,6 +79,6 @@ const SearchByNameResult: FC<{ keyword?: string; item: UDTQueryResult }> = ({ it
           {typeHash}
         </EllipsisMiddle>
       </div>
-    </a>
+    </Link>
   )
 }

@@ -17,7 +17,7 @@ import classNames from 'classnames'
 import { SearchPanel, SearchButton } from './styled'
 import { explorerService, Response, SearchResultType } from '../../services/ExplorerService'
 import { addPrefixForHash, containSpecialChar } from '../../utils/string'
-import { HttpErrorCode, SearchFailType } from '../../constants/common'
+import { HttpErrorCode, SearchFailType, TYPE_ID_CODE_HASH } from '../../constants/common'
 import { useForkedState, useIsMobile } from '../../hooks'
 import { isChainTypeError } from '../../utils/chain'
 import { isAxiosError } from '../../utils/error'
@@ -38,7 +38,8 @@ const Search: FC<{
   content?: string
   hasButton?: boolean
   onEditEnd?: () => void
-}> = memo(({ content, hasButton, onEditEnd: handleEditEnd }) => {
+  onClear?: () => void
+}> = memo(({ content, hasButton, onEditEnd: handleEditEnd, onClear: handleClear }) => {
   const history = useHistory()
   const queryClient = useQueryClient()
   const { t } = useTranslation()
@@ -118,8 +119,8 @@ const Search: FC<{
   const onClear = useCallback(() => {
     setKeyword('')
     resetSearchByName()
-    setEditEnded(true)
-  }, [resetSearchByName, setEditEnded])
+    handleClear?.()
+  }, [resetSearchByName, handleClear])
 
   return (
     <SearchPanel moreHeight={hasButton} hasButton={hasButton}>
@@ -207,8 +208,16 @@ const getURLByIdSearch = async (searchValue: string) => {
     const { data } = await explorerService.api.fetchSearchByIdResult(addPrefixForHash(query))
     const { type, attributes } = data
     switch (type) {
+      // 1. when query by type_id, first it will use type_id as args to find type script, then use this type script's script_hash as code_hash to find script
+      // 2. when query by code_hash, it will directly query script by code_hash
       case SearchResultType.TypeScript:
-        return `/script/${attributes.scriptHash}/type`
+        if (attributes.codeHash === TYPE_ID_CODE_HASH) {
+          return `/script/${attributes.scriptHash}/${attributes.hashType}`
+        }
+        return `/script/${attributes.codeHash}/${attributes.hashType}`
+
+      case SearchResultType.LockScript:
+        return `/script/${attributes.codeHash}/${attributes.hashType}`
 
       case SearchResultType.Block:
         return `/block/${attributes.blockHash}`

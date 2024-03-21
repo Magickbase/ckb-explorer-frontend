@@ -1,9 +1,20 @@
-import { Suspense, lazy, Component } from 'react'
-import { BrowserRouter as Router, Route, Redirect, Switch, RouteProps } from 'react-router-dom'
+import { Suspense, lazy, Component, FC } from 'react'
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+  RouteProps,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Page from '../components/Page'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { isChainTypeError } from '../utils/chain'
+import { SupportedLngs } from '../utils/i18n'
+import { useSyncEffect } from '../hooks'
 
 const Home = lazy(() => import('../pages/Home'))
 const Block = lazy(() => import('../pages/BlockDetail'))
@@ -33,6 +44,9 @@ const MinerVersionDistributionChart = lazy(() => import('../pages/StatisticsChar
 const TransactionCountChart = lazy(() => import('../pages/StatisticsChart/activities/TransactionCount'))
 const AddressCountChart = lazy(() => import('../pages/StatisticsChart/activities/AddressCount'))
 const CellCountChart = lazy(() => import('../pages/StatisticsChart/activities/CellCount'))
+const ContractResourceDistributedChart = lazy(
+  () => import('../pages/StatisticsChart/activities/ContractResourceDistributed'),
+)
 const AddressBalanceRankChart = lazy(() => import('../pages/StatisticsChart/activities/AddressBalanceRank'))
 const BalanceDistributionChart = lazy(() => import('../pages/StatisticsChart/activities/BalanceDistribution'))
 const TxFeeHistoryChart = lazy(() => import('../pages/StatisticsChart/activities/TxFeeHistory'))
@@ -197,6 +211,11 @@ const routes: RouteProps[] = [
     component: TxFeeHistoryChart,
   },
   {
+    path: '/charts/contract-resource-distributed',
+    component: ContractResourceDistributedChart,
+  },
+
+  {
     path: '/charts/block-time-distribution',
     component: BlockTimeDistributionChart,
   },
@@ -302,25 +321,42 @@ class PageErrorBoundary extends Component<PageErrorBoundaryProps, PageErrorBound
   }
 }
 
+const ComponentInContextProvided: FC = () => {
+  const [, i18n] = useTranslation()
+  const { path } = useRouteMatch()
+  // TODO: The default value here could be automatically detected from the browser.
+  const { locale = 'en' } = useParams<{ locale?: string }>()
+
+  useSyncEffect(() => i18n.init({ lng: locale }), [i18n, locale])
+
+  return (
+    <Page>
+      <Header />
+      <Suspense fallback={<span />}>
+        <PageErrorBoundary>
+          <Switch>
+            {routes.map((route, idx) => (
+              // `routes` is immutable, so using idx as the key has no impact.
+              // eslint-disable-next-line react/no-array-index-key
+              <Route key={idx} exact {...route} path={`${path}${route.path}`} />
+            ))}
+            <Redirect from="*" to={`${locale != null ? `/${locale}` : ''}/404`} />
+          </Switch>
+        </PageErrorBoundary>
+        <Footer />
+      </Suspense>
+    </Page>
+  )
+}
+
 export default () => {
   return (
     <Router>
-      <Page>
-        <Header />
-        <Suspense fallback={<span />}>
-          <PageErrorBoundary>
-            <Switch>
-              {routes.map((route, idx) => (
-                // `routes` is immutable, so using idx as the key has no impact.
-                // eslint-disable-next-line react/no-array-index-key
-                <Route key={idx} exact {...route} />
-              ))}
-              <Redirect from="*" to="/404" />
-            </Switch>
-          </PageErrorBoundary>
-          <Footer />
-        </Suspense>
-      </Page>
+      <Switch>
+        <Route path={`/:locale(${SupportedLngs.join('|')})?`}>
+          <ComponentInContextProvided />
+        </Route>
+      </Switch>
     </Router>
   )
 }

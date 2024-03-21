@@ -1,11 +1,11 @@
 import { Table, Tooltip } from 'antd'
 import { WarningOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { FC, Fragment, ReactNode, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { ColumnGroupType, ColumnType } from 'antd/lib/table'
+import { Link } from '../../components/Link'
 import Content from '../../components/Content'
 import Pagination from '../../components/Pagination'
 import SortButton from '../../components/SortButton'
@@ -73,7 +73,7 @@ const TokenInfo: FC<{ token: UDT | OmigaInscriptionCollection }> = ({ token }) =
   return (
     <div key={token.typeHash} className={styles.tokenInfo}>
       <span>
-        {isOmigaInscriptionCollection(token) && !token.published && (
+        {isOmigaInscriptionCollection(token) && (token.isRepeatedSymbol ?? !token.published) && (
           <Tooltip placement="topLeft" title={t('udt.repeat_inscription_symbol')} arrowPointAtCenter>
             <WarningOutlined style={{ fontSize: '16px', color: '#FFB21E' }} />
           </Tooltip>
@@ -220,7 +220,7 @@ const TokenTable: FC<{
         return (
           <div className={styles.container}>
             <div className={styles.warningIcon}>
-              {isOmigaInscriptionCollection(token) && !token.published && (
+              {isOmigaInscriptionCollection(token) && (token.isRepeatedSymbol ?? !token.published) && (
                 <Tooltip title={t('udt.repeat_inscription_symbol')}>
                   <WarningOutlined style={{ fontSize: '16px', color: '#FFB21E' }} />
                 </Tooltip>
@@ -360,85 +360,34 @@ const Tokens: FC<{ isInscription?: boolean }> = ({ isInscription }) => {
   const totalPages = Math.ceil(total / pageSize)
 
   return (
-    // {/* <> */}
-    // {/*   <Content> */}
-    // {/*     <TokensPanel className="container"> */}
-    // {/*       <div className="tokensTitlePanel"> */}
-    // {/*         <span>{isInscription ? t('udt.inscriptions') : t('udt.tokens')}</span> */}
-    // {/*       </div> */}
-    // {/*       <TokensTableTitle> */}
-    // {/*         {!isMobile && <span>{t('udt.uan_name')}</span>} */}
-    // {/*         {isInscription && ( */}
-    // {/*           <span className={styles.colStatus}> */}
-    // {/*             {t('udt.status')} */}
-    // {/*             <SortButton field="mint_status" sortParam={sortParam} /> */}
-    // {/*           </span> */}
-    // {/*         )} */}
-    // {/*         <span> */}
-    // {/*           {t('udt.transactions')} */}
-    // {/*           <SortButton field="transactions" sortParam={sortParam} /> */}
-    // {/*         </span> */}
-    // {/*         <span> */}
-    // {/*           {t('udt.address_count')} */}
-    // {/*           <SortButton field="addresses_count" sortParam={sortParam} /> */}
-    // {/*         </span> */}
-    // {/*         <span> */}
-    // {/*           {t('udt.created_time')} */}
-    // {/*           <SortButton field="created_time" sortParam={sortParam} /> */}
-    // {/*         </span> */}
-    // {/*       </TokensTableTitle> */}
+    <Content>
+      <TokensPanel className="container">
+        <div className="tokensTitlePanel">
+          <span>{isInscription ? t('udt.inscriptions') : t('udt.tokens')}</span>
+          <button
+            type="button"
+            className={styles.submitTokenInfoBtn}
+            onClick={() => setIsSubmitTokenInfoModalOpen(true)}
+          >
+            {t('udt.submit_token_info')}
+          </button>
+        </div>
 
-    // {/*       <QueryResult */}
-    // {/*         query={query} */}
-    // {/*         errorRender={() => <TokensContentEmpty>{t('udt.tokens_empty')}</TokensContentEmpty>} */}
-    // {/*         loadingRender={() => ( */}
-    // {/*           <TokensLoadingPanel>{isMobile ? <SmallLoading /> : <Loading show />}</TokensLoadingPanel> */}
-    // {/*         )} */}
-    // {/*       > */}
-    // {/*         {data => ( */}
-    // {/*           <TokensTableContent> */}
-    // {/*             {data && */}
-    // {/*               data.tokens.map((token, index) => ( */}
-    // {/*                 <TokenItem key={token.typeHash} token={token} isLast={index === data.tokens.length - 1} /> */}
-    // {/*               ))} */}
-    // {/*           </TokensTableContent> */}
-    // {/*         )} */}
-    // {/*       </QueryResult> */}
+        {isMobile ? (
+          <TokensCard isInscription={isInscription} query={query} sortParam={sortParam} />
+        ) : (
+          <TokenTable isInscription={isInscription} query={query} sortParam={sortParam} />
+        )}
 
-    // {/*       <Pagination currentPage={currentPage} totalPages={totalPages} onChange={setPage} /> */}
-    // {/*     </TokensPanel> */}
-    // {/*   </Content> */}
-    // {/* </> */}
-    <>
-      <Content>
-        <TokensPanel className="container">
-          <div className="tokensTitlePanel">
-            <span>{isInscription ? t('udt.inscriptions') : t('udt.tokens')}</span>
-            <button
-              type="button"
-              className={styles.submitTokenInfoBtn}
-              onClick={() => setIsSubmitTokenInfoModalOpen(true)}
-            >
-              {t('udt.submit_token_info')}
-            </button>
-          </div>
-
-          {isMobile ? (
-            <TokensCard isInscription={isInscription} query={query} sortParam={sortParam} />
-          ) : (
-            <TokenTable isInscription={isInscription} query={query} sortParam={sortParam} />
-          )}
-
-          <Pagination
-            className={styles.pagination}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onChange={setPage}
-          />
-        </TokensPanel>
-        {isSubmitTokenInfoModalOpen ? <SubmitTokenInfo onClose={() => setIsSubmitTokenInfoModalOpen(false)} /> : null}
-      </Content>
-    </>
+        <Pagination
+          className={styles.pagination}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChange={setPage}
+        />
+      </TokensPanel>
+      {isSubmitTokenInfoModalOpen ? <SubmitTokenInfo onClose={() => setIsSubmitTokenInfoModalOpen(false)} /> : null}
+    </Content>
   )
 }
 

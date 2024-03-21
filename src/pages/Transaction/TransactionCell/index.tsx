@@ -1,7 +1,7 @@
 import { useState, ReactNode, FC } from 'react'
 import { Tooltip } from 'antd'
-import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Link } from '../../../components/Link'
 import { CellType } from '../../../constants/common'
 import { parseUDTAmount } from '../../../utils/number'
 import { parseSimpleDate } from '../../../utils/date'
@@ -224,15 +224,15 @@ const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       break
     }
     case 'spore_cluster': {
-      detailTitle = t('transaction.spore_cluster')
+      detailTitle = t('nft.dob')
       detailIcon = SporeCellIcon
-      tooltip = detailTitle
+      tooltip = t('transaction.spore_cluster')
       break
     }
     case 'spore_cell': {
-      detailTitle = t('transaction.spore')
+      detailTitle = t('nft.dob')
       detailIcon = SporeCellIcon
-      tooltip = detailTitle
+      tooltip = t('transaction.spore')
       break
     }
     default:
