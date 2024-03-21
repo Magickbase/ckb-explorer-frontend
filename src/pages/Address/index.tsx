@@ -127,10 +127,6 @@ export const Address = () => {
     pending: pendingTransactionCountQuery.data?.total ?? '-',
   }
 
-  const newAddr = useNewAddr(address)
-  const deprecatedAddr = useDeprecatedAddr(address)
-  const counterpartAddr = newAddr === address ? deprecatedAddr : newAddr
-
   return (
     <Content>
       <AddressContentPanel className="container">
@@ -138,29 +134,7 @@ export const Address = () => {
           <HashCardHeader
             title={addressInfo?.type === 'LockHash' ? t('address.lock_hash') : t('address.address')}
             hash={address}
-            customActions={[
-              isRGBPP || counterpartAddr ? (
-                <Tooltip
-                  placement="top"
-                  title={t(`address.${newAddr === address ? 'visit-deprecated-address' : 'view-new-address'}`)}
-                >
-                  {isRGBPP ? (
-                    <a href={`${config.BITCOIN_EXPLORER}address/${address}`}>
-                      <ShareIcon />
-                    </a>
-                  ) : (
-                    <Link
-                      className={styles.openInNew}
-                      to={`/address/${counterpartAddr}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <ShareIcon />
-                    </Link>
-                  )}
-                </Tooltip>
-              ) : null,
-            ]}
+            customActions={[<AddressJumpAction isRGBPP={isRGBPP} address={address} />]}
             rightContent={addressInfo?.addressHash && <DASInfo address={addressInfo?.addressHash} />}
           />
         </Card>
@@ -182,6 +156,43 @@ export const Address = () => {
       </AddressContentPanel>
     </Content>
   )
+}
+
+const AddressJumpAction = ({ isRGBPP, address }: { isRGBPP: boolean; address: string }) => {
+  const { t } = useTranslation()
+  const newAddr = useNewAddr(address)
+  const deprecatedAddr = useDeprecatedAddr(address)
+  const counterpartAddr = newAddr === address ? deprecatedAddr : newAddr
+
+  if (isRGBPP) {
+    return (
+      <a
+        rel="noreferrer"
+        target="_blank"
+        className={styles.openInNew}
+        href={`${config.BITCOIN_EXPLORER}address/${address}`}
+      >
+        <ShareIcon />
+      </a>
+    )
+  }
+
+  if (counterpartAddr) {
+    return (
+      <Tooltip
+        placement="top"
+        title={t(`address.${newAddr === address ? 'visit-deprecated-address' : 'view-new-address'}`)}
+      >
+        (
+        <Link className={styles.openInNew} to={`/address/${counterpartAddr}`} target="_blank" rel="noopener noreferrer">
+          <ShareIcon />
+        </Link>
+        )
+      </Tooltip>
+    )
+  }
+
+  return null
 }
 
 const AddressOverView = ({ isRGBPP, addressInfo }: { isRGBPP: boolean; addressInfo?: AddressInfo }) => {
