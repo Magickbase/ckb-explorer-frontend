@@ -44,7 +44,7 @@ export const Address = () => {
   const isRGBPP = isValidBTCAddress(address)
 
   let addressInfo: AddressInfo | undefined
-  if (isRGBPP) {
+  if (!isRGBPP) {
     addressInfo = addressInfoQuery.data?.[0]
   } else {
     addressInfo = addressInfoQuery.data?.reduce((acc, cur) => {
