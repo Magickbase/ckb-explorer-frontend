@@ -1,4 +1,5 @@
 import type { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { Tooltip } from 'antd'
 import SmallLoading from '../../Loading/SmallLoading'
@@ -12,6 +13,7 @@ import { ReactComponent as NewSeal } from './new-seal.svg'
 import { ReactComponent as ViewNewSeal } from './view-new-seal.svg'
 
 const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId = true }) => {
+  const { t } = useTranslation()
   const { data, isLoading } = useQuery(['btc-tx', txid], () => getTxList([txid]), {
     enabled: !!txid,
   })
@@ -55,11 +57,19 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
                 </a>
                 <div className={`${styles.btcAttr} monospace`}>
                   {input.prevout.value} BTC
-                  {input.prevout.scriptPubKey.asm ? (
-                    <Tooltip placement="top" title={input.prevout.scriptPubKey.asm}>
+                  {input.prevout.scriptPubKey.asm && !idx ? (
+                    <Tooltip
+                      placement="top"
+                      title={t('transaction.isomorphic-binding-with-index', {
+                        index: `Output #${idx}`,
+                        commitment: input.prevout.scriptPubKey.asm,
+                      })}
+                    >
                       <UsedSeal />
                     </Tooltip>
-                  ) : null}
+                  ) : (
+                    <div className={styles.iconPlaceholder} />
+                  )}
                 </div>
               </div>
             )
@@ -80,14 +90,22 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
                 </a>
                 <div className={`${styles.btcAttr} monospace`}>
                   {output.value} BTC
-                  {output.scriptPubKey.asm ? (
-                    <Tooltip placement="top" title={output.scriptPubKey.asm}>
+                  {output.scriptPubKey.asm && !idx ? (
+                    <Tooltip
+                      placement="top"
+                      title={t('transaction.isomorphic-binding-with-index', {
+                        index: `Output #${idx}`,
+                        commitment: output.scriptPubKey.asm,
+                      })}
+                    >
                       <div className={styles.newSeal}>
                         <NewSeal />
                         <ViewNewSeal />
                       </div>
                     </Tooltip>
-                  ) : null}
+                  ) : (
+                    <div className={styles.iconPlaceholder} />
+                  )}
                 </div>
               </div>
             )

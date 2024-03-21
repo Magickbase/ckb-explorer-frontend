@@ -486,7 +486,8 @@
       "no_records": "No records",
       "data-being-processed": "Data is being processed, please wait...",
       "view-btc-utxos": "BTC UTXOs",
-      "view-btc-tx": "View BTC Tx"
+      "view-btc-tx": "View BTC Tx",
+      "isomorphic-binding-with-index": "Isomorphic bound to {{index}}\n\nCommitment:\n{{commitment}}"
     },
     "block": {
       "block": "Block",
