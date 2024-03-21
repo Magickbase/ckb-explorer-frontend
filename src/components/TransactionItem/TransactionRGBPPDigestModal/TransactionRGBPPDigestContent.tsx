@@ -77,12 +77,12 @@ export const TransactionRGBPPDigestContent = ({
           />
         </div>
       </div>
-      {data.data.transfers ? (
+      {data.data.transfers && data.data.transfers.length > 0 ? (
         data.data.transfers.map(transfer =>
           transfer && transfer.address ? <TransactionRGBPPDigestTransfer transfer={transfer} /> : null,
         )
       ) : (
-        <div className={styles.noRecords}>no</div>
+        <div className={styles.noRecords}>{t('transaction.no_records')}</div>
       )}
     </div>
   )
