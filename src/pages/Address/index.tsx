@@ -139,19 +139,25 @@ export const Address = () => {
             title={addressInfo?.type === 'LockHash' ? t('address.lock_hash') : t('address.address')}
             hash={address}
             customActions={[
-              counterpartAddr ? (
+              isRGBPP || counterpartAddr ? (
                 <Tooltip
                   placement="top"
                   title={t(`address.${newAddr === address ? 'visit-deprecated-address' : 'view-new-address'}`)}
                 >
-                  <Link
-                    className={styles.openInNew}
-                    to={`${isRGBPP ? config.BITCOIN_EXPLORER : ''}/address/${counterpartAddr}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ShareIcon />
-                  </Link>
+                  {isRGBPP ? (
+                    <a href={`${config.BITCOIN_EXPLORER}address/${address}`}>
+                      <ShareIcon />
+                    </a>
+                  ) : (
+                    <Link
+                      className={styles.openInNew}
+                      to={`/address/${counterpartAddr}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <ShareIcon />
+                    </Link>
+                  )}
                 </Tooltip>
               ) : null,
             ]}
