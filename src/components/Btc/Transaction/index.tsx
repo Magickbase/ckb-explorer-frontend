@@ -2,6 +2,7 @@ import type { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { Tooltip } from 'antd'
+import dayjs from 'dayjs'
 import SmallLoading from '../../Loading/SmallLoading'
 import { getTxList } from '../../../services/BtcService'
 import config from '../../../config'
@@ -29,20 +30,26 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
   if (!btcTx) {
     return <div>No Record</div>
   }
+  const time = dayjs(btcTx.blocktime * 1000)
   return (
     <div className={styles.container}>
       {showId ? (
-        <h3 className={styles.txid}>
-          <span>BTC TX ID:</span>
-          <a
-            href={`${config.BITCOIN_EXPLORER}/tx/${btcTx.txid}`}
-            title={btcTx.txid}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <EllipsisMiddle className="monospace" text={btcTx.txid} />
-          </a>
-        </h3>
+        <div className={styles.header}>
+          <h3 className={styles.txid}>
+            <span>BTC TX ID:</span>
+            <a
+              href={`${config.BITCOIN_EXPLORER}/tx/${btcTx.txid}`}
+              title={btcTx.txid}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <EllipsisMiddle className="monospace" text={btcTx.txid} />
+            </a>
+          </h3>
+          <time dateTime={time.toISOString()}>{`Time: ${time.format(
+            'YYYY-MM-DD hh:mm:ss',
+          )}(${btcTx.confirmations.toLocaleString('en')} Confirmations)`}</time>
+        </div>
       ) : null}
       <div className={styles.utxos}>
         <div className={styles.inputs}>
@@ -61,7 +68,7 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
                     <Tooltip
                       placement="top"
                       title={t('transaction.isomorphic-binding-with-index', {
-                        index: `Output #${idx}`,
+                        index: `Input #${idx}`,
                         commitment: input.prevout.scriptPubKey.asm,
                       })}
                     >

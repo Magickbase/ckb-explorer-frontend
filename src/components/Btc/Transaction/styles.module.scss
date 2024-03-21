@@ -9,8 +9,15 @@
     color: var(--primary-color);
   }
 
+  .header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
   .txid {
     display: flex;
+    flex: 1;
     gap: 0.5em;
     font-size: 1em;
 
