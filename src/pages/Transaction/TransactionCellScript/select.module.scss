@@ -1,0 +1,67 @@
+// @import '@radix-ui/colors/black-alpha.css';
+// @import '@radix-ui/colors/mauve.css';
+// @import '@radix-ui/colors/violet.css';
+
+/* reset */
+button {
+  all: unset;
+}
+
+.selectTrigger {
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 0 15px;
+  line-height: 1;
+  gap: 5px;
+  background-color: white;
+  color: var(--primary-color);
+}
+
+.selectIcon {
+  font-size: 12px;
+}
+
+.selectContent {
+  width: 100%;
+  overflow: hidden;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 10px 38px -10px rgb(22 23 24 / 35%), 0 10px 20px -15px rgb(22 23 24 / 20%);
+}
+
+.selectViewport {
+  padding: 12px 8px;
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.selectItem {
+  cursor: pointer;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+
+  // padding: 0 35px 0 25px;
+  position: relative;
+  user-select: none;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5rem;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.selectScrollButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+  background-color: white;
+  cursor: default;
+}

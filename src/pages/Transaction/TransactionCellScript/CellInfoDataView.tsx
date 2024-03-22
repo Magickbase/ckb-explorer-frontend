@@ -1,7 +1,8 @@
-import { useMemo, useRef, useState } from 'react'
-import { Select } from 'antd'
+/* eslint-disable import/no-extraneous-dependencies */
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Root, Trigger, Portal, Content } from 'selection-popover'
+import Select from './Select'
 import styles from './styles.module.scss'
 
 const DECODER = {
@@ -15,12 +16,15 @@ export const CellInfoDataView: React.FC<{ data: string }> = ({ data }) => {
   const { t } = useTranslation()
   const ref = useRef(null)
   const wrapperRef = useRef(null)
+  const [decoderOpen, setDecoderOpen] = useState(false)
   const [selectedText, setSelectedText] = useState('')
   const [decoder, setDecoder] = useState<keyof typeof DECODER>(Object.keys(DECODER)[0] as keyof typeof DECODER)
 
   const setSelection = () => {
     const selection = window.getSelection()
-    const text = (selection?.anchorNode?.textContent ?? '').slice(selection?.anchorOffset, selection?.focusOffset)
+    const min = Math.min(selection?.anchorOffset ?? 0, selection?.focusOffset ?? 0)
+    const max = Math.max(selection?.anchorOffset ?? 0, selection?.focusOffset ?? 0)
+    const text = (selection?.anchorNode?.textContent ?? '').slice(min, max)
 
     setSelectedText(text)
   }
@@ -37,6 +41,16 @@ export const CellInfoDataView: React.FC<{ data: string }> = ({ data }) => {
     return `0x${hex}`
   }
 
+  useEffect(() => {
+    if (decoderOpen) {
+      setSelection()
+      window.document.addEventListener('selectionchange', setSelection)
+    } else {
+      setSelectedText('')
+      window.document.removeEventListener('selectionchange', setSelection)
+    }
+  }, [decoderOpen])
+
   const decodedText = useMemo(() => {
     if (decoder === 'utf8') {
       const bytes = [...selectedText.matchAll(/[0-9a-f]{2}/g)].map(a => parseInt(a[0], 16))
@@ -51,27 +65,16 @@ export const CellInfoDataView: React.FC<{ data: string }> = ({ data }) => {
 
   return (
     <div ref={wrapperRef} className={styles.dataView}>
-      <Root onOpenChange={open => (open ? setSelection() : setSelectedText(''))}>
+      <Root whileSelect onOpenChange={open => setDecoderOpen(open)}>
         <Trigger ref={ref}>{data}</Trigger>
         <Portal container={wrapperRef.current}>
-          <Content className={styles.selectionPopover}>
+          <Content side="bottom" className={styles.selectionPopover}>
             <div className={styles.selectionPopoverHeader}>
               {t('transaction.view_data_as')}
               <Select
-                bordered={false}
-                getPopupContainer={() => wrapperRef?.current ?? document.body}
-                className={styles.decoderSelect}
-                dropdownStyle={{ userSelect: 'none' }}
-                style={{ userSelect: 'none' }}
-                popupClassName={styles.notSelect}
-                onMouseDown={e => e.preventDefault()}
-                onClick={e => e.preventDefault()}
-                onFocus={e => e.preventDefault()}
-                onKeyDown={e => e.preventDefault()}
-                onInputKeyDown={e => e.preventDefault()}
+                container={wrapperRef?.current}
                 value={decoder}
-                onChange={e => setDecoder(e)}
-                showSearch={false}
+                onValueChange={e => setDecoder(e as keyof typeof DECODER)}
                 options={Object.keys(DECODER).map(key => ({
                   value: key,
                   label: DECODER[key as keyof typeof DECODER],
