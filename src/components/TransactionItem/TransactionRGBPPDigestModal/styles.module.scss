@@ -193,3 +193,20 @@
   height: 16px;
   background-color: white;
 }
+
+.action {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+
+  @media (width <= $mobileBreakPoint) {
+    width: 16px;
+    height: 16px;
+  }
+}

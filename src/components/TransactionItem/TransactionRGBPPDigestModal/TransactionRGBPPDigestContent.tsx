@@ -9,6 +9,7 @@ import { explorerService } from '../../../services/ExplorerService'
 import AddressText from '../../AddressText'
 import SmallLoading from '../../Loading/SmallLoading'
 import { TransactionLeapDirection } from '../../RGBPP/types'
+import SimpleButton from '../../SimpleButton'
 
 export const TransactionRGBPPDigestContent = ({
   leapDirection,
@@ -38,8 +39,8 @@ export const TransactionRGBPPDigestContent = ({
         <div className={styles.left}>
           <span>{t('address.seal_tx_on_bitcoin')}</span>
           <AddressText
+            wrap
             className={styles.transactionHash}
-            style={{ maxWidth: '319px' }}
             onClick={() => {
               navigator.clipboard.writeText(data.data.txid).then(
                 () => {
@@ -53,28 +54,27 @@ export const TransactionRGBPPDigestContent = ({
           >
             {data.data.txid}
           </AddressText>
-          <span className={styles.blockConfirm}>({data.data.confirmations} Bitcoin Confirmed)</span>
-          <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>
-            <span className={styles.leap}>{t(`address.leap_${leapDirection}`)}</span>
-          </Tooltip>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <span className={styles.blockConfirm}>({data.data.confirmations} Bitcoin Confirmed)</span>
+            <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>
+              <span className={styles.leap}>{t(`address.leap_${leapDirection}`)}</span>
+            </Tooltip>
+          </div>
         </div>
         <div className={styles.right}>
           <span className={styles.commitment}>Commitment:</span>
           <AddressText style={{ maxWidth: '101px' }} className={styles.commitment}>
             {data.data.commitment}
           </AddressText>
-          <CopyIcon
+          <SimpleButton
+            className={styles.action}
             onClick={() => {
-              navigator.clipboard.writeText(data.data.commitment).then(
-                () => {
-                  setToast({ message: t('common.copied') })
-                },
-                error => {
-                  console.error(error)
-                },
-              )
+              navigator.clipboard.writeText(hash)
+              setToast({ message: t('common.copied') })
             }}
-          />
+          >
+            <CopyIcon />
+          </SimpleButton>
         </div>
       </div>
       {data.data.transfers && data.data.transfers.length > 0 ? (

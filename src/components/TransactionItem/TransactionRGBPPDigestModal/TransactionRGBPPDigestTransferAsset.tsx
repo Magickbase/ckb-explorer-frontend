@@ -39,7 +39,7 @@ export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: Li
   return (
     <div className={styles.asset}>
       <span>{name}</span>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {record.asset && (
           <Amount
             diffStatus={record.asset.diffStatus}

@@ -11,7 +11,12 @@ export const TransactionRGBPPDigestTransfer = ({ transfer }: { transfer: Transac
   return address ? (
     <div className={styles.script}>
       <div className={styles.addressInfo}>
-        <a href={`${config.BITCOIN_EXPLORER}/address/${transfer.address}`} target="_blank" rel="noreferrer">
+        <a
+          href={`${config.BITCOIN_EXPLORER}/address/${transfer.address}`}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.address}
+        >
           <AddressText className={styles.address}>{transfer.address}</AddressText>
         </a>
         <span className={styles.addressType}>{`${address.encodeType} (${address.type})`}</span>
