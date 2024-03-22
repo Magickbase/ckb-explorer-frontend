@@ -38,8 +38,8 @@ export const TransactionRGBPPDigestContent = ({
       <div className={styles.transactionInfo}>
         <div className={styles.left}>
           <span>{t('address.seal_tx_on_bitcoin')}</span>
-          <AddressText
-            wrap
+          <div
+            role="presentation"
             className={styles.transactionHash}
             onClick={() => {
               navigator.clipboard.writeText(data.data.txid).then(
@@ -53,7 +53,7 @@ export const TransactionRGBPPDigestContent = ({
             }}
           >
             {data.data.txid}
-          </AddressText>
+          </div>
           <div style={{ display: 'flex', gap: '8px' }}>
             <span className={styles.blockConfirm}>({data.data.confirmations} Bitcoin Confirmed)</span>
             <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>

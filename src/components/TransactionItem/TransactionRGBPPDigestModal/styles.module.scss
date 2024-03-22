@@ -59,6 +59,8 @@
   color: var(--primary-color);
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
   font-size: 14px;
+  max-width: 100%;
+  word-wrap: break-word;
 }
 
 .blockConfirm {
