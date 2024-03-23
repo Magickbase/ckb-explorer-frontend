@@ -4,5 +4,4 @@ export default {
   BASE_URL: process.env.REACT_APP_BASE_URL || 'explorer.nervos.org/',
   BACKUP_NODES: process.env.REACT_APP_BACKUP_NODES?.split(',') || [],
   BITCOIN_EXPLORER: process.env.REACT_APP_BTCOIN_EXPLORER || 'https://mempool.space/',
-  BITCOIN_NODES: process.env.REACT_APP_BITCOIN_NODES?.split(',') || [],
 }

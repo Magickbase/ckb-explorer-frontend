@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import SmallLoading from '../../Loading/SmallLoading'
-import { getTxList } from '../../../services/BtcService'
+import { explorerService } from '../../../services/ExplorerService'
 import config from '../../../config'
 import styles from './styles.module.scss'
 import AddressText from '../../AddressText'
@@ -15,11 +15,11 @@ import { ReactComponent as ViewNewSeal } from './view-new-seal.svg'
 
 const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId = true }) => {
   const { t } = useTranslation()
-  const { data, isLoading } = useQuery(['btc-tx', txid], () => getTxList([txid]), {
+  const { data, isLoading } = useQuery(['btc-tx', txid], () => explorerService.api.getBtcTxList([txid]), {
     enabled: !!txid,
   })
 
-  const btcTx = data?.[0]
+  const btcTx = data?.[txid]
   if (isLoading) {
     return (
       <div>

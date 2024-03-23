@@ -870,6 +870,22 @@ export const apiFetcher = {
         Accept: 'application/vnd.api+json',
       },
     }),
+  getBtcTxList: (idList: string[]): Promise<Record<string, RawBtcRPC.BtcTx>> => {
+    return requesterV2
+      .post('/bitcoin_transactions', {
+        txids: idList,
+      })
+      .then(res => {
+        if (res.status === 200) {
+          const txMap: Record<string, RawBtcRPC.BtcTx> = {}
+          Object.values(res.data).forEach((tx: any) => {
+            txMap[tx.result.txid] = tx.result
+          })
+          return txMap
+        }
+        throw new Error('Failed to fetch btc tx list')
+      })
+  },
 }
 
 // ====================
@@ -1047,4 +1063,29 @@ type SubmitTokenInfoParams = {
   display_name?: string
   uan?: string
   token?: string
+}
+
+namespace RawBtcRPC {
+  interface Utxo {
+    value: number
+    scriptPubKey: {
+      asm: string
+      address: string
+    }
+  }
+  interface Vin {
+    txid: string
+    prevout: Utxo
+  }
+
+  interface Vout extends Utxo {}
+
+  export interface BtcTx {
+    txid: string
+    hash: string
+    vin: Vin[]
+    vout: Vout[]
+    blocktime: number
+    confirmations: number
+  }
 }
