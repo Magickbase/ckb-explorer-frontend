@@ -77,7 +77,7 @@ export const Address = () => {
 
   const addressTransactionsQuery = useQuery(listQueryKey, async () => {
     try {
-      const { data: transactions, total } = await listQueryIns(address, currentPage, pageSize, sort)
+      const { transactions, total } = await listQueryIns(address, currentPage, pageSize, sort)
       return {
         transactions,
         total,
@@ -99,7 +99,7 @@ export const Address = () => {
     ['address_pending_transactions', address, currentPage, pageSize, sort],
     async () => {
       try {
-        const { data: transactions, total } = await explorerService.api.fetchPendingTransactionsByAddress(
+        const { transactions, total } = await explorerService.api.fetchPendingTransactionsByAddress(
           address,
           currentPage,
           pageSize,

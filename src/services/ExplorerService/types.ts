@@ -294,3 +294,28 @@ export interface RGBDigest {
   commitment: string
   transfers: TransactionRecord[]
 }
+
+export namespace RawBtcRPC {
+  interface Utxo {
+    value: number
+    scriptPubKey: {
+      asm: string
+      address: string
+    }
+  }
+  interface Vin {
+    txid: string
+    prevout: Utxo
+  }
+
+  interface Vout extends Utxo {}
+
+  export interface BtcTx {
+    txid: string
+    hash: string
+    vin: Vin[]
+    vout: Vout[]
+    blocktime: number
+    confirmations: number
+  }
+}

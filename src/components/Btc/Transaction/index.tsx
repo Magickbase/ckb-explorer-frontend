@@ -1,10 +1,8 @@
 import type { FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from '@tanstack/react-query'
 import { Tooltip } from 'antd'
 import dayjs from 'dayjs'
-import SmallLoading from '../../Loading/SmallLoading'
-import { explorerService } from '../../../services/ExplorerService'
+import { type RawBtcRPC } from '../../../services/ExplorerService'
 import config from '../../../config'
 import styles from './styles.module.scss'
 import AddressText from '../../AddressText'
@@ -14,24 +12,10 @@ import { ReactComponent as NewSeal } from './new-seal.svg'
 import { ReactComponent as ViewNewSeal } from './view-new-seal.svg'
 import { ReactComponent as BtcIcon } from './btc.svg'
 
-const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId = true }) => {
+const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, showId = true }) => {
   const { t } = useTranslation()
-  const { data, isLoading } = useQuery(['btc-tx', txid], () => explorerService.api.getBtcTxList([txid]), {
-    enabled: !!txid,
-  })
 
-  const btcTx = data?.[txid]
-  if (isLoading) {
-    return (
-      <div>
-        <SmallLoading />
-      </div>
-    )
-  }
-  if (!btcTx) {
-    return <div>No Record</div>
-  }
-  const time = dayjs(btcTx.blocktime * 1000)
+  const time = dayjs(tx.blocktime * 1000)
   return (
     <div className={styles.container}>
       <BtcIcon className={styles.btcIcon} />
@@ -39,23 +23,23 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
         <div className={styles.header}>
           <h3 className={styles.txid}>
             <a
-              href={`${config.BITCOIN_EXPLORER}/tx/${btcTx.txid}`}
-              title={btcTx.txid}
+              href={`${config.BITCOIN_EXPLORER}/tx/${tx.txid}`}
+              title={tx.txid}
               rel="noopener noreferrer"
               target="_blank"
             >
-              <EllipsisMiddle className="monospace" text={btcTx.txid} />
+              <EllipsisMiddle className="monospace" text={tx.txid} />
             </a>
             <span className={styles.btcTxBadge}>Bitcoin TXID</span>
           </h3>
           <time dateTime={time.toISOString()}>{`Time: ${time.format(
             'YYYY-MM-DD hh:mm:ss',
-          )}(${btcTx.confirmations.toLocaleString('en')} Confirmations)`}</time>
+          )}(${tx.confirmations.toLocaleString('en')} Confirmations)`}</time>
         </div>
       ) : null}
       <div className={styles.utxos}>
         <div className={styles.inputs}>
-          {btcTx.vin.map((input, idx) => {
+          {tx.vin.map((input, idx) => {
             if (!input.prevout) return null
             const key = `${input?.txid}-${idx}`
             return (
@@ -84,7 +68,7 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
           })}
         </div>
         <div className={styles.outputs}>
-          {btcTx.vout.map((output, idx) => {
+          {tx.vout.map((output, idx) => {
             const key = `${output?.scriptPubKey?.address}-${idx}`
             return (
               <div key={key} className={styles.output}>

@@ -14,6 +14,7 @@ import { useIsExtraLarge, useParsedDate } from '../../hooks'
 import { Transaction } from '../../models/Transaction'
 import BtcTransaction from '../Btc/Transaction'
 import RGBPP from '../RGBPP'
+import { RawBtcRPC } from '../../services/ExplorerService'
 
 export interface CircleCorner {
   top?: boolean
@@ -68,7 +69,7 @@ const TransactionItem = ({
   },
   scrollIntoViewOnMount,
 }: {
-  transaction: Transaction
+  transaction: Transaction & { btcTx: RawBtcRPC.BtcTx | null }
   address?: string
   isBlock?: boolean
   titleCard?: ReactNode | null
@@ -141,9 +142,9 @@ const TransactionItem = ({
         </TransactionCellPanel>
         {address && <TransactionIncome income={transaction.income} />}
       </TransactionPanel>
-      {transaction.rgbTxid ? (
+      {transaction.btcTx ? (
         <div className={styles.btcTxContent}>
-          <BtcTransaction txid={transaction.rgbTxid} />
+          <BtcTransaction tx={transaction.btcTx} />
         </div>
       ) : null}
     </>

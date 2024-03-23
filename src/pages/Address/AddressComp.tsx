@@ -4,7 +4,7 @@ import { Radio } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { Link } from '../../components/Link'
 import TransactionItem from '../../components/TransactionItem/index'
-import { explorerService } from '../../services/ExplorerService'
+import { explorerService, RawBtcRPC } from '../../services/ExplorerService'
 import { localeNumberString } from '../../utils/number'
 import { shannonToCkb, deprecatedAddrToNewAddr } from '../../utils/util'
 import {
@@ -316,7 +316,7 @@ export const AddressTransactions = ({
   meta: { counts },
 }: {
   address: string
-  transactions: Transaction[]
+  transactions: (Transaction & { btcTx: RawBtcRPC.BtcTx | null })[]
   timeOrderBy: OrderByType
   meta: { counts: Record<'committed' | 'pending', number | '-'> }
 }) => {
@@ -415,7 +415,7 @@ export const AddressTransactions = ({
           <LiteTransactionList address={address} list={transactions} />
         ) : (
           <>
-            {txList.map((transaction: Transaction, index: number) => (
+            {txList.map((transaction, index) => (
               <TransactionItem
                 address={address}
                 transaction={transaction}
