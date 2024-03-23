@@ -12,6 +12,7 @@ import EllipsisMiddle from '../../EllipsisMiddle'
 import { ReactComponent as UsedSeal } from './used-seal.svg'
 import { ReactComponent as NewSeal } from './new-seal.svg'
 import { ReactComponent as ViewNewSeal } from './view-new-seal.svg'
+import { ReactComponent as BtcIcon } from './btc.svg'
 
 const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId = true }) => {
   const { t } = useTranslation()
@@ -33,10 +34,10 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
   const time = dayjs(btcTx.blocktime * 1000)
   return (
     <div className={styles.container}>
+      <BtcIcon className={styles.btcIcon} />
       {showId ? (
         <div className={styles.header}>
           <h3 className={styles.txid}>
-            <span>BTC TX ID:</span>
             <a
               href={`${config.BITCOIN_EXPLORER}/tx/${btcTx.txid}`}
               title={btcTx.txid}
@@ -45,6 +46,7 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
             >
               <EllipsisMiddle className="monospace" text={btcTx.txid} />
             </a>
+            <span className={styles.btcTxBadge}>Bitcoin TXID</span>
           </h3>
           <time dateTime={time.toISOString()}>{`Time: ${time.format(
             'YYYY-MM-DD hh:mm:ss',
@@ -53,7 +55,6 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
       ) : null}
       <div className={styles.utxos}>
         <div className={styles.inputs}>
-          <h5>Inputs</h5>
           {btcTx.vin.map((input, idx) => {
             if (!input.prevout) return null
             const key = `${input?.txid}-${idx}`
@@ -83,7 +84,6 @@ const BtcTransaction: FC<{ txid: string; showId?: boolean }> = ({ txid, showId =
           })}
         </div>
         <div className={styles.outputs}>
-          <h5>Outputs</h5>
           {btcTx.vout.map((output, idx) => {
             const key = `${output?.scriptPubKey?.address}-${idx}`
             return (

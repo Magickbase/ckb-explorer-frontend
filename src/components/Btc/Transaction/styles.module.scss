@@ -1,9 +1,18 @@
 @import '../../../styles/variables.module';
 
 .container {
+  position: relative;
   width: 100%;
-  border-radius: 8px;
   cursor: default;
+  background: var(--btc-secondary-color);
+  background-clip: border-box;
+  padding: 1.5rem 2.5rem;
+
+  .btcIcon {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
 
   a {
     color: var(--primary-color);
@@ -13,6 +22,9 @@
     display: flex;
     justify-content: space-between;
     gap: 1rem;
+    border-bottom: 1px solid var(--btc-primary-color);
+    padding-bottom: 18px;
+    margin-bottom: 18px;
   }
 
   .txid {
@@ -20,10 +32,24 @@
     flex: 1;
     gap: 0.5em;
     font-size: 1em;
+    margin: 0;
+
+    .btcTxBadge {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 0.25rem;
+      background: var(--btc-primary-color);
+      color: #fff;
+      font-size: 0.75rem;
+      line-height: 1;
+      border-radius: 4px;
+    }
 
     a {
       flex: 1;
       overflow: hidden;
+      max-width: 68ch;
     }
   }
 
@@ -33,10 +59,6 @@
     justify-content: space-between;
     gap: 2em;
     white-space: nowrap;
-
-    h5 {
-      font-size: 1em;
-    }
 
     @media (width <= $extraLargeBreakPoint) {
       flex-direction: column;

@@ -92,66 +92,61 @@ const TransactionItem = ({
   }, [])
 
   return (
-    <TransactionPanel ref={ref} circleCorner={circleCorner}>
-      {titleCard}
-      <TransactionHashBlockPanel>
-        <div className="transactionItemContent">
-          <div className={styles.left}>
-            <AddressText
-              disableTooltip
-              className="transactionItemHash"
-              linkProps={{
-                to: `/transaction/${transaction.transactionHash}`,
-              }}
-            >
-              {transaction.transactionHash}
-            </AddressText>
-            {transaction.isRgbTransaction && <RGBPP transaction={transaction} />}
+    <>
+      <TransactionPanel ref={ref} circleCorner={circleCorner}>
+        {titleCard}
+        <TransactionHashBlockPanel>
+          <div className="transactionItemContent">
+            <div className={styles.left}>
+              <AddressText
+                disableTooltip
+                className="transactionItemHash"
+                linkProps={{
+                  to: `/transaction/${transaction.transactionHash}`,
+                }}
+              >
+                {transaction.transactionHash}
+              </AddressText>
+              {transaction.isRgbTransaction && <RGBPP transaction={transaction} />}
+            </div>
+            <div className={styles.right}>
+              <Time tx={isBlock ? undefined : transaction} />
+            </div>
           </div>
-          <div className={styles.right}>
-            <Time tx={isBlock ? undefined : transaction} />
-          </div>
-        </div>
-      </TransactionHashBlockPanel>
-      <TransactionCellPanel>
-        <div className="transactionItemInput">
-          <TransactionCellList
-            cells={transaction.displayInputs}
-            transaction={transaction}
-            render={cell => <TransactionCell cell={cell} address={address} cellType={CellType.Input} key={cell.id} />}
-          />
-        </div>
-        <img src={isXL ? DownArrowIcon : RightArrowIcon} alt="input and output" />
-        <div className="transactionItemOutput">
-          {transaction.displayOutputs && transaction.displayOutputs.length !== 0 ? (
+        </TransactionHashBlockPanel>
+        <TransactionCellPanel>
+          <div className="transactionItemInput">
             <TransactionCellList
-              cells={transaction.displayOutputs}
+              cells={transaction.displayInputs}
               transaction={transaction}
-              render={cell => (
-                <FullPanel key={cell.id}>
-                  <TransactionCell cell={cell} address={address} cellType={CellType.Output} />
-                </FullPanel>
-              )}
+              render={cell => <TransactionCell cell={cell} address={address} cellType={CellType.Input} key={cell.id} />}
             />
-          ) : (
-            <div className="transactionItemOutputEmpty">{t('transaction.empty_output')}</div>
-          )}
-        </div>
-      </TransactionCellPanel>
-      {address && <TransactionIncome income={transaction.income} />}
-      {transaction.rgbTxid ? (
-        <details className={styles.viewBtcTx}>
-          <summary>
-            {t('transaction.view-btc-tx')}
-            <div className={styles.expandArrow} />
-          </summary>
-          <div className={styles.btcTxContent}>
-            <BtcTransaction txid={transaction.rgbTxid} />
           </div>
-        </details>
+          <img src={isXL ? DownArrowIcon : RightArrowIcon} alt="input and output" />
+          <div className="transactionItemOutput">
+            {transaction.displayOutputs && transaction.displayOutputs.length !== 0 ? (
+              <TransactionCellList
+                cells={transaction.displayOutputs}
+                transaction={transaction}
+                render={cell => (
+                  <FullPanel key={cell.id}>
+                    <TransactionCell cell={cell} address={address} cellType={CellType.Output} />
+                  </FullPanel>
+                )}
+              />
+            ) : (
+              <div className="transactionItemOutputEmpty">{t('transaction.empty_output')}</div>
+            )}
+          </div>
+        </TransactionCellPanel>
+        {address && <TransactionIncome income={transaction.income} />}
+      </TransactionPanel>
+      {transaction.rgbTxid ? (
+        <div className={styles.btcTxContent}>
+          <BtcTransaction txid={transaction.rgbTxid} />
+        </div>
       ) : null}
-      {/* {isR} */}
-    </TransactionPanel>
+    </>
   )
 }
 

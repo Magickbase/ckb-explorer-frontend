@@ -25,15 +25,9 @@ export const RGBDigestComp = ({
       </Card>
       <Card className={styles.digestContent}>
         <TransactionRGBPPDigestContent hash={hash} leapDirection={leapDirection} />
-        <details className={styles.viewBtcTxContainer}>
-          <summary>
-            {t('transaction.view-btc-utxos')}
-            <div className={styles.expandArrow} />
-          </summary>
-          <div className={styles.btcTxContent}>
-            <BtcTransaction txid={txid} showId={false} />
-          </div>
-        </details>
+        <div className={styles.btcTxContent}>
+          <BtcTransaction txid={txid} showId={false} />
+        </div>
       </Card>
     </>
   )

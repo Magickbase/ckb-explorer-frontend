@@ -92,22 +92,6 @@
   margin-top: 1rem;
   font-size: 1rem;
 
-  summary {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    color: var(--primary-color);
-    font-weight: 600;
-
-    .expandArrow {
-      margin-left: 4px;
-      transform: translateY(-2px) rotate(45deg);
-      width: 8px;
-      height: 8px;
-      box-shadow: 1px 1px 1px 0 currentcolor;
-    }
-  }
-
   .btcTxContent {
     margin-top: 0.5rem;
     padding: 1rem;
