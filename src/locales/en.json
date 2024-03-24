@@ -329,7 +329,8 @@
       "telegram": "Telegram",
       "reddit": "Reddit",
       "youtube": "YouTube",
-      "forum": "Forum"
+      "forum": "Forum",
+      "api-doc": "API Documentation"
     },
     "search": {
       "loading": "Loading...",
@@ -389,7 +390,8 @@
       "leap_in": "Leap In",
       "leap_out": "Leap Out",
       "leap_in_tip": "This RGB++ transaction is marked as \"Leap In\", indicating that the number of cells with RGB++ lock in the output exceeds the number of cells with RGB++ lock in the input.",
-      "leap_out_tip": "This RGB++ transaction is marked as \"Leap Out\", indicating that the number of cells with RGB++ lock in the input exceeds the number of cells with RGB++ lock in the output."
+      "leap_out_tip": "This RGB++ transaction is marked as \"Leap Out\", indicating that the number of cells with RGB++ lock in the input exceeds the number of cells with RGB++ lock in the output.",
+      "view_in_btc_explorer": "View in Bitcoin Explorer"
     },
     "transaction": {
       "transaction": "Transaction",
@@ -785,6 +787,10 @@
       "logo_tip": "Token logo for the SUDT",
       "logo_placeholder": "Upload",
       "confirm": "Confirm"
+    },
+    "sort": {
+      "time": "Sort by time",
+      "capacity": "Sort by capacity"
     }
   }
 }

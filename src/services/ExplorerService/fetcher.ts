@@ -9,10 +9,11 @@ import {
   ChartItem,
   NervosDaoDepositor,
   RGBDigest,
+  RawBtcRPC,
   Response,
   SupportedExportTransactionType,
   TransactionRecord,
-  RawBtcRPC,
+  LiveCell,
 } from './types'
 import { assert } from '../../utils/error'
 import { Cell } from '../../models/Cell'
@@ -119,31 +120,7 @@ export const apiFetcher = {
   // sort field, block_timestamp, capacity
   // sort type, asc, desc
   fetchAddressLiveCells: (address: string, page: number, size: number, sort?: string) => {
-    return v1GetUnwrappedPagedList<{
-      cellType: 'spore_cell'
-      txHash: string
-      cellIndex: number
-      typeHash: string
-      data: string
-      capacity: string
-      occupiedCapacity: string
-      blockTimestamp: string
-      blockNumber: string
-      typeScript: Script
-      lockScript: Script
-      extraInfo: {
-        symbol: string
-        amount: string
-        decimal: string
-        typeHash: string
-        published: boolean
-        displayName: string
-        uan: string
-        type: 'ckb' | 'udt' | 'nrc_721' | 'm_nft'
-        className: string
-        tokenId: string
-      }
-    }>(`address_live_cells/${address}`, {
+    return v1GetUnwrappedPagedList<LiveCell>(`address_live_cells/${address}`, {
       params: {
         page,
         page_size: size,

@@ -18,8 +18,8 @@ import {
 } from './styled'
 import Capacity from '../../components/Capacity'
 import CKBTokenIcon from './ckb_token_icon.png'
-import { ReactComponent as TimeDownIcon } from './time_down.svg'
-import { ReactComponent as TimeUpIcon } from './time_up.svg'
+import { ReactComponent as TimeDownIcon } from '../../assets/time_down.svg'
+import { ReactComponent as TimeUpIcon } from '../../assets/time_up.svg'
 import {
   OrderByType,
   useIsMobile,
@@ -156,12 +156,17 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
     },
   )
 
-  const { data: cotaList } = useQuery(['cota-list', initList?.pagination.series], () =>
-    Promise.all(
-      (initList?.pagination.series ?? []).map(p =>
-        explorerService.api.fetchNFTItemByOwner(address.addressHash, 'cota', p),
-      ),
-    ).then(resList => resList.flatMap(res => res.data)),
+  const { data: cotaList } = useQuery(
+    ['cota-list', initList?.pagination?.series],
+    () =>
+      Promise.all(
+        (initList?.pagination.series ?? []).map(p =>
+          explorerService.api.fetchNFTItemByOwner(address.addressHash, 'cota', p),
+        ),
+      ).then(resList => resList.flatMap(res => res.data)),
+    {
+      enabled: !!initList?.pagination?.series?.length,
+    },
   )
 
   const overviewItems: CardCellInfo<'left' | 'right'>[] = [
