@@ -80,7 +80,7 @@ const LiteTransactionList: React.FC<{
                     >
                       {item.transactionHash}
                     </AddressText>
-                    <RGBPP transaction={item} />
+                    {item.isRgbTransaction && <RGBPP transaction={item} />}
                   </td>
                   {isPendingListActive ? null : (
                     <td className={styles.height} title={t('transaction.height')}>
