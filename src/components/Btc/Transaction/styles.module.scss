@@ -22,7 +22,7 @@
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    border-bottom: 1px solid var(--btc-primary-color);
+    border-bottom: 1px solid #e5e5e5;
     padding-bottom: 18px;
     margin-bottom: 18px;
   }
@@ -83,7 +83,13 @@
       align-items: center;
       cursor: default;
 
+      .newSeal {
+        display: flex;
+        align-items: center;
+      }
+
       svg {
+        color: #999;
         cursor: pointer;
 
         &:hover {
