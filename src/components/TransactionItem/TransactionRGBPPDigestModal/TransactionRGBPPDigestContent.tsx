@@ -10,6 +10,7 @@ import AddressText from '../../AddressText'
 import SmallLoading from '../../Loading/SmallLoading'
 import { TransactionLeapDirection } from '../../RGBPP/types'
 import SimpleButton from '../../SimpleButton'
+import config from '../../../config'
 
 export const TransactionRGBPPDigestContent = ({
   leapDirection,
@@ -38,21 +39,8 @@ export const TransactionRGBPPDigestContent = ({
       <div className={styles.transactionInfo}>
         <div className={styles.left}>
           <span>{t('address.seal_tx_on_bitcoin')}</span>
-          <div
-            role="presentation"
-            className={styles.transactionHash}
-            onClick={() => {
-              navigator.clipboard.writeText(data.data.txid).then(
-                () => {
-                  setToast({ message: t('common.copied') })
-                },
-                error => {
-                  console.error(error)
-                },
-              )
-            }}
-          >
-            {data.data.txid}
+          <div role="presentation" className={styles.transactionHash}>
+            <a href={`${config.BITCOIN_EXPLORER}tx/${data.data.txid}`}>{data.data.txid}</a>
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <span className={styles.blockConfirm}>({data.data.confirmations} Bitcoin Confirmed)</span>
