@@ -63,6 +63,20 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
       {hasAssets || hasCells ? (
         <AddressUDTAssetsPanel className={styles.addressUDTAssetsPanel}>
           <AddressAssetsTab animated={false} key={i18n.language} activeKey={activeTab.toString()}>
+            {hasCells ? (
+              <AddressAssetsTabPane
+                tab={
+                  <AddressAssetsTabPaneTitle onClick={() => setActiveTab(AssetInfo.CELLs)}>
+                    {t('address.live_cell_tab')}
+                  </AddressAssetsTabPaneTitle>
+                }
+                key={AssetInfo.CELLs}
+              >
+                <div className={styles.assetCardList}>
+                  <Cells address={address.addressHash} count={+address.liveCellsCount} />
+                </div>
+              </AddressAssetsTabPane>
+            ) : null}
             {hasAssets ? (
               <AddressAssetsTabPane
                 tab={
@@ -106,21 +120,6 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
                     })}
                   </div>
                 </AddressUDTAssetsContent>
-              </AddressAssetsTabPane>
-            ) : null}
-
-            {hasCells ? (
-              <AddressAssetsTabPane
-                tab={
-                  <AddressAssetsTabPaneTitle onClick={() => setActiveTab(AssetInfo.CELLs)}>
-                    {t('address.live_cell_tab')}
-                  </AddressAssetsTabPaneTitle>
-                }
-                key={AssetInfo.CELLs}
-              >
-                <div className={styles.assetCardList}>
-                  <Cells address={address.addressHash} count={+address.liveCellsCount} />
-                </div>
               </AddressAssetsTabPane>
             ) : null}
           </AddressAssetsTab>
