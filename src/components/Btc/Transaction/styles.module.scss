@@ -146,6 +146,7 @@
       pointer-events: none;
       backface-visibility: hidden;
       position: absolute;
+      background: var(--btc-secondary-color);
 
       &:last-child {
         transform: rotateY(0.5turn);
