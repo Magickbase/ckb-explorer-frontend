@@ -44,34 +44,63 @@
 .transactionInfo {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-  font-size: 16px;
+  align-items: center;
   width: 100%;
+  gap: 16px;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
 
-  span {
-    word-wrap: break-word;
-    max-width: 100%;
+  .txid,
+  .commitment {
+    width: 100%;
+    display: flex;
+    flex: 1;
+    flex-shrink: 1;
+    overflow: hidden;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+    flex-wrap: nowrap;
   }
-}
 
-.transactionHash {
-  color: var(--primary-color);
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-  font-size: 14px;
-  max-width: 100%;
-  word-wrap: break-word;
+  .txid {
+    gap: 8px;
+
+    a {
+      color: var(--primary-color);
+      overflow: hidden;
+      flex: 1;
+      flex-shrink: 1;
+      max-width: 63ch;
+    }
+  }
+
+  .commitment {
+    gap: 8px;
+    justify-content: flex-end;
+
+    .commitmentText {
+      flex: 1;
+      flex-shrink: 0;
+      overflow: hidden;
+      max-width: 63ch;
+    }
+  }
+
+  @media screen and (width <= $extraLargeBreakPoint) {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: stretch;
+    gap: 0;
+
+    .commitment {
+      justify-content: flex-start;
+    }
+  }
 }
 
 .blockConfirm {
   color: #666;
 
-  @media screen and (max-width: $mobileBreakPoint) {
-    font-size: 14px;
-  }
-}
-
-.commitment {
   @media screen and (max-width: $mobileBreakPoint) {
     font-size: 14px;
   }
@@ -147,23 +176,6 @@
   cursor: pointer;
 }
 
-.left {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 8px;
-  max-width: 100%;
-}
-
-.right {
-  display: flex;
-  flex-wrap: wrap;
-  justify-self: self-end;
-  justify-content: flex-start;
-  max-width: 100%;
-  gap: 8px;
-}
-
 .decimal {
   font-size: 14px;
 }
@@ -202,6 +214,7 @@
   align-items: center;
   width: 24px;
   height: 24px;
+  color: #999;
 
   &:hover {
     color: var(--primary-color);

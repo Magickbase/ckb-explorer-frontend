@@ -6,19 +6,11 @@ import { Card } from '../../../components/Card'
 import styles from './TransactionDetailsHeader.module.scss'
 import { TransactionRGBPPDigestContent } from '../../../components/TransactionItem/TransactionRGBPPDigestModal/TransactionRGBPPDigestContent'
 import BtcTransaction from '../../../components/Btc/Transaction'
-import { TransactionLeapDirection } from '../../../components/RGBPP/types'
 import { explorerService, RawBtcRPC } from '../../../services/ExplorerService'
 import SmallLoading from '../../../components/Loading/SmallLoading'
+import { TransactionLeapDirection } from '../../../components/RGBPP/types'
 
-export const RGBDigestComp = ({
-  hash,
-  txid,
-  leapDirection,
-}: {
-  hash: string
-  txid: string
-  leapDirection: TransactionLeapDirection
-}) => {
+export const RGBDigestComp = ({ hash, txid }: { hash: string; txid: string }) => {
   const { t } = useTranslation()
   const { data: btcTx, isLoading: isBtcTxLoading } = useQuery(['btc_tx', txid], () =>
     explorerService.api.getBtcTxList([txid]).then((res: Record<string, RawBtcRPC.BtcTx>) => res[txid]),
@@ -69,6 +61,18 @@ export const RGBDigestComp = ({
     return map
   }, [displayInputs, displayOutputs])
 
+  const direction = useMemo(() => {
+    const inputCellCount = displayInputs.data.filter(c => c.rgbInfo).length
+    const outputCellCount = displayOutputs.data.filter(c => c.rgbInfo).length
+    if (inputCellCount === outputCellCount) {
+      return TransactionLeapDirection.NONE
+    }
+    if (inputCellCount > outputCellCount) {
+      return TransactionLeapDirection.OUT
+    }
+    return TransactionLeapDirection.IN
+  }, [displayInputs, displayOutputs])
+
   return (
     <>
       <Card className={styles.transactionHeader}>
@@ -77,7 +81,7 @@ export const RGBDigestComp = ({
         </div>
       </Card>
       <Card className={styles.digestContent}>
-        <TransactionRGBPPDigestContent hash={hash} leapDirection={leapDirection} />
+        <TransactionRGBPPDigestContent hash={hash} leapDirection={direction} />
         <div className={styles.btcTxContent}>
           {isBtcTxLoading ? <SmallLoading /> : null}
           {btcTx ? <BtcTransaction tx={btcTx} showId={false} boundCellIndex={boundCellIndex} /> : null}

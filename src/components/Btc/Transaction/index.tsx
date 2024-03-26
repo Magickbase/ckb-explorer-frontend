@@ -13,18 +13,6 @@ import { ReactComponent as ViewNewSeal } from './view-new-seal.svg'
 import { ReactComponent as BtcIcon } from './btc.svg'
 import { ReactComponent as DirectionIcon } from '../../../assets/direction.svg'
 
-enum RGBPP_BTC_POINTER {
-  IDNEX_BYTE_LENGTH = 4,
-  TXID_BYTE_LENGTH = 32,
-}
-export const getBtxUtxoPointer = (args: string) => {
-  const d = 2 + RGBPP_BTC_POINTER.IDNEX_BYTE_LENGTH * 2
-  const [txid, index] = [args.slice(0, d), args.slice(d + RGBPP_BTC_POINTER.TXID_BYTE_LENGTH * 2)].map(
-    str => str.match(/\w{2}/g)?.reverse().join('') ?? '',
-  )
-  return { index, txid }
-}
-
 const BtcTransaction: FC<{
   tx: RawBtcRPC.BtcTx
   boundCellIndex: Record<string, number>
