@@ -62,6 +62,7 @@ export const RGBDigestComp = ({ hash, txid }: { hash: string; txid: string }) =>
   }, [displayInputs, displayOutputs])
 
   const direction = useMemo(() => {
+    // FIXME: should be from API because inputs/outputs are paginated
     const inputCellCount = displayInputs.data.filter(c => c.rgbInfo).length
     const outputCellCount = displayOutputs.data.filter(c => c.rgbInfo).length
     if (inputCellCount === outputCellCount) {
