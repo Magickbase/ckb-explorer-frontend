@@ -25,6 +25,15 @@
     border-bottom: 1px solid #e5e5e5;
     padding-bottom: 18px;
     margin-bottom: 18px;
+
+    time {
+      white-space: nowrap;
+    }
+
+    @media screen and (width <= $mobileBreakPoint) {
+      flex-direction: column;
+      gap: 0;
+    }
   }
 
   .txid {
@@ -33,18 +42,7 @@
     gap: 0.5em;
     font-size: 1em;
     margin: 0;
-
-    .btcTxBadge {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0 0.25rem;
-      background: var(--btc-primary-color);
-      color: #fff;
-      font-size: 0.75rem;
-      line-height: 1;
-      border-radius: 4px;
-    }
+    overflow: hidden;
 
     a {
       flex: 1;
@@ -60,8 +58,22 @@
     gap: 2em;
     white-space: nowrap;
 
+    .direction {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      transform: rotate(-90deg);
+      transition: transform 0.3s;
+      padding: 4px;
+    }
+
     @media (width <= $extraLargeBreakPoint) {
       flex-direction: column;
+
+      .direction {
+        transform: rotate(0);
+        align-self: center;
+      }
     }
   }
 

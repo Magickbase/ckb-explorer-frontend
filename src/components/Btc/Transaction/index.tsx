@@ -11,6 +11,7 @@ import { ReactComponent as UsedSeal } from './used-seal.svg'
 import { ReactComponent as NewSeal } from './new-seal.svg'
 import { ReactComponent as ViewNewSeal } from './view-new-seal.svg'
 import { ReactComponent as BtcIcon } from './btc.svg'
+import { ReactComponent as DirectionIcon } from '../../../assets/direction.svg'
 
 const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, showId = true }) => {
   const { t } = useTranslation()
@@ -30,7 +31,6 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
             >
               <EllipsisMiddle className="monospace" text={tx.txid} />
             </a>
-            <span className={styles.btcTxBadge}>Bitcoin TXID</span>
           </h3>
           <time dateTime={time.toISOString()}>{`${tx.confirmations.toLocaleString('en')} Confirmations (${time.format(
             'YYYY-MM-DD hh:mm:ss',
@@ -72,6 +72,7 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
             )
           })}
         </div>
+        <DirectionIcon className={styles.direction} />
         <div className={styles.outputs}>
           {tx.vout.map((output, idx) => {
             const key = `${output?.scriptPubKey?.address}-${idx}`

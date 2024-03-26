@@ -1,8 +1,7 @@
 import { ReactNode, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styles from './styles.module.scss'
-import RightArrowIcon from './input_arrow_output.png'
-import DownArrowIcon from './input_arrow_output_down.png'
+import { ReactComponent as DirectionIcon } from '../../assets/direction.svg'
 import { localeNumberString } from '../../utils/number'
 import TransactionCell from './TransactionItemCell'
 import TransactionCellList from './TransactionItemCellList'
@@ -10,7 +9,7 @@ import TransactionIncome from './TransactionIncome'
 import { FullPanel, TransactionHashBlockPanel, TransactionCellPanel, TransactionPanel } from './styled'
 import { CellType } from '../../constants/common'
 import AddressText from '../AddressText'
-import { useIsExtraLarge, useParsedDate } from '../../hooks'
+import { useParsedDate } from '../../hooks'
 import { Transaction } from '../../models/Transaction'
 import BtcTransaction from '../Btc/Transaction'
 import RGBPP from '../RGBPP'
@@ -76,7 +75,6 @@ const TransactionItem = ({
   circleCorner?: CircleCorner
   scrollIntoViewOnMount?: boolean
 }) => {
-  const isXL = useIsExtraLarge()
   const { t } = useTranslation()
   const ref = useRef<HTMLDivElement>(null)
 
@@ -123,7 +121,7 @@ const TransactionItem = ({
               render={cell => <TransactionCell cell={cell} address={address} cellType={CellType.Input} key={cell.id} />}
             />
           </div>
-          <img src={isXL ? DownArrowIcon : RightArrowIcon} alt="input and output" />
+          <DirectionIcon className={styles.direction} />
           <div className="transactionItemOutput">
             {transaction.displayOutputs && transaction.displayOutputs.length !== 0 ? (
               <TransactionCellList
