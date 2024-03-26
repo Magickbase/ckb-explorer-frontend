@@ -358,6 +358,7 @@
       "lock_script": "Lock Script",
       "balance": "余额",
       "live_cells": "未花费 Cells",
+      "live_cell_tab": "Live Cell(s)",
       "block_mined": "已挖区块",
       "occupied": "使用中",
       "dao_deposit": "Nervos DAO 锁定金额",

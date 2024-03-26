@@ -113,7 +113,7 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
               <AddressAssetsTabPane
                 tab={
                   <AddressAssetsTabPaneTitle onClick={() => setActiveTab(AssetInfo.CELLs)}>
-                    {t(`address.${+address.liveCellsCount > 1 ? 'cells' : 'cell'}`)}
+                    {t('address.live_cell_tab')}
                   </AddressAssetsTabPaneTitle>
                 }
                 key={AssetInfo.CELLs}

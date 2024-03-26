@@ -358,6 +358,7 @@
       "lock_script": "Lock Script",
       "balance": "Balance",
       "live_cells": "Live Cells",
+      "live_cell_tab": "Live Cell(s)",
       "block_mined": "Block Mined",
       "occupied": "Occupied",
       "dao_deposit": "Nervos DAO Deposit",
