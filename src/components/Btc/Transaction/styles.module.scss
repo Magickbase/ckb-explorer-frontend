@@ -83,6 +83,16 @@
       align-items: center;
       cursor: default;
 
+      .btcValue {
+        display: flex;
+        align-items: flex-end;
+
+        span:nth-child(2) {
+          color: #999;
+          font-size: 0.875em;
+        }
+      }
+
       .newSeal {
         display: flex;
         align-items: center;

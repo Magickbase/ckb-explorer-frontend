@@ -32,9 +32,9 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
             </a>
             <span className={styles.btcTxBadge}>Bitcoin TXID</span>
           </h3>
-          <time dateTime={time.toISOString()}>{`Time: ${time.format(
+          <time dateTime={time.toISOString()}>{`${tx.confirmations.toLocaleString('en')} Confirmations (${time.format(
             'YYYY-MM-DD hh:mm:ss',
-          )}(${tx.confirmations.toLocaleString('en')} Confirmations)`}</time>
+          )})`}</time>
         </div>
       ) : null}
       <div className={styles.utxos}>
@@ -42,13 +42,18 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
           {tx.vin.map((input, idx) => {
             if (!input.prevout) return null
             const key = `${input?.txid}-${idx}`
+            const [int, dec] = input.prevout.value.toString().split('.')
             return (
               <div key={key} className={styles.input}>
                 <a href={`${config.BITCOIN_EXPLORER}/tx/${input.txid}`} rel="noopener noreferrer" target="_blank">
                   <AddressText className="monospace">{input.prevout.scriptPubKey.address}</AddressText>
                 </a>
                 <div className={`${styles.btcAttr} monospace`}>
-                  {input.prevout.value} BTC
+                  <div className={styles.btcValue}>
+                    <span>{int}</span>
+                    {dec ? <span>{`.${dec}`}</span> : null}
+                  </div>
+                  BTC
                   {input.prevout.scriptPubKey.asm && !idx ? (
                     <Tooltip
                       placement="top"
@@ -70,6 +75,7 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
         <div className={styles.outputs}>
           {tx.vout.map((output, idx) => {
             const key = `${output?.scriptPubKey?.address}-${idx}`
+            const [int, dec] = output.value.toString().split('.')
             return (
               <div key={key} className={styles.output}>
                 <a
@@ -80,7 +86,11 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
                   <AddressText className="monospace">{output.scriptPubKey.address}</AddressText>
                 </a>
                 <div className={`${styles.btcAttr} monospace`}>
-                  {output.value} BTC
+                  <div className={styles.btcValue}>
+                    <span>{int}</span>
+                    {dec ? <span>{`.${dec}`}</span> : null}
+                  </div>
+                  BTC
                   {output.scriptPubKey.asm && !idx ? (
                     <Tooltip
                       placement="top"
