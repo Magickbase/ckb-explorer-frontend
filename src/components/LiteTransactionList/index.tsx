@@ -72,15 +72,17 @@ const LiteTransactionList: React.FC<{
               return (
                 <tr key={item.transactionHash}>
                   <td className={styles.hash} title={t('transaction.transaction_hash')}>
-                    <AddressText
-                      disableTooltip
-                      linkProps={{
-                        to: `/transaction/${item.transactionHash}`,
-                      }}
-                    >
-                      {item.transactionHash}
-                    </AddressText>
-                    {item.isRgbTransaction && <RGBPP transaction={item} />}
+                    <div className={styles.transactionHash}>
+                      <AddressText
+                        disableTooltip
+                        linkProps={{
+                          to: `/transaction/${item.transactionHash}`,
+                        }}
+                      >
+                        {item.transactionHash}
+                      </AddressText>
+                      {item.isRgbTransaction && <RGBPP transaction={item} />}
+                    </div>
                   </td>
                   {isPendingListActive ? null : (
                     <td className={styles.height} title={t('transaction.height')}>

@@ -49,10 +49,6 @@
 
   .hash {
     font-size: 0.875rem;
-    max-width: 25vw;
-    display: flex;
-    align-items: center;
-    gap: 8px;
   }
 
   .height {
@@ -110,10 +106,14 @@
             content: attr(title);
             font-size: 1rem;
             color: #666;
-            margin-bottom: 0.5rem;
           }
         }
       }
     }
   }
+}
+
+.transactionHash {
+  display: flex;
+  gap: 8px;
 }
