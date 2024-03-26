@@ -216,10 +216,6 @@
   height: 24px;
   color: #999;
 
-  &:hover {
-    color: var(--primary-color);
-  }
-
   @media (width <= $mobileBreakPoint) {
     width: 16px;
     height: 16px;
