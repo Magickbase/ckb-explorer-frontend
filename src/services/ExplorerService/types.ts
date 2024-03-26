@@ -262,6 +262,19 @@ export namespace LiteTransfer {
     cellType: 'cota_registry'
   }
 
+  export interface OmigaTransfer {
+    capacity: string
+    cellType: 'omiga_inscription'
+    name: string
+    count: string
+  }
+  export interface XudtTransfer {
+    capacity: string
+    cellType: 'xudt'
+    name: string
+    count: string
+  }
+
   export type Transfer =
     | CKBTransfer
     | NFTTransfer
@@ -274,6 +287,8 @@ export namespace LiteTransfer {
     | UDTTransfer
     | CotaTransfer
     | CotaRegistryTransfer
+    | OmigaTransfer
+    | XudtTransfer
 }
 
 interface FetchStatusValue {

@@ -78,6 +78,20 @@ export const getTransfer = (transfer: LiteTransfer.Transfer): TransferRecord => 
           },
         }
       }
+      case 'xudt':
+      case 'omiga_inscription': {
+        return {
+          label: transfer.name,
+          diffStatus: getDiffStatus(+transfer.capacity),
+          category: transfer.cellType,
+          capacity: transfer.capacity,
+          asset: {
+            amount: transfer.count,
+            item: transfer.name,
+            diffStatus: getDiffStatus(+transfer.count),
+          },
+        }
+      }
       case 'm_nft_token': {
         const id = formatNftDisplayId(transfer.toeknId ?? transfer.tokenId, 'm_nft')
         const diffStatus = getDiffStatus(+transfer.count)

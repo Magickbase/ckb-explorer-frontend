@@ -4,6 +4,7 @@ import { parseCKBAmount } from '../../../utils/number'
 import { Amount } from './Amount'
 import { LiteTransfer } from '../../../services/ExplorerService'
 import { getTransfer } from '../../../utils/transfer'
+import Capacity from '../../Capacity'
 
 export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: LiteTransfer.Transfer }) => {
   const { t } = useTranslation()
@@ -13,7 +14,6 @@ export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: Li
   const record = getTransfer(transfer)
 
   let name = t('transaction.unknown_assets')
-  let amount = record.asset?.amount
   switch (transfer.cellType) {
     case 'normal':
       name = 'CKB'
@@ -24,11 +24,15 @@ export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: Li
         transfer.udtInfo.symbol ||
         `${t('udt.unknown_token')} #${transfer.udtInfo.typeHash.substring(transfer.udtInfo.typeHash.length - 4)}`
       break
+    case 'xudt':
+    case 'omiga_inscription': {
+      name = record.label
+      break
+    }
     case 'spore_cell':
     case 'm_nft_token':
     case 'nrc_721_token':
       name = transfer.name || `${t('udt.unknown_token')} #${transfer.tokenId.substring(transfer.tokenId.length - 4)}`
-      amount = amount ? amount.split('.')[0] : amount
       break
     case 'cota_regular':
       if (transfer.cotaInfo.length > 0) {
@@ -42,12 +46,7 @@ export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: Li
     <div className={styles.asset}>
       <span>{name}</span>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {record.asset && (
-          <Amount
-            diffStatus={record.asset.diffStatus}
-            amount={`${record.diffStatus === 'negative' ? '' : '+'}${amount}`}
-          />
-        )}
+        {record.asset ? <Capacity display="short" type="diff" capacity={record.asset.amount} unit={null} /> : null}
         <Amount
           diffStatus={record.diffStatus}
           brackets={transfer.cellType !== 'normal'}
