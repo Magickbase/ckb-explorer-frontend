@@ -490,7 +490,8 @@
       "data-being-processed": "Data is being processed, please wait...",
       "view-btc-utxos": "BTC UTXOs",
       "view-btc-tx": "View BTC Tx",
-      "isomorphic-binding-with-index": "Isomorphic bound to {{index}}\n\nCommitment:\n{{commitment}}"
+      "isomorphic-binding-with-index": "Isomorphic bound to {{index}}",
+      "isomorphic-binding-with-index-commitment": "Isomorphic bound to {{index}}\n\nCommitment:\n{{commitment}}"
     },
     "block": {
       "block": "Block",

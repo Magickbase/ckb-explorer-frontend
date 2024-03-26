@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from 'react'
+import { ReactNode, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styles from './styles.module.scss'
 import { ReactComponent as DirectionIcon } from '../../assets/direction.svg'
@@ -90,6 +90,19 @@ const TransactionItem = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const boundCellIndex = useMemo(() => {
+    const map: Record<string, number> = {}
+    transaction.displayInputs.forEach((input, idx) => {
+      if (!input.rgbInfo) return
+      map[`${input.rgbInfo.txid}-${input.rgbInfo.index}`] = idx
+    })
+    transaction.displayOutputs.forEach((output, idx) => {
+      if (!output.rgbInfo) return
+      map[`${output.rgbInfo.txid}-${output.rgbInfo.index}`] = idx
+    })
+    return map
+  }, [transaction])
+
   return (
     <>
       <TransactionPanel ref={ref} circleCorner={circleCorner}>
@@ -142,7 +155,7 @@ const TransactionItem = ({
       </TransactionPanel>
       {transaction.btcTx ? (
         <div className={styles.btcTxContent}>
-          <BtcTransaction tx={transaction.btcTx} />
+          <BtcTransaction tx={transaction.btcTx} boundCellIndex={boundCellIndex} />
         </div>
       ) : null}
     </>

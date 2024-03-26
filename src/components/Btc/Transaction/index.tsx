@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import { useMemo, type FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Tooltip } from 'antd'
 import dayjs from 'dayjs'
@@ -13,10 +13,32 @@ import { ReactComponent as ViewNewSeal } from './view-new-seal.svg'
 import { ReactComponent as BtcIcon } from './btc.svg'
 import { ReactComponent as DirectionIcon } from '../../../assets/direction.svg'
 
-const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, showId = true }) => {
+enum RGBPP_BTC_POINTER {
+  IDNEX_BYTE_LENGTH = 4,
+  TXID_BYTE_LENGTH = 32,
+}
+export const getBtxUtxoPointer = (args: string) => {
+  const d = 2 + RGBPP_BTC_POINTER.IDNEX_BYTE_LENGTH * 2
+  const [txid, index] = [args.slice(0, d), args.slice(d + RGBPP_BTC_POINTER.TXID_BYTE_LENGTH * 2)].map(
+    str => str.match(/\w{2}/g)?.reverse().join('') ?? '',
+  )
+  return { index, txid }
+}
+
+const BtcTransaction: FC<{
+  tx: RawBtcRPC.BtcTx
+  boundCellIndex: Record<string, number>
+  showId?: boolean
+}> = ({ tx, boundCellIndex, showId = true }) => {
   const { t } = useTranslation()
 
   const time = dayjs(tx.blocktime * 1000)
+
+  const commitment = useMemo(() => {
+    const msg = tx.vout.find(v => v.scriptPubKey.asm.includes('OP_RETURN'))?.scriptPubKey.asm
+    return msg?.slice('OP_RETURN '.length) ?? null
+  }, [tx.vout])
+
   return (
     <div className={styles.container}>
       <BtcIcon className={styles.btcIcon} />
@@ -39,10 +61,11 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
       ) : null}
       <div className={styles.utxos}>
         <div className={styles.inputs}>
-          {tx.vin.map((input, idx) => {
+          {tx.vin.map(input => {
             if (!input.prevout) return null
-            const key = `${input?.txid}-${idx}`
+            const key = `${input?.txid}-${input.vout}`
             const [int, dec] = input.prevout.value.toString().split('.')
+            const boundIndex = boundCellIndex[key]
             return (
               <div key={key} className={styles.input}>
                 <a href={`${config.BITCOIN_EXPLORER}/tx/${input.txid}`} rel="noopener noreferrer" target="_blank">
@@ -54,12 +77,11 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
                     {dec ? <span>{`.${dec}`}</span> : null}
                   </div>
                   BTC
-                  {input.prevout.scriptPubKey.asm && !idx ? (
+                  {boundIndex !== undefined ? (
                     <Tooltip
                       placement="top"
                       title={t('transaction.isomorphic-binding-with-index', {
-                        index: `Input #${idx}`,
-                        commitment: input.prevout.scriptPubKey.asm,
+                        index: `Input #${boundIndex}`,
                       })}
                     >
                       <UsedSeal />
@@ -75,8 +97,9 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
         <DirectionIcon className={styles.direction} />
         <div className={styles.outputs}>
           {tx.vout.map((output, idx) => {
-            const key = `${output?.scriptPubKey?.address}-${idx}`
+            const key = `${tx.txid}-${idx}`
             const [int, dec] = output.value.toString().split('.')
+            const boundIndex = boundCellIndex[key]
             return (
               <div key={key} className={styles.output}>
                 <a
@@ -92,13 +115,18 @@ const BtcTransaction: FC<{ tx: RawBtcRPC.BtcTx; showId?: boolean }> = ({ tx, sho
                     {dec ? <span>{`.${dec}`}</span> : null}
                   </div>
                   BTC
-                  {output.scriptPubKey.asm && !idx ? (
+                  {boundIndex !== undefined ? (
                     <Tooltip
                       placement="top"
-                      title={t('transaction.isomorphic-binding-with-index', {
-                        index: `Output #${idx}`,
-                        commitment: output.scriptPubKey.asm,
-                      })}
+                      title={t(
+                        `transaction.${
+                          commitment ? 'isomorphic-binding-with-index-commitment' : 'isomorphic-binding-with-index'
+                        }`,
+                        {
+                          index: `Output #${boundIndex}`,
+                          commitment,
+                        },
+                      )}
                     >
                       <div className={styles.newSeal}>
                         <NewSeal />

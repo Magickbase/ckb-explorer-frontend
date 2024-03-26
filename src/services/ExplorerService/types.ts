@@ -321,6 +321,7 @@ export namespace RawBtcRPC {
   interface Vin {
     txid: string
     prevout: Utxo
+    vout: number
   }
 
   interface Vout extends Utxo {}

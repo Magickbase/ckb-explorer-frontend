@@ -490,7 +490,8 @@
       "data-being-processed": "数据正在处理中, 请稍后访问...",
       "view-btc-utxos": "BTC UTXOs",
       "view-btc-tx": "查看 BTC 交易",
-      "isomorphic-binding-with-index": "与 {{index}} 同构绑定\n\nCommitment:\n{{commitment}}"
+      "isomorphic-binding-with-index": "与 {{index}} 同构绑定",
+      "isomorphic-binding-with-index-commitment": "与 {{index}} 同构绑定\n\nCommitment:\n{{commitment}}"
     },
     "block": {
       "block": "区块",
