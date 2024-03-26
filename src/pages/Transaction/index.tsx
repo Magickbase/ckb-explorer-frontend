@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { addressToScript } from '@nervosnetwork/ckb-sdk-utils'
 import Content from '../../components/Content'
 import { TransactionDiv as TransactionPanel } from './TransactionComp/styled'
 import { explorerService } from '../../services/ExplorerService'
@@ -13,29 +12,6 @@ import { TransactionComp } from './TransactionComp/TransactionComp'
 import { TransactionOverviewCard } from './TransactionComp/TransactionOverview'
 import { TransactionDetailsHeader } from './TransactionComp/TransactionDetailsHeader'
 import { RGBDigestComp } from './TransactionComp/RGBDigestComp'
-import { matchScript } from '../../utils/util'
-import { Cell } from '../../models/Cell'
-import { TransactionLeapDirection } from '../../components/RGBPP/types'
-
-const computeRGBPPCellAmount = (cells: Cell[]) => {
-  return cells.reduce((cur, cell) => {
-    try {
-      const script = addressToScript(cell.addressHash)
-      if (!script) {
-        return cur
-      }
-
-      const tag = matchScript(script.codeHash, script.hashType)
-      if (tag?.tag === 'rgb++') {
-        return cur + 1
-      }
-    } catch (e) {
-      return cur
-    }
-
-    return cur
-  }, 0)
-}
 
 export default () => {
   const { Professional, Lite } = LayoutLiteProfessional
@@ -54,9 +30,6 @@ export default () => {
   const searchParams = useSearchParams('layout')
   const layout = searchParams.layout === Lite ? Lite : Professional
 
-  const inputRGBAmount = computeRGBPPCellAmount(transaction.displayInputs)
-  const outputRGBAmount = computeRGBPPCellAmount(transaction.displayOutputs)
-
   return (
     <Content>
       <TransactionPanel className="container">
@@ -67,15 +40,7 @@ export default () => {
           isRGB={transaction.isRgbTransaction}
         />
 
-        {transaction.rgbTxid && (
-          <RGBDigestComp
-            hash={txHash}
-            txid={transaction.rgbTxid}
-            leapDirection={
-              inputRGBAmount > outputRGBAmount ? TransactionLeapDirection.OUT : TransactionLeapDirection.IN
-            }
-          />
-        )}
+        {transaction.rgbTxid && <RGBDigestComp hash={txHash} txid={transaction.rgbTxid} />}
 
         <TransactionDetailsHeader layout={layout} />
 

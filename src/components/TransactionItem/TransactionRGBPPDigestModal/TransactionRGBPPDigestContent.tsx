@@ -6,10 +6,10 @@ import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
 import { TransactionRGBPPDigestTransfer } from './TransactionRGBPPDigestTransfer'
 import { useSetToast } from '../../Toast'
 import { explorerService } from '../../../services/ExplorerService'
-import AddressText from '../../AddressText'
 import SmallLoading from '../../Loading/SmallLoading'
 import { TransactionLeapDirection } from '../../RGBPP/types'
 import SimpleButton from '../../SimpleButton'
+import EllipsisMiddle from '../../EllipsisMiddle'
 import config from '../../../config'
 
 export const TransactionRGBPPDigestContent = ({
@@ -27,7 +27,7 @@ export const TransactionRGBPPDigestContent = ({
   if (!isFetched) {
     return (
       <div className={styles.digestLoading}>
-        <SmallLoading />{' '}
+        <SmallLoading />
       </div>
     )
   }
@@ -37,23 +37,21 @@ export const TransactionRGBPPDigestContent = ({
   return (
     <div className={styles.content}>
       <div className={styles.transactionInfo}>
-        <div className={styles.left}>
+        <div className={styles.txid}>
           <span>{t('address.seal_tx_on_bitcoin')}</span>
-          <div role="presentation" className={styles.transactionHash}>
-            <a href={`${config.BITCOIN_EXPLORER}tx/${data.data.txid}`}>{data.data.txid}</a>
-          </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <span className={styles.blockConfirm}>({data.data.confirmations} Bitcoin Confirmed)</span>
+          <a href={`${config.BITCOIN_EXPLORER}/tx/${data.data.txid}`} target="_blank" rel="noopener noreferrer">
+            <EllipsisMiddle text={data.data.txid} />
+          </a>
+          <span className={styles.blockConfirm}>({data.data.confirmations} Confirmations on Bitcoin)</span>
+          {leapDirection !== TransactionLeapDirection.NONE ? (
             <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>
               <span className={styles.leap}>{t(`address.leap_${leapDirection}`)}</span>
             </Tooltip>
-          </div>
+          ) : null}
         </div>
-        <div className={styles.right}>
-          <span className={styles.commitment}>Commitment:</span>
-          <AddressText style={{ maxWidth: '101px' }} className={styles.commitment}>
-            {data.data.commitment}
-          </AddressText>
+        <div className={styles.commitment}>
+          <span>Commitment:</span>
+          <EllipsisMiddle text={data.data.commitment} className={styles.commitmentText} />
           <SimpleButton
             className={styles.action}
             onClick={() => {
