@@ -52,13 +52,15 @@ export const Address = () => {
       return {
         ...cur,
         ...{
-          daoCompensation: acc.daoCompensation + cur.daoCompensation,
-          daoDeposit: acc.daoDeposit + cur.daoDeposit,
-          interest: acc.interest + cur.interest,
-          liveCellsCount: acc.liveCellsCount + cur.liveCellsCount,
-          minedBlocksCount: acc.minedBlocksCount + cur.minedBlocksCount,
-          pendingRewardBlocksCount: acc.pendingRewardBlocksCount + cur.pendingRewardBlocksCount,
-          transactionsCount: acc.transactionsCount + cur.transactionsCount,
+          daoCompensation: (BigInt(acc.daoCompensation) + BigInt(cur.daoCompensation ?? 0)).toString(),
+          daoDeposit: (BigInt(acc.daoDeposit) + BigInt(cur.daoDeposit ?? 0)).toString(),
+          interest: (BigInt(acc.interest) + BigInt(cur.interest ?? 0)).toString(),
+          liveCellsCount: (BigInt(acc.liveCellsCount) + BigInt(cur.liveCellsCount ?? 0)).toString(),
+          minedBlocksCount: (BigInt(acc.minedBlocksCount) + BigInt(cur.minedBlocksCount ?? 0)).toString(),
+          pendingRewardBlocksCount: (
+            BigInt(acc.pendingRewardBlocksCount) + BigInt(cur.pendingRewardBlocksCount ?? 0)
+          ).toString(),
+          transactionsCount: (BigInt(acc.transactionsCount) + BigInt(cur.transactionsCount ?? 0)).toString(),
           udtAccounts: acc.udtAccounts ? acc.udtAccounts.concat(cur.udtAccounts ?? []) : cur.udtAccounts,
         },
       }

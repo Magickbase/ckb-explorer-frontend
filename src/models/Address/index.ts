@@ -14,13 +14,13 @@ export interface Address {
   lockHash: string
   balance: string
   balanceOccupied: string
-  transactionsCount: number
+  transactionsCount: string
   lockScript: Script
-  pendingRewardBlocksCount: number
+  pendingRewardBlocksCount: string
   type: 'Address' | 'LockHash' | ''
-  daoDeposit: number
-  interest: number
-  daoCompensation: number
+  daoDeposit: string
+  interest: string
+  daoCompensation: string
   lockInfo: LockInfo
   liveCellsCount: string
   minedBlocksCount: string
