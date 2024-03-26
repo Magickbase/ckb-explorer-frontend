@@ -54,7 +54,7 @@ export const TransactionRGBPPDigestContent = ({
           >
             {data.data.txid}
           </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <span className={styles.blockConfirm}>({data.data.confirmations} Bitcoin Confirmed)</span>
             <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>
               <span className={styles.leap}>{t(`address.leap_${leapDirection}`)}</span>
