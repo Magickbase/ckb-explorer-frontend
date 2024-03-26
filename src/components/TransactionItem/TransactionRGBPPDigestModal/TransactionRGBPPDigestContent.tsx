@@ -69,7 +69,7 @@ export const TransactionRGBPPDigestContent = ({
           <SimpleButton
             className={styles.action}
             onClick={() => {
-              navigator.clipboard.writeText(hash)
+              navigator.clipboard.writeText(data.data.commitment)
               setToast({ message: t('common.copied') })
             }}
           >
