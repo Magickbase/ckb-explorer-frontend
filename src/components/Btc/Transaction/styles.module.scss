@@ -67,6 +67,12 @@
       padding: 4px;
     }
 
+    .inputs,
+    .outputs {
+      flex: 1;
+      overflow: hidden;
+    }
+
     @media (width <= $extraLargeBreakPoint) {
       flex-direction: column;
 
