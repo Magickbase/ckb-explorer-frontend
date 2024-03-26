@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Tooltip } from 'antd'
 import { useQuery } from '@tanstack/react-query'
-import styles from './styles.module.scss'
 import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
 import { TransactionRGBPPDigestTransfer } from './TransactionRGBPPDigestTransfer'
 import { useSetToast } from '../../Toast'
@@ -11,6 +10,7 @@ import { TransactionLeapDirection } from '../../RGBPP/types'
 import SimpleButton from '../../SimpleButton'
 import EllipsisMiddle from '../../EllipsisMiddle'
 import config from '../../../config'
+import styles from './styles.module.scss'
 
 export const TransactionRGBPPDigestContent = ({
   leapDirection,
