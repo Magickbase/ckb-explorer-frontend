@@ -100,21 +100,35 @@
   }
 
   .newSeal {
-    svg:first-child {
-      display: inline;
-    }
-
-    svg:last-child {
-      display: none;
-    }
+    position: relative;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
 
     &:hover {
+      svg {
+        color: var(--primary-color);
+      }
+
       svg:first-child {
-        display: none;
+        transform: rotateY(0.5turn);
       }
 
       svg:last-child {
-        display: inline;
+        transform: rotateY(0);
+      }
+    }
+
+    svg {
+      transition: transform 0.3s;
+      pointer-events: none;
+      backface-visibility: hidden;
+      position: absolute;
+
+      &:last-child {
+        transform: rotateY(0.5turn);
+        top: 0;
+        left: 0;
       }
     }
   }
