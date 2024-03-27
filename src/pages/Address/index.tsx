@@ -191,7 +191,7 @@ const LinkToBtcAddress = ({ address }: { address: string }) => {
         rel="noreferrer"
         target="_blank"
         className={styles.openInNew}
-        href={`${config.BITCOIN_EXPLORER}address/${address}`}
+        href={`${config.BITCOIN_EXPLORER}/address/${address}`}
       >
         <ShareIcon />
       </a>
