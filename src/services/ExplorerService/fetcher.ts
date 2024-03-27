@@ -20,7 +20,7 @@ import { Cell } from '../../models/Cell'
 import { Script } from '../../models/Script'
 import { Block } from '../../models/Block'
 import { BtcTx, Transaction } from '../../models/Transaction'
-import { Address } from '../../models/Address'
+import { Address, AddressType } from '../../models/Address'
 import { OmigaInscriptionCollection, UDT } from '../../models/UDT'
 import { HashType } from '../../constants/common'
 
@@ -112,7 +112,7 @@ export const apiFetcher = {
       return wrapper.map(
         (item): Address => ({
           ...item.attributes,
-          type: item.type === 'lock_hash' ? 'LockHash' : 'Address',
+          type: item.type === 'lock_hash' ? AddressType.LockHash : AddressType.Address,
         }),
       )
     }),

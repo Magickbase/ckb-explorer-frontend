@@ -8,6 +8,12 @@ export interface LockInfo {
   estimatedUnlockTime: string
 }
 
+export enum AddressType {
+  Address = 'Address',
+  LockHash = 'LockHash',
+  Unknown = 'Unknown',
+}
+
 export interface Address {
   bitcoinAddress?: string
   addressHash: string
@@ -17,7 +23,7 @@ export interface Address {
   transactionsCount: string
   lockScript: Script
   pendingRewardBlocksCount: string
-  type: 'Address' | 'LockHash' | ''
+  type: AddressType
   daoDeposit: string
   interest: string
   daoCompensation: string
