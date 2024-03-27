@@ -46,7 +46,9 @@ export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: Li
     <div className={styles.asset}>
       <span>{name}</span>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {record.asset ? <Capacity display="short" type="diff" capacity={record.asset.amount} unit={null} /> : null}
+        {record.asset ? (
+          <Capacity display="short" type="diff" capacity={record.asset.amount} unit={record.asset.item} />
+        ) : null}
         <Amount
           diffStatus={record.diffStatus}
           brackets={transfer.cellType !== 'normal'}

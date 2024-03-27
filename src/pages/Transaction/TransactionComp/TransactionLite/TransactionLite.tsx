@@ -55,7 +55,7 @@ export const TransactionCompLite: FC<{ isCellbase: boolean }> = ({ isCellbase })
                     <td className={styles.value}>
                       {transfer.asset ? (
                         <div className={styles.asset} data-diff-status={transfer.asset.diffStatus}>
-                          <div>{transfer.asset.item}</div>
+                          <div>{`${transfer.asset.amount} ${transfer.asset.item}`}</div>
                         </div>
                       ) : null}
                       <div className={styles.ckb}>
