@@ -9,7 +9,6 @@ import SmallLoading from '../../Loading/SmallLoading'
 import { TransactionLeapDirection } from '../../RGBPP/types'
 import SimpleButton from '../../SimpleButton'
 import EllipsisMiddle from '../../EllipsisMiddle'
-import config from '../../../config'
 import styles from './styles.module.scss'
 
 export const TransactionRGBPPDigestContent = ({
@@ -39,7 +38,7 @@ export const TransactionRGBPPDigestContent = ({
       <div className={styles.transactionInfo}>
         <div className={styles.txid}>
           <span>{t('address.seal_tx_on_bitcoin')}</span>
-          <a href={`${config.BITCOIN_EXPLORER}/tx/${data.data.txid}`} target="_blank" rel="noopener noreferrer">
+          <a href={`/transaction/${hash}`} target="_blank" rel="noopener noreferrer">
             <EllipsisMiddle text={data.data.txid} />
           </a>
           <span className={styles.blockConfirm}>({data.data.confirmations} Confirmations on Bitcoin)</span>
