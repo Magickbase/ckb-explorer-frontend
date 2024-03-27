@@ -3,9 +3,11 @@
 .container {
   padding: 0 2rem;
   background: #fff;
+  max-width: 100%;
 
   table {
     width: 100%;
+    max-width: 100%;
 
     th,
     td {
@@ -49,6 +51,7 @@
 
   .hash {
     font-size: 0.875rem;
+    max-width: 25vw;
   }
 
   .height {
