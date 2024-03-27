@@ -395,6 +395,7 @@
       "view_in_btc_explorer": "在 Bitcoin 浏览器查看"
     },
     "transaction": {
+      "view_rgbpp_digest": "查看 RGB++ 摘要",
       "transaction": "交易",
       "transactions": "交易",
       "pending_transactions": "待处理交易",

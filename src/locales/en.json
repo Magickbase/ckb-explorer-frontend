@@ -395,6 +395,7 @@
       "view_in_btc_explorer": "View in Bitcoin Explorer"
     },
     "transaction": {
+      "view_rgbpp_digest": "View RGB++ Digest",
       "transaction": "Transaction",
       "transactions": "Transactions",
       "pending_transactions": "Pending Transactions",

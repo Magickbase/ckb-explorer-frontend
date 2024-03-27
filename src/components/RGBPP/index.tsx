@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { addressToScript } from '@nervosnetwork/ckb-sdk-utils'
+import { useTranslation } from 'react-i18next'
 import { Transaction } from '../../models/Transaction'
 import SimpleModal from '../Modal'
 import SimpleButton from '../SimpleButton'
@@ -22,6 +23,7 @@ const computeRGBPPCellAmount = (cells: Cell[]) =>
 
 const RGBPP = ({ transaction }: { transaction: Transaction }) => {
   const [showModal, setShowModal] = useState(false)
+  const { t } = useTranslation()
 
   const inputRGBAmount = computeRGBPPCellAmount(transaction.displayInputs)
   const outputRGBAmount = computeRGBPPCellAmount(transaction.displayOutputs)
@@ -34,7 +36,7 @@ const RGBPP = ({ transaction }: { transaction: Transaction }) => {
         }}
       >
         <div className={styles.rgbpp}>
-          <span>RGB++</span>
+          <span>{t('transaction.view_rgbpp_digest')}</span>
         </div>
       </SimpleButton>
       <SimpleModal isShow={showModal} setIsShow={setShowModal}>
