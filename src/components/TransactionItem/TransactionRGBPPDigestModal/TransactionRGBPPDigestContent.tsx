@@ -49,19 +49,21 @@ export const TransactionRGBPPDigestContent = ({
             </Tooltip>
           ) : null}
         </div>
-        <div className={styles.commitment}>
-          <span>Commitment:</span>
-          <EllipsisMiddle text={data.data.commitment} className={styles.commitmentText} />
-          <SimpleButton
-            className={styles.action}
-            onClick={() => {
-              navigator.clipboard.writeText(data.data.commitment)
-              setToast({ message: t('common.copied') })
-            }}
-          >
-            <CopyIcon />
-          </SimpleButton>
-        </div>
+        {data.data.commitment ? (
+          <div className={styles.commitment}>
+            <span>Commitment:</span>
+            <EllipsisMiddle text={data.data.commitment} className={styles.commitmentText} />
+            <SimpleButton
+              className={styles.action}
+              onClick={() => {
+                navigator.clipboard.writeText(data.data.commitment)
+                setToast({ message: t('common.copied') })
+              }}
+            >
+              <CopyIcon />
+            </SimpleButton>
+          </div>
+        ) : null}
       </div>
       {data.data.transfers && data.data.transfers.length > 0 ? (
         data.data.transfers.map(transfer =>
