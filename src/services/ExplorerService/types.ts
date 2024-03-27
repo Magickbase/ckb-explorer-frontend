@@ -267,6 +267,11 @@ export namespace LiteTransfer {
     cellType: 'omiga_inscription'
     name: string
     count: string
+    udtInfo?: {
+      amount: string
+      decimal: string
+      symbol: string
+    }
   }
   export interface XudtTransfer {
     capacity: string

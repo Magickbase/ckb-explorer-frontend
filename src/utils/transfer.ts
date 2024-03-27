@@ -78,8 +78,41 @@ export const getTransfer = (transfer: LiteTransfer.Transfer): TransferRecord => 
           },
         }
       }
-      case 'xudt':
       case 'omiga_inscription': {
+        const info = transfer.udtInfo
+        if (info) {
+          const item = info?.symbol || 'Unknown'
+          const diffStatus = getDiffStatus(+(info?.amount ?? 0))
+          let amount = 'Unknown'
+          if (info?.decimal && info.amount) {
+            amount = parseUDTAmount(info.amount, +info.decimal)
+          }
+          // const info =
+          return {
+            label: 'Omiga Inscription',
+            diffStatus: getDiffStatus(+transfer.capacity),
+            category: transfer.cellType,
+            capacity: transfer.capacity,
+            asset: {
+              amount,
+              item,
+              diffStatus,
+            },
+          }
+        }
+        return {
+          label: transfer.name,
+          diffStatus: getDiffStatus(+transfer.capacity),
+          category: transfer.cellType,
+          capacity: transfer.capacity,
+          asset: {
+            amount: transfer.count,
+            item: transfer.name,
+            diffStatus: getDiffStatus(+transfer.count),
+          },
+        }
+      }
+      case 'xudt': {
         return {
           label: transfer.name,
           diffStatus: getDiffStatus(+transfer.capacity),
