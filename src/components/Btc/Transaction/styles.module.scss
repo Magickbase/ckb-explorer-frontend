@@ -143,7 +143,7 @@
       }
 
       svg:last-child {
-        transform: rotateY(0);
+        transform: rotateY(0) rotateZ(0.5turn);
       }
     }
 
@@ -155,7 +155,7 @@
       background: var(--btc-secondary-color);
 
       &:last-child {
-        transform: rotateY(0.5turn);
+        transform: rotateY(0.5turn) rotateZ(0.5turn);
         top: 0;
         left: 0;
       }
