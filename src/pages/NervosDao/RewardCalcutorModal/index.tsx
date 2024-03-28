@@ -11,8 +11,9 @@ import { localeNumberString } from '../../../utils/number'
 import { isMainnet } from '../../../utils/chain'
 
 const RewardCalcutorModal = ({ onClose, estimatedApc }: { onClose: () => void; estimatedApc: string }) => {
-  const [depositValue, setDepositValue] = useState('1000')
   const { t } = useTranslation()
+  const [depositValue, setDepositValue] = useState('1000')
+  const [inputVal, setInputVal] = useState(localeNumberString(depositValue))
 
   const [annualRewards, monthRewards] = useMemo(() => {
     const amount = Number(depositValue) - MIN_DEPOSIT_AMOUNT
@@ -30,14 +31,9 @@ const RewardCalcutorModal = ({ onClose, estimatedApc }: { onClose: () => void; e
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { value } = e.target
 
-    value = value.replace(/,/g, '')
+    value = value.replace('。', '.').replace(/^\D*([0-9]\d*\.?\d{0,8})?.*$/, '$1')
 
-    const charReg = /[^\d.]/g
-
-    if (charReg.test(value)) {
-      value = value.replace(charReg, '')
-    }
-
+    setInputVal(value)
     setDepositValue(value)
   }
 
@@ -66,7 +62,9 @@ const RewardCalcutorModal = ({ onClose, estimatedApc }: { onClose: () => void; e
           <div className={styles.modalContent}>
             <h2>{t('nervos_dao.you_deposit')}</h2>
             <Input
-              value={localeNumberString(depositValue)}
+              value={inputVal}
+              onFocus={() => setInputVal(depositValue)}
+              onBlur={() => setInputVal(localeNumberString(depositValue))}
               maxLength={15}
               className={styles.input}
               suffix="CKB"
@@ -103,7 +101,6 @@ const RewardCalcutorModal = ({ onClose, estimatedApc }: { onClose: () => void; e
                     {
                       data: [0, Number(monthRewards)],
                       type: 'line',
-                      areaStyle: {},
                     },
                   ],
                 }}
