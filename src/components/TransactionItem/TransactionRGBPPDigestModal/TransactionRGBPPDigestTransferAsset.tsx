@@ -4,7 +4,6 @@ import { parseCKBAmount } from '../../../utils/number'
 import { Amount } from './Amount'
 import { LiteTransfer } from '../../../services/ExplorerService'
 import { getTransfer } from '../../../utils/transfer'
-import Capacity from '../../Capacity'
 
 export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: LiteTransfer.Transfer }) => {
   const { t } = useTranslation()
@@ -24,7 +23,9 @@ export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: Li
         transfer.udtInfo.symbol ||
         `${t('udt.unknown_token')} #${transfer.udtInfo.typeHash.substring(transfer.udtInfo.typeHash.length - 4)}`
       break
-    case 'xudt':
+    case 'xudt': {
+      break
+    }
     case 'omiga_inscription': {
       name = record.label
       break
@@ -47,7 +48,9 @@ export const TransactionRGBPPDigestTransferAsset = ({ transfer }: { transfer: Li
       <span>{name}</span>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {record.asset ? (
-          <Capacity display="short" type="diff" capacity={record.asset.amount} unit={record.asset.item} />
+          <div className={styles.token} data-diff-status={record.asset.diffStatus}>
+            <div>{`${record.asset.amount} ${record.asset.item}`}</div>
+          </div>
         ) : null}
         <Amount
           diffStatus={record.diffStatus}

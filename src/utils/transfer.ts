@@ -54,8 +54,8 @@ export const getTransfer = (transfer: LiteTransfer.Transfer): TransferRecord => 
             category: transfer.cellType,
             capacity: transfer.capacity,
             asset: {
-              amount: transfer.udtInfo.amount,
-              item: 'Unknown Amount',
+              amount: 'Unknown Amount',
+              item: '',
               diffStatus: getDiffStatus(+transfer.udtInfo.amount),
             },
           }
@@ -113,15 +113,37 @@ export const getTransfer = (transfer: LiteTransfer.Transfer): TransferRecord => 
         }
       }
       case 'xudt': {
+        if (!transfer.udtInfo) {
+          throw new Error('Missing udtInfo')
+        }
+        if (!transfer.udtInfo.decimal) {
+          return {
+            label: `Unknown Asset`,
+            diffStatus: getDiffStatus(+transfer.capacity),
+            category: transfer.cellType,
+            capacity: transfer.capacity,
+            asset: {
+              amount: 'Unknown Amount',
+              item: '',
+              diffStatus: getDiffStatus(+transfer.udtInfo.amount),
+            },
+          }
+        }
+        const decimal = +transfer.udtInfo.decimal
+        let item = decimal ? parseUDTAmount(transfer.udtInfo.amount, decimal) : transfer.udtInfo.amount
+        const diffStatus = getDiffStatus(+transfer.udtInfo.amount)
+        if (diffStatus === 'positive') {
+          item = `+${item}`
+        }
         return {
-          label: transfer.name,
+          label: transfer.udtInfo.symbol || 'Unknown',
           diffStatus: getDiffStatus(+transfer.capacity),
           category: transfer.cellType,
           capacity: transfer.capacity,
           asset: {
-            amount: transfer.count,
-            item: transfer.name,
-            diffStatus: getDiffStatus(+transfer.count),
+            amount: transfer.udtInfo.amount,
+            item,
+            diffStatus,
           },
         }
       }

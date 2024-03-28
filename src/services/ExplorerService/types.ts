@@ -276,8 +276,7 @@ export namespace LiteTransfer {
   export interface XudtTransfer {
     capacity: string
     cellType: 'xudt'
-    name: string
-    count: string
+    udtInfo: Record<'amount' | 'decimal' | 'displayName' | 'symbol' | 'typeHash' | 'uan', string>
   }
 
   export type Transfer =

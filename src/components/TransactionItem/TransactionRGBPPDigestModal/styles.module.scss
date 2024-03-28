@@ -219,3 +219,16 @@
   color: #999;
   flex-shrink: 0;
 }
+
+.token {
+  color: #999;
+  margin-right: 0.25rem;
+
+  &[data-diff-status='positive'] {
+    color: var(--primary-color);
+  }
+
+  &[data-diff-status='negative'] {
+    color: var(--accent-color);
+  }
+}
