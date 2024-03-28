@@ -2,12 +2,15 @@
 
 .container {
   background-color: #fff;
-  margin: 178px 16px;
   padding: 20px 40px;
+  width: 75%;
+  margin: 15% auto;
   border-radius: 4px;
 
   @media screen and (max-width: $mobileBreakPoint) {
+    width: 90%;
     padding: 16px;
+    margin: 178px auto;
   }
 }
 
