@@ -218,6 +218,10 @@
   height: 24px;
   color: #999;
   flex-shrink: 0;
+
+  &:hover {
+    color: var(--primary-color);
+  }
 }
 
 .token {
