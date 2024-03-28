@@ -34,7 +34,10 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
           acc[0].push(cur)
           break
         case 'omiga_inscription':
-          acc[1].push(cur)
+          if (cur.amount !== '0') {
+            // FIXME: remove this condition after backend fix
+            acc[1].push(cur)
+          }
           break
         default:
           break
