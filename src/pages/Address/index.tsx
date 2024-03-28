@@ -158,7 +158,7 @@ export const Address = () => {
       committed,
       pending,
     }
-  }, [addressInfoQuery, pendingTransactionCountQuery, transactionCountQuery, isRGBPP])
+  }, [addressInfo?.transactionsCount, pendingTransactionCountQuery, transactionCountQuery, isRGBPP])
 
   const newAddr = useNewAddr(address)
   const deprecatedAddr = useDeprecatedAddr(address)
