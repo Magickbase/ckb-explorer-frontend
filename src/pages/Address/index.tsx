@@ -149,11 +149,11 @@ export const Address = () => {
   const transactionCounts: Record<'committed' | 'pending', number | '-'> = useMemo(() => {
     let committed: number | '-' = '-'
     if (isRGBPP) {
-      committed = transactionCountQuery.data.total
+      committed = transactionCountQuery.data?.total ?? '-'
     } else {
       committed = Number(addressInfo?.transactionsCount) ?? '-'
     }
-    const pending = pendingTransactionCountQuery.data.total
+    const pending = pendingTransactionCountQuery.data?.total ?? '-'
     return {
       committed,
       pending,
