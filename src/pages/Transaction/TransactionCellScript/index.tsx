@@ -16,7 +16,6 @@ import {
   TransactionCellDetailTitle,
 } from './styled'
 import SmallLoading from '../../../components/Loading/SmallLoading'
-import { CellInfoDataView } from './CellInfoDataView'
 import CloseIcon from './modal_close.png'
 import config from '../../../config'
 import { getBtcUtxo, getContractHashTag } from '../../../utils/util'
@@ -340,7 +339,7 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
         {isFetched ? (
           <div className="transactionDetailContent">
             {selectedInfo === CellInfo.DATA && isCellData(content) ? (
-              <CellInfoDataView data={content.data} />
+              <div className={styles.dataView}>{content.data}</div>
             ) : (
               <CellInfoValueJSONView content={content} />
             )}

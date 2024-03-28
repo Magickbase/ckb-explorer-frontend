@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { DefaultTheme, ThemeProvider } from 'styled-components'
 import Routers from './routes'
 import Toast from './components/Toast'
+import { SelectionParser } from './components/SelectionParser'
 import { isMainnet } from './utils/chain'
 import { DASQueryContextProvider } from './hooks/useDASAccount'
 import { getPrimaryColor, getSecondaryColor } from './constants/common'
@@ -29,8 +30,10 @@ const App = () => {
       <div style={appStyle} data-net={isMainnet() ? 'mainnet' : 'testnet'}>
         <QueryClientProvider client={queryClient}>
           <DASQueryContextProvider>
-            <Routers />
-            <Toast />
+            <SelectionParser>
+              <Routers />
+              <Toast />
+            </SelectionParser>
           </DASQueryContextProvider>
         </QueryClientProvider>
       </div>

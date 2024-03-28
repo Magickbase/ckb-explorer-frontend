@@ -1,9 +1,6 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react'
 import * as Select from '@radix-ui/react-select'
 import classnames from 'classnames'
-// import ChevronUpIcon from './ChevronUp.svg'
-// import ChevronDownIcon from './ChevronDown.svg'
 
 import styles from './select.module.scss'
 

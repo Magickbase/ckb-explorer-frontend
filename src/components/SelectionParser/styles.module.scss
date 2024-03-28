@@ -1,0 +1,45 @@
+@import '../../styles/variables.module';
+
+.selectionPopover {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px #eee;
+  transform-origin: var(--selection-popover-content-transform-origin);
+  animation: scale-in 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 400px;
+  word-wrap: break-word;
+  z-index: 2;
+}
+
+.selectionPopoverHeader {
+  padding: 16px;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: start;
+}
+
+.selectionPopoverContent {
+  padding: 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #666;
+  line-height: 1.5rem;
+  text-align: start;
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.notSelect {
+  user-select: none;
+}
