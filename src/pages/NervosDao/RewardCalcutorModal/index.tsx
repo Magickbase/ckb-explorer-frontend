@@ -55,7 +55,7 @@ const RewardCalcutorModal = ({ onClose, estimatedApc }: { onClose: () => void; e
             <Trans
               i18nKey="nervos_dao.deposit_terms"
               components={[
-                <a href={NERVOS_DAO_RFC_URL} className={styles.rfcLink}>
+                <a href={NERVOS_DAO_RFC_URL} className={styles.rfcLink} target="_blank" rel="noreferrer">
                   Nervos DAO RFC
                 </a>,
               ]}
