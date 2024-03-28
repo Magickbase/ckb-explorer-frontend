@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { Tooltip } from 'antd'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { Address as AddressInfo } from '../../models/Address'
 import Content from '../../components/Content'
 import { AddressContentPanel } from './styled'
@@ -96,6 +96,31 @@ export const Address = () => {
       throw err
     }
   })
+  /* FIXME: the total count of tx cannot be aggregated from addresses api if its RGB++ Address because some of them are repeated and double counted */
+  /* reuse the cache of address_transactions query by using the same query key */
+  const transactionCountQuery = useQuery<{ transactions: Transaction[]; total: number | '-' }>(
+    ['address_transactions', address, currentPage, pageSize, sort],
+    async () => {
+      try {
+        const { transactions, total } = await explorerService.api.fetchTransactionsByAddress(
+          address,
+          currentPage,
+          pageSize,
+          sort,
+        )
+        return {
+          transactions,
+          total,
+        }
+      } catch (err) {
+        return { transactions: [], total: '-' }
+      }
+    },
+    {
+      initialData: { transactions: [], total: '-' },
+      enabled: isRGBPP,
+    },
+  )
 
   /* reuse the cache of address_pending_transactions query by using the same query key */
   const pendingTransactionCountQuery = useQuery<{ transactions: Transaction[]; total: number | '-' }>(
@@ -121,14 +146,20 @@ export const Address = () => {
     },
   )
 
-  const transactionCounts: Record<'committed' | 'pending', number | '-'> = {
-    committed:
-      addressInfoQuery.isFetched && addressInfoQuery.data
-        ? // FIXME: this type conversion could be removed once the type declaration of Transaction is fixed
-          Number(addressInfo?.transactionsCount) ?? '-'
-        : '-',
-    pending: pendingTransactionCountQuery.data?.total ?? '-',
-  }
+  const transactionCounts: Record<'committed' | 'pending', number | '-'> = useMemo(() => {
+    let committed: number | '-' = '-'
+    if (isRGBPP) {
+      committed = transactionCountQuery.data.total
+    } else {
+      committed = Number(addressInfo?.transactionsCount) ?? '-'
+    }
+    const pending = pendingTransactionCountQuery.data.total
+    return {
+      committed,
+      pending,
+    }
+  }, [addressInfoQuery, pendingTransactionCountQuery, transactionCountQuery, isRGBPP])
+
   const newAddr = useNewAddr(address)
   const deprecatedAddr = useDeprecatedAddr(address)
   const counterpartAddr = newAddr === address ? deprecatedAddr : newAddr
