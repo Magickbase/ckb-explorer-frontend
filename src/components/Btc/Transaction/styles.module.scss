@@ -55,7 +55,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    gap: 2em;
+    gap: 4em;
     white-space: nowrap;
 
     .direction {
@@ -75,6 +75,7 @@
 
     @media (width <= $extraLargeBreakPoint) {
       flex-direction: column;
+      gap: 0;
 
       .direction {
         transform: rotate(0);
