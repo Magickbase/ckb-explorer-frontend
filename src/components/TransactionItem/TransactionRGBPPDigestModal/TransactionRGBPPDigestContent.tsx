@@ -34,20 +34,25 @@ export const TransactionRGBPPDigestContent = ({
   if (!data) {
     return <div className={styles.noRecords}>{t('transaction.no_records')}</div>
   }
+
   return (
     <div className={styles.content}>
       <div className={styles.transactionInfo}>
         <div className={styles.txid}>
           <span>{t('address.seal_tx_on_bitcoin')}</span>
-          <AddressText
-            linkProps={{
-              to: `/transaction/${hash}`,
-            }}
-            className={styles.address}
-          >
-            {data.data.txid}
-          </AddressText>
-          <span className={styles.blockConfirm}>({data.data.confirmations} Confirmations on Bitcoin)</span>
+          {data.data.txid && (
+            <AddressText
+              linkProps={{
+                to: `/transaction/${hash}`,
+              }}
+              className={styles.address}
+            >
+              {data.data.txid}
+            </AddressText>
+          )}
+          {data.data.confirmations && (
+            <span className={styles.blockConfirm}>({data.data.confirmations} Confirmations on Bitcoin)</span>
+          )}
           {leapDirection !== TransactionLeapDirection.NONE ? (
             <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>
               <span className={styles.leap}>{t(`address.leap_${leapDirection}`)}</span>

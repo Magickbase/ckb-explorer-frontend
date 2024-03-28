@@ -10,10 +10,12 @@ import { explorerService, RawBtcRPC } from '../../../services/ExplorerService'
 import SmallLoading from '../../../components/Loading/SmallLoading'
 import { TransactionLeapDirection } from '../../../components/RGBPP/types'
 
-export const RGBDigestComp = ({ hash, txid }: { hash: string; txid: string }) => {
+export const RGBDigestComp = ({ hash, txid }: { hash: string; txid?: string }) => {
   const { t } = useTranslation()
-  const { data: btcTx, isLoading: isBtcTxLoading } = useQuery(['btc_tx', txid], () =>
-    explorerService.api.getBtcTxList([txid]).then((res: Record<string, RawBtcRPC.BtcTx>) => res[txid]),
+  const { data: btcTx, isLoading: isBtcTxLoading } = useQuery(['btc_tx', txid], async () =>
+    txid
+      ? explorerService.api.getBtcTxList([txid]).then((res: Record<string, RawBtcRPC.BtcTx>) => res[txid])
+      : undefined,
   )
 
   const { data: displayInputs } = useQuery(

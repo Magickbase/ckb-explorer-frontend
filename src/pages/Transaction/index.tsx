@@ -40,7 +40,7 @@ export default () => {
           isRGB={transaction.isRgbTransaction}
         />
 
-        {transaction.rgbTxid && <RGBDigestComp hash={txHash} txid={transaction.rgbTxid} />}
+        {transaction.isRgbTransaction && <RGBDigestComp hash={txHash} txid={transaction.rgbTxid ?? undefined} />}
 
         <TransactionDetailsHeader layout={layout} />
 
