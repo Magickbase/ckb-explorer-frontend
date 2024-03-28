@@ -31,7 +31,7 @@ export const TransactionRGBPPDigestContent = ({
     )
   }
   if (!data) {
-    return <div className={styles.noRecords}>no</div>
+    return <div className={styles.noRecords}>{t('transaction.no_records')}</div>
   }
   return (
     <div className={styles.content}>
