@@ -58,7 +58,7 @@ const AddressText: FC<{
     </Tooltip>
   )
 
-  if (linkProps != null) {
+  if (linkProps != null && linkProps.to !== window.location.pathname) {
     const { className, ...props } = linkProps
     return (
       <Link className={classNames(styles.link, containerClass, className)} {...props}>

@@ -10,6 +10,7 @@ import { TransactionLeapDirection } from '../../RGBPP/types'
 import SimpleButton from '../../SimpleButton'
 import EllipsisMiddle from '../../EllipsisMiddle'
 import styles from './styles.module.scss'
+import AddressText from '../../AddressText'
 
 export const TransactionRGBPPDigestContent = ({
   leapDirection,
@@ -38,9 +39,14 @@ export const TransactionRGBPPDigestContent = ({
       <div className={styles.transactionInfo}>
         <div className={styles.txid}>
           <span>{t('address.seal_tx_on_bitcoin')}</span>
-          <a href={`/transaction/${hash}`} target="_blank" rel="noopener noreferrer">
-            <EllipsisMiddle text={data.data.txid} />
-          </a>
+          <AddressText
+            linkProps={{
+              to: `/transaction/${hash}`,
+            }}
+            className={styles.address}
+          >
+            {data.data.txid}
+          </AddressText>
           <span className={styles.blockConfirm}>({data.data.confirmations} Confirmations on Bitcoin)</span>
           {leapDirection !== TransactionLeapDirection.NONE ? (
             <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>
