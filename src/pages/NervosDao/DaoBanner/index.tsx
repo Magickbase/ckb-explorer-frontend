@@ -23,7 +23,11 @@ const DaoBanner = ({ estimatedApc }: { estimatedApc: string }) => {
             {t('nervos_dao.nervos_dao_rfc')}
             <GoIcon className={styles.icon} />
           </button>
-          <button type="button" className={styles.btn} onClick={() => window.open('https://dao.ckb.community/')}>
+          <button
+            type="button"
+            className={styles.btn}
+            onClick={() => window.open('https://medium.com/nervosnetwork/nervos-dao-explained-95e33898b1c')}
+          >
             {t('nervos_dao.learn_more')}
             <GoIcon className={styles.icon} />
           </button>
