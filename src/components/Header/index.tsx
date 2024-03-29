@@ -64,11 +64,11 @@ export default () => {
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
 
   useEffect(() => {
-    const unregster = history.listen(() => {
+    const unregister = history.listen(() => {
       setMobileMenuVisible(false)
     })
 
-    return () => unregster()
+    return () => unregister()
   }, [history])
 
   return (
