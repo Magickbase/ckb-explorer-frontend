@@ -74,7 +74,7 @@ const hexToXudtData = (v: string) => {
 }
 
 const jsonToList = (json: Record<string, any>) =>
-  Object.entries(json).reduce((acc, cur) => `${acc}\n${cur[0]}:${cur[1]}`, '')
+  Object.entries(json).reduce((acc, cur) => `${acc}\n${cur[0]}: ${cur[1]}`, '')
 
 const Decoder = () => {
   const [selection, setSelection] = useState<{
@@ -197,12 +197,10 @@ const Decoder = () => {
         }
         case DecodeMethod.BTCTimeLock: {
           const res = parseBtcTimeLockArgs(v)
+          const json = { ...res, script: JSON.stringify(res.script, null, 2) }
           return {
-            display: jsonToList({
-              ...res,
-              script: JSON.stringify(res.script, null, 2),
-            }),
-            copy: res,
+            display: jsonToList(json),
+            copy: json,
           }
         }
         case DecodeMethod.Address: {
