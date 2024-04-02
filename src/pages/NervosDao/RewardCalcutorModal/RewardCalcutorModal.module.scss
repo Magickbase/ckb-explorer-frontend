@@ -94,6 +94,10 @@
     .apcTitle {
       flex: 1;
       margin: 0;
+
+      a {
+        margin-left: 4px;
+      }
     }
 
     div {
@@ -142,6 +146,16 @@
     color: #999;
     font-size: 12px;
     font-weight: 500;
+  }
+}
+
+.years {
+  input {
+    outline: none;
+    border: 1px solid #e5e5e5;
+    width: 6ch;
+    padding: 0 4px;
+    margin: 0 4px;
   }
 }
 

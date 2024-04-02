@@ -1,40 +1,59 @@
 import { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { Input } from 'antd'
 import { Trans, useTranslation } from 'react-i18next'
+import BigNumber from 'bignumber.js'
 import CommonModal from '../../../components/CommonModal'
 import styles from './RewardCalcutorModal.module.scss'
 import { ReactChartCore } from '../../StatisticsChart/common'
 import CloseIcon from '../../../assets/modal_close.png'
-import { MIN_DEPOSIT_AMOUNT, MAX_DECIMAL_DIGITS, NERVOS_DAO_RFC_URL } from '../../../constants/common'
-import { ckbToShannon, shannonToCkb } from '../../../utils/util'
+import { MIN_DEPOSIT_AMOUNT, NERVOS_DAO_RFC_URL, IS_MAINNET, MAX_DECIMAL_DIGITS } from '../../../constants/common'
 import { localeNumberString } from '../../../utils/number'
-import { isMainnet } from '../../../utils/chain'
+
+const INIT_DEPOSIT_VALUE = '1000'
 
 const RewardCalcutorModal = ({ onClose, estimatedApc }: { onClose: () => void; estimatedApc: string }) => {
   const { t } = useTranslation()
-  const [depositValue, setDepositValue] = useState('1000')
-  const [inputVal, setInputVal] = useState(localeNumberString(depositValue))
+  const [depositValue, setDepositValue] = useState<string>(INIT_DEPOSIT_VALUE)
+  const [years, setYears] = useState<number>(5)
 
-  const [annualRewards, monthRewards] = useMemo(() => {
-    const amount = Number(depositValue) - MIN_DEPOSIT_AMOUNT
-    const value = ckbToShannon((amount > 0 ? amount : 0).toFixed(MAX_DECIMAL_DIGITS).toString())
+  const yearReward = useMemo(() => {
+    const EMPTY = BigNumber(0)
+    if (!estimatedApc) return EMPTY
+    if (!depositValue) return EMPTY
+    const v = BigNumber(depositValue)
 
-    const dpc = Number(estimatedApc || 0) / 365 / 100
+    if (v.isNaN() || v.isNegative()) return EMPTY
 
-    const mRewards = (Number(value) * dpc * 30).toFixed(0).toString()
+    const amount = v.minus(MIN_DEPOSIT_AMOUNT)
+    if (amount.isNegative()) return EMPTY
 
-    const rewerds = (Number(value) * dpc * 360).toFixed(0).toString()
-
-    return [shannonToCkb(rewerds), shannonToCkb(mRewards)]
+    const yearReward = amount.multipliedBy(estimatedApc).dividedBy(100)
+    return yearReward
   }, [depositValue, estimatedApc])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { value } = e.target
+  const monthReward = yearReward.dividedBy(12)
 
-    value = value.replace('。', '.').replace(/^\D*([0-9]\d*\.?\d{0,8})?.*$/, '$1')
+  const handleDepositChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const { value } = e.currentTarget
+    const v = value.replace(/,/g, '')
+    if (!v) {
+      setDepositValue('')
+      return
+    }
+    setDepositValue(v)
+  }
 
-    setInputVal(value)
-    setDepositValue(value)
+  const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const y = +e.currentTarget.value
+    if (y < 1) {
+      return
+    }
+    setYears(y)
   }
 
   return (
@@ -62,56 +81,94 @@ const RewardCalcutorModal = ({ onClose, estimatedApc }: { onClose: () => void; e
           <div className={styles.modalContent}>
             <h2>{t('nervos_dao.you_deposit')}</h2>
             <Input
-              value={inputVal}
-              onFocus={() => setInputVal(depositValue)}
-              onBlur={() => setInputVal(localeNumberString(depositValue))}
-              maxLength={15}
+              value={
+                /\.$/.test(depositValue)
+                  ? `${localeNumberString(depositValue.slice(0, -1))}.`
+                  : localeNumberString(depositValue)
+              }
               className={styles.input}
               suffix="CKB"
-              onChange={handleInputChange}
+              onChange={handleDepositChange}
             />
             <h2>{t('nervos_dao.you_can_withdraw')}</h2>
             <p>{t(`nervos_dao.estimated_rewards`, { days: 30 })}</p>
-            <Input value={localeNumberString(monthRewards)} className={styles.input} suffix="CKB" disabled />
+            <Input
+              value={localeNumberString(monthReward.plus(depositValue).toFixed(MAX_DECIMAL_DIGITS))}
+              className={styles.input}
+              suffix="CKB"
+              disabled
+            />
             <p>{t(`nervos_dao.estimated_rewards`, { days: 360 })}</p>
-            <Input value={localeNumberString(annualRewards)} className={styles.input} suffix="CKB" disabled />
+            <Input
+              value={localeNumberString(yearReward.plus(depositValue).toFixed(MAX_DECIMAL_DIGITS))}
+              className={styles.input}
+              suffix="CKB"
+              disabled
+            />
             <div className={styles.notice}>{t('nervos_dao.deposit_notice')}</div>
 
             <div className={styles.apcHeader}>
-              <h2 className={styles.apcTitle}>{t('nervos_dao.estimated_APC')}</h2>
+              <h2 className={styles.apcTitle}>
+                {t('nervos_dao.estimated_APC')}
+                <Link to="charts/nominal-apc" target="_blank">
+                  {`(${t('nervos_dao.view_apc_trending')})`}
+                </Link>
+              </h2>
             </div>
             <Input value={`${estimatedApc}%`} className={styles.input} disabled />
 
-            <h2>{t('nervos_dao.estimated_rewards_30')}</h2>
+            <h2 className={styles.years}>
+              {t('nervos_dao.estimated_rewards_in_years')}
+              <input onChange={handleYearChange} value={years} type="number" min="1" />
+              {t('nervos_dao.years')}
+            </h2>
             <div className={styles.chartWap}>
               <p className={styles.yTitle}>{t('nervos_dao.rewards')}</p>
               <ReactChartCore
                 option={{
-                  color: [isMainnet() ? '#00cc9b' : '#9a2cec'],
+                  color: IS_MAINNET ? ['#00cc9b'] : ['#9a2cec'],
+                  tooltip: {
+                    show: true,
+                    formatter: '{c} CKB',
+                  },
                   grid: { top: 12, right: 30, bottom: 80, left: 78 },
                   xAxis: {
                     type: 'category',
                     boundaryGap: false,
-                    data: ['0', '30'],
+                    data: Array.from({ length: years }, (_, i) => i + 1),
+                    axisLabel: {
+                      formatter: (value: string) =>
+                        +value > 1 ? `${value} ${t('nervos_dao.years')}` : `${value} ${t('nervos_dao.year')}`,
+                    },
                   },
                   yAxis: {
                     type: 'value',
+                    axisLabel: {
+                      formatter: (value: string) => `${value} CKB`,
+                    },
+                    boundaryGap: ['5%', '2%'],
                   },
                   series: [
                     {
-                      data: [0, Number(monthRewards)],
+                      data: Array.from({ length: years }, (_, i) => yearReward.multipliedBy(i + 1).toNumber()),
                       type: 'line',
+                      stack: 'withdrawal',
+                      areaStyle: {},
+                      label: {
+                        normal: {
+                          show: years <= 5,
+                          position: 'top',
+                          formatter: '{c} CKB',
+                        },
+                      },
                     },
                   ],
                 }}
                 notMerge
                 lazyUpdate
-                style={{
-                  height: '100%',
-                  width: '100%',
-                }}
+                style={{ height: '100%', width: '100%' }}
               />
-              <p className={styles.xTitle}>{t('nervos_dao.day')}</p>
+              <p className={styles.xTitle}>{t('nervos_dao.years')}</p>
             </div>
           </div>
 

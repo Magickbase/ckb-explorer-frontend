@@ -17,20 +17,20 @@ const DaoBanner = ({ estimatedApc }: { estimatedApc: string }) => {
         <div className={styles.actions}>
           <button type="button" className={styles.btn} onClick={() => setShowRewardCalcutorModal(true)}>
             {t('nervos_dao.reward_calculator')}
-            <GoIcon className={styles.icon} />
           </button>
-          <button type="button" className={styles.btn} onClick={() => window.open(NERVOS_DAO_RFC_URL)}>
+          <a className={styles.btn} href={NERVOS_DAO_RFC_URL} target="_blank" rel="noopener noreferrer">
             {t('nervos_dao.nervos_dao_rfc')}
             <GoIcon className={styles.icon} />
-          </button>
-          <button
-            type="button"
+          </a>
+          <a
             className={styles.btn}
-            onClick={() => window.open('https://medium.com/nervosnetwork/nervos-dao-explained-95e33898b1c')}
+            href="https://www.nervos.org/knowledge-base/nervosdao_withdrawal_process_explained"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             {t('nervos_dao.learn_more')}
             <GoIcon className={styles.icon} />
-          </button>
+          </a>
         </div>
       </div>
 
