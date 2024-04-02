@@ -226,6 +226,31 @@ export const scripts = new Map<string, ScriptAttributes>([
       website: 'https://forcebridge.com/',
     },
   ],
+  [
+    'RGB++',
+    {
+      name: 'RGB++',
+      description: 'RGB++ Lock',
+      doc: 'https://github.com/ckb-cell/RGBPlusPlus-design/blob/main/docs/',
+    },
+  ],
+  [
+    'Unique Cell',
+    {
+      name: 'Unique Cell',
+      description:
+        'A unique cell can be created on the Nervos CKB through TypeID which makes sure the unique cell cannot be updated or destroyed.',
+      code: 'https://github.com/ckb-cell/unique-cell/',
+    },
+  ],
+  [
+    'BTC Time Lock',
+    {
+      name: 'BTC Time Lock',
+      description: 'A lock require n confirmations of Bitcoin transaction to unlock the cell.',
+      doc: 'https://github.com/ckb-cell/RGBPlusPlus-design/blob/main/docs/locscript-design-prd-cn.md#btc_time_lock',
+    },
+  ],
 ])
 
 const keysWithLinkValueInScript: (keyof ScriptAttributes)[] = ['rfc', 'code', 'doc', 'deprecated', 'website']

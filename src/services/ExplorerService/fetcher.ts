@@ -8,6 +8,8 @@ import { requesterV1, requesterV2 } from './requester'
 import {
   ChartItem,
   NervosDaoDepositor,
+  RGBDigest,
+  RawBtcRPC,
   Response,
   SupportedExportTransactionType,
   TransactionRecord,
@@ -17,9 +19,10 @@ import { assert } from '../../utils/error'
 import { Cell } from '../../models/Cell'
 import { Script } from '../../models/Script'
 import { Block } from '../../models/Block'
-import { Transaction } from '../../models/Transaction'
-import { Address } from '../../models/Address'
+import { BtcTx, Transaction } from '../../models/Transaction'
+import { Address, AddressType } from '../../models/Address'
 import { OmigaInscriptionCollection, UDT } from '../../models/UDT'
+import { XUDT } from '../../models/Xudt'
 import { HashType } from '../../constants/common'
 
 async function v1Get<T>(...args: Parameters<typeof requesterV1.get>) {
@@ -57,6 +60,40 @@ export enum SearchResultType {
   UDT = 'udt',
   TypeScript = 'type_script',
   LockScript = 'lock_script',
+  BtcTx = 'bitcoin_transaction',
+}
+
+const getBtcTxList = (idList: string[]): Promise<Record<string, RawBtcRPC.BtcTx>> => {
+  if (idList.length === 0) return Promise.resolve({})
+
+  return requesterV2
+    .post('/bitcoin_transactions', {
+      txids: idList,
+    })
+    .then(res => {
+      if (res.status === 200) {
+        const txMap: Record<string, RawBtcRPC.BtcTx> = {}
+        Object.values(res.data).forEach((tx: any) => {
+          txMap[tx.result.txid] = tx.result
+        })
+        return txMap
+      }
+      throw new Error('Failed to fetch btc tx list')
+    })
+    .catch(() => {
+      return {}
+    })
+}
+
+const mergeBtcTxList = async <T extends { rgbTxid: string | null }>(txList: T[]) => {
+  const txidList: string[] = txList.map(tx => tx.rgbTxid ?? '').filter(id => !!id)
+
+  const btcTxMap = await getBtcTxList(txidList)
+  const transactions = txList.map(i => {
+    const btcTx: RawBtcRPC.BtcTx | null = btcTxMap[i.rgbTxid ?? ''] ?? null
+    return { ...i, btcTx }
+  })
+  return transactions
 }
 
 export const apiFetcher = {
@@ -72,12 +109,14 @@ export const apiFetcher = {
   fetchLatestBlocks: (size: number) => apiFetcher.fetchBlocks(1, size),
 
   fetchAddressInfo: (address: string) =>
-    v1GetWrapped<Address>(`addresses/${address}`).then(
-      (wrapper): Address => ({
-        ...wrapper.attributes,
-        type: wrapper.type === 'lock_hash' ? 'LockHash' : 'Address',
-      }),
-    ),
+    v1GetWrappedList<Address>(`addresses/${address}`).then((wrapper): Address[] => {
+      return wrapper.map(
+        (item): Address => ({
+          ...item.attributes,
+          type: item.type === 'lock_hash' ? AddressType.LockHash : AddressType.Address,
+        }),
+      )
+    }),
 
   // sort field, block_timestamp, capacity
   // sort type, asc, desc
@@ -91,32 +130,55 @@ export const apiFetcher = {
     })
   },
 
-  fetchTransactionsByAddress: (address: string, page: number, size: number, sort?: string, txTypeFilter?: string) =>
-    v1GetUnwrappedPagedList<Transaction>(`address_transactions/${address}`, {
-      params: {
-        page,
-        page_size: size,
-        sort,
-        tx_type: txTypeFilter,
-      },
-    }),
-
-  fetchPendingTransactionsByAddress: (
+  fetchTransactionsByAddress: async (
     address: string,
     page: number,
     size: number,
     sort?: string,
     txTypeFilter?: string,
-  ) =>
-    v1GetUnwrappedPagedList<Transaction>(`address_pending_transactions/${address}`, {
+  ) => {
+    const res = await v1GetUnwrappedPagedList<Transaction>(`address_transactions/${address}`, {
       params: {
         page,
         page_size: size,
         sort,
         tx_type: txTypeFilter,
       },
-    }),
+    })
 
+    const transactions = await mergeBtcTxList(res.data)
+
+    return {
+      transactions,
+      pageSize: res.pageSize,
+      total: res.total,
+    }
+  },
+
+  fetchPendingTransactionsByAddress: async (
+    address: string,
+    page: number,
+    size: number,
+    sort?: string,
+    txTypeFilter?: string,
+  ) => {
+    const res = await v1GetUnwrappedPagedList<Transaction>(`address_pending_transactions/${address}`, {
+      params: {
+        page,
+        page_size: size,
+        sort,
+        tx_type: txTypeFilter,
+      },
+    })
+
+    const transactions = await mergeBtcTxList(res.data)
+
+    return {
+      transactions,
+      pageSize: res.pageSize,
+      total: res.total,
+    }
+  },
   fetchTransactionRaw: (hash: string) => requesterV2.get<unknown>(`transactions/${hash}/raw`).then(res => res.data),
   fetchContractResourceDistributed: () =>
     requesterV2
@@ -125,6 +187,11 @@ export const apiFetcher = {
 
   fetchTransactionByHash: (hash: string, displayCells: boolean = false) =>
     v1GetUnwrapped<Transaction>(`transactions/${hash}?display_cells=${displayCells}`),
+
+  fetchRGBDigest: (hash: string) =>
+    requesterV2
+      .get(`ckb_transactions/${hash}/rgb_digest`)
+      .then(res => toCamelcase<Response.Response<RGBDigest>>(res.data)),
 
   fetchCellsByTxHash: (hash: string, type: 'inputs' | 'outputs', page: Record<'no' | 'size', number>) =>
     requesterV2
@@ -141,19 +208,26 @@ export const apiFetcher = {
       .get(`ckb_transactions/${hash}/details`)
       .then((res: AxiosResponse) => toCamelcase<Response.Response<TransactionRecord[]>>(res.data)),
 
-  fetchTransactions: (page: number, size: number, sort?: string) =>
-    v1GetUnwrappedPagedList<Transaction>('transactions', {
+  fetchTransactions: async (page: number, size: number, sort?: string) => {
+    const res = await v1GetUnwrappedPagedList<Transaction>('transactions', {
       params: {
         page,
         page_size: size,
         sort,
       },
-    }),
+    })
+
+    return {
+      transactions: res.data,
+      pageSize: res.pageSize,
+      total: res.total,
+    }
+  },
 
   fetchLatestTransactions: (size: number) => apiFetcher.fetchTransactions(1, size),
 
-  fetchPendingTransactions: (page: number, size: number, sort?: string) =>
-    requesterV2
+  fetchPendingTransactions: async (page: number, size: number, sort?: string) => {
+    const res = await requesterV2
       .get('pending_transactions', {
         params: {
           page,
@@ -168,11 +242,18 @@ export const apiFetcher = {
           data: res.data,
           ...res.meta,
         }
-      }),
+      })
+
+    return {
+      transactions: res.data,
+      pageSize: res.pageSize,
+      total: res.total,
+    }
+  },
 
   fetchPendingTransactionsCount: () => apiFetcher.fetchPendingTransactions(1, 1).then(res => res.total),
 
-  fetchTransactionsByBlockHash: (
+  fetchTransactionsByBlockHash: async (
     blockHash: string,
     {
       page,
@@ -183,15 +264,23 @@ export const apiFetcher = {
       size: number
       filter: string | null
     }>,
-  ) =>
-    v1GetUnwrappedPagedList<Transaction>(`/block_transactions/${blockHash}`, {
+  ) => {
+    const res = await v1GetUnwrappedPagedList<Transaction>(`/block_transactions/${blockHash}`, {
       params: {
         page,
         page_size,
         address_hash: filter?.startsWith('ck') ? filter : null,
         tx_hash: filter?.startsWith('0x') ? filter : null,
       },
-    }),
+    })
+
+    const transactions = await mergeBtcTxList(res.data)
+    return {
+      transactions,
+      pageSize: res.pageSize,
+      total: res.total,
+    }
+  },
 
   fetchBlock: (blockHeightOrHash: string) => v1GetUnwrapped<Block>(`blocks/${blockHeightOrHash}`),
 
@@ -209,6 +298,7 @@ export const apiFetcher = {
       | Response.Wrapper<Address, SearchResultType.Address>
       | Response.Wrapper<Address, SearchResultType.LockHash>
       | Response.Wrapper<UDT, SearchResultType.UDT>
+      | Response.Wrapper<BtcTx, SearchResultType.BtcTx>
       | Response.Wrapper<Script & { scriptHash: string }, SearchResultType.TypeScript>
       | Response.Wrapper<Script, SearchResultType.LockScript>
     >('suggest_queries', {
@@ -282,36 +372,32 @@ export const apiFetcher = {
       estimatedApc: string
     }>(`contracts/nervos_dao`),
 
-  // Unused currently
-  fetchNervosDaoTransactions: (page: number, size: number) =>
-    v1Get<Response.Wrapper<Transaction>[]>(`contract_transactions/nervos_dao`, {
-      params: {
-        page,
-        page_size: size,
-      },
-    }),
-
-  // Unused currently
-  fetchNervosDaoTransactionsByHash: (hash: string) => v1GetWrapped<Transaction>(`dao_contract_transactions/${hash}`),
-
-  // Unused currently
-  fetchNervosDaoTransactionsByAddress: (address: string, page: number, size: number) =>
-    v1Get<Response.Wrapper<Transaction>[]>(`address_dao_transactions/${address}`, {
-      params: {
-        page,
-        page_size: size,
-      },
-    }),
-
-  fetchNervosDaoTransactionsByFilter: ({ page, size, filter }: { page: number; size: number; filter?: string }) =>
-    v1GetUnwrappedPagedList<Transaction>(`contract_transactions/nervos_dao`, {
+  fetchNervosDaoTransactionsByFilter: async ({
+    page,
+    size,
+    filter,
+  }: {
+    page: number
+    size: number
+    filter?: string
+  }) => {
+    const res = await v1GetUnwrappedPagedList<Transaction>(`contract_transactions/nervos_dao`, {
       params: {
         page,
         page_size: size,
         tx_hash: filter?.startsWith('0x') ? filter : null,
         address_hash: filter?.startsWith('0x') ? null : filter,
       },
-    }),
+    })
+
+    const transactions = await mergeBtcTxList(res.data)
+
+    return {
+      transactions,
+      pageSize: res.pageSize,
+      total: res.total,
+    }
+  },
 
   fetchNervosDaoDepositors: () => v1GetUnwrappedList<NervosDaoDepositor>(`/dao_depositors`),
 
@@ -482,12 +568,6 @@ export const apiFetcher = {
       res => res.averageBlockTime,
     ),
 
-  // Unused currently
-  fetchStatisticOccupiedCapacity: () =>
-    v1Get<Response.Wrapper<{ occupiedCapacity: string; createdAtUnixtimestamp: string }>[]>(
-      `/daily_statistics/occupied_capacity`,
-    ),
-
   fetchStatisticEpochTimeDistribution: () =>
     v1GetUnwrapped<{ epochTimeDistribution: string[][] }>(`/distribution_data/epoch_time_distribution`).then(
       ({ epochTimeDistribution }) => {
@@ -501,23 +581,6 @@ export const apiFetcher = {
         return statisticEpochTimeDistributions
       },
     ),
-
-  // Unused currently
-  fetchStatisticNewNodeCount: () =>
-    v1Get<Response.Wrapper<{ nodesCount: string; createdAtUnixtimestamp: string }>[]>(`/daily_statistics/nodes_count`),
-
-  // Unused currently
-  fetchStatisticNodeDistribution: () =>
-    v1GetWrapped<{
-      nodesDistribution: {
-        city: string
-        count: number
-        postal: string
-        country: string
-        latitude: string
-        longitude: string
-      }[]
-    }>(`/distribution_data/nodes_distribution`),
 
   fetchStatisticTotalSupply: () =>
     v1GetUnwrappedList<ChartItem.TotalSupply>(`/daily_statistics/circulating_supply-burnt-locked_capacity`),
@@ -582,7 +645,7 @@ export const apiFetcher = {
 
   fetchSimpleUDT: (typeHash: string) => v1GetUnwrapped<UDT>(`/udts/${typeHash}`),
 
-  fetchUDTTransactions: ({
+  fetchUDTTransactions: async ({
     typeHash,
     page,
     size,
@@ -592,15 +655,24 @@ export const apiFetcher = {
     page: number
     size: number
     filter?: string | null
-  }) =>
-    v1GetUnwrappedPagedList<Transaction>(`/udt_transactions/${typeHash}`, {
+  }) => {
+    const res = await v1GetUnwrappedPagedList<Transaction>(`/udt_transactions/${typeHash}`, {
       params: {
         page,
         page_size: size,
         address_hash: filter?.startsWith('0x') ? undefined : filter,
         tx_hash: filter?.startsWith('0x') ? filter : undefined,
       },
-    }),
+    })
+
+    const transactions = await mergeBtcTxList(res.data)
+
+    return {
+      transactions,
+      pageSize: res.pageSize,
+      total: res.total,
+    }
+  },
 
   fetchTokens: (page: number, size: number, sort?: string) =>
     v1GetUnwrappedPagedList<UDT>(`/udts`, {
@@ -610,6 +682,47 @@ export const apiFetcher = {
         sort,
       },
     }),
+
+  fetchXudt: (typeHash: string) => v1GetUnwrapped<XUDT>(`/xudts/${typeHash}`),
+
+  fetchXudts: (page: number, size: number, sort?: string) =>
+    v1GetUnwrappedPagedList<XUDT>(`/xudts`, {
+      params: {
+        page,
+        page_size: size,
+        sort,
+      },
+    }),
+
+  // TODO: This API is not supported yet, use fetchUDTTransactions instead
+  // fetchXudtTransactions: async ({
+  //   typeHash,
+  //   page,
+  //   size,
+  //   filter,
+  // }: {
+  //   typeHash: string
+  //   page: number
+  //   size: number
+  //   filter?: string | null
+  // }) => {
+  //   const res = await v1GetUnwrappedPagedList<Transaction>(`/xudt_transactions/${typeHash}`, {
+  //     params: {
+  //       page,
+  //       page_size: size,
+  //       address_hash: filter?.startsWith('0x') ? undefined : filter,
+  //       tx_hash: filter?.startsWith('0x') ? filter : undefined,
+  //     },
+  //   })
+
+  //   const transactions = await mergeBtcTxList(res.data)
+
+  //   return {
+  //     transactions,
+  //     pageSize: res.pageSize,
+  //     total: res.total,
+  //   }
+  // },
 
   fetchOmigaInscription: (typeHash: string, isViewOriginal: boolean) =>
     v1GetUnwrapped<OmigaInscriptionCollection>(
@@ -739,8 +852,8 @@ export const apiFetcher = {
       })
       .then(res => toCamelcase<Response.Response<ScriptInfo>>(res.data)),
 
-  fetchScriptCKBTransactions: (codeHash: string, hashType: string, page: number, pageSize: number) =>
-    requesterV2
+  fetchScriptCKBTransactions: async (codeHash: string, hashType: string, page: number, pageSize: number) => {
+    const res = await requesterV2
       .get('scripts/ckb_transactions', {
         params: {
           code_hash: codeHash,
@@ -761,7 +874,16 @@ export const apiFetcher = {
             }
           }>
         >(res.data),
-      ),
+      )
+
+    const transactions = await mergeBtcTxList(res.data.ckbTransactions)
+
+    return {
+      transactions,
+      pageSize: res.data.meta.pageSize,
+      total: res.data.meta.total,
+    }
+  },
 
   fetchScriptCells: (
     cellType: 'deployed_cells' | 'referring_cells',
@@ -837,6 +959,7 @@ export const apiFetcher = {
         Accept: 'application/vnd.api+json',
       },
     }),
+  getBtcTxList,
 }
 
 // ====================
@@ -925,6 +1048,8 @@ export interface ScriptInfo {
 }
 
 export interface CKBTransactionInScript {
+  rgbTransaction: boolean
+  rgbTxid: string | null
   id: number
   txHash: string
   blockId: number

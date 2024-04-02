@@ -39,6 +39,11 @@ const useMenuDataList = () => {
       children: [
         {
           type: LinkType.Inner,
+          name: t('navbar.xUDT'),
+          url: '/xudts',
+        },
+        {
+          type: LinkType.Inner,
           name: t('navbar.sUDT'),
           url: '/tokens',
         },
