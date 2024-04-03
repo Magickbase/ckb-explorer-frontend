@@ -97,6 +97,12 @@
 
       a {
         margin-left: 4px;
+        font-size: 0.75rem;
+        color: #999;
+
+        &:hover {
+          color: var(--primary-color);
+        }
       }
     }
 
@@ -179,4 +185,8 @@
   color: #fff;
   font-size: 16px;
   cursor: pointer;
+}
+
+.loading {
+  text-align: center;
 }

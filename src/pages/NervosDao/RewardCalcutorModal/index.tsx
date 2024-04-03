@@ -4,11 +4,12 @@ import { Input } from 'antd'
 import { Trans, useTranslation } from 'react-i18next'
 import BigNumber from 'bignumber.js'
 import CommonModal from '../../../components/CommonModal'
-import styles from './RewardCalcutorModal.module.scss'
-import { ReactChartCore } from '../../StatisticsChart/common'
+import Loading from '../../../components/AwesomeLoadings/Spinner'
 import CloseIcon from '../../../assets/modal_close.png'
+import { ReactChartCore } from '../../StatisticsChart/common'
 import { MIN_DEPOSIT_AMOUNT, NERVOS_DAO_RFC_URL, IS_MAINNET, MAX_DECIMAL_DIGITS } from '../../../constants/common'
 import { localeNumberString } from '../../../utils/number'
+import styles from './RewardCalcutorModal.module.scss'
 
 const INIT_DEPOSIT_VALUE = '1000'
 
@@ -54,6 +55,36 @@ const RewardCalcutorModal = ({ onClose, estimatedApc }: { onClose: () => void; e
       return
     }
     setYears(y)
+  }
+  if (!estimatedApc) {
+    return (
+      <CommonModal isOpen onClose={onClose}>
+        <div className={styles.modalWrapper}>
+          <div className={styles.contentWrapper}>
+            <div className={styles.modalTitle}>
+              <p>{t('nervos_dao.dao_reward_calculator')}</p>
+              <button type="button" onClick={onClose} className={styles.closeBtn}>
+                <img src={CloseIcon} alt="close icon" />
+              </button>
+            </div>
+            <div className={styles.subTitle}>
+              <Trans
+                i18nKey="nervos_dao.deposit_terms"
+                components={[
+                  <a href={NERVOS_DAO_RFC_URL} className={styles.rfcLink} target="_blank" rel="noreferrer">
+                    Nervos DAO RFC
+                  </a>,
+                ]}
+              />
+            </div>
+            <div className={styles.divider} />
+            <div className={styles.loading}>
+              <Loading />
+            </div>
+          </div>
+        </div>
+      </CommonModal>
+    )
   }
 
   return (
@@ -146,11 +177,15 @@ const RewardCalcutorModal = ({ onClose, estimatedApc }: { onClose: () => void; e
                     axisLabel: {
                       formatter: (value: string) => `${value} CKB`,
                     },
-                    boundaryGap: ['5%', '2%'],
+                    boundaryGap: ['20%', '20%'],
                   },
                   series: [
                     {
-                      data: Array.from({ length: years }, (_, i) => yearReward.multipliedBy(i + 1).toNumber()),
+                      data: Array.from({ length: years }, (_, i) =>
+                        yearReward
+                          .multipliedBy(BigNumber(1 + +estimatedApc / 100).exponentiatedBy(i + 1))
+                          .toFixed(8, BigNumber.ROUND_DOWN),
+                      ),
                       type: 'line',
                       stack: 'withdrawal',
                       areaStyle: {},
