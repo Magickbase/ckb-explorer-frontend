@@ -86,6 +86,14 @@ const Search: FC<{
     enabled: false,
   })
 
+  useEffect(() => {
+    if (editEnded && isSearchByName && searchByNameResults && searchByNameResults.length > 1) {
+      const item = searchByNameResults[0]
+      const url = `/${item.udtType === 'omiga_inscription' ? 'inscription' : 'sudt'}/${item.typeHash}`
+      history.push(url)
+    }
+  }, [history, isSearchByName, searchByNameResults, editEnded])
+
   const debouncedSearchByName = useMemo(
     () => debounce(refetchSearchByName, 1000, { trailing: true }),
     [refetchSearchByName],
