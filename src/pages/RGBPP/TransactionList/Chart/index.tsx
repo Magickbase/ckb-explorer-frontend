@@ -14,7 +14,7 @@ import { isMainnet } from '../../../../utils/chain'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../../../StatisticsChart/common'
 import { ChartItem, explorerService } from '../../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../../constants/common'
-import { useIsXXLBreakPoint } from '../../../../hooks'
+import { useIsMobile, useIsXXLBreakPoint } from '../../../../hooks'
 
 const widthSpan = (value: string, language: SupportedLng) => tooltipWidth(value, language === 'en' ? 168 : 110)
 
@@ -181,9 +181,11 @@ const useOption = (
 
 export const Chart = ({ isThumbnail = false }: { isThumbnail?: boolean }) => {
   const [t] = useTranslation()
+  const isMobile = useIsMobile()
   return (
     <div className={styles.container}>
       <SmartChartPage
+        style={{ height: isMobile ? '469px' : '641px', borderRadius: '8px' }}
         title={t('statistic.rgbpp_transaction_list')}
         note={isMainnet() ? `${t('common.note')}1GB = 1,000,000,000 CKBytes` : undefined}
         isThumbnail={isThumbnail}

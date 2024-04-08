@@ -171,6 +171,7 @@ export interface SmartChartPageProps<T> {
   ) => echarts.EChartOption
   toCSV?: (dataList: T[]) => (string | number)[][]
   queryKey?: string
+  style?: CSSProperties
 }
 
 export function SmartChartPage<T>({
@@ -184,6 +185,7 @@ export function SmartChartPage<T>({
   getEChartOption,
   toCSV,
   queryKey,
+  style,
 }: SmartChartPageProps<T>): ReactElement {
   const isMobile = useIsMobile()
 
@@ -200,7 +202,7 @@ export function SmartChartPage<T>({
   const content = query.isLoading ? (
     <ChartLoading show isThumbnail={isThumbnail} />
   ) : (
-    <ReactChartCore option={option} isThumbnail={isThumbnail} {...chartProps} />
+    <ReactChartCore option={option} isThumbnail={isThumbnail} {...chartProps} style={style} />
   )
 
   return isThumbnail ? (

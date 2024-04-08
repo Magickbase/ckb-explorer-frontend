@@ -6,8 +6,8 @@ import { Link } from '../../../../components/Link'
 import { localeNumberString } from '../../../../utils/number'
 import SortButton from '../../../../components/SortButton'
 import FilterButton from '../../../../components/FilterButton'
-import { useIsXXLBreakPoint } from '../../../../hooks'
 import { useStatistics } from '../../../../services/ExplorerService'
+import { useIsMobile } from '../../../../hooks'
 
 const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
   const [t] = useTranslation()
@@ -18,7 +18,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
 
   const headers = getTableHeaders()
 
-  const isMobile = useIsXXLBreakPoint()
+  const isMobile = useIsMobile()
 
   return (
     <div className={styles.container}>
@@ -65,7 +65,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
               </th>
             ))}
           </tr>
-          <tr key="split" style={{ marginLeft: '-10px' }}>
+          <tr key="split">
             <td className={styles.split} colSpan={headers.length}>
               {' '}
             </td>

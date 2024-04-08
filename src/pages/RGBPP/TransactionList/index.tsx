@@ -41,6 +41,7 @@ const RGBPPTransactionList = () => {
   })
   return (
     <Content>
+      <div className={styles.title}>RGB++ Transaction List</div>
       <Chart />
       <QueryResult query={transactions} delayLoading>
         {data => (

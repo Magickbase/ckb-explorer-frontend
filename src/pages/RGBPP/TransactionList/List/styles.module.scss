@@ -92,7 +92,7 @@
     white-space: pre;
   }
 
-  @media (width <= $xxlBreakPoint) {
+  @media (width <= $mobileBreakPoint) {
     padding: 16px;
 
     table {
