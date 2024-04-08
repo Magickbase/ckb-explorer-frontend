@@ -1,0 +1,11 @@
+@import '../../../styles/variables.module';
+
+.pagination {
+  padding: 0 120px;
+  margin-top: 3px;
+  margin-bottom: 40px;
+
+  @media (width <= $xxlBreakPoint) {
+    padding: 16px;
+  }
+}

@@ -2,6 +2,7 @@
 
 .container {
   max-width: 100%;
+  padding: 0 120px;
 
   .filters {
     border-radius: 8px;
@@ -92,7 +93,7 @@
   }
 
   @media (width <= $xxlBreakPoint) {
-    padding: 0;
+    padding: 16px;
 
     table {
       thead {

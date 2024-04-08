@@ -7,9 +7,12 @@ import { localeNumberString } from '../../../../utils/number'
 import SortButton from '../../../../components/SortButton'
 import FilterButton from '../../../../components/FilterButton'
 import { useIsXXLBreakPoint } from '../../../../hooks'
+import { useStatistics } from '../../../../services/ExplorerService'
 
 const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
   const [t] = useTranslation()
+  const statistics = useStatistics()
+  const tipBlockNumber = parseInt(statistics?.tipBlockNumber ?? '0', 10)
 
   const filterFields = getFilterList(t)
 
@@ -29,7 +32,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                   <div>
                     {header.title}
                     {header.filter && <FilterButton key={header.key} filteredList={filterFields} isMobile />}
-                    {header.order && <SortButton key={header.key} field={header.key} />}
+                    {header.order && <SortButton key={header.key} field={header.order} />}
                   </div>
                 )
               )
@@ -43,7 +46,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                   <div>
                     {header.title}
                     {header.filter && <FilterButton key={header.key} filteredList={filterFields} isMobile />}
-                    {header.order && <SortButton key={header.key} field={header.key} />}
+                    {header.order && <SortButton key={header.key} field={header.order} />}
                   </div>
                 )
               )
@@ -57,8 +60,8 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
             {headers.map(header => (
               <th key={header.key}>
                 {header.title}
-                {header.order ? <SortButton field={header.key} /> : null}
-                {header.filter ? <FilterButton filteredList={filterFields} /> : null}
+                {header.order ? <SortButton key={header.key} field={header.order} /> : null}
+                {header.filter ? <FilterButton key={header.key} filteredList={filterFields} /> : null}
               </th>
             ))}
           </tr>
@@ -71,7 +74,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
         <tbody>
           {list.length > 0 ? (
             list.map(item => {
-              let leapDirection = '/'
+              let leapDirection = '-'
               if (item.type === TransactionLeapDirection.IN) {
                 leapDirection = 'Leap In'
               }
@@ -100,7 +103,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                     </Link>
                   </td>
                   <td className={styles.confirmation} title={t('transaction.confirmation')}>
-                    {item.confirmation} Confirmation
+                    {tipBlockNumber - item.blockNumber} Confirmation
                   </td>
                   <td className={styles.time} title={t('transaction.time')}>
                     {item.time}s ago
@@ -143,7 +146,6 @@ export default RGBTransactionList
 export type Transaction = {
   ckbTxId: string
   blockNumber: number
-  confirmation: number
   time: number
   type: TransactionLeapDirection
   cellChange: number
@@ -153,17 +155,17 @@ export type Transaction = {
 const getFilterList = (t: TFunction): Record<'title' | 'value' | 'to', string>[] => {
   return [
     {
-      value: 'leap_in',
+      value: 'in',
       title: t('address.leap_in'),
       to: '',
     },
     {
-      value: 'leap_out',
+      value: 'out',
       title: t('address.leap_out'),
       to: '',
     },
     {
-      value: '-',
+      value: 'equal',
       title: '-',
       to: '',
     },
@@ -173,10 +175,10 @@ const getFilterList = (t: TFunction): Record<'title' | 'value' | 'to', string>[]
 const getTableHeaders = (): TableHeader[] => {
   return [
     { title: 'CKB TXID', key: 'ckb-txid' },
-    { title: 'Block Number', key: 'block-number', order: 'asc' },
-    { title: 'Confirmation', key: 'confirmation', order: 'asc' },
-    { title: 'Time', key: 'time', order: 'asc' },
-    { title: 'Type', key: 'type', filter: 'in' },
+    { title: 'Block Number', key: 'block-number', order: 'number' },
+    { title: 'Confirmation', key: 'confirmation', order: 'number' },
+    { title: 'Time', key: 'time', order: 'time' },
+    { title: 'Type', key: 'type', filter: 'leap_direction' },
     { title: 'Cell Change', key: 'cell-change' },
     { title: 'BTC TXID', key: 'btc-txid' },
   ]
@@ -185,6 +187,6 @@ const getTableHeaders = (): TableHeader[] => {
 interface TableHeader {
   title: string
   key: string
-  order?: 'asc' | 'desc'
-  filter?: 'in' | 'out'
+  order?: string
+  filter?: string
 }

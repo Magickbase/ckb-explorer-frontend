@@ -496,6 +496,26 @@ export const apiFetcher = {
       toCamelcase<{ data: { version: string; blocksCount: number }[] }>(res.data),
     ),
 
+  fetchRGBTransactions: async (page: number, size: number, sort?: string, leapDirection?: string) =>
+    requesterV2('/rgb_transactions', {
+      params: {
+        page,
+        page_size: size,
+        sort,
+        leap_direction: leapDirection,
+      },
+    }).then((res: AxiosResponse) =>
+      toCamelcase<{
+        data: {
+          ckbTransactions: RGBTransaction[]
+        }
+        meta: {
+          total: number
+          pageSize: number
+        }
+      }>(res.data),
+    ),
+
   fetchStatisticTransactionFees: () =>
     requesterV2
       .get('statistics/transaction_fees')
@@ -1137,4 +1157,14 @@ type SubmitTokenInfoParams = {
   display_name?: string
   uan?: string
   token?: string
+}
+
+export interface RGBTransaction {
+  txHash: string
+  blockId: number
+  blockNumber: number
+  blockTimestamp: number
+  leapDirection: string
+  rgbCellChanges: number
+  tgbTxid: string
 }

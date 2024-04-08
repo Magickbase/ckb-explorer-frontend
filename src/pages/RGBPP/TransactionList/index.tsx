@@ -1,38 +1,57 @@
 import { useQuery } from '@tanstack/react-query'
 import Content from '../../../components/Content'
-import { useSearchParams } from '../../../hooks'
-import List, { type Transaction } from './List'
-import { TransactionLeapDirection } from '../../../components/RGBPP/types'
+import styles from './styles.module.scss'
+import { usePaginationParamsInPage, useSearchParams } from '../../../hooks'
+import List, { Transaction } from './List'
 import { QueryResult } from '../../../components/QueryResult'
+import Pagination from '../../../components/Pagination'
+import { explorerService } from '../../../services/ExplorerService'
+import { TransactionLeapDirection } from '../../../components/RGBPP/types'
 
 const RGBPPTransactionList = () => {
   const { sort } = useSearchParams('sort')
   const { type } = useSearchParams('type')
 
-  const transactions = useQuery(['rgbpp_transactions', sort, type], async () => {
-    return mockTransactionList(20)
+  const { currentPage, setPage } = usePaginationParamsInPage()
+
+  const transactions = useQuery(['rgbpp_transactions', currentPage, sort, type], async () => {
+    const { data } = await explorerService.api.fetchRGBTransactions(currentPage, 20, sort, type)
+
+    return data.ckbTransactions.map<Transaction>(tx => {
+      let leapDirection = TransactionLeapDirection.NONE
+
+      if (tx.leapDirection === 'in') {
+        leapDirection = TransactionLeapDirection.IN
+      }
+
+      if (tx.leapDirection === 'out') {
+        leapDirection = TransactionLeapDirection.OUT
+      }
+
+      return {
+        ckbTxId: tx.txHash,
+        blockNumber: tx.blockNumber,
+        time: Math.ceil((Date.now() - tx.blockTimestamp) / 1000),
+        type: leapDirection,
+        cellChange: tx.rgbCellChanges,
+        btcTxId: tx.tgbTxid,
+      }
+    })
   })
   return (
     <Content>
-      <div className="container">
-        <QueryResult query={transactions} delayLoading>
-          {data => <List list={data ?? []} />}
-        </QueryResult>
-      </div>
+      <QueryResult query={transactions} delayLoading>
+        {data => (
+          <>
+            <List list={data ?? []} />
+            <div className={styles.pagination}>
+              <Pagination currentPage={currentPage} totalPages={100} onChange={setPage} />
+            </div>
+          </>
+        )}
+      </QueryResult>
     </Content>
   )
-}
-
-const mockTransactionList = (amount: number): Transaction[] => {
-  return Array.from({ length: amount }).map(() => ({
-    ckbTxId: '0x09eec9ee3f27ba809565e07b8b389376cb9a73df04d4fd5225637fc82a1cfabc',
-    blockNumber: Date.now(),
-    confirmation: 0,
-    time: 7,
-    type: TransactionLeapDirection.IN,
-    cellChange: 10,
-    btcTxId: '09eec9ee3f27ba809565e07b8b389376cb9a73df04d4fd5225637fc82a1cfabc',
-  }))
 }
 
 export default RGBPPTransactionList
