@@ -7,6 +7,7 @@ import { QueryResult } from '../../../components/QueryResult'
 import Pagination from '../../../components/Pagination'
 import { explorerService } from '../../../services/ExplorerService'
 import { TransactionLeapDirection } from '../../../components/RGBPP/types'
+import Chart from './Chart'
 
 const RGBPPTransactionList = () => {
   const { sort } = useSearchParams('sort')
@@ -40,6 +41,7 @@ const RGBPPTransactionList = () => {
   })
   return (
     <Content>
+      <Chart />
       <QueryResult query={transactions} delayLoading>
         {data => (
           <>

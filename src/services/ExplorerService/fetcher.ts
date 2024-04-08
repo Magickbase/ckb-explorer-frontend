@@ -416,6 +416,9 @@ export const apiFetcher = {
   fetchStatisticTotalDaoDeposit: () =>
     v1GetUnwrappedList<ChartItem.TotalDaoDeposit>('/daily_statistics/total_depositors_count-total_dao_deposit'),
 
+  fetchStatisticBitcoin: () =>
+    requesterV2(`/bitcoin_statistics`).then((res: AxiosResponse) => toCamelcase<ChartItem.Bitcoin[]>(res.data.data)),
+
   fetchStatisticNewDaoDeposit: () =>
     v1GetUnwrappedList<ChartItem.NewDaoDeposit>('/daily_statistics/daily_dao_deposit-daily_dao_depositors_count'),
 

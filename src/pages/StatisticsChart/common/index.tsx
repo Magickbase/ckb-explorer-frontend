@@ -169,7 +169,7 @@ export interface SmartChartPageProps<T> {
     isMobile: boolean,
     isThumbnail?: boolean,
   ) => echarts.EChartOption
-  toCSV: (dataList: T[]) => (string | number)[][]
+  toCSV?: (dataList: T[]) => (string | number)[][]
   queryKey?: string
 }
 
@@ -206,7 +206,7 @@ export function SmartChartPage<T>({
   return isThumbnail ? (
     content
   ) : (
-    <ChartPage title={title} description={description} data={toCSV(dataList)}>
+    <ChartPage title={title} description={description} data={toCSV ? toCSV(dataList) : undefined}>
       {content}
       {note != null && <ChartNotePanel>{note}</ChartNotePanel>}
     </ChartPage>
