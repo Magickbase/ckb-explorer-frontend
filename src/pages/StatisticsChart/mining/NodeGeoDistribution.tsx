@@ -7,6 +7,8 @@ import Loading from '../../../components/Loading/SmallLoading'
 import { getPeers, RawPeer } from '../../../services/NodeProbService'
 import { getPrimaryColor, IS_MAINNET } from '../../../constants/common'
 
+const LAUNCH_TIME_OF_MAINNET = 0x16e70e6985c
+
 type Point = [long: number, lat: number, city: string]
 type Line = [Point, Point]
 
@@ -58,7 +60,7 @@ const option = {
       main: {
         intensity: 10,
         shadow: true,
-        time: new Date(0x16e70e6985c), // launch time of CKB mainnet
+        time: new Date(LAUNCH_TIME_OF_MAINNET),
       },
     },
     viewControl: {
@@ -150,7 +152,7 @@ export const NodeGeoDistribution = ({ isThumbnail = false }: { isThumbnail?: boo
     return (
       <div
         style={{
-          width: '280px',
+          width: 280,
           height: 200,
           background: `center / cover url(/images/chart/geo_cover_${IS_MAINNET ? 'mainnet' : 'testnet'}.png)`,
         }}
