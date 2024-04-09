@@ -208,7 +208,7 @@ export function SmartChartPage<T>({
   return isThumbnail ? (
     content
   ) : (
-    <ChartPage title={title} description={description} data={toCSV ? toCSV(dataList) : undefined}>
+    <ChartPage title={title} description={description} data={toCSV?.(dataList)}>
       {content}
       {note != null && <ChartNotePanel>{note}</ChartNotePanel>}
     </ChartPage>
