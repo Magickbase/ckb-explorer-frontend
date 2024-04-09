@@ -1,17 +1,18 @@
 import { useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import 'echarts/lib/component/tooltip'
 import 'echarts-gl'
 import echarts from 'echarts/lib/echarts'
 import Loading from '../../../components/Loading/SmallLoading'
 import { getPeers, RawPeer } from '../../../services/NodeProbService'
 import { getPrimaryColor, IS_MAINNET } from '../../../constants/common'
 
-type Point = [number, number]
+type Point = [long: number, lat: number, city: string]
 type Line = [Point, Point]
 
 const fetchData = async (): Promise<{ lines: Line[]; points: Point[] }> => {
   const list: RawPeer[] = await getPeers()
-  const points: Point[] = list.map(peer => [peer.longitude, peer.latitude])
+  const points: Point[] = list.map(peer => [peer.longitude, peer.latitude, peer.city])
   const lines: Line[] = []
   for (let i = 0; i < points.length - 1; i++) {
     for (let j = i + 1; j < points.length; j++) {
@@ -26,6 +27,12 @@ const fetchData = async (): Promise<{ lines: Line[]; points: Point[] }> => {
 
 const option = {
   backgroundColor: '#000',
+  tooltip: {
+    show: true,
+    formatter: (params: { data: Point }) => {
+      return params.data[2]
+    },
+  },
   globe: {
     environment: '/images/chart/dark.webp',
     baseTexture: '/images/chart/earth.jpg',
@@ -111,7 +118,10 @@ export const NodeGeoDistribution = ({ isThumbnail = false }: { isThumbnail?: boo
           color,
           opacity: 0.2,
         },
-        silent: true,
+        label: {
+          show: true,
+          formatter: '{b}',
+        },
         data: data.points,
       },
     ]
