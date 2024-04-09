@@ -74,6 +74,46 @@ const useMenuDataList = () => {
       name: t('navbar.fee_rate'),
       url: '/fee-rate-tracker',
     },
+    {
+      type: LinkType.Inner,
+      name: t('footer.developer'),
+      children: [
+        {
+          type: LinkType.Outer,
+          name: t('footer.docs'),
+          url: 'https://docs.nervos.org',
+        },
+        {
+          type: LinkType.Outer,
+          name: t('footer.gitHub'),
+          url: 'https://github.com/nervosnetwork',
+        },
+        {
+          type: LinkType.Outer,
+          name: t('footer.whitepaper'),
+          url: 'https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0002-ckb/0002-ckb.md',
+        },
+        ...(IS_MAINNET
+          ? [
+              {
+                type: LinkType.Outer,
+                name: t('navbar.faucet'),
+                url: 'https://faucet.nervos.org/',
+              },
+            ]
+          : []),
+        {
+          type: LinkType.Outer,
+          name: t('footer.api-doc'),
+          url: 'https://ckb-explorer.readme.io/reference/transaction',
+        },
+        {
+          type: LinkType.Inner,
+          name: t('footer.tools'),
+          url: '/tools/address-conversion',
+        },
+      ],
+    },
   ]
   if (!IS_MAINNET) {
     list.push({

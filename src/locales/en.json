@@ -338,6 +338,7 @@
       "reddit": "Reddit",
       "youtube": "YouTube",
       "forum": "Forum",
+      "tools": "Tools",
       "api-doc": "API Documentation"
     },
     "search": {
@@ -878,6 +879,16 @@
       "select-x-from-y": "Selected {{x}} chars from {{y}}",
       "fail-to-decode": "Fail to decode as {{decode}}",
       "text-too-long": "Text too long, only {{limit}} chars can be decoded"
+    },
+    "tools": {
+      "address_conversion": "Address Conversion",
+      "address_conversion_description": "The CKB2021 address format has changed from bech32 to bech32m, we recommend developers to use the new format in your dApps. This tool will help you determine if an address is deprecated or new.",
+      "address_rfc": "CKB Address Format RFC",
+      "address_to_script": "Address to Script",
+      "script_to_address": "Script to Address",
+      "please_enter": "Please enter",
+      "molecule_parser": "Molecule Parser",
+      "broadcast_transaction": "Broadcast Transaction"
     }
   }
 }
