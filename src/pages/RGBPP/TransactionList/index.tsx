@@ -38,7 +38,7 @@ const RGBPPTransactionList = () => {
         return {
           ckbTxId: tx.txHash,
           blockNumber: tx.blockNumber,
-          time: Math.ceil((Date.now() - tx.blockTimestamp) / 1000),
+          time: tx.blockTimestamp,
           type: leapDirection,
           cellChange: tx.rgbCellChanges,
           btcTxId: tx.rgbTxid,
