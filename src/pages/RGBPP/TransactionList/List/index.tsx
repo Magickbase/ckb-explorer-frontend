@@ -8,6 +8,7 @@ import SortButton from '../../../../components/SortButton'
 import FilterButton from '../../../../components/FilterButton'
 import { useStatistics } from '../../../../services/ExplorerService'
 import { useIsMobile } from '../../../../hooks'
+import { parseTime } from '../../../../utils/date'
 
 const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
   const [t] = useTranslation()
@@ -106,7 +107,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                     {tipBlockNumber - item.blockNumber} Confirmation
                   </td>
                   <td className={styles.time} title={t('transaction.time')}>
-                    {item.time}s ago
+                    {parseTime(item.time)} ago
                   </td>
                   <td className={styles.type} title={t('transaction.type')}>
                     {leapDirection}
