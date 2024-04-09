@@ -9,6 +9,8 @@ import { explorerService } from '../../../services/ExplorerService'
 import { TransactionLeapDirection } from '../../../components/RGBPP/types'
 import Chart from './Chart'
 
+const PAGE_SIZE = 20
+
 const RGBPPTransactionList = () => {
   const { sort } = useSearchParams('sort')
   const { type } = useSearchParams('type')
@@ -16,7 +18,7 @@ const RGBPPTransactionList = () => {
   const { currentPage, setPage } = usePaginationParamsInPage()
 
   const transactions = useQuery(['rgbpp_transactions', currentPage, sort, type], async () => {
-    const { data } = await explorerService.api.fetchRGBTransactions(currentPage, 20, sort, type)
+    const { data } = await explorerService.api.fetchRGBTransactions(currentPage, PAGE_SIZE, sort, type)
 
     return data.ckbTransactions.map<Transaction>(tx => {
       let leapDirection = TransactionLeapDirection.NONE
