@@ -1169,5 +1169,5 @@ export interface RGBTransaction {
   blockTimestamp: number
   leapDirection: string
   rgbCellChanges: number
-  tgbTxid: string
+  rgbTxid: string
 }
