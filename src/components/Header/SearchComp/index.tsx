@@ -14,7 +14,7 @@ export const SearchComp: FC<{
 
   return (
     <HeaderSearchPanel>
-      <Search onEditEnd={onEditEnd} onClear={onEditEnd} />
+      <Search onEditEnd={onEditEnd} />
     </HeaderSearchPanel>
   )
 })
