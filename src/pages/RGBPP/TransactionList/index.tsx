@@ -18,28 +18,34 @@ const RGBPPTransactionList = () => {
   const { currentPage, setPage } = usePaginationParamsInPage()
 
   const transactions = useQuery(['rgbpp_transactions', currentPage, sort, type], async () => {
-    const { data } = await explorerService.api.fetchRGBTransactions(currentPage, PAGE_SIZE, sort, type)
+    const {
+      data,
+      meta: { total, pageSize },
+    } = await explorerService.api.fetchRGBTransactions(currentPage, PAGE_SIZE, sort, type)
 
-    return data.ckbTransactions.map<Transaction>(tx => {
-      let leapDirection = TransactionLeapDirection.NONE
+    return {
+      transactions: data.ckbTransactions.map<Transaction>(tx => {
+        let leapDirection = TransactionLeapDirection.NONE
 
-      if (tx.leapDirection === 'in') {
-        leapDirection = TransactionLeapDirection.IN
-      }
+        if (tx.leapDirection === 'in') {
+          leapDirection = TransactionLeapDirection.IN
+        }
 
-      if (tx.leapDirection === 'out') {
-        leapDirection = TransactionLeapDirection.OUT
-      }
+        if (tx.leapDirection === 'out') {
+          leapDirection = TransactionLeapDirection.OUT
+        }
 
-      return {
-        ckbTxId: tx.txHash,
-        blockNumber: tx.blockNumber,
-        time: Math.ceil((Date.now() - tx.blockTimestamp) / 1000),
-        type: leapDirection,
-        cellChange: tx.rgbCellChanges,
-        btcTxId: tx.rgbTxid,
-      }
-    })
+        return {
+          ckbTxId: tx.txHash,
+          blockNumber: tx.blockNumber,
+          time: Math.ceil((Date.now() - tx.blockTimestamp) / 1000),
+          type: leapDirection,
+          cellChange: tx.rgbCellChanges,
+          btcTxId: tx.rgbTxid,
+        }
+      }),
+      totalPage: Math.ceil(total / pageSize),
+    }
   })
   return (
     <Content>
@@ -48,9 +54,9 @@ const RGBPPTransactionList = () => {
       <QueryResult query={transactions} delayLoading>
         {data => (
           <>
-            <List list={data ?? []} />
+            <List list={data?.transactions ?? []} />
             <div className={styles.pagination}>
-              <Pagination currentPage={currentPage} totalPages={100} onChange={setPage} />
+              <Pagination currentPage={currentPage} totalPages={data?.totalPage ?? 1} onChange={setPage} />
             </div>
           </>
         )}
