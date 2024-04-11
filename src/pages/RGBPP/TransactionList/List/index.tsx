@@ -34,7 +34,9 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                 key % 2 === 0 && (
                   <div>
                     {header.title}
-                    {header.filter && <FilterButton key={header.key} filteredList={filterFields} isMobile />}
+                    {header.filter && (
+                      <FilterButton filterName="type" key={header.key} filteredList={filterFields} isMobile />
+                    )}
                     {header.order && <SortButton key={header.key} field={header.order} />}
                   </div>
                 )
@@ -48,7 +50,9 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                 key % 2 === 1 && (
                   <div>
                     {header.title}
-                    {header.filter && <FilterButton key={header.key} filteredList={filterFields} isMobile />}
+                    {header.filter && (
+                      <FilterButton filterName="type" key={header.key} filteredList={filterFields} isMobile />
+                    )}
                     {header.order && <SortButton key={header.key} field={header.order} />}
                   </div>
                 )
@@ -64,7 +68,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
               <th key={header.key}>
                 {header.title}
                 {header.order ? <SortButton key={header.key} field={header.order} /> : null}
-                {header.filter ? <FilterButton key={header.key} filteredList={filterFields} /> : null}
+                {header.filter ? <FilterButton filterName="type" key={header.key} filteredList={filterFields} /> : null}
               </th>
             ))}
           </tr>
@@ -128,13 +132,15 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                       >
                         {item.btcTxId}
                       </AddressText>
-                      <a
-                        href={`${config.BITCOIN_EXPLORER}/tx/${item.ckbTxId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <ShareIcon />
-                      </a>
+                      {item.btcTxId && (
+                        <a
+                          href={`${config.BITCOIN_EXPLORER}/tx/${item.btcTxId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <ShareIcon />
+                        </a>
+                      )}
                     </div>
                   </td>
                 </tr>

@@ -8,7 +8,9 @@ import styles from './styles.module.scss'
 export function FilterButton({
   filteredList,
   isMobile,
+  filterName,
 }: {
+  filterName: string
   filteredList: Record<'title' | 'value' | 'to', string>[]
   isMobile?: boolean
 }) {
@@ -23,7 +25,7 @@ export function FilterButton({
       content={
         <div className={styles.filterItems}>
           {filteredList.map(f => (
-            <Link key={f.value} to={`${f.to}?type=${f.value}`} data-is-active={f.value === type}>
+            <Link key={f.value} to={`${f.to}?${filterName}=${f.value}`} data-is-active={f.value === type}>
               {f.title}
               <SelectedCheckIcon />
             </Link>
