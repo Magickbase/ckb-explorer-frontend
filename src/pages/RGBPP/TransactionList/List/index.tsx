@@ -122,7 +122,8 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                     {leapDirection}
                   </td>
                   <td className={styles.cellChange} title={t('rgbpp.transaction.rgbpp_cell_change')}>
-                    {item.cellChange} Cells
+                    {`${item.cellChange > 0 ? '+' : ''}${item.cellChange}`}{' '}
+                    {Math.abs(item.cellChange) === 1 ? t('rgbpp.transaction.cell') : t('rgbpp.transaction.cells')}
                   </td>
                   <td className={styles.hash} title={t('rgbpp.transaction.btc_txid')}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 4 }}>

@@ -413,7 +413,9 @@
         "time": "Time",
         "type": "Type",
         "rgbpp_cell_change": "RGB++ Cell Change",
-        "btc_txid": "BTC TXID"
+        "btc_txid": "BTC TXID",
+        "cell": "Cell",
+        "cells": "Cells"
       }
     },
     "transaction": {
