@@ -49,13 +49,13 @@ const RGBPPTransactionList = () => {
   })
   return (
     <Content>
-      <div className={styles.title}>RGB++ Transaction List</div>
+      <div className={`container ${styles.title}`}>RGB++ Transaction List</div>
       <Chart />
       <QueryResult query={transactions} delayLoading>
         {data => (
           <>
             <List list={data?.transactions ?? []} />
-            <div className={styles.pagination}>
+            <div className={`container ${styles.pagination}`}>
               <Pagination currentPage={currentPage} totalPages={data?.totalPage ?? 1} onChange={setPage} />
             </div>
           </>

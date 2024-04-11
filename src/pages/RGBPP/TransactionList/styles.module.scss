@@ -1,7 +1,6 @@
 @import '../../../styles/variables.module';
 
 .pagination {
-  padding: 0 120px;
   margin-top: 3px;
   margin-bottom: 40px;
 
@@ -11,13 +10,13 @@
 }
 
 .title {
-  padding: 40px 120px 0;
+  margin-top: 40px;
   font-size: 24px;
   line-height: 28px;
   color: #333;
 
   @media (width <= $mobileBreakPoint) {
-    padding: 20px 16px 0;
+    margin-top: 20px;
     font-size: 20px;
     line-height: 23px;
   }

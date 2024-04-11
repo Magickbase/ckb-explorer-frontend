@@ -24,7 +24,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
   const isMobile = useIsMobile()
 
   return (
-    <div className={styles.container}>
+    <div className={`container ${styles.container}`}>
       {isMobile && (
         <div className={styles.filters}>
           <div className={styles.left}>
