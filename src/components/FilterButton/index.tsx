@@ -11,7 +11,7 @@ export function FilterButton({
   filterName,
 }: {
   filterName: string
-  filteredList: Record<'title' | 'value' | 'to', string>[]
+  filteredList: Record<'key' | 'title' | 'value' | 'to', string>[]
   isMobile?: boolean
 }) {
   const { type } = useSearchParams('type')
@@ -25,7 +25,7 @@ export function FilterButton({
       content={
         <div className={styles.filterItems}>
           {filteredList.map(f => (
-            <Link key={f.value} to={`${f.to}?${filterName}=${f.value}`} data-is-active={f.value === type}>
+            <Link key={f.key} to={`${f.to}?${filterName}=${f.value}`} data-is-active={f.value === type}>
               {f.title}
               <SelectedCheckIcon />
             </Link>

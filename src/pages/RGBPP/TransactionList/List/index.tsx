@@ -170,19 +170,22 @@ export type Transaction = {
   btcTxId: string
 }
 
-const getFilterList = (t: TFunction): Record<'title' | 'value' | 'to', string>[] => {
+const getFilterList = (t: TFunction): Record<'key' | 'title' | 'value' | 'to', string>[] => {
   return [
     {
+      key: 'leap_in',
       value: 'in',
       title: t('address.leap_in'),
       to: '',
     },
     {
+      key: 'leap_out',
       value: 'out',
       title: t('address.leap_out'),
       to: '',
     },
     {
+      key: 'equal',
       value: 'equal',
       title: '-',
       to: '',
