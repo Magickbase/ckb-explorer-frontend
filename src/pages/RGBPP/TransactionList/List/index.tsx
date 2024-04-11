@@ -19,7 +19,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
 
   const filterFields = getFilterList(t)
 
-  const headers = getTableHeaders()
+  const headers = getTableHeaders(t)
 
   const isMobile = useIsMobile()
 
@@ -92,7 +92,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
 
               return (
                 <tr key={item.ckbTxId}>
-                  <td className={styles.hash} title={t('transaction.transaction_hash')}>
+                  <td className={styles.hash} title={t('rgbpp.transaction.ckb_txid')}>
                     <div className={styles.transactionHash}>
                       <AddressText
                         disableTooltip
@@ -104,24 +104,27 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                       </AddressText>
                     </div>
                   </td>
-                  <td className={styles.height} title={t('transaction.height')}>
+                  <td className={styles.height} title={t('rgbpp.transaction.block_number')}>
                     <Link className={styles.blockLink} to={`/block/${item.blockNumber}`}>
                       {localeNumberString(item.blockNumber)}
                     </Link>
                   </td>
-                  <td className={styles.confirmation} title={t('transaction.confirmation')}>
-                    {tipBlockNumber - item.blockNumber} Confirmation
+                  <td className={styles.confirmation} title={t('rgbpp.transaction.confirmation')}>
+                    {localeNumberString(tipBlockNumber - item.blockNumber)}{' '}
+                    {tipBlockNumber - item.blockNumber === 1
+                      ? t('rgbpp.transaction.confirmation')
+                      : t('rgbpp.transaction.confirmations')}
                   </td>
-                  <td className={styles.time} title={t('transaction.time')}>
+                  <td className={styles.time} title={t('rgbpp.transaction.time')}>
                     {dayjs(item.time).fromNow()}
                   </td>
-                  <td className={styles.type} title={t('transaction.type')}>
+                  <td className={styles.type} title={t('rgbpp.transaction.type')}>
                     {leapDirection}
                   </td>
-                  <td className={styles.cellChange} title={t('transaction.cell_change')}>
+                  <td className={styles.cellChange} title={t('rgbpp.transaction.rgbpp_cell_change')}>
                     {item.cellChange} Cells
                   </td>
-                  <td className={styles.hash} title={t('transaction.btc_txid')}>
+                  <td className={styles.hash} title={t('rgbpp.transaction.btc_txid')}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 4 }}>
                       <AddressText
                         style={{ marginLeft: 'auto' }}
@@ -193,15 +196,15 @@ const getFilterList = (t: TFunction): Record<'key' | 'title' | 'value' | 'to', s
   ]
 }
 
-const getTableHeaders = (): TableHeader[] => {
+const getTableHeaders = (t: TFunction): TableHeader[] => {
   return [
-    { title: 'CKB TXID', key: 'ckb-txid' },
-    { title: 'Block Number', key: 'block-number', order: 'number' },
-    { title: 'Confirmation', key: 'confirmation', order: 'number' },
-    { title: 'Time', key: 'time', order: 'time' },
-    { title: 'Type', key: 'type', filter: 'leap_direction' },
-    { title: 'Cell Change', key: 'cell-change' },
-    { title: 'BTC TXID', key: 'btc-txid' },
+    { title: t('rgbpp.transaction.ckb_txid'), key: 'ckb-txid' },
+    { title: t('rgbpp.transaction.block_number'), key: 'block-number' },
+    { title: t('rgbpp.transaction.confirmation'), key: 'confirmation' },
+    { title: t('rgbpp.transaction.time'), key: 'time', order: 'time' },
+    { title: t('rgbpp.transaction.type'), key: 'type', filter: 'leap_direction' },
+    { title: t('rgbpp.transaction.rgbpp_cell_change'), key: 'cell-change' },
+    { title: t('rgbpp.transaction.btc_txid'), key: 'btc-txid' },
   ]
 }
 

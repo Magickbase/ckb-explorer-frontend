@@ -404,6 +404,18 @@
       "view-as-asset-items": "View Asset Distribution",
       "view-as-merged-assets": "View Asset Amounts(CKB excluded)"
     },
+    "rgbpp": {
+      "transaction": {
+        "ckb_txid": "CKB_TXID",
+        "block_number": "Block Number",
+        "confirmation": "Confirmation",
+        "confirmations": "Confirmations",
+        "time": "Time",
+        "type": "Type",
+        "rgbpp_cell_change": "RGB++ Cell Change",
+        "btc_txid": "BTC TXID"
+      }
+    },
     "transaction": {
       "view_rgbpp_digest": "View RGB++ Digest",
       "transaction": "Transaction",

@@ -404,6 +404,18 @@
       "view-as-asset-items": "查看资产分布",
       "view-as-merged-assets": "查看资产合计(不含 CKB)"
     },
+    "rgbpp": {
+      "transaction": {
+        "ckb_txid": "CKB_TXID",
+        "block_number": "Block Number",
+        "confirmation": "Confirmation",
+        "confirmations": "Confirmations",
+        "time": "Time",
+        "type": "Type",
+        "rgbpp_cell_change": "RGB++ Cell Change",
+        "btc_txid": "BTC TXID"
+      }
+    },
     "transaction": {
       "view_rgbpp_digest": "查看 RGB++ 摘要",
       "transaction": "交易",
