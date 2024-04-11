@@ -9,6 +9,8 @@ import FilterButton from '../../../../components/FilterButton'
 import { useStatistics } from '../../../../services/ExplorerService'
 import { useIsMobile } from '../../../../hooks'
 import { dayjs } from '../../../../utils/date'
+import { ReactComponent as ShareIcon } from './share_icon.svg'
+import config from '../../../../config'
 
 const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
   const [t] = useTranslation()
@@ -116,15 +118,24 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                     {item.cellChange} Cells
                   </td>
                   <td className={styles.hash} title={t('transaction.btc_txid')}>
-                    <AddressText
-                      style={{ marginLeft: 'auto' }}
-                      disableTooltip
-                      linkProps={{
-                        to: `/transaction/${item.ckbTxId}`,
-                      }}
-                    >
-                      {item.btcTxId}
-                    </AddressText>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 4 }}>
+                      <AddressText
+                        style={{ marginLeft: 'auto' }}
+                        disableTooltip
+                        linkProps={{
+                          to: `/transaction/${item.ckbTxId}`,
+                        }}
+                      >
+                        {item.btcTxId}
+                      </AddressText>
+                      <a
+                        href={`${config.BITCOIN_EXPLORER}/tx/${item.ckbTxId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <ShareIcon />
+                      </a>
+                    </div>
                   </td>
                 </tr>
               )
