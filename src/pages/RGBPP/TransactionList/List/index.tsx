@@ -81,7 +81,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
         <tbody>
           {list.length > 0 ? (
             list.map(item => {
-              let leapDirection = '-'
+              let leapDirection = '/'
               if (item.type === TransactionLeapDirection.IN) {
                 leapDirection = 'Leap In'
               }
@@ -126,17 +126,17 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                     {Math.abs(item.cellChange) === 1 ? t('rgbpp.transaction.cell') : t('rgbpp.transaction.cells')}
                   </td>
                   <td className={styles.hash} title={t('rgbpp.transaction.btc_txid')}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 4 }}>
-                      <AddressText
-                        style={{ marginLeft: 'auto' }}
-                        disableTooltip
-                        linkProps={{
-                          to: `/transaction/${item.ckbTxId}`,
-                        }}
-                      >
-                        {item.btcTxId}
-                      </AddressText>
-                      {item.btcTxId && (
+                    {item.btcTxId ? (
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 4 }}>
+                        <AddressText
+                          style={{ marginLeft: 'auto' }}
+                          disableTooltip
+                          linkProps={{
+                            to: `/transaction/${item.ckbTxId}`,
+                          }}
+                        >
+                          {item.btcTxId}
+                        </AddressText>
                         <a
                           href={`${config.BITCOIN_EXPLORER}/tx/${item.btcTxId}`}
                           target="_blank"
@@ -144,8 +144,10 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                         >
                           <ShareIcon />
                         </a>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      '/'
+                    )}
                   </td>
                 </tr>
               )
