@@ -38,10 +38,11 @@
       height: 4rem;
       padding: 0 8px;
       white-space: nowrap;
-      font-size: 1rem;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 400;
       text-align: left;
       max-width: 100%;
+      line-height: 19px;
 
       &:first-child {
         padding-left: 2em;
@@ -59,7 +60,8 @@
 
     thead {
       th {
-        font-weight: 600;
+        font-size: 16px;
+        font-weight: 400;
       }
 
       padding: 10px;
