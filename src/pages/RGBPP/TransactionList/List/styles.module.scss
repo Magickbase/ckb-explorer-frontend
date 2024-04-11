@@ -32,6 +32,9 @@
     background: #fff;
     width: 100%;
     max-width: 100%;
+    table-layout: fixed;
+    word-break: break-word;
+    text-overflow: ellipsis;
 
     th,
     td {
@@ -78,11 +81,6 @@
 
   a {
     color: var(--primary-color);
-  }
-
-  .hash {
-    font-size: 0.875rem;
-    max-width: 25vw;
   }
 
   .height {
@@ -145,9 +143,4 @@
       }
     }
   }
-}
-
-.transactionHash {
-  display: flex;
-  gap: 8px;
 }
