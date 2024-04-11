@@ -171,8 +171,8 @@ const useOption = (
     dataset: {
       source: statisticBitcoin.map(data => [
         parseSimpleDate(data.timestamp),
-        data.addressesCount.toString(),
-        data.transactionsCount.toString(),
+        (data.transactionsCount > 0 ? Math.log10(data.transactionsCount) : 0).toString(),
+        (data.addressesCount > 0 ? Math.log10(data.addressesCount) : 0).toString(),
       ]),
       dimensions: ['timestamp', 'addresses_count', 'transaction_num'],
     },
