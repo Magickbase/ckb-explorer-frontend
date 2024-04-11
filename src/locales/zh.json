@@ -211,7 +211,7 @@
     },
     "statistic": {
       "transaction_num": "交易数量",
-      "new_btc_address": "新BTC地址",
+      "new_btc_address": "新赠BTC地址",
       "rgbpp_transaction_list": "RGB++ 交易列表",
       "transaction_count": "交易数量",
       "address_count": "已使用的地址数",
@@ -406,14 +406,14 @@
     },
     "rgbpp": {
       "transaction": {
-        "ckb_txid": "CKB_TXID",
-        "block_number": "Block Number",
-        "confirmation": "Confirmation",
-        "confirmations": "Confirmations",
-        "time": "Time",
-        "type": "Type",
-        "rgbpp_cell_change": "RGB++ Cell Change",
-        "btc_txid": "BTC TXID",
+        "ckb_txid": "CKB 交易ID",
+        "block_number": "区块序号",
+        "confirmation": "确认数",
+        "confirmations": "确认数",
+        "time": "时间",
+        "type": "类型",
+        "rgbpp_cell_change": "RGB++ Cell 变化",
+        "btc_txid": "BTC 交易",
         "cell": "Cell",
         "cells": "Cells"
       }
