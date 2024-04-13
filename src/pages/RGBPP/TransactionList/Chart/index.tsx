@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import { SupportedLng, useCurrentLanguage } from '../../../../utils/i18n'
 import styles from './styles.module.scss'
 import {
   DATA_ZOOM_CONFIG,
@@ -11,28 +10,26 @@ import {
 } from '../../../../utils/chart'
 import { parseSimpleDate } from '../../../../utils/date'
 import { isMainnet } from '../../../../utils/chain'
-import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../../../StatisticsChart/common'
+import { tooltipColor, SeriesItem, SmartChartPage } from '../../../StatisticsChart/common'
 import { ChartItem, explorerService } from '../../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../../constants/common'
 import { useIsMobile, useIsXXLBreakPoint } from '../../../../hooks'
 
-const widthSpan = (value: string, language: SupportedLng) => tooltipWidth(value, language === 'en' ? 168 : 110)
-
 const useTooltip = () => {
   const { t } = useTranslation()
-  const currentLanguage = useCurrentLanguage()
   return ({ seriesName, data, color }: SeriesItem & { data: [string, string, string] }): string => {
     if (seriesName === t('statistic.new_btc_address')) {
-      return `<div>${tooltipColor(color)}${widthSpan(
-        t('statistic.new_btc_address'),
-        currentLanguage,
-      )} ${parseNumericAbbr(data[1], 2)}</div>`
+      return `<tr><td>${tooltipColor(color)}${t('statistic.new_btc_address')}: </td><td>${parseNumericAbbr(
+        data[1],
+        2,
+      )}</td></tr>`
     }
     if (seriesName === t('statistic.transaction_num')) {
-      return `<div>${tooltipColor(color)}${widthSpan(
-        t('statistic.transaction_num'),
-        currentLanguage,
-      )} ${parseNumericAbbr(data[2], 2, true)}</div>`
+      return `<tr><td>${tooltipColor(color)}${t('statistic.transaction_num')}: </td><td>${parseNumericAbbr(
+        data[2],
+        2,
+        true,
+      )}</td></tr>`
     }
     return ''
   }
@@ -61,7 +58,6 @@ const useOption = (
     containLabel: true,
   }
   const { t } = useTranslation()
-  const currentLanguage = useCurrentLanguage()
   const parseTooltip = useTooltip()
 
   return {
@@ -71,15 +67,16 @@ const useOption = (
           trigger: 'axis',
           formatter: dataList => {
             assertIsArray(dataList)
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'), currentLanguage)} ${
+            let result = '<table>'
+            result = `${result}<tr><td>${tooltipColor('#333333')}${t('statistic.date')}: </td><td>${
               dataList[0].data[0]
-            }</div>`
+            }</td></tr>`
             dataList.forEach(data => {
               assertSerialsItem(data)
               assertSerialsDataIsStringArrayOf3(data)
               result += parseTooltip(data)
             })
-            return result
+            return `${result}</table>`
           },
         }
       : undefined,
