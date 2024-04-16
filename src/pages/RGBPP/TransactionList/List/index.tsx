@@ -132,7 +132,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                           style={{ marginLeft: 'auto' }}
                           disableTooltip
                           linkProps={{
-                            to: `/transaction/${item.ckbTxId}`,
+                            to: `${config.BITCOIN_EXPLORER}/tx/${item.ckbTxId}`,
                           }}
                         >
                           {item.btcTxId}

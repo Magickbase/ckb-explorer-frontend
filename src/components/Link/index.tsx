@@ -25,7 +25,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps<unknown>>((({ lng, t
     return (location: H.Location) => addI18nPrefix(to(location), lng ?? locale)
   }, [lng, locale, to])
 
-  return <RouterLink ref={ref} {...props} to={toWithPrefix} />
+  return <RouterLink ref={ref} {...props} to={{ pathname: toWithPrefix }} />
   // The `as` here is to allow the generic type to be correctly inferred.
 }) as <S>(props: LinkProps<S>, ref: ForwardedRef<HTMLAnchorElement>) => JSX.Element)
 
