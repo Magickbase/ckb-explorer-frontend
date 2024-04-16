@@ -39,7 +39,7 @@ export const ScriptToAddress: React.FC = () => {
             onValueChange={value => setHashType(value as HashType)}
             value={hashType}
           >
-            {Object.keys(HashType).map(hashType => (
+            {Object.values(HashType).map(hashType => (
               <div className={styles.radioItem} key={hashType}>
                 <RadioGroupItem value={hashType} id={hashType} />
                 <label htmlFor={hashType}>{hashType.toLowerCase()}</label>
@@ -60,7 +60,9 @@ export const ScriptToAddress: React.FC = () => {
         <div className={styles.console} style={{ marginBottom: 16 }}>
           <h2>Mainnet</h2>
           {isErr(parsed.mainnet) && <>{parsed.mainnet.error}</>}
-          {isMultiVersionAddress(parsed.mainnet) && <MultiVersionAddress multiVersionAddr={parsed.mainnet} />}
+          {isMultiVersionAddress(parsed.mainnet) && (
+            <MultiVersionAddress displayName multiVersionAddr={parsed.mainnet} />
+          )}
         </div>
       )}
 
@@ -68,7 +70,9 @@ export const ScriptToAddress: React.FC = () => {
         <div className={styles.console} style={{ marginBottom: 16 }}>
           <h2>Testnet</h2>
           {isErr(parsed.testnet) && <>{parsed.testnet.error}</>}
-          {isMultiVersionAddress(parsed.testnet) && <MultiVersionAddress multiVersionAddr={parsed.testnet} />}
+          {isMultiVersionAddress(parsed.testnet) && (
+            <MultiVersionAddress displayName multiVersionAddr={parsed.testnet} />
+          )}
         </div>
       )}
     </div>

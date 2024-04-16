@@ -44,7 +44,7 @@ export const AddressToScript: React.FC = () => {
       {isErr(parsed) && <div className={styles.console}>{parsed.error}</div>}
       {isMultiVersionAddress(parsed) && (
         <div className={styles.console}>
-          <MultiVersionAddress multiVersionAddr={parsed} />
+          <MultiVersionAddress displayName multiVersionAddr={parsed} />
 
           <div>
             <strong>Code Hash:</strong> <CopyableText>{parsed.script.codeHash}</CopyableText>

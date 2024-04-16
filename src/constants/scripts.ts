@@ -1,5 +1,6 @@
-import { type HashType } from '@ckb-lumos/base'
-import { predefined, type ScriptConfigs, type Config } from '@ckb-lumos/config-manager'
+import type { HashType } from '@ckb-lumos/base'
+import type { ScriptConfigs, Config } from '@ckb-lumos/config-manager'
+import { predefined } from '@ckb-lumos/config-manager'
 import { Script } from '../models/Script'
 
 export interface ContractHashTag {
@@ -658,22 +659,20 @@ export const TestnetContractHashTags: ContractHashTag[] = [
   },
 ]
 
-const getLumosScripts = (tags: ContractHashTag[]): ScriptConfigs =>
-  tags
-    .filter(tag => tag.lumosConfigName)
-    .reduce(
-      (acc, tag) =>
-        Object.assign(acc, {
-          [tag.lumosConfigName as string]: {
-            CODE_HASH: tag.codeHashes[0],
-            HASH_TYPE: tag.hashType,
-            TX_HASH: `${tag.txHashes[tag.txHashes.length - 1].split('-')[0]}`,
-            INDEX: `0x${(+tag.txHashes[tag.txHashes.length - 1].split('-')[1]).toString(16)}`,
-            DEP_TYPE: tag.depType,
-          },
-        }),
-      {},
-    )
+const getLumosScripts = (scripts: ContractHashTag[]): ScriptConfigs =>
+  scripts.reduce(
+    (acc, script) =>
+      Object.assign(acc, {
+        [script.lumosConfigName ?? script.tag]: {
+          CODE_HASH: script.codeHashes[0],
+          HASH_TYPE: script.hashType,
+          TX_HASH: `${script.txHashes[script.txHashes.length - 1].split('-')[0]}`,
+          INDEX: `0x${(+script.txHashes[script.txHashes.length - 1].split('-')[1]).toString(16)}`,
+          DEP_TYPE: script.depType,
+        },
+      }),
+    {},
+  )
 
 const LUMOS_MAINNET_SCRIPTS: ScriptConfigs = getLumosScripts(MainnetContractHashTags)
 
