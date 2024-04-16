@@ -6,7 +6,7 @@ import { parseAddress } from '@ckb-lumos/helpers'
 import { parseMultiVersionAddress, ParseResult } from './parseMultiVersionAddress'
 import CopyableText from '../../../components/CopyableText'
 import { MultiVersionAddress } from './MultiVersionAddress'
-import { MAINNET_CONFIG, TESTNET_CONFIG } from '../constants'
+import { LUMOS_MAINNET_CONFIG, LUMOS_TESTNET_CONFIG } from '../../../constants/scripts'
 import { isMultiVersionAddress, isErr } from './types'
 import styles from './styles.module.scss'
 
@@ -18,7 +18,7 @@ export const AddressToScript: React.FC = () => {
     if (!address) return null
     const prefix = address.substring(0, 3)
 
-    const config = prefix === 'ckb' ? MAINNET_CONFIG : TESTNET_CONFIG
+    const config = prefix === 'ckb' ? LUMOS_MAINNET_CONFIG : LUMOS_TESTNET_CONFIG
 
     let script: Script
     try {

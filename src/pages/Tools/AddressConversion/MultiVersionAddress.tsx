@@ -16,16 +16,6 @@ export const MultiVersionAddress: React.FC<{
       <div>
         <strong>CKB2021:</strong> <CopyableText>{multiVersionAddr.ckb2021FullFormat}</CopyableText>
       </div>
-      {multiVersionAddr.ckb2019ShortFormat && (
-        <div>
-          <strong>CKB2019(short format):</strong> <CopyableText>{multiVersionAddr.ckb2019ShortFormat}</CopyableText>
-        </div>
-      )}
-      {multiVersionAddr.ckb2019FullFormat && (
-        <div>
-          <strong>CKB2019(full format):</strong> <CopyableText>{multiVersionAddr.ckb2019FullFormat}</CopyableText>
-        </div>
-      )}
     </>
   )
 }

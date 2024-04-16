@@ -61,3 +61,15 @@
   gap: 8px;
   word-break: break-all;
 }
+
+.radioGroup {
+  display: flex !important;
+  gap: 1rem !important;
+}
+
+.radioItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}

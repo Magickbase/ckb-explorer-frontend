@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Tabs } from 'antd'
 import ToolsContainer from '../ToolsContainer'
 import { AddressToScript } from './AddressToScript'
 import { ScriptToAddress } from './ScriptToAddress'
+import { Tabs, TabsList, TabsContent, TabsTrigger } from '../../../components/ui/Tabs'
 import styles from './styles.module.scss'
 
 const AddressConversion: FC = () => {
@@ -26,21 +26,18 @@ const AddressConversion: FC = () => {
         </div>
 
         <div>
-          <Tabs
-            type="card"
-            items={[
-              {
-                label: t('tools.address_to_script'),
-                key: 'address2script',
-                children: <AddressToScript />,
-              },
-              {
-                label: t('tools.script_to_address'),
-                key: 'script2address',
-                children: <ScriptToAddress />,
-              },
-            ]}
-          />
+          <Tabs defaultValue="address2script">
+            <TabsList style={{ width: '100%' }}>
+              <TabsTrigger value="address2script">{t('tools.address_to_script')}</TabsTrigger>
+              <TabsTrigger value="script2address">{t('tools.script_to_address')}</TabsTrigger>
+            </TabsList>
+            <TabsContent value="address2script">
+              <AddressToScript />
+            </TabsContent>
+            <TabsContent value="script2address">
+              <ScriptToAddress />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </ToolsContainer>

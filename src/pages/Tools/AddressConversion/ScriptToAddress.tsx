@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react'
-import type { HashType } from '@ckb-lumos/base'
 import { useTranslation } from 'react-i18next'
-import { Radio } from 'antd'
+import { RadioGroup, RadioGroupItem } from '../../../components/ui/RadioGroup'
 import { parseMultiVersionAddress, ParseResult } from './parseMultiVersionAddress'
-import { MAINNET_CONFIG, TESTNET_CONFIG } from '../constants'
+import { LUMOS_MAINNET_CONFIG, LUMOS_TESTNET_CONFIG } from '../../../constants/scripts'
+import { HashType } from '../../../constants/common'
 import { MultiVersionAddress } from './MultiVersionAddress'
 import { isMultiVersionAddress, isErr } from './types'
 import styles from './styles.module.scss'
@@ -11,13 +11,13 @@ import styles from './styles.module.scss'
 export const ScriptToAddress: React.FC = () => {
   const [codeHash, setCodeHash] = useState('')
   const [args, setArgs] = useState('')
-  const [hashType, setHashType] = useState<HashType>('type')
+  const [hashType, setHashType] = useState(HashType.TYPE)
   const { t } = useTranslation()
 
   const parsed = useMemo<{ mainnet: ParseResult; testnet: ParseResult }>(() => {
-    const mainnet = parseMultiVersionAddress({ codeHash, hashType, args }, MAINNET_CONFIG)
+    const mainnet = parseMultiVersionAddress({ codeHash, hashType, args }, LUMOS_MAINNET_CONFIG)
 
-    const testnet = parseMultiVersionAddress({ codeHash, hashType, args }, TESTNET_CONFIG)
+    const testnet = parseMultiVersionAddress({ codeHash, hashType, args }, LUMOS_TESTNET_CONFIG)
 
     return { mainnet, testnet }
   }, [codeHash, hashType, args])
@@ -34,11 +34,18 @@ export const ScriptToAddress: React.FC = () => {
 
         <div className={styles.radioWrapper}>
           <div>Hash Type</div>
-          <Radio.Group onChange={({ target: { value } }) => setHashType(value)} value={hashType}>
-            <Radio value="type">type</Radio>
-            <Radio value="data">data</Radio>
-            <Radio value="data1">data1</Radio>
-          </Radio.Group>
+          <RadioGroup
+            className={styles.radioGroup}
+            onValueChange={value => setHashType(value as HashType)}
+            value={hashType}
+          >
+            {Object.keys(HashType).map(hashType => (
+              <div className={styles.radioItem} key={hashType}>
+                <RadioGroupItem value={hashType} id={hashType} />
+                <label htmlFor={hashType}>{hashType.toLowerCase()}</label>
+              </div>
+            ))}
+          </RadioGroup>
         </div>
 
         <input
