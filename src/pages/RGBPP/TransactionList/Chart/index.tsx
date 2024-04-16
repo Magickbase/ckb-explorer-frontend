@@ -46,14 +46,14 @@ const useOption = (
   const gridThumbnail = {
     left: '4%',
     right: '10%',
-    top: '8%',
+    top: '12%',
     bottom: '6%',
     containLabel: true,
   }
   const grid = {
     left: '4%',
     right: '3%',
-    top: '6%',
+    top: '10%',
     bottom: '5%',
     containLabel: true,
   }
@@ -82,7 +82,9 @@ const useOption = (
       : undefined,
     grid: isThumbnail ? gridThumbnail : grid,
     legend: {
-      icon: 'roundRect',
+      orient: 'horizontal',
+      right: '3%',
+      icon: 'circle',
       data: isThumbnail
         ? []
         : [
