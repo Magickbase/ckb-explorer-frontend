@@ -159,7 +159,7 @@ export const AddressNRC721Comp = ({ account, isRGBPP }: { account: NRC721; isRGB
     <AddressAssetComp
       isRGBPP={isRGBPP ?? false}
       href={`/nft-collections/${collection?.typeHash}`}
-      property={!symbol ? '?' : `#${sliceNftName(amount, 20)}`}
+      property={!symbol ? '?' : `#${amount}`}
       name={!symbol ? '?' : sliceNftName(symbol)}
       isUnverified={!symbol}
       udtLabel="NRC 721"
