@@ -1,39 +1,11 @@
-import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 import styles from './styles.module.scss'
-import {
-  DATA_ZOOM_CONFIG,
-  assertIsArray,
-  assertSerialsDataIsStringArrayOf3,
-  assertSerialsItem,
-  parseNumericAbbr,
-} from '../../../../utils/chart'
+import { DATA_ZOOM_CONFIG, assertIsArray, parseNumericAbbr } from '../../../../utils/chart'
 import { parseSimpleDate } from '../../../../utils/date'
-import { isMainnet } from '../../../../utils/chain'
-import { tooltipColor, SeriesItem, SmartChartPage } from '../../../StatisticsChart/common'
+import { tooltipColor, SmartChartPage } from '../../../StatisticsChart/common'
 import { ChartItem, explorerService } from '../../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../../constants/common'
 import { useIsMobile, useIsXXLBreakPoint } from '../../../../hooks'
-
-const useTooltip = () => {
-  const { t } = useTranslation()
-  return ({ seriesName, data, color }: SeriesItem & { data: [string, string, string] }): string => {
-    if (seriesName === t('statistic.new_btc_address')) {
-      return `<tr><td>${tooltipColor(color)}${t('statistic.new_btc_address')}: </td><td>${parseNumericAbbr(
-        data[1],
-        2,
-      )}</td></tr>`
-    }
-    if (seriesName === t('statistic.transaction_num')) {
-      return `<tr><td>${tooltipColor(color)}${t('statistic.transaction_num')}: </td><td>${parseNumericAbbr(
-        data[2],
-        2,
-        true,
-      )}</td></tr>`
-    }
-    return ''
-  }
-}
 
 const useOption = (
   statisticBitcoin: ChartItem.Bitcoin[],
@@ -58,7 +30,6 @@ const useOption = (
     containLabel: true,
   }
   const { t } = useTranslation()
-  const parseTooltip = useTooltip()
 
   return {
     color: chartColor.colors,
@@ -67,16 +38,17 @@ const useOption = (
           trigger: 'axis',
           formatter: dataList => {
             assertIsArray(dataList)
-            let result = '<table>'
-            result = `${result}<tr><td>${tooltipColor('#333333')}${t('statistic.date')}: </td><td>${
-              dataList[0].data[0]
-            }</td></tr>`
-            dataList.forEach(data => {
-              assertSerialsItem(data)
-              assertSerialsDataIsStringArrayOf3(data)
-              result += parseTooltip(data)
-            })
-            return `${result}</table>`
+            return `<table><tr><td>${tooltipColor('#333333')}${t('statistic.date')}: </td><td>${
+              dataList[0].name
+            }</td></tr>${dataList
+              .map(
+                data =>
+                  `<tr><td>${tooltipColor(data.color ?? '#333333')}${data.seriesName}: </td><td>${parseNumericAbbr(
+                    // Why to subtract one: https://www.cnblogs.com/goloving/p/14364333.html
+                    data.data - 1,
+                  )}</td></tr>`,
+              )
+              .join('')}</table>`
           },
         }
       : undefined,
@@ -104,6 +76,7 @@ const useOption = (
         nameGap: 30,
         type: 'category',
         boundaryGap: false,
+        data: statisticBitcoin.map(data => parseSimpleDate(data.timestamp)),
       },
     ],
     yAxis: [
@@ -113,16 +86,11 @@ const useOption = (
         nameTextStyle: {
           align: 'left',
         },
-        type: 'value',
+        type: 'log',
+        logBase: 2,
         scale: true,
-        axisLine: {
-          lineStyle: {
-            color: chartColor.colors[0],
-          },
-        },
-        axisLabel: {
-          formatter: (value: string) => `${parseNumericAbbr(value)}`,
-        },
+        axisLine: { lineStyle: { color: chartColor.colors[0] } },
+        axisLabel: { formatter: (value: string) => parseNumericAbbr(value) },
       },
       {
         position: 'right',
@@ -130,17 +98,12 @@ const useOption = (
         nameTextStyle: {
           align: 'right',
         },
-        type: 'value',
+        type: 'log',
+        logBase: 10,
         scale: true,
-        axisLine: {
-          lineStyle: {
-            color: chartColor.colors[1],
-          },
-        },
+        axisLine: { lineStyle: { color: chartColor.colors[1] } },
         splitLine: { show: false },
-        axisLabel: {
-          formatter: (value: string) => `${parseNumericAbbr(new BigNumber(value))}`,
-        },
+        axisLabel: { formatter: (value: string) => parseNumericAbbr(value) },
       },
     ],
     series: [
@@ -150,10 +113,8 @@ const useOption = (
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
-        encode: {
-          x: 'timestamp',
-          y: 'addresses_count',
-        },
+        // Why to add one: https://www.cnblogs.com/goloving/p/14364333.html
+        data: statisticBitcoin.map(data => data.addressesCount + 1),
       },
       {
         name: t('statistic.transaction_num'),
@@ -161,20 +122,10 @@ const useOption = (
         yAxisIndex: 1,
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
-        encode: {
-          x: 'timestamp',
-          y: 'transaction_num',
-        },
+        // Why to add one: https://www.cnblogs.com/goloving/p/14364333.html
+        data: statisticBitcoin.map(data => data.transactionsCount + 1),
       },
     ],
-    dataset: {
-      source: statisticBitcoin.map(data => [
-        parseSimpleDate(data.timestamp),
-        (data.transactionsCount > 0 ? Math.log10(data.transactionsCount) : 0).toString(),
-        (data.addressesCount > 0 ? Math.log10(data.addressesCount) : 0).toString(),
-      ]),
-      dimensions: ['timestamp', 'addresses_count', 'transaction_num'],
-    },
   }
 }
 
@@ -186,7 +137,6 @@ export const Chart = ({ isThumbnail = false }: { isThumbnail?: boolean }) => {
       <SmartChartPage
         style={{ height: isMobile ? '469px' : '641px', borderRadius: '8px' }}
         title={t('statistic.rgbpp_transaction_list')}
-        note={isMainnet() ? `${t('common.note')}1GB = 1,000,000,000 CKBytes` : undefined}
         isThumbnail={isThumbnail}
         fetchData={explorerService.api.fetchStatisticBitcoin}
         getEChartOption={useOption}
