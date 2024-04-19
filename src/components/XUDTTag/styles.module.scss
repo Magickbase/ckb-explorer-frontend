@@ -1,0 +1,24 @@
+.container {
+  border-radius: 4px;
+  display: flex;
+  padding: 4px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+
+  span {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+}
+
+.normal {
+  border: 1px solid;
+}
+
+.rgbppCompatible {
+  color: #333;
+  background: linear-gradient(90deg, #ffd176 0.23%, #ffdb81 6.7%, #84ffcb 99.82%);
+}
