@@ -10,6 +10,14 @@
   }
 }
 
+.tags {
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  width: 100%;
+  display: flex;
+  gap: 8px;
+}
+
 .cardTitle {
   display: flex;
   gap: 8px;
