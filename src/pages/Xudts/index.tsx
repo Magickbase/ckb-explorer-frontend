@@ -20,6 +20,7 @@ import { QueryResult } from '../../components/QueryResult'
 import { FilterSortContainerOnMobile } from '../../components/FilterSortContainer'
 import { Card } from '../../components/Card'
 import { BooleanT } from '../../utils/array'
+import { getTag } from '../../components/XUDTTag'
 
 type SortField = 'transactions' | 'addresses_count' | 'created_time' | 'mint_status'
 
@@ -138,19 +139,23 @@ const TokenTable: FC<{
       className: styles.colName,
       render: (_, token) => {
         const symbol = token.symbol || `#${token.typeHash.substring(token.typeHash.length - 4)}`
+        const tags = token.xudtTags ?? []
         return (
           <div className={styles.container}>
             <div className={styles.right}>
               <div className={styles.symbolAndName}>
                 {token.published ? (
-                  <Link className={styles.link} to={`/xudt/${token.typeHash}`}>
-                    {symbol}
+                  <>
+                    <Link className={styles.link} to={`/xudt/${token.typeHash}`}>
+                      {symbol}
+                    </Link>
                     <span className={styles.name}>{token.fullName}</span>
-                  </Link>
+                  </>
                 ) : (
                   symbol
                 )}
               </div>
+              <div className={styles.tags}>{tags.map(tag => getTag(tag))}</div>
             </div>
           </div>
         )
