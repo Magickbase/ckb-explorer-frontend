@@ -38,29 +38,39 @@ const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
       name: t('xudt.address_count'),
       value: localeNumberString(token.addressesCount),
     },
+    {
+      name: t('xudt.created_time'),
+      value: token.createdAt ? parseDateNoTime(Number(token.createdAt) / 1000, false, '-') : null,
+    },
   ].filter(BooleanT())
 
   return (
-    <div key={token.typeHash} className={styles.tokenInfo}>
-      <div className={styles.title}>
-        {token.published ? (
-          <>
-            <Link className={styles.link} to={`/xudt/${token.typeHash}`}>
-              {symbol}
-            </Link>
-            {token.fullName ? <span>{token.fullName}</span> : null}
-          </>
-        ) : (
-          symbol
-        )}
-      </div>
+    <Card key={token.typeHash} className={styles.tokensCard}>
+      {token.published && (
+        <div className={styles.tokenInfo}>
+          {/* {token.fullName ? <span>{token.fullName}</span> : null} */}
+          <span className={styles.title}>Name</span>
+          <Link className={styles.link} to={`/xudt/${token.typeHash}`}>
+            {symbol}
+          </Link>
+        </div>
+      )}
+      {token.published && (
+        <div className={styles.tokenInfo}>
+          <span className={styles.title}>Symbol</span>
+          {token.fullName ? <span className={styles.value}>{token.fullName}</span> : null}
+        </div>
+      )}
       {fields.map(field => (
-        <dl key={field.name}>
-          <dt>{field.name}</dt>
-          <dd>{field.value}</dd>
-        </dl>
+        <div className={styles.tokenInfo}>
+          <div className={styles.title}>{field.name}</div>
+          <div className={styles.value}>{field.value}</div>
+        </div>
       ))}
-    </div>
+      <div className={styles.tokenInfo} style={{ flexDirection: 'row' }}>
+        {token.xudtTags?.map(tag => getTag(tag))}
+      </div>
+    </Card>
   )
 }
 
@@ -109,11 +119,11 @@ export function TokensCard({
         )}
       >
         {data => (
-          <Card className={styles.tokensCard}>
+          <div>
             {data?.tokens.map(token => (
               <TokenInfo key={token.typeHash} token={token} />
             ))}
-          </Card>
+          </div>
         )}
       </QueryResult>
     </>
