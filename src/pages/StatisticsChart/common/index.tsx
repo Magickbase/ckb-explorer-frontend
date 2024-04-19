@@ -119,7 +119,9 @@ const ChartPage = ({
   children,
   description,
   data,
+  style,
 }: {
+  style?: CSSProperties
   title: string
   children: ReactNode
   description?: string
@@ -133,7 +135,11 @@ const ChartPage = ({
     .replace(/\s+/g, '-')
   return (
     <Content>
-      <ChartDetailTitle className="container">
+      <ChartDetailTitle
+        className="container"
+        // TODO: refactor
+        style={{ borderTopLeftRadius: style?.borderRadius, borderTopRightRadius: style?.borderRadius }}
+      >
         <div className="chartDetailTitlePanel">
           <span>{title}</span>
           {description && <HelpTip placement="bottom" title={description} iconProps={{ alt: 'chart help' }} />}
@@ -150,7 +156,13 @@ const ChartPage = ({
           </a>
         )}
       </ChartDetailTitle>
-      <ChartDetailPanel className="container">{children}</ChartDetailPanel>
+      <ChartDetailPanel
+        className="container"
+        // TODO: refactor
+        style={{ borderBottomLeftRadius: style?.borderRadius, borderBottomRightRadius: style?.borderRadius }}
+      >
+        {children}
+      </ChartDetailPanel>
     </Content>
   )
 }
@@ -208,7 +220,7 @@ export function SmartChartPage<T>({
   return isThumbnail ? (
     content
   ) : (
-    <ChartPage title={title} description={description} data={toCSV?.(dataList)}>
+    <ChartPage title={title} description={description} data={toCSV?.(dataList)} style={style}>
       {content}
       {note != null && <ChartNotePanel>{note}</ChartNotePanel>}
     </ChartPage>
