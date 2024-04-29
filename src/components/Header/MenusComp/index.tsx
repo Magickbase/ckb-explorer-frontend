@@ -132,10 +132,10 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
   const [open, setOpen] = useState(false)
   const [languageModalVisible, setLanguageModalVisible] = useState(false)
 
-  const Warpper = isMobile ? MobileMenuItem : ({ children }: PropsWithChildren<{}>) => <>{children}</>
+  const Wrapper = isMobile ? MobileMenuItem : ({ children }: PropsWithChildren<{}>) => <>{children}</>
 
   return (
-    <Warpper>
+    <Wrapper>
       <Dropdown
         onOpenChange={setOpen}
         open={open}
@@ -173,7 +173,7 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
         )}
       </Dropdown>
       {languageModalVisible ? <LanguageModal onClose={() => setLanguageModalVisible(false)} /> : null}
-    </Warpper>
+    </Wrapper>
   )
 }
 
