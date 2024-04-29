@@ -147,7 +147,6 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
             <a
               className={styles.link}
               onClick={() => {
-                // e.preventDefault()
                 setOpen(false)
                 setLanguageModalVisible(true)
               }}
@@ -159,7 +158,6 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
         mouseEnterDelay={0}
         transitionName=""
         placement="bottomRight"
-        trigger={isMobile ? ['click'] : ['click', 'hover']}
       >
         {isMobile ? (
           <MobileMenuOuterLink className={styles.mobileSubmenuTrigger}>
