@@ -167,7 +167,7 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
             <ArrowIcon className={styles.icon} />
           </MobileMenuOuterLink>
         ) : (
-          <a className={classNames(styles.headerMenusItem, styles.submenuTrigger)}>
+          <a className={classNames(styles.headerMenusItem, styles.submenuTrigger, styles.moreMenus)}>
             <MenuIcon className={styles.moreIcon} />
           </a>
         )}
