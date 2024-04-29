@@ -60,7 +60,7 @@ const AssetItem: FC<{ cell: LiveCell }> = ({ cell }) => {
 
   const ckb = new BigNumber(shannonToCkb(+cell.capacity)).toFormat()
   const link = `/transaction/${cell.txHash}?${new URLSearchParams({
-    page_of_outputs: Math.ceil(+cell.cellIndex / PAGE_SIZE).toString(),
+    page_of_outputs: Math.ceil((+cell.cellIndex + 1) / PAGE_SIZE).toString(),
   })}`
   const assetType: string = cell.extraInfo?.type ?? cell.cellType
   let icon: string | React.ReactElement | null = null
@@ -242,17 +242,26 @@ const RgbAssetItems: FC<{ address: string; count: number }> = ({ address, count 
     }
   }, [isListDisplayed, fetchNextPage])
 
-  const cells = data?.pages.map(page => page.data).flat() ?? []
-
-  const rgbppCells = cells.filter(cell => {
-    const info = getContractHashTag(cell.lockScript)
-    return info?.tag === 'RGB++'
-  })
+  const cells =
+    data?.pages
+      .map(page => page.data)
+      .flat()
+      .filter(cell => {
+        const info = getContractHashTag(cell.lockScript)
+        return info?.tag === 'RGB++'
+      })
+      .reduce((acc, cur) => {
+        // remove repeated cells
+        if (acc.find(c => c.txHash === cur.txHash && c.cellIndex === cur.cellIndex)) {
+          return acc
+        }
+        return [...acc, cur]
+      }, [] as LiveCell[]) ?? []
 
   return (
     <>
       <ul>
-        {rgbppCells.map(cell => (
+        {cells.map(cell => (
           <AssetItem cell={cell} key={`${cell.txHash}-${cell.cellIndex}`} />
         ))}
       </ul>
