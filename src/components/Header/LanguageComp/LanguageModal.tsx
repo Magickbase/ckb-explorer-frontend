@@ -29,7 +29,7 @@ export const LanguageModal = ({ onClose }: { onClose: () => void }) => {
 
           <div className={styles.modalContent}>
             <CommonSelect
-              // className={styles.codeHashSelect}
+              className={styles.languageSelect}
               options={SupportedLngs.map(lng => ({
                 value: lng,
                 label: t(`navbar.language_${lng}`),

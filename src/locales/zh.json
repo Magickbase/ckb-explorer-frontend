@@ -173,6 +173,7 @@
       "docs": "文档",
       "search_placeholder": "区块/交易/地址/脚本哈希/Args 参数/BTC 地址/BTC 交易 id/DID",
       "search_by_name_placeholder": "代币名称",
+      "more": "更多",
       "mainnet": "LINA",
       "testnet": "测试网",
       "language": "语言",

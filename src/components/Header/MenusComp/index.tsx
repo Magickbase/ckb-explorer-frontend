@@ -127,13 +127,18 @@ const SubmenuDropdown: FC<PropsWithChildren<DropdownProps & { menu: MenuData[] }
   )
 }
 
-export const MoreMenu: FC = () => {
+export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
   const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
   const [languageModalVisible, setLanguageModalVisible] = useState(false)
 
+  const Warpper = isMobile ? MobileMenuItem : ({ children }: PropsWithChildren<{}>) => <>{children}</>
+
   return (
-    <>
+    <Warpper>
       <Dropdown
+        onOpenChange={setOpen}
+        open={open}
         overlay={
           <div className={styles.submenu}>
             <Link className={styles.link} to="/tools/address-conversion">
@@ -141,8 +146,9 @@ export const MoreMenu: FC = () => {
             </Link>
             <a
               className={styles.link}
-              onClick={e => {
-                e.preventDefault()
+              onClick={() => {
+                // e.preventDefault()
+                setOpen(false)
                 setLanguageModalVisible(true)
               }}
             >
@@ -153,15 +159,21 @@ export const MoreMenu: FC = () => {
         mouseEnterDelay={0}
         transitionName=""
         placement="bottomRight"
+        trigger={isMobile ? ['click'] : ['click', 'hover']}
       >
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <a className={classNames(styles.headerMenusItem, styles.submenuTrigger)}>
-          <MenuIcon className={styles.moreIcon} />
-        </a>
+        {isMobile ? (
+          <MobileMenuOuterLink className={styles.mobileSubmenuTrigger}>
+            {t('navbar.more')}
+            <ArrowIcon className={styles.icon} />
+          </MobileMenuOuterLink>
+        ) : (
+          <a className={classNames(styles.headerMenusItem, styles.submenuTrigger)}>
+            <MenuIcon className={styles.moreIcon} />
+          </a>
+        )}
       </Dropdown>
-
       {languageModalVisible ? <LanguageModal onClose={() => setLanguageModalVisible(false)} /> : null}
-    </>
+    </Warpper>
   )
 }
 

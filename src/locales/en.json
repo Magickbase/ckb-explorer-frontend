@@ -173,6 +173,7 @@
       "docs": "Docs",
       "search_placeholder": "Block/Transaction/Address/Script Hash/Args/BTC Address/BTC Txid/DID",
       "search_by_name_placeholder": "Token Name",
+      "more": "More",
       "mainnet": "LINA",
       "testnet": "TESTNET",
       "language": "Language",
