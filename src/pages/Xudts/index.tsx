@@ -20,7 +20,7 @@ import { QueryResult } from '../../components/QueryResult'
 import { FilterSortContainerOnMobile } from '../../components/FilterSortContainer'
 import { Card } from '../../components/Card'
 import { BooleanT } from '../../utils/array'
-import { getTag } from '../../components/XUDTTag'
+import XUDTTag from '../../components/XUDTTag'
 
 type SortField = 'transactions' | 'addresses_count' | 'created_time' | 'mint_status'
 
@@ -68,7 +68,9 @@ const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
         </div>
       ))}
       <div className={styles.tokenInfo} style={{ flexDirection: 'row' }}>
-        {token.xudtTags?.map(tag => getTag(tag))}
+        {token.xudtTags?.map(tag => (
+          <XUDTTag tagName={tag} />
+        ))}
       </div>
     </Card>
   )
@@ -165,7 +167,11 @@ const TokenTable: FC<{
                   symbol
                 )}
               </div>
-              <div className={styles.tags}>{tags.map(tag => getTag(tag))}</div>
+              <div className={styles.tags}>
+                {tags.map(tag => (
+                  <XUDTTag tagName={tag} />
+                ))}
+              </div>
             </div>
           </div>
         )
