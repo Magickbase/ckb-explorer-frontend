@@ -16,11 +16,11 @@
   }
 
   &[data-type='out-of-length-range'] {
-    border-color: #ff9c9c;
-    background: #ffe8e8;
+    border-color: #b0cbfc;
+    background: #d7e5fd;
 
     span {
-      color: #fa504f;
+      color: #346dff;
     }
   }
 
@@ -92,7 +92,7 @@
     border-color: #ff9c9c;
 
     span {
-      color: #333;
+      color: #fa504f;
     }
   }
 
