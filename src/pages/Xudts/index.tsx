@@ -47,25 +47,26 @@ const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
   return (
     <Card key={token.typeHash} className={styles.tokensCard}>
       {token.published && (
-        <div className={styles.tokenInfo}>
-          {/* {token.fullName ? <span>{token.fullName}</span> : null} */}
-          <span className={styles.title}>Name</span>
-          <Link className={styles.link} to={`/xudt/${token.typeHash}`}>
-            {symbol}
-          </Link>
-        </div>
+        <dl className={styles.tokenInfo}>
+          <dt className={styles.title}>Name</dt>
+          <dd>
+            <Link className={styles.link} to={`/xudt/${token.typeHash}`}>
+              {symbol}
+            </Link>
+          </dd>
+        </dl>
       )}
       {token.published && (
-        <div className={styles.tokenInfo}>
-          <span className={styles.title}>Symbol</span>
-          {token.fullName ? <span className={styles.value}>{token.fullName}</span> : null}
-        </div>
+        <dl className={styles.tokenInfo}>
+          <dt className={styles.title}>Symbol</dt>
+          {token.fullName ? <dd className={styles.value}>{token.fullName}</dd> : null}
+        </dl>
       )}
       {fields.map(field => (
-        <div className={styles.tokenInfo}>
-          <div className={styles.title}>{field.name}</div>
-          <div className={styles.value}>{field.value}</div>
-        </div>
+        <dl className={styles.tokenInfo}>
+          <dt className={styles.title}>{field.name}</dt>
+          <dd className={styles.value}>{field.value}</dd>
+        </dl>
       ))}
       <div className={styles.tokenInfo} style={{ flexDirection: 'row' }}>
         {token.xudtTags?.map(tag => (

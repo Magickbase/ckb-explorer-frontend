@@ -1,5 +1,12 @@
 @import '../../styles/variables.module';
 
+dl,
+dd,
+dt {
+  margin: 0;
+  padding: 0;
+}
+
 .link {
   display: flex;
   align-items: center;
@@ -51,6 +58,18 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  &:first-child {
+    @media (width <= $mobileBreakPoint) {
+      margin-top: 16px;
+    }
+  }
+
+  &:last-child {
+    @media (width <= $mobileBreakPoint) {
+      margin-bottom: 16px;
+    }
+  }
 
   &:not(:last-child) {
     border-bottom: 1px solid #f5f5f5;
