@@ -359,7 +359,16 @@
       "addr": "Address",
       "reset": "Reset",
       "by_name": "by name",
-      "by_id": "by ID"
+      "by_id": "by ID",
+      "block": "Block",
+      "ckb_transaction": "Transaction",
+      "address": "Address",
+      "lock_hash": "LockHash",
+      "udt": "UDT",
+      "type_script": "TypeScript",
+      "lock_script": "LockScript",
+      "bitcoin_transaction": "BitcoinTransaction",
+      "token_collection": "TokenCollection"
     },
     "address": {
       "address": "Address",

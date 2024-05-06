@@ -63,7 +63,28 @@ export enum SearchResultType {
   TypeScript = 'type_script',
   LockScript = 'lock_script',
   BtcTx = 'bitcoin_transaction',
+  TokenCollection = 'token_collection',
 }
+
+export type AggregateSearchResult =
+  | Response.Wrapper<Block, SearchResultType.Block>
+  | Response.Wrapper<Transaction, SearchResultType.Transaction>
+  | Response.Wrapper<Address, SearchResultType.Address>
+  | Response.Wrapper<Address, SearchResultType.LockHash>
+  | Response.Wrapper<UDT, SearchResultType.UDT>
+  | Response.Wrapper<BtcTx, SearchResultType.BtcTx>
+  | Response.Wrapper<Script & { scriptHash: string }, SearchResultType.TypeScript>
+  | Response.Wrapper<Script, SearchResultType.LockScript>
+  | Response.Wrapper<
+      {
+        standard: string
+        name: string
+        description: string
+        icon_url: string
+        symbol: string
+      },
+      SearchResultType.TokenCollection
+    >
 
 export const getBtcTxList = (idList: string[]): Promise<Record<string, RawBtcRPC.BtcTx>> => {
   if (idList.length === 0) return Promise.resolve({})
@@ -292,6 +313,14 @@ export const apiFetcher = {
   fetchCellData: (id: string) =>
     // TODO: When will it return an empty result?
     v1GetNullableWrapped<{ data: string }>(`/cell_output_data/${id}`).then(res => res?.attributes.data ?? null),
+
+  fetchAggregateSearchResult: (param: string) =>
+    v1Get<AggregateSearchResult[]>('suggest_queries', {
+      params: {
+        q: param,
+        filter_by: 0,
+      },
+    }),
 
   fetchSearchByIdResult: (param: string) =>
     v1Get<
