@@ -363,10 +363,10 @@
       "block": "Block",
       "ckb_transaction": "Transaction",
       "address": "Address",
-      "lock_hash": "LockHash",
+      "lock_hash": "Lock Hash",
       "udt": "UDT",
-      "type_script": "TypeScript",
-      "lock_script": "LockScript",
+      "type_script": "Type Script",
+      "lock_script": "Lock Script",
       "bitcoin_transaction": "BitcoinTransaction",
       "token_collection": "TokenCollection"
     },
