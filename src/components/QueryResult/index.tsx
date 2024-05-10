@@ -20,12 +20,19 @@ export function QueryResult<TData, TError>({
 }): ReactElement {
   const delayedLoading = useDelayLoading(LOADING_WAITING_TIME, true)
 
+  if (query.isLoading) {
+    return loadingRender ? (
+      loadingRender(delayLoading ? delayedLoading : true)
+    ) : (
+      <Loading show={delayLoading ? delayedLoading : true} />
+    )
+  }
+
   switch (query.status) {
     case 'error':
       return errorRender && query.error ? errorRender(query.error) : <Error />
     case 'success':
       return children(query.data)
-    case 'loading':
     default:
       return loadingRender ? (
         loadingRender(delayLoading ? delayedLoading : true)
