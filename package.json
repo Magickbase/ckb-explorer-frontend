@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@ant-design/icons": "4.8.1",
+    "@ant-design/icons": "4.8.3",
     "@ckb-lumos/base": "0.22.2",
     "@ckb-lumos/config-manager": "0.22.1",
     "@ckb-lumos/helpers": "0.22.1",
