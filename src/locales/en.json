@@ -173,8 +173,10 @@
       "docs": "Docs",
       "search_placeholder": "Block/Transaction/Address/Script Hash/Args/BTC Address/BTC Txid/DID",
       "search_by_name_placeholder": "Token Name",
+      "more": "More",
       "mainnet": "LINA",
       "testnet": "TESTNET",
+      "language": "Language",
       "language_en": "EN",
       "language_zh": "简体中文",
       "home": "Home",
@@ -338,6 +340,7 @@
       "reddit": "Reddit",
       "youtube": "YouTube",
       "forum": "Forum",
+      "tools": "Tools",
       "api-doc": "API Documentation"
     },
     "search": {
@@ -396,18 +399,19 @@
       "current-address": "Current Address",
       "transaction_rgbpp_digest": "RGB++ Digest",
       "seal_tx_on_bitcoin": "Seal Tx On Bitcoin",
-      "tx_on_bitcoin": "x On Bitcoin",
-      "leap_in": "Leap In",
-      "leap_out": "Leap Out",
-      "leap_in_tip": "This RGB++ transaction is marked as \"Leap In\", indicating that the number of cells with RGB++ lock in the output exceeds the number of cells with RGB++ lock in the input.",
-      "leap_out_tip": "This RGB++ transaction is marked as \"Leap Out\", indicating that the number of cells with RGB++ lock in the input exceeds the number of cells with RGB++ lock in the output.",
+      "tx_on_bitcoin": "Tx On Bitcoin",
+      "leap_in": "L1 → L2",
+      "leap_out": "L2 → L1",
+      "leap_in_tip": "This RGB++ transaction is marked as \"L1 → L2\", indicating that the number of cells with RGB++ lock in the output exceeds the number of cells with RGB++ lock in the input.",
+      "leap_out_tip": "This RGB++ transaction is marked as \"L2 → L1\", indicating that the number of cells with RGB++ lock in the input exceeds the number of cells with RGB++ lock in the output.",
       "view_in_btc_explorer": "View in Bitcoin Explorer",
       "view-as-asset-items": "View Asset Distribution",
       "view-as-merged-assets": "View Asset Amounts(CKB excluded)"
     },
     "rgbpp": {
       "transaction": {
-        "ckb_txid": "CKB_TXID",
+        "ckb_tx": "CKB Tx",
+        "btc_tx": "BTC Tx",
         "block_number": "Block Number",
         "confirmation": "Confirmation",
         "confirmations": "Confirmations",
@@ -416,8 +420,10 @@
         "rgbpp_cell_change": "RGB++ Cell Change",
         "btc_txid": "BTC TXID",
         "cell": "Cell",
-        "cells": "Cells"
-      }
+        "cells": "Cells",
+        "view_on_bitcoin_explorer": "View on Bitcoin Explorer"
+      },
+      "amount": "Amount"
     },
     "transaction": {
       "view_rgbpp_digest": "View RGB++ Digest",
@@ -710,7 +716,17 @@
       "transactions": "24hr Transactions",
       "address_count": "Address Count",
       "created_time": "Created Time",
-      "tokens_empty": "There are no xUDTs at this time."
+      "tokens_empty": "There are no xUDTs at this time.",
+      "invalid": "Invalid",
+      "suspicious": "Suspicious",
+      "out-of-length-range": "Out Of Length Range",
+      "duplicate": "Duplicate",
+      "layer-1-asset": "Layer 1 Asset",
+      "layer-2-asset": "Layer 2 Asset",
+      "verified-on": "Verified On Platform",
+      "supply-limited": "Supply Limited",
+      "supply-unlimited": "Supply Unlimited",
+      "rgbpp-compatible": "RGB++ Compatible"
     },
     "nft": {
       "nft_collection": "NFT Collection",
@@ -878,6 +894,16 @@
       "select-x-from-y": "Selected {{x}} chars from {{y}}",
       "fail-to-decode": "Fail to decode as {{decode}}",
       "text-too-long": "Text too long, only {{limit}} chars can be decoded"
+    },
+    "tools": {
+      "address_conversion": "Address Conversion",
+      "address_conversion_description": "The CKB2021 address format has changed from bech32 to bech32m, we recommend developers to use the new format in your dApps. This tool will help you determine if an address is deprecated or new.",
+      "address_rfc": "CKB Address Format RFC",
+      "address_to_script": "Address to Script",
+      "script_to_address": "Script to Address",
+      "please_enter": "Please enter",
+      "molecule_parser": "Molecule Parser",
+      "broadcast_transaction": "Broadcast Transaction"
     }
   }
 }

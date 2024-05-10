@@ -1,7 +1,8 @@
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import dayjs from 'dayjs'
 import styles from './styles.module.scss'
 import { DATA_ZOOM_CONFIG, assertIsArray, parseNumericAbbr } from '../../../../utils/chart'
-import { parseSimpleDate } from '../../../../utils/date'
 import { tooltipColor, SmartChartPage } from '../../../StatisticsChart/common'
 import { ChartItem, explorerService } from '../../../../services/ExplorerService'
 import { ChartColorConfig } from '../../../../constants/common'
@@ -30,6 +31,31 @@ const useOption = (
     containLabel: true,
   }
   const { t } = useTranslation()
+
+  const dataset = useMemo(() => {
+    const data = new Map<string, Omit<ChartItem.Bitcoin, 'timestamp'>>()
+
+    statisticBitcoin.forEach(item => {
+      const date = dayjs(item.timestamp).format('YYYY/MM/DD')
+      if (data.has(date)) {
+        const v = data.get(date)!
+        data.set(date, {
+          addressesCount: v.addressesCount + item.addressesCount,
+          transactionsCount: v.transactionsCount + item.transactionsCount,
+        })
+      } else {
+        data.set(date, {
+          addressesCount: item.addressesCount,
+          transactionsCount: item.transactionsCount,
+        })
+      }
+    })
+    return Array.from(data.entries()).map(([date, { addressesCount, transactionsCount }]) => ({
+      date,
+      addressesCount,
+      transactionsCount,
+    }))
+  }, [statisticBitcoin])
 
   return {
     color: chartColor.colors,
@@ -76,7 +102,7 @@ const useOption = (
         nameGap: 30,
         type: 'category',
         boundaryGap: false,
-        data: statisticBitcoin.map(data => parseSimpleDate(data.timestamp)),
+        data: dataset.map(data => data.date),
       },
     ],
     yAxis: [
@@ -87,7 +113,7 @@ const useOption = (
           align: 'left',
         },
         type: 'log',
-        logBase: 2,
+        logBase: 10,
         scale: true,
         axisLine: { lineStyle: { color: chartColor.colors[0] } },
         axisLabel: { formatter: (value: string) => parseNumericAbbr(value) },
@@ -114,7 +140,7 @@ const useOption = (
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
         // Why to add one: https://www.cnblogs.com/goloving/p/14364333.html
-        data: statisticBitcoin.map(data => data.addressesCount + 1),
+        data: dataset.map(data => data.addressesCount + 1),
       },
       {
         name: t('statistic.transaction_num'),
@@ -123,7 +149,7 @@ const useOption = (
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
         // Why to add one: https://www.cnblogs.com/goloving/p/14364333.html
-        data: statisticBitcoin.map(data => data.transactionsCount + 1),
+        data: dataset.map(data => data.transactionsCount + 1),
       },
     ],
   }

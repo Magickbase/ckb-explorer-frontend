@@ -51,12 +51,6 @@ export const parseTimeNoSecond = (millisecond: number | string) => {
   return `${hour} h ${minute} m`
 }
 
-export const parseDateNoTime = (timestamp: number | string | Date, noYear = false, connector = '/') => {
-  const date = timestamp instanceof Date ? timestamp : new Date(Number(timestamp) * 1000)
-  const year = noYear ? '' : `${date.getFullYear()}${connector}`
-  return `${year}${formatData(date.getMonth() + 1)}${connector}${formatData(date.getDate())}`
-}
-
 export const useParseDate = () => {
   const { t } = useTranslation()
   return (timestamp: number | string, now = new Date().getTime()) => {

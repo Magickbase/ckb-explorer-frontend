@@ -173,8 +173,10 @@
       "docs": "文档",
       "search_placeholder": "区块/交易/地址/脚本哈希/Args 参数/BTC 地址/BTC 交易 id/DID",
       "search_by_name_placeholder": "代币名称",
+      "more": "更多",
       "mainnet": "LINA",
       "testnet": "测试网",
+      "language": "语言",
       "language_en": "EN",
       "language_zh": "简体中文",
       "home": "首页",
@@ -338,6 +340,7 @@
       "reddit": "Reddit",
       "youtube": "YouTube",
       "forum": "Forum",
+      "tools": "工具箱",
       "api-doc": "API 文档"
     },
     "search": {
@@ -397,17 +400,18 @@
       "transaction_rgbpp_digest": "RGB++ Digest",
       "seal_tx_on_bitcoin": "Seal Tx On Bitcoin",
       "tx_on_bitcoin": "Tx On Bitcoin",
-      "leap_in": "Leap In",
-      "leap_out": "Leap Out",
-      "leap_in_tip": "本笔 RGB++ 交易被标记为\"Leap In\"，即存在一般 CKB 资产转化为 RGB++ 资产。",
-      "leap_out_tip": "本笔 RGB++ 交易被标记为\"Leap In\"，即存在 RGB++ 资产转化为一般 CKB 资产。",
+      "leap_in": "L1 → L2",
+      "leap_out": "L2 → L1",
+      "leap_in_tip": "本笔 RGB++ 交易被标记为\"L1 → L2\"，即存在一般 CKB 资产转化为 RGB++ 资产。",
+      "leap_out_tip": "本笔 RGB++ 交易被标记为\"L2 → L1\"，即存在 RGB++ 资产转化为一般 CKB 资产。",
       "view_in_btc_explorer": "在 Bitcoin 浏览器查看",
       "view-as-asset-items": "查看资产分布",
       "view-as-merged-assets": "查看资产合计(不含 CKB)"
     },
     "rgbpp": {
       "transaction": {
-        "ckb_txid": "CKB 交易ID",
+        "ckb_tx": "CKB 交易",
+        "btc_tx": "BTC 交易",
         "block_number": "区块序号",
         "confirmation": "确认数",
         "confirmations": "确认数",
@@ -416,8 +420,10 @@
         "rgbpp_cell_change": "RGB++ Cell 变化",
         "btc_txid": "BTC 交易",
         "cell": "Cell",
-        "cells": "Cells"
-      }
+        "cells": "Cells",
+        "view_on_bitcoin_explorer": "在 Bitcoin 浏览器查看"
+      },
+      "amount": "数量"
     },
     "transaction": {
       "view_rgbpp_digest": "查看 RGB++ 摘要",
@@ -711,7 +717,17 @@
       "transactions": "24小时交易数",
       "address_count": "用户数",
       "created_time": "创建时间",
-      "tokens_empty": "目前没有 xUDT。"
+      "tokens_empty": "目前没有 xUDT。",
+      "invalid": "无效",
+      "suspicious": "可疑",
+      "out-of-length-range": "超长",
+      "duplicate": "重复",
+      "layer-1-asset": "Layer 1 资产",
+      "layer-2-asset": "Layer 2 资产",
+      "verified-on": "Platform 平台认证",
+      "supply-limited": "有限供应资产",
+      "supply-unlimited": "无限供应资产",
+      "rgbpp-compatible": "RGB++兼容"
     },
     "nft": {
       "nft_collection": "NFT 藏品",
@@ -879,6 +895,16 @@
       "select-x-from-y": "从 {{y}} 字符起选择了 {{x}} 个字符",
       "fail-to-decode": "未能以 {{decode}} 格式解码",
       "text-too-long": "文本过长, 仅支持解码 {{limit}} 字符"
+    },
+    "tools": {
+      "address_conversion": "地址转换",
+      "address_conversion_description": "CKB2021 地址格式已从 bech32 变为 bech32m，我们建议开发人员在 dApp 中使用新格式。此工具可帮助您确定地址是已废弃还是新地址。",
+      "address_rfc": "CKB 地址格式 RFC",
+      "address_to_script": "Address to Script",
+      "script_to_address": "Script to Address",
+      "please_enter": "请输入",
+      "molecule_parser": "Molecule 解析",
+      "broadcast_transaction": "广播交易"
     }
   }
 }
