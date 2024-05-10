@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import BigNumber from 'bignumber.js'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Tooltip } from 'antd'
+import { useHistory } from 'react-router-dom'
+import classNames from 'classnames'
 import { explorerService, LiveCell } from '../../services/ExplorerService'
 import SUDTTokenIcon from '../../assets/sudt_token.png'
 import CKBTokenIcon from './ckb_token_icon.png'
@@ -56,6 +58,7 @@ const ATTRIBUTE_LENGTH = 18
 const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
   const setToast = useSetToast()
   const { t } = useTranslation()
+  const history = useHistory()
 
   const handleCopy = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
@@ -66,6 +69,8 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
       setToast({ message: t('common.copied') })
     })
   }
+
+  let handleAssetNameClick: ((e: React.MouseEvent<HTMLDivElement>) => void) | undefined
 
   const ckb = new BigNumber(shannonToCkb(+cell.capacity)).toFormat()
   const title = `${cell.txHash.slice(0, 8)}...${cell.txHash.slice(-8)}#${cell.cellIndex}`
@@ -130,6 +135,11 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
           ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
           : 'Unknown xUDT amount'
       detailInfo = cell.extraInfo?.amount
+      handleAssetNameClick = e => {
+        e.stopPropagation()
+        e.preventDefault()
+        history.push(`/xudt/${cell.typeHash}`)
+      }
       break
     }
     case 'omiga_inscription': {
@@ -188,21 +198,31 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
     index: `0x${cell.cellIndex.toString(16)}`,
   }
 
-  return (
-    <li key={cell.txHash + cell.cellIndex} className={styles.card}>
-      <h5>
-        <a href={link}>{title}</a>
+  const handleClick = () => {
+    history.push(link)
+  }
 
+  return (
+    <li
+      key={cell.txHash + cell.cellIndex}
+      className={classNames(styles.card, styles.pointer)}
+      onClick={handleClick}
+      onKeyDown={handleClick}
+    >
+      <h5>
+        {title}
         <button type="button" className={styles.copy} data-detail={JSON.stringify(outPoint)} onClick={handleCopy}>
           <CopyIcon />
         </button>
-        <span title={`${ckb} CKB`}>{`${ckb} CKB`}</span>
+        <span className={styles.pointer} title={`${ckb} CKB`}>{`${ckb} CKB`}</span>
       </h5>
       <div className={styles.content}>
         {typeof icon === 'string' ? <img src={icon} alt={assetName ?? 'sudt'} width="40" height="40" /> : null}
         {icon && typeof icon !== 'string' ? icon : null}
         <div className={styles.fields}>
-          <div className={styles.assetName}>{assetName}</div>
+          <div className={styles.assetName} onClick={handleAssetNameClick} onKeyDown={undefined}>
+            {assetName}
+          </div>
           <div className={styles.attribute} title={detailInfo ?? attribute}>
             <div className={styles.attributeContent}>{attribute}</div>
             {detailInfo ? (

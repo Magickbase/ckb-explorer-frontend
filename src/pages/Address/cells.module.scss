@@ -58,6 +58,12 @@
   }
 }
 
+.pointer {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .card {
   min-height: 86px;
   background: #fff;
