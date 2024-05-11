@@ -56,6 +56,13 @@
   overflow: hidden;
   margin-bottom: 1rem;
 
+  .commitment > div {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    width: 100%;
+  }
+
   .txid,
   .commitment {
     width: 100%;
@@ -65,6 +72,16 @@
     overflow: hidden;
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
     flex-wrap: nowrap;
+
+    div {
+      display: flex;
+      gap: 8px;
+    }
+
+    @media screen and (max-width: $mobileBreakPoint) {
+      flex-direction: column;
+      gap: 4px;
+    }
   }
 
   .txid {

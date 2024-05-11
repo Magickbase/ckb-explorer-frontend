@@ -107,27 +107,31 @@ export const TransactionRGBPPDigestContent = ({
                 {data.data.txid}
               </AddressText>
             )}
-            {data.data.confirmations && (
-              <span className={styles.blockConfirm}>({data.data.confirmations} Confirmations on Bitcoin)</span>
-            )}
-            {leapDirection !== TransactionLeapDirection.NONE ? (
-              <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>
-                <span className={styles.leap}>{t(`address.leap_${leapDirection}`)}</span>
-              </Tooltip>
-            ) : null}
+            <div>
+              {data.data.confirmations && (
+                <span className={styles.blockConfirm}>({data.data.confirmations} Confirmations on Bitcoin)</span>
+              )}
+              {leapDirection !== TransactionLeapDirection.NONE ? (
+                <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>
+                  <span className={styles.leap}>{t(`address.leap_${leapDirection}`)}</span>
+                </Tooltip>
+              ) : null}
+            </div>
           </div>
           <div className={styles.commitment}>
             <span>Commitment:</span>
-            <EllipsisMiddle text={data.data.commitment} className={styles.commitmentText} />
-            <SimpleButton
-              className={styles.action}
-              onClick={() => {
-                navigator.clipboard.writeText(data.data.commitment)
-                setToast({ message: t('common.copied') })
-              }}
-            >
-              <CopyIcon />
-            </SimpleButton>
+            <div>
+              <EllipsisMiddle text={data.data.commitment} className={styles.commitmentText} />
+              <SimpleButton
+                className={styles.action}
+                onClick={() => {
+                  navigator.clipboard.writeText(data.data.commitment)
+                  setToast({ message: t('common.copied') })
+                }}
+              >
+                <CopyIcon />
+              </SimpleButton>
+            </div>
           </div>
         </div>
       ) : null}
