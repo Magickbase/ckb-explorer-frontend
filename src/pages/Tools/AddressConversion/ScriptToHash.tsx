@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { utils } from '@ckb-lumos/base'
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/RadioGroup'
@@ -9,8 +9,17 @@ import CopyableText from '../../../components/CopyableText'
 export const ScriptToHash: React.FC = () => {
   const [codeHash, setCodeHash] = useState('')
   const [args, setArgs] = useState('')
+  const [hash, setHash] = useState<string | undefined>(undefined)
   const [hashType, setHashType] = useState(HashType.TYPE)
   const { t } = useTranslation()
+
+  useMemo(() => {
+    try {
+      setHash(utils.computeScriptHash({ codeHash, hashType, args }))
+    } catch (e) {
+      setHash(undefined)
+    }
+  }, [codeHash, hashType, args])
 
   return (
     <div>
@@ -49,8 +58,7 @@ export const ScriptToHash: React.FC = () => {
       {args !== '' && codeHash !== '' && (
         <div className={styles.console} style={{ marginBottom: 16 }}>
           <div>
-            <strong>Script Hash:</strong>{' '}
-            <CopyableText>{utils.computeScriptHash({ codeHash, hashType, args })}</CopyableText>
+            <strong>Script Hash:</strong> {hash ? <CopyableText>{hash}</CopyableText> : 'Invalid Script'}
           </div>
         </div>
       )}
