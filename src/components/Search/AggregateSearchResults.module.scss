@@ -83,3 +83,13 @@
 .categoryList {
   padding: 6px 8px;
 }
+
+.icon {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex-shrink: 0;
+  object-fit: cover;
+}

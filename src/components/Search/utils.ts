@@ -39,6 +39,9 @@ export const getURLByAggregateSearchResult = (result: AggregateSearchResult) => 
       }
       break
 
+    case SearchResultType.TokenCollection:
+      return `/nft-collections/${attributes.sn}`
+
     case SearchResultType.BtcTx:
       return `/transaction/${attributes.ckbTransactionHash}`
 

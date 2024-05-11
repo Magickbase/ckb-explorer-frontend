@@ -37,7 +37,6 @@ import { isValidBTCAddress } from '../../utils/bitcoin'
 // Therefore, here we are implementing a frontend-level limitation on the number of displayed results.
 const DISPLAY_COUNT = 10
 
-// The return value of the `TokenCollection` type is missing the `typehash` and there is no way to jump to it, so it is not supported at this time.
 const ALLOW_SEARCH_TYPES = [
   SearchResultType.Address,
   SearchResultType.Block,
@@ -46,6 +45,7 @@ const ALLOW_SEARCH_TYPES = [
   SearchResultType.LockScript,
   SearchResultType.Transaction,
   SearchResultType.TypeScript,
+  SearchResultType.TokenCollection,
   SearchResultType.UDT,
 ]
 

@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import { ComponentProps, FC } from 'react'
 import { SearchResultType, AggregateSearchResult } from '../../services/ExplorerService'
 import { getURLByAggregateSearchResult, getDisplayNameByAggregateSearchResult } from './utils'
+import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import styles from './AggregateSearchResults.module.scss'
 import EllipsisMiddle from '../EllipsisMiddle'
 import SmallLoading from '../Loading/SmallLoading'
@@ -72,15 +73,49 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
           ) : (
             <HighlightText text={displayName} keyword={keyword} style={{ maxWidth: 'min(200px, 60%)' }} />
           )}
-          {item.type === SearchResultType.UDT && (
-            <EllipsisMiddle
-              className={classNames(styles.typeHash, 'monospace')}
-              style={{ maxWidth: 'min(200px, 40%)' }}
-              useTextWidthForPlaceholderWidth
-              title={item.attributes.typeHash}
-            >
-              {item.attributes.typeHash}
-            </EllipsisMiddle>
+          <EllipsisMiddle
+            className={classNames(styles.typeHash, 'monospace')}
+            style={{ maxWidth: 'min(200px, 40%)' }}
+            useTextWidthForPlaceholderWidth
+            title={item.attributes.typeHash}
+          >
+            {item.attributes.typeHash}
+          </EllipsisMiddle>
+        </div>
+      </Link>
+    )
+  }
+
+  if (item.type === SearchResultType.TokenCollection) {
+    return (
+      <Link className={styles.searchResult} to={to}>
+        <div className={styles.content}>
+          {!displayName ? (
+            t('udt.unknown_token')
+          ) : (
+            <>
+              {item.attributes.iconUrl ? (
+                <img
+                  src={`${patchMibaoImg(item.attributes.iconUrl)}?size=small`}
+                  alt="cover"
+                  loading="lazy"
+                  className={styles.icon}
+                  onError={handleNftImgError}
+                />
+              ) : (
+                <img
+                  src={
+                    item.attributes.standard === 'spore'
+                      ? '/images/spore_placeholder.svg'
+                      : '/images/nft_placeholder.png'
+                  }
+                  alt="cover"
+                  loading="lazy"
+                  className={styles.icon}
+                />
+              )}
+              <HighlightText text={displayName} keyword={keyword} maxHighlightLength={16} sideCharLength={8} />
+            </>
           )}
         </div>
       </Link>
@@ -89,11 +124,13 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
 
   return (
     <Link className={styles.searchResult} to={to}>
-      {!displayName ? (
-        t('udt.unknown_token')
-      ) : (
-        <HighlightText text={displayName} keyword={keyword} maxHighlightLength={16} />
-      )}
+      <div className={styles.content}>
+        {!displayName ? (
+          t('udt.unknown_token')
+        ) : (
+          <HighlightText text={displayName} keyword={keyword} maxHighlightLength={16} sideCharLength={8} />
+        )}
+      </div>
     </Link>
   )
 }
@@ -102,16 +139,23 @@ interface HighlightTextProps extends ComponentProps<'span'> {
   text: string
   keyword: string
   maxHighlightLength?: number
+  sideCharLength?: number
 }
 
-const HighlightText: FC<HighlightTextProps> = ({ text, keyword, maxHighlightLength = 5, ...props }) => {
+const HighlightText: FC<HighlightTextProps> = ({
+  text,
+  keyword,
+  maxHighlightLength = 5,
+  sideCharLength = 3,
+  ...props
+}) => {
   const keywordIndex = text.toUpperCase().indexOf(keyword.toUpperCase())
   if (keywordIndex === -1) return <>text</>
   const startIndex = Math.max(0, keywordIndex - 1)
   const keywordLength = Math.min(keyword.length, maxHighlightLength)
   const preLength = startIndex
   const afterLength = text.length - (keywordLength + 1 + keywordIndex)
-  const sideChar = Math.min(Math.max(1, maxHighlightLength - keywordLength), 3)
+  const sideChar = Math.min(Math.max(1, maxHighlightLength - keywordLength), sideCharLength)
 
   return (
     <span className={styles.highlightText} {...props}>

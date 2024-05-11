@@ -80,8 +80,9 @@ export type AggregateSearchResult =
         standard: string
         name: string
         description: string
-        icon_url: string
+        iconUrl: string
         symbol: string
+        sn: string
       },
       SearchResultType.TokenCollection
     >
