@@ -13,6 +13,7 @@ import SimpleButton from '../../SimpleButton'
 import EllipsisMiddle from '../../EllipsisMiddle'
 import styles from './styles.module.scss'
 import AddressText from '../../AddressText'
+import { useIsMobile } from '../../../hooks'
 
 export const TransactionRGBPPDigestContent = ({
   leapDirection,
@@ -23,6 +24,7 @@ export const TransactionRGBPPDigestContent = ({
 }) => {
   const { t } = useTranslation()
   const setToast = useSetToast()
+  const isMobile = useIsMobile()
 
   const { data, isFetched } = useQuery(['rgb-digest', hash], () => explorerService.api.fetchRGBDigest(hash))
 
@@ -99,6 +101,7 @@ export const TransactionRGBPPDigestContent = ({
             <span>{t('address.seal_tx_on_bitcoin')}</span>
             {data.data.txid && (
               <AddressText
+                ellipsisMiddle={!isMobile}
                 linkProps={{
                   to: `/transaction/${hash}`,
                 }}
