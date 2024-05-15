@@ -15,7 +15,7 @@ import debounce from 'lodash.debounce'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { SearchPanel, SearchButton } from './styled'
-import { explorerService, Response, SearchResultType } from '../../services/ExplorerService'
+import { explorerService, Response, SearchResultType, type AggregateSearchResult } from '../../services/ExplorerService'
 import { getReverseAddresses } from '../../services/DidService'
 import { ethToCKb as DidEthToCkb } from '../../utils/did'
 import { addPrefixForHash, containSpecialChar } from '../../utils/string'
@@ -47,7 +47,52 @@ const ALLOW_SEARCH_TYPES = [
   SearchResultType.TypeScript,
   SearchResultType.TokenCollection,
   SearchResultType.UDT,
+  SearchResultType.DID,
+  SearchResultType.BtcAddress,
 ]
+
+async function fetchAggregateSearchResult(searchValue: string): Promise<AggregateSearchResult[]> {
+  let results = await explorerService.api
+    .fetchAggregateSearchResult(searchValue)
+    .then(res => res.data)
+    .catch(() => [] as AggregateSearchResult[])
+
+  if (/\w*\.bit$/.test(searchValue)) {
+    // search .bit name
+    const list = await getReverseAddresses(searchValue)
+    const ETH_COIN_TYPE = '60'
+    const ethAddr = list?.find(item => item.key_info.coin_type === ETH_COIN_TYPE)
+    if (ethAddr) {
+      const ckbAddr = DidEthToCkb(ethAddr.key_info.key)
+      results = [
+        ...results,
+        {
+          id: Math.random(),
+          type: SearchResultType.DID,
+          attributes: {
+            did: searchValue,
+            address: ckbAddr,
+          },
+        },
+      ]
+    }
+  }
+
+  if (isValidBTCAddress(searchValue)) {
+    results = [
+      ...results,
+      {
+        id: Math.random(),
+        type: SearchResultType.BtcAddress,
+        attributes: {
+          address: searchValue,
+        },
+      },
+    ]
+  }
+
+  return results
+}
 
 const Search: FC<{
   content?: string
@@ -70,18 +115,14 @@ const Search: FC<{
     // TODO: Previously, for some reasons, 'searchValue' was not added to the 'search' key here.
     // However, no problems were found in the tests after refactoring, so it has been added back for now.
     // If problems occur later, you can confirm here again. If no problems are found after a period of time, this comment can be removed.
-  } = useQuery(
-    ['aggregateSearch', searchValue],
-    () => explorerService.api.fetchAggregateSearchResult(searchValue).catch(() => ({ data: [] })),
-    {
-      enabled: false,
-    },
-  )
+  } = useQuery(['aggregateSearch', searchValue], () => fetchAggregateSearchResult(searchValue), {
+    enabled: false,
+  })
 
-  const aggregateSearchResults = _aggregateSearchResults?.data.filter(item => ALLOW_SEARCH_TYPES.includes(item.type))
+  const aggregateSearchResults = _aggregateSearchResults?.filter(item => ALLOW_SEARCH_TYPES.includes(item.type))
 
   const handleSearch = () => {
-    if (aggregateSearchResults) {
+    if (aggregateSearchResults && aggregateSearchResults.length > 0) {
       const url = getURLByAggregateSearchResult(aggregateSearchResults[0])
       history.push(url ?? `/search/fail?q=${searchValue}`)
       handleEditEnd?.()

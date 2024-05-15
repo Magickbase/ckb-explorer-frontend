@@ -367,8 +367,10 @@
       "udt": "UDT",
       "type_script": "Type Script",
       "lock_script": "Lock Script",
-      "bitcoin_transaction": "BitcoinTransaction",
-      "token_collection": "TokenCollection"
+      "bitcoin_transaction": "Bitcoin Transaction",
+      "bitcoin_address": "Bitcoin Address",
+      "token_collection": "Token Collection",
+      "did": "DID"
     },
     "address": {
       "address": "Address",

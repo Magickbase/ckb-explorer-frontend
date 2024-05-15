@@ -368,7 +368,9 @@
       "type_script": "Type Script",
       "lock_script": "Lock Script",
       "bitcoin_transaction": "BTC 交易",
-      "token_collection": "藏品"
+      "bitcoin_address": "BTC 地址",
+      "token_collection": "藏品",
+      "did": "分布式数字身份（DID）"
     },
     "address": {
       "address": "地址",

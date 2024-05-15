@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
-import { ComponentProps, FC } from 'react'
+import { ComponentProps, FC, useEffect, useState } from 'react'
 import { SearchResultType, AggregateSearchResult } from '../../services/ExplorerService'
 import { getURLByAggregateSearchResult, getDisplayNameByAggregateSearchResult } from './utils'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
@@ -18,34 +18,61 @@ type Props = {
 
 export const AggregateSearchResults: FC<Props> = ({ keyword = '', results, loading }) => {
   const { t } = useTranslation()
+  const [activedCategory, setActivedCategory] = useState<{ [key in SearchResultType]?: boolean }>({})
+
+  useEffect(() => {
+    setActivedCategory({})
+  }, [results])
+
+  const categories = results.reduce((acc, result) => {
+    if (!acc[result.type]) {
+      acc[result.type] = []
+    }
+    acc[result.type].push(result)
+    return acc
+  }, {} as Record<SearchResultType, AggregateSearchResult[]>)
 
   const SearchResultCategoryPanel = (() => {
-    const categories = results.reduce((acc, result) => {
-      if (!acc[result.type]) {
-        acc[result.type] = []
-      }
-      acc[result.type].push(result)
-      return acc
-    }, {} as Record<SearchResultType, AggregateSearchResult[]>)
-
     return (
       <div className={styles.searchResultCategory}>
-        {Object.entries(categories).map(([type, items]) => (
-          <div key={type} className={styles.category}>
-            <div className={styles.categoryTitle}>{t(`search.${type}`)}</div>
-            <div className={styles.categoryList}>
-              {items.map(item => (
-                <SearchResultItem keyword={keyword} key={item.id} item={item} />
-              ))}
+        {Object.entries(categories)
+          .filter(([type]) =>
+            // eslint-disable-next-line unused-imports/no-unused-vars
+            Object.entries(activedCategory).filter(([_, v]) => v).length === 0
+              ? true
+              : activedCategory[type as SearchResultType],
+          )
+          .map(([type, items]) => (
+            <div key={type} className={styles.category}>
+              <div className={styles.categoryTitle}>{t(`search.${type}`)}</div>
+              <div className={styles.categoryList}>
+                {items.map(item => (
+                  <SearchResultItem keyword={keyword} key={item.id} item={item} />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     )
   })()
 
   return (
     <div className={styles.searchResultsPanelWrapper}>
+      {!loading && Object.keys(categories).length > 0 && (
+        <div className={styles.searchCategoryFilter}>
+          {(Object.keys(categories) as SearchResultType[]).map(category => (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+            <div
+              className={classNames(styles.searchCategoryTag, { [styles.active]: activedCategory[category] })}
+              onClick={() =>
+                setActivedCategory(pre => ({ ...pre, [category]: pre[category] === undefined ? true : !pre[category] }))
+              }
+            >
+              {t(`search.${category}`)} {`(${categories[category].length})`}
+            </div>
+          ))}
+        </div>
+      )}
       {/* eslint-disable-next-line no-nested-ternary */}
       {loading ? (
         <SmallLoading className={styles.loadingWrapper} />
@@ -67,20 +94,18 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
   if (item.type === SearchResultType.UDT) {
     return (
       <Link className={styles.searchResult} to={to}>
-        <div className={styles.content}>
-          {!displayName ? (
-            t('udt.unknown_token')
-          ) : (
-            <HighlightText text={displayName} keyword={keyword} style={{ maxWidth: 'min(200px, 60%)' }} />
-          )}
-          <EllipsisMiddle
-            className={classNames(styles.typeHash, 'monospace')}
-            style={{ maxWidth: 'min(200px, 40%)' }}
-            useTextWidthForPlaceholderWidth
-            title={item.attributes.typeHash}
-          >
-            {item.attributes.typeHash}
-          </EllipsisMiddle>
+        <div className={styles.boxContent}>
+          {!displayName ? t('udt.unknown_token') : <HighlightText text={displayName} keyword={keyword} />}
+          <div className={classNames(styles.secondaryText, styles.subTitle, 'monospace')}>
+            <span style={{ marginRight: 4, flexShrink: 0 }}>type hash:</span>
+            <EllipsisMiddle
+              style={{ maxWidth: '100%' }}
+              useTextWidthForPlaceholderWidth
+              title={item.attributes.typeHash}
+            >
+              {item.attributes.typeHash}
+            </EllipsisMiddle>
+          </div>
         </div>
       </Link>
     )
@@ -122,6 +147,30 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
     )
   }
 
+  if (item.type === SearchResultType.DID) {
+    return (
+      <Link className={styles.searchResult} to={to}>
+        <div className={styles.content}>
+          <EllipsisMiddle
+            style={{ maxWidth: 'min(200px, 60%)' }}
+            useTextWidthForPlaceholderWidth
+            title={item.attributes.did}
+          >
+            {item.attributes.did}
+          </EllipsisMiddle>
+          <EllipsisMiddle
+            className={classNames(styles.secondaryText, 'monospace')}
+            style={{ maxWidth: 'min(200px, 40%)' }}
+            useTextWidthForPlaceholderWidth
+            title={item.attributes.address}
+          >
+            {item.attributes.address}
+          </EllipsisMiddle>
+        </div>
+      </Link>
+    )
+  }
+
   return (
     <Link className={styles.searchResult} to={to}>
       <div className={styles.content}>
@@ -150,12 +199,17 @@ const HighlightText: FC<HighlightTextProps> = ({
   ...props
 }) => {
   const keywordIndex = text.toUpperCase().indexOf(keyword.toUpperCase())
-  if (keywordIndex === -1) return <>text</>
+  if (keywordIndex === -1)
+    return (
+      <EllipsisMiddle style={{ width: '100%' }} {...props}>
+        {text}
+      </EllipsisMiddle>
+    )
   const startIndex = Math.max(0, keywordIndex - 1)
   const keywordLength = Math.min(keyword.length, maxHighlightLength)
   const preLength = startIndex
   const afterLength = text.length - (keywordLength + 1 + keywordIndex)
-  const sideChar = Math.min(Math.max(1, maxHighlightLength - keywordLength), sideCharLength)
+  const sideChar = sideCharLength
 
   return (
     <span className={styles.highlightText} {...props}>

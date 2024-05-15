@@ -64,6 +64,8 @@ export enum SearchResultType {
   LockScript = 'lock_script',
   BtcTx = 'bitcoin_transaction',
   TokenCollection = 'token_collection',
+  DID = 'did',
+  BtcAddress = 'bitcoin_address',
 }
 
 export type AggregateSearchResult =
@@ -85,6 +87,21 @@ export type AggregateSearchResult =
         sn: string
       },
       SearchResultType.TokenCollection
+    >
+  // This type is currently checked and inserted by the frontend
+  | Response.Wrapper<
+      {
+        did: string
+        address: string
+      },
+      SearchResultType.DID
+    >
+  // This type is currently checked and inserted by the frontend
+  | Response.Wrapper<
+      {
+        address: string
+      },
+      SearchResultType.BtcAddress
     >
 
 export const getBtcTxList = (idList: string[]): Promise<Record<string, RawBtcRPC.BtcTx>> => {

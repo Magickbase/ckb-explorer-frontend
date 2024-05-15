@@ -45,6 +45,12 @@ export const getURLByAggregateSearchResult = (result: AggregateSearchResult) => 
     case SearchResultType.BtcTx:
       return `/transaction/${attributes.ckbTransactionHash}`
 
+    case SearchResultType.DID:
+      return `/address/${attributes.address}`
+
+    case SearchResultType.BtcAddress:
+      return `/address/${attributes.address}`
+
     default:
       break
   }
@@ -78,5 +84,11 @@ export const getDisplayNameByAggregateSearchResult = (result: AggregateSearchRes
   }
   if (type === SearchResultType.TokenCollection) {
     return attributes.name
+  }
+  if (type === SearchResultType.DID) {
+    return attributes.did
+  }
+  if (type === SearchResultType.BtcAddress) {
+    return attributes.address
   }
 }
