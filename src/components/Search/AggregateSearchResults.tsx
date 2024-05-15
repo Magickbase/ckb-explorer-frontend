@@ -18,10 +18,10 @@ type Props = {
 
 export const AggregateSearchResults: FC<Props> = ({ keyword = '', results, loading }) => {
   const { t } = useTranslation()
-  const [activedCategory, setActivedCategory] = useState<{ [key in SearchResultType]?: boolean }>({})
+  const [activatedCategory, setActivatedCategory] = useState<{ [key in SearchResultType]?: boolean }>({})
 
   useEffect(() => {
-    setActivedCategory({})
+    setActivatedCategory({})
   }, [results])
 
   const categories = results.reduce((acc, result) => {
@@ -38,9 +38,9 @@ export const AggregateSearchResults: FC<Props> = ({ keyword = '', results, loadi
         {Object.entries(categories)
           .filter(([type]) =>
             // eslint-disable-next-line unused-imports/no-unused-vars
-            Object.entries(activedCategory).filter(([_, v]) => v).length === 0
+            Object.entries(activatedCategory).filter(([_, v]) => v).length === 0
               ? true
-              : activedCategory[type as SearchResultType],
+              : activatedCategory[type as SearchResultType],
           )
           .map(([type, items]) => (
             <div key={type} className={styles.category}>
@@ -63,9 +63,12 @@ export const AggregateSearchResults: FC<Props> = ({ keyword = '', results, loadi
           {(Object.keys(categories) as SearchResultType[]).map(category => (
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events
             <div
-              className={classNames(styles.searchCategoryTag, { [styles.active]: activedCategory[category] })}
+              className={classNames(styles.searchCategoryTag, { [styles.active]: activatedCategory[category] })}
               onClick={() =>
-                setActivedCategory(pre => ({ ...pre, [category]: pre[category] === undefined ? true : !pre[category] }))
+                setActivatedCategory(pre => ({
+                  ...pre,
+                  [category]: pre[category] === undefined ? true : !pre[category],
+                }))
               }
             >
               {t(`search.${category}`)} {`(${categories[category].length})`}
