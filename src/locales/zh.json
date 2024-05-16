@@ -901,7 +901,7 @@
       "address_conversion_description": "CKB2021 地址格式已从 bech32 变为 bech32m，我们建议开发人员在 dApp 中使用新格式。此工具可帮助您确定地址是已废弃还是新地址。",
       "address_rfc": "CKB 地址格式 RFC",
       "address_to_script": "Address to Script",
-      "script_to_address": "Script to Address",
+      "script_to_hash": "Script to Hash",
       "please_enter": "请输入",
       "molecule_parser": "Molecule 解析",
       "broadcast_transaction": "广播交易"

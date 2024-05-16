@@ -901,6 +901,7 @@
       "address_rfc": "CKB Address Format RFC",
       "address_to_script": "Address to Script",
       "script_to_address": "Script to Address",
+      "script_to_hash": "Script to Hash",
       "please_enter": "Please enter",
       "molecule_parser": "Molecule Parser",
       "broadcast_transaction": "Broadcast Transaction"
