@@ -1,15 +1,15 @@
 /* eslint-disable react/destructuring-assignment */
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
-import { ComponentProps, FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SearchResultType, AggregateSearchResult } from '../../services/ExplorerService'
 import { getURLByAggregateSearchResult, getDisplayNameByAggregateSearchResult } from './utils'
+import { HighlightText } from './HighlightText'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
 import styles from './AggregateSearchResults.module.scss'
 import EllipsisMiddle from '../EllipsisMiddle'
 import SmallLoading from '../Loading/SmallLoading'
 import { Link } from '../Link'
-import useTextWidth from '../../hooks/useTextWidth'
 
 type Props = {
   keyword?: string
@@ -19,10 +19,10 @@ type Props = {
 
 export const AggregateSearchResults: FC<Props> = ({ keyword = '', results, loading }) => {
   const { t } = useTranslation()
-  const [activatedCategory, setActivatedCategory] = useState<{ [key in SearchResultType]?: boolean }>({})
+  const [activatedCategory, setActivatedCategory] = useState<SearchResultType | undefined>(undefined)
 
   useEffect(() => {
-    setActivatedCategory({})
+    setActivatedCategory(undefined)
   }, [results])
 
   const categories = results.reduce((acc, result) => {
@@ -37,12 +37,7 @@ export const AggregateSearchResults: FC<Props> = ({ keyword = '', results, loadi
     return (
       <div className={styles.searchResultCategory}>
         {Object.entries(categories)
-          .filter(([type]) =>
-            // eslint-disable-next-line unused-imports/no-unused-vars
-            Object.entries(activatedCategory).filter(([_, v]) => v).length === 0
-              ? true
-              : activatedCategory[type as SearchResultType],
-          )
+          .filter(([type]) => (activatedCategory === undefined ? true : activatedCategory === type))
           .map(([type, items]) => (
             <div key={type} className={styles.category}>
               <div className={styles.categoryTitle}>{t(`search.${type}`)}</div>
@@ -64,13 +59,8 @@ export const AggregateSearchResults: FC<Props> = ({ keyword = '', results, loadi
           {(Object.keys(categories) as SearchResultType[]).map(category => (
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events
             <div
-              className={classNames(styles.searchCategoryTag, { [styles.active]: activatedCategory[category] })}
-              onClick={() =>
-                setActivatedCategory(pre => ({
-                  ...pre,
-                  [category]: pre[category] === undefined ? true : !pre[category],
-                }))
-              }
+              className={classNames(styles.searchCategoryTag, { [styles.active]: activatedCategory === category })}
+              onClick={() => setActivatedCategory(pre => (pre === category ? undefined : category))}
             >
               {t(`search.${category}`)} {`(${categories[category].length})`}
             </div>
@@ -99,16 +89,22 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
     return (
       <Link className={styles.searchResult} to={to}>
         <div className={styles.boxContent}>
-          {!displayName ? t('udt.unknown_token') : <HighlightText text={displayName} keyword={keyword} />}
+          <div style={{ display: 'flex', width: '100%' }}>
+            {!item.attributes.symbol ? (
+              t('udt.unknown_token')
+            ) : (
+              <HighlightText text={item.attributes.symbol} keyword={keyword} style={{ flex: 2, marginRight: 4 }} />
+            )}
+            {item.attributes.fullName && (
+              <span className={classNames(styles.secondaryText, styles.subTitle)} style={{ flex: 1 }}>
+                (<HighlightText text={item.attributes.fullName} keyword={keyword} style={{ width: '100%' }} />)
+              </span>
+            )}
+          </div>
+
           <div className={classNames(styles.secondaryText, styles.subTitle, 'monospace')}>
-            <span style={{ marginRight: 4, flexShrink: 0 }}>type hash:</span>
-            <EllipsisMiddle
-              style={{ maxWidth: '100%' }}
-              useTextWidthForPlaceholderWidth
-              title={item.attributes.typeHash}
-            >
-              {item.attributes.typeHash}
-            </EllipsisMiddle>
+            <span style={{ marginRight: 4, flexShrink: 0 }}>type hash: </span>
+            <HighlightText style={{ width: '100%' }} text={item.attributes.typeHash} keyword={keyword} />
           </div>
         </div>
       </Link>
@@ -119,33 +115,37 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
     return (
       <Link className={styles.searchResult} to={to}>
         <div className={styles.content}>
-          {!displayName ? (
-            t('udt.unknown_token')
+          {item.attributes.iconUrl ? (
+            <img
+              src={`${patchMibaoImg(item.attributes.iconUrl)}?size=small`}
+              alt="cover"
+              loading="lazy"
+              className={styles.icon}
+              onError={handleNftImgError}
+            />
           ) : (
-            <>
-              {item.attributes.iconUrl ? (
-                <img
-                  src={`${patchMibaoImg(item.attributes.iconUrl)}?size=small`}
-                  alt="cover"
-                  loading="lazy"
-                  className={styles.icon}
-                  onError={handleNftImgError}
-                />
-              ) : (
-                <img
-                  src={
-                    item.attributes.standard === 'spore'
-                      ? '/images/spore_placeholder.svg'
-                      : '/images/nft_placeholder.png'
-                  }
-                  alt="cover"
-                  loading="lazy"
-                  className={styles.icon}
-                />
-              )}
-              <HighlightText text={displayName} keyword={keyword} maxHighlightLength={16} sideCharLength={8} />
-            </>
+            <img
+              src={
+                item.attributes.standard === 'spore' ? '/images/spore_placeholder.svg' : '/images/nft_placeholder.png'
+              }
+              alt="cover"
+              loading="lazy"
+              className={styles.icon}
+            />
           )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flex: 1 }}>
+            {!displayName ? (
+              t('udt.unknown_token')
+            ) : (
+              <HighlightText text={displayName} keyword={keyword} style={{ flex: 1 }} />
+            )}
+
+            <div className={classNames(styles.secondaryText, styles.subTitle, 'monospace')}>
+              <span style={{ marginRight: 4, flexShrink: 0 }}>sn: </span>
+              <HighlightText style={{ width: '100%' }} text={item.attributes.sn} keyword={keyword} />
+            </div>
+          </div>
         </div>
       </Link>
     )
@@ -155,13 +155,11 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
     return (
       <Link className={styles.searchResult} to={to}>
         <div className={styles.content}>
-          <EllipsisMiddle
+          <HighlightText
             style={{ maxWidth: 'min(200px, 60%)', marginRight: 8 }}
-            useTextWidthForPlaceholderWidth
-            title={item.attributes.did}
-          >
-            {item.attributes.did}
-          </EllipsisMiddle>
+            text={item.attributes.did}
+            keyword={keyword}
+          />
           <EllipsisMiddle
             className={classNames(styles.secondaryText, 'monospace')}
             style={{ maxWidth: 'min(200px, 40%)' }}
@@ -180,14 +178,30 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
       <Link className={styles.searchResult} to={to}>
         <div className={styles.boxContent}>
           <div className={classNames(styles.subTitle)}>
-            <HighlightText text={item.attributes.ckbTransactionHash} keyword={keyword} style={{ marginRight: 4 }} />
+            <HighlightText
+              text={item.attributes.ckbTransactionHash}
+              keyword={keyword}
+              style={{ flex: 1, marginRight: 4 }}
+            />
             <span className={styles.rgbPlus}>RGB++</span>
           </div>
           <div className={classNames(styles.secondaryText, styles.subTitle, 'monospace')}>
             <span style={{ marginRight: 4, flexShrink: 0 }}>btc id:</span>
-            <EllipsisMiddle style={{ maxWidth: '100%' }} useTextWidthForPlaceholderWidth title={item.attributes.txid}>
-              {item.attributes.txid}
-            </EllipsisMiddle>
+            <HighlightText style={{ width: '100%' }} text={item.attributes.txid} keyword={keyword} />
+          </div>
+        </div>
+      </Link>
+    )
+  }
+
+  if (item.type === SearchResultType.Transaction) {
+    return (
+      <Link className={styles.searchResult} to={to}>
+        <div className={styles.boxContent}>
+          <HighlightText style={{ width: '100%' }} text={item.attributes.transactionHash} keyword={keyword} />
+
+          <div className={classNames(styles.secondaryText, styles.subTitle, 'monospace')}>
+            <span style={{ marginRight: 4, flexShrink: 0 }}># {item.attributes.blockNumber}</span>
           </div>
         </div>
       </Link>
@@ -204,58 +218,5 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
         )}
       </div>
     </Link>
-  )
-}
-
-interface HighlightTextProps extends ComponentProps<'span'> {
-  text: string
-  keyword: string
-  maxHighlightLength?: number
-  sideCharLength?: number
-}
-
-const HighlightText: FC<HighlightTextProps> = ({
-  text,
-  keyword,
-  maxHighlightLength = 5,
-  sideCharLength = 3,
-  ...props
-}) => {
-  const ref = useRef<HTMLSpanElement>(null)
-  const textWidth = useTextWidth({ text, font: 'inherit' })
-
-  const keywordIndex = text.toUpperCase().indexOf(keyword.toUpperCase())
-  if (keywordIndex === -1)
-    return (
-      <EllipsisMiddle useTextWidthForPlaceholderWidth {...props}>
-        {text}
-      </EllipsisMiddle>
-    )
-
-  const wrapperWidth = ref.current?.offsetWidth ?? 0
-  const needEllipsis = textWidth > wrapperWidth
-
-  const sideChar = needEllipsis ? sideCharLength : 999
-  const startIndex = Math.max(0, keywordIndex - 1)
-  const keywordLength = Math.min(keyword.length, needEllipsis ? maxHighlightLength : 999)
-  const preLength = startIndex
-  const afterLength = text.length - (keywordLength + 1 + keywordIndex)
-
-  return (
-    <span ref={ref} {...props} className={classNames(styles.highlightText, props.className)}>
-      <span>
-        {text.slice(0, preLength > sideChar ? sideChar : startIndex)}
-        {preLength > sideChar ? '...' : ''}
-      </span>
-      <span style={{ textOverflow: 'clip' }}>
-        {text.slice(startIndex, keywordIndex)}
-        <span className={styles.highlight}>{text.slice(keywordIndex, keywordIndex + keywordLength)}</span>
-        {text.slice(keywordIndex + keywordLength, keywordIndex + keywordLength + 1)}
-      </span>
-      <span>
-        {afterLength > sideChar ? '...' : ''}
-        {text.slice(afterLength > sideChar ? -sideChar : keywordIndex + keywordLength + 1)}
-      </span>
-    </span>
   )
 }
