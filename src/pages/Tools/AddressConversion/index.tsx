@@ -5,7 +5,6 @@ import { AddressToScript } from './AddressToScript'
 import { ScriptToAddress } from './ScriptToAddress'
 import { Tabs, TabsList, TabsContent, TabsTrigger } from '../../../components/ui/Tabs'
 import styles from './styles.module.scss'
-import { ScriptToHash } from './ScriptToHash'
 
 const AddressConversion: FC = () => {
   const { t } = useTranslation()
@@ -31,16 +30,12 @@ const AddressConversion: FC = () => {
             <TabsList style={{ width: '100%' }}>
               <TabsTrigger value="address2script">{t('tools.address_to_script')}</TabsTrigger>
               <TabsTrigger value="script2address">{t('tools.script_to_address')}</TabsTrigger>
-              <TabsTrigger value="script2hash">{t('tools.script_to_hash')}</TabsTrigger>
             </TabsList>
             <TabsContent value="address2script">
               <AddressToScript />
             </TabsContent>
             <TabsContent value="script2address">
               <ScriptToAddress />
-            </TabsContent>
-            <TabsContent value="script2hash">
-              <ScriptToHash />
             </TabsContent>
           </Tabs>
         </div>
