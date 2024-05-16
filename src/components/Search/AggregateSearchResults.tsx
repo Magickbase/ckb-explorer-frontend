@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable react/destructuring-assignment */
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
