@@ -68,6 +68,11 @@ export enum SearchResultType {
   BtcAddress = 'bitcoin_address',
 }
 
+enum SearchQueryType {
+  Aggregate = 0,
+  Single = 1,
+}
+
 export type AggregateSearchResult =
   | Response.Wrapper<Block, SearchResultType.Block>
   | Response.Wrapper<Transaction, SearchResultType.Transaction>
@@ -336,7 +341,7 @@ export const apiFetcher = {
     v1Get<AggregateSearchResult[]>('suggest_queries', {
       params: {
         q: param,
-        filter_by: 0,
+        filter_by: SearchQueryType.Aggregate,
       },
     }),
 
