@@ -21,14 +21,26 @@ export const ScriptToHash: React.FC = () => {
     }
   }, [codeHash, hashType, args])
 
+  const debounceInput = (fn: Function, delay = 300) => {
+    let timer: NodeJS.Timeout
+    return (value: string) => {
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        fn.call(this, value)
+      }, delay)
+    }
+  }
+
+  const saveCodeHash = debounceInput(setCodeHash)
+  const saveArgs = debounceInput(setArgs)
+
   return (
     <div>
       <div>
         <input
           placeholder={`${t('tools.please_enter')} Code Hash`}
           className={styles.input}
-          value={codeHash}
-          onChange={e => setCodeHash(e.target.value)}
+          onChange={e => saveCodeHash(e.target.value)}
         />
 
         <div className={styles.radioWrapper}>
@@ -50,16 +62,13 @@ export const ScriptToHash: React.FC = () => {
         <input
           className={styles.input}
           placeholder={`${t('tools.please_enter')} Args`}
-          value={args}
-          onChange={e => setArgs(e.target.value)}
+          onChange={e => saveArgs(e.target.value)}
         />
       </div>
 
       {args !== '' && codeHash !== '' && (
         <div className={styles.console} style={{ marginBottom: 16 }}>
-          <div>
-            <strong>Script Hash:</strong> {hash ? <CopyableText>{hash}</CopyableText> : 'Invalid Script'}
-          </div>
+          <strong>Script Hash:</strong> {hash ? <CopyableText>{hash}</CopyableText> : 'Invalid Script'}
         </div>
       )}
     </div>
