@@ -104,7 +104,7 @@ export type AggregateSearchResult =
   // This type is currently checked and inserted by the frontend
   | Response.Wrapper<
       {
-        address: string
+        addressHash: string
       },
       SearchResultType.BtcAddress
     >

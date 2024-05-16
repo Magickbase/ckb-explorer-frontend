@@ -73,19 +73,6 @@ async function fetchAggregateSearchResult(searchValue: string): Promise<Aggregat
     }
   }
 
-  if (isValidBTCAddress(searchValue)) {
-    results = [
-      ...results,
-      {
-        id: Math.random(),
-        type: SearchResultType.BtcAddress,
-        attributes: {
-          address: searchValue,
-        },
-      },
-    ]
-  }
-
   return results
 }
 

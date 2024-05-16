@@ -49,7 +49,7 @@ export const getURLByAggregateSearchResult = (result: AggregateSearchResult) => 
       return `/address/${attributes.address}`
 
     case SearchResultType.BtcAddress:
-      return `/address/${attributes.address}`
+      return `/address/${attributes.addressHash}`
 
     default:
       break
@@ -89,6 +89,6 @@ export const getDisplayNameByAggregateSearchResult = (result: AggregateSearchRes
     return attributes.did
   }
   if (type === SearchResultType.BtcAddress) {
-    return attributes.address
+    return attributes.addressHash
   }
 }
