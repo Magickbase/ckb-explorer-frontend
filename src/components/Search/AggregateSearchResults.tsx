@@ -1,7 +1,8 @@
+/* eslint-disable no-console */
 /* eslint-disable react/destructuring-assignment */
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
-import { ComponentProps, FC, useEffect, useState } from 'react'
+import { ComponentProps, FC, useEffect, useRef, useState } from 'react'
 import { SearchResultType, AggregateSearchResult } from '../../services/ExplorerService'
 import { getURLByAggregateSearchResult, getDisplayNameByAggregateSearchResult } from './utils'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
@@ -9,6 +10,7 @@ import styles from './AggregateSearchResults.module.scss'
 import EllipsisMiddle from '../EllipsisMiddle'
 import SmallLoading from '../Loading/SmallLoading'
 import { Link } from '../Link'
+import useTextWidth from '../../hooks/useTextWidth'
 
 type Props = {
   keyword?: string
@@ -155,7 +157,7 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
       <Link className={styles.searchResult} to={to}>
         <div className={styles.content}>
           <EllipsisMiddle
-            style={{ maxWidth: 'min(200px, 60%)' }}
+            style={{ maxWidth: 'min(200px, 60%)', marginRight: 8 }}
             useTextWidthForPlaceholderWidth
             title={item.attributes.did}
           >
@@ -174,13 +176,32 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
     )
   }
 
+  if (item.type === SearchResultType.BtcTx) {
+    return (
+      <Link className={styles.searchResult} to={to}>
+        <div className={styles.boxContent}>
+          <div className={classNames(styles.subTitle)}>
+            <HighlightText text={item.attributes.ckbTransactionHash} keyword={keyword} style={{ marginRight: 4 }} />
+            <span className={styles.rgbPlus}>RGB++</span>
+          </div>
+          <div className={classNames(styles.secondaryText, styles.subTitle, 'monospace')}>
+            <span style={{ marginRight: 4, flexShrink: 0 }}>btc id:</span>
+            <EllipsisMiddle style={{ maxWidth: '100%' }} useTextWidthForPlaceholderWidth title={item.attributes.txid}>
+              {item.attributes.txid}
+            </EllipsisMiddle>
+          </div>
+        </div>
+      </Link>
+    )
+  }
+
   return (
     <Link className={styles.searchResult} to={to}>
       <div className={styles.content}>
         {!displayName ? (
           t('udt.unknown_token')
         ) : (
-          <HighlightText text={displayName} keyword={keyword} maxHighlightLength={16} sideCharLength={8} />
+          <HighlightText style={{ width: '100%' }} text={displayName} keyword={keyword} />
         )}
       </div>
     </Link>
@@ -201,21 +222,28 @@ const HighlightText: FC<HighlightTextProps> = ({
   sideCharLength = 3,
   ...props
 }) => {
+  const ref = useRef<HTMLSpanElement>(null)
+  const textWidth = useTextWidth({ text, font: 'inherit' })
+
   const keywordIndex = text.toUpperCase().indexOf(keyword.toUpperCase())
   if (keywordIndex === -1)
     return (
-      <EllipsisMiddle style={{ width: '100%' }} {...props}>
+      <EllipsisMiddle useTextWidthForPlaceholderWidth {...props}>
         {text}
       </EllipsisMiddle>
     )
+
+  const wrapperWidth = ref.current?.offsetWidth ?? 0
+  const needEllipsis = textWidth > wrapperWidth
+
+  const sideChar = needEllipsis ? sideCharLength : 999
   const startIndex = Math.max(0, keywordIndex - 1)
-  const keywordLength = Math.min(keyword.length, maxHighlightLength)
+  const keywordLength = Math.min(keyword.length, needEllipsis ? maxHighlightLength : 999)
   const preLength = startIndex
   const afterLength = text.length - (keywordLength + 1 + keywordIndex)
-  const sideChar = sideCharLength
 
   return (
-    <span className={styles.highlightText} {...props}>
+    <span ref={ref} {...props} className={classNames(styles.highlightText, props.className)}>
       <span>
         {text.slice(0, preLength > sideChar ? sideChar : startIndex)}
         {preLength > sideChar ? '...' : ''}

@@ -32,11 +32,6 @@ import { ReactComponent as ClearIcon } from './clear.svg'
 import SimpleButton from '../SimpleButton'
 import { isValidBTCAddress } from '../../utils/bitcoin'
 
-// Currently, the API returns all search results, which could be extremely large in quantity.
-// Since the rendering component does not implement virtual scrolling, this leads to a significant decrease in page performance.
-// Therefore, here we are implementing a frontend-level limitation on the number of displayed results.
-const DISPLAY_COUNT = 10
-
 const ALLOW_SEARCH_TYPES = [
   SearchResultType.Address,
   SearchResultType.Block,
@@ -53,7 +48,7 @@ const ALLOW_SEARCH_TYPES = [
 
 async function fetchAggregateSearchResult(searchValue: string): Promise<AggregateSearchResult[]> {
   let results = await explorerService.api
-    .fetchAggregateSearchResult(searchValue)
+    .fetchAggregateSearchResult(addPrefixForHash(searchValue))
     .then(res => res.data)
     .catch(() => [] as AggregateSearchResult[])
 
@@ -189,11 +184,7 @@ const Search: FC<{
       {hasButton && <SearchButton onClick={handleSearch}>{t('search.search')}</SearchButton>}
 
       {(isFetching || aggregateSearchResults) && (
-        <AggregateSearchResults
-          keyword={keyword}
-          results={aggregateSearchResults?.slice(0, DISPLAY_COUNT) ?? []}
-          loading={isFetching}
-        />
+        <AggregateSearchResults keyword={keyword} results={aggregateSearchResults ?? []} loading={isFetching} />
       )}
     </SearchPanel>
   )
@@ -266,7 +257,7 @@ const getURLBySearchValue = async (searchValue: string) => {
   }
 
   try {
-    const { data } = await explorerService.api.fetchAggregateSearchResult(addPrefixForHash(query))
+    const data = await fetchAggregateSearchResult(addPrefixForHash(query))
     return getURLByAggregateSearchResult(data[0])
   } catch (error) {
     if (
