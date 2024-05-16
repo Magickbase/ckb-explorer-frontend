@@ -68,9 +68,7 @@ export const ScriptToHash: React.FC = () => {
 
       {args !== '' && codeHash !== '' && (
         <div className={styles.console} style={{ marginBottom: 16 }}>
-          <div>
-            <strong>Script Hash:</strong> {hash ? <CopyableText>{hash}</CopyableText> : 'Invalid Script'}
-          </div>
+          <strong>Script Hash:</strong> {hash ? <CopyableText>{hash}</CopyableText> : 'Invalid Script'}
         </div>
       )}
     </div>
