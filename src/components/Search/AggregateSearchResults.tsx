@@ -6,6 +6,7 @@ import { SearchResultType, AggregateSearchResult } from '../../services/Explorer
 import { getURLByAggregateSearchResult, getDisplayNameByAggregateSearchResult } from './utils'
 import { HighlightText } from './HighlightText'
 import { handleNftImgError, patchMibaoImg } from '../../utils/util'
+import { localeNumberString } from '../../utils/number'
 import styles from './AggregateSearchResults.module.scss'
 import EllipsisMiddle from '../EllipsisMiddle'
 import SmallLoading from '../Loading/SmallLoading'
@@ -201,7 +202,9 @@ const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = 
           <HighlightText style={{ width: '100%' }} text={item.attributes.transactionHash} keyword={keyword} />
 
           <div className={classNames(styles.secondaryText, styles.subTitle, 'monospace')}>
-            <span style={{ marginRight: 4, flexShrink: 0 }}># {item.attributes.blockNumber}</span>
+            <span style={{ marginRight: 4, flexShrink: 0 }}>
+              {t('search.block')} # {localeNumberString(item.attributes.blockNumber)}
+            </span>
           </div>
         </div>
       </Link>
