@@ -11,7 +11,7 @@ import styles from '../styles.module.scss'
 
 const STEP = {
   // step 1 for parse schema
-  fisrt: 1,
+  first: 1,
   // step 2 for choose codec
   second: 2,
   // step 3 for decode!
@@ -20,7 +20,7 @@ const STEP = {
 
 export const MoleculeParser: React.FC = () => {
   const { t } = useTranslation()
-  const [step, setStep] = useState<number>(STEP.fisrt)
+  const [step, setStep] = useState<number>(STEP.first)
   const [codecMap, setCodecMap] = useState<CodecMap>({})
   const [selectedCodecName, setSelectedCodecName] = useState<string>('')
   const handleCodecMap = (codecMap: CodecMap) => {
@@ -56,7 +56,7 @@ export const MoleculeParser: React.FC = () => {
           as built-in schemas to this tool.
         </div>
         <Molecule onNextStep={() => setStep(STEP.second)} updateCodecMap={handleCodecMap} />
-        {step > STEP.fisrt && (
+        {step > STEP.first && (
           <SchemaSelect codecMap={codecMap} onSelectCodec={handleSelectCodec} onNextStep={() => setStep(STEP.third)} />
         )}
         {step > STEP.second && <DataInput codec={codecMap[selectedCodecName]} />}
