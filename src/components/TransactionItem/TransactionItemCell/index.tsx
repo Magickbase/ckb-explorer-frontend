@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import { Link } from '../../Link'
 import NervosDAOCellIcon from '../../../assets/nervos_dao_cell.png'
+import { ReactComponent as CellInfo } from '../../../assets/cell_info.svg'
 import NervosDAOWithdrawingIcon from '../../../assets/nervos_dao_withdrawing.png'
 import CurrentAddressIcon from '../../../assets/current_address.svg'
 import UDTTokenIcon from '../../../assets/udt_token.png'
@@ -293,6 +294,7 @@ const TransactionCell = ({ cell, address, cellType }: { cell: Cell; address?: st
           </Tooltip>
         )}
         <TransactionCellCapacity cell={cell} cellType={cellType} />
+        <CellInfo />
       </TransactionCellCapacityPanel>
     </TransactionCellPanel>
   )
