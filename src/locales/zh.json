@@ -437,6 +437,7 @@
       "amount": "数量"
     },
     "transaction": {
+      "ckb-cell-info": "CKB Cell Info",
       "view_rgbpp_digest": "查看 RGB++ 摘要",
       "transaction": "交易",
       "transactions": "交易",
