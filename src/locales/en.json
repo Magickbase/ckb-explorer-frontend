@@ -466,6 +466,7 @@
       "amount": "Amount"
     },
     "transaction": {
+      "ckb-cell-info": "CKB Cell Info",
       "view_rgbpp_digest": "View RGB++ Digest",
       "transaction": "Transaction",
       "transactions": "Transactions",
