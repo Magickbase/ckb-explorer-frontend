@@ -36,13 +36,15 @@ const fetchCells = async ({
   size = 10,
   sort = 'capacity.desc',
   page = 1,
+  boundStatus = 'bound',
 }: {
+  boundStatus: 'bound' | 'unbound'
   address: string
   size: number
   sort: string
   page: number
 }) => {
-  const res = await explorerService.api.fetchAddressLiveCells(address, page, size, sort)
+  const res = await explorerService.api.fetchAddressLiveCells(address, page, size, sort, boundStatus)
   return {
     data: res.data,
     nextPage: page + 1,
@@ -439,8 +441,9 @@ const RGBAssetsTableView: FC<{ address: string; count: number }> = ({ address, c
   const loadMoreRef = useRef<HTMLDivElement | null>(null)
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
-    ['address live cells', address, params.size, params.sort],
-    ({ pageParam = 1 }) => fetchCells({ ...params, address, page: pageParam }),
+    ['address live cells', address, params.size, params.sort, isUnbounded ? 'unbound' : 'bound'],
+    ({ pageParam = 1 }) =>
+      fetchCells({ ...params, address, page: pageParam, boundStatus: isUnbounded ? 'unbound' : 'bound' }),
     {
       getNextPageParam: (lastPage: any) => {
         if (lastPage.data.length < params.size) return false
@@ -508,12 +511,13 @@ const RGBAssetsTableView: FC<{ address: string; count: number }> = ({ address, c
   )
 }
 
-const RgbAssets: FC<{ address: string; count: number; udts: UDTAccount[]; inscriptions: UDTAccount[] }> = ({
-  address,
-  count,
-  udts,
-  inscriptions,
-}) => {
+const RgbAssets: FC<{
+  address: string
+  count: number
+  udts: UDTAccount[]
+  inscriptions: UDTAccount[]
+  isUnBounded?: boolean
+}> = ({ address, count, udts, inscriptions, isUnBounded }) => {
   const fontSize = 14
   const minWidth = 250
   const [isMerged, setIsMerged] = useState(true)
@@ -532,31 +536,38 @@ const RgbAssets: FC<{ address: string; count: number; udts: UDTAccount[]; inscri
   return (
     <div ref={ref} className={styles.container}>
       <div className={styles.toolbar}>
-        <div>{t(`address.${isMerged ? 'view-as-merged-assets' : 'view-as-asset-items'}`)}</div>
-        <div className={styles.filters}>
-          <Tooltip placement="top" title={t(`address.${isMerged ? 'view-as-asset-items' : 'view-as-merged-assets'}`)}>
-            <button
-              type="button"
-              onClick={() => {
-                setIsMerged(i => !i)
-                setIsDisplayedAsList(false)
-              }}
-            >
-              {isMerged ? <AssetItemsIcon /> : <MergedAssetIcon />}
-            </button>
-          </Tooltip>
-          <Tooltip placement="top" title={isDisplayedAsList ? t('sort.card') : t('sort.list')}>
-            <button
-              type="button"
-              onClick={() => {
-                setIsDisplayedAsList(i => !i)
-                setIsMerged(false)
-              }}
-            >
-              {isDisplayedAsList ? <GridIcon /> : <ListIcon />}
-            </button>
-          </Tooltip>
-        </div>
+        {!isUnBounded && (
+          <>
+            <div>{t(`address.${isMerged ? 'view-as-merged-assets' : 'view-as-asset-items'}`)}</div>
+            <div className={styles.filters}>
+              <Tooltip
+                placement="top"
+                title={t(`address.${isMerged ? 'view-as-asset-items' : 'view-as-merged-assets'}`)}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMerged(i => !i)
+                    setIsDisplayedAsList(false)
+                  }}
+                >
+                  {isMerged ? <AssetItemsIcon /> : <MergedAssetIcon />}
+                </button>
+              </Tooltip>
+              <Tooltip placement="top" title={isDisplayedAsList ? t('sort.card') : t('sort.list')}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsDisplayedAsList(i => !i)
+                    setIsMerged(false)
+                  }}
+                >
+                  {isDisplayedAsList ? <GridIcon /> : <ListIcon />}
+                </button>
+              </Tooltip>
+            </div>
+          </>
+        )}
       </div>
 
       <div className={styles.content}>
@@ -564,7 +575,7 @@ const RgbAssets: FC<{ address: string; count: number; udts: UDTAccount[]; inscri
           <RGBAssetsTableView address={address} count={count} />
         ) : (
           <>
-            {isMerged ? (
+            {isMerged && !isUnBounded ? (
               <MergedAssetList udts={udts} inscriptions={inscriptions} />
             ) : (
               <RGBAssetsCellView address={address} count={count} width={width} />

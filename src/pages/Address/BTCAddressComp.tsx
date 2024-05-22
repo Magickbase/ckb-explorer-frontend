@@ -11,6 +11,7 @@ import RgbppAssets from './RgbppAssets'
 enum AssetInfo {
   CELLs,
   RGBPP,
+  Invalid,
 }
 
 export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
@@ -100,6 +101,26 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
                     address={address.bitcoinAddressHash}
                     count={+address.liveCellsCount}
                     udts={udts}
+                    inscriptions={inscriptions}
+                  />
+                </div>
+              </AddressAssetsTabPane>
+            ) : null}
+            {hasCells ? (
+              <AddressAssetsTabPane
+                tab={
+                  <AddressAssetsTabPaneTitle onClick={() => setActiveTab(AssetInfo.Invalid)}>
+                    {t('address.invalid')}
+                  </AddressAssetsTabPaneTitle>
+                }
+                key={AssetInfo.Invalid}
+              >
+                <div className={styles.assetCardList}>
+                  <RgbppAssets
+                    address={address.bitcoinAddressHash}
+                    count={+address.liveCellsCount}
+                    udts={udts}
+                    isUnBounded
                     inscriptions={inscriptions}
                   />
                 </div>
