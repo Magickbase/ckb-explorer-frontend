@@ -8,8 +8,7 @@ import { explorerService } from '../../../services/ExplorerService'
 import { hexToUtf8 } from '../../../utils/string'
 import {
   TransactionDetailContainer,
-  TransactionDetailPanel,
-  TransactionCellDetailPanel,
+  // TransactionCellDetailPanel,
   TransactionCellInfoValuePanel,
   TransactionCellDetailTab,
   TransactionCellDetailPane,
@@ -31,6 +30,7 @@ import { isAxiosError } from '../../../utils/error'
 import { Script } from '../../../models/Script'
 import { ReactComponent as CompassIcon } from './compass.svg'
 import styles from './styles.module.scss'
+import EllipsisMiddle from '../../../components/EllipsisMiddle'
 
 enum CellInfo {
   LOCK = 1,
@@ -303,13 +303,21 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
 
   return (
     <TransactionDetailContainer ref={ref}>
-      <TransactionCellDetailPanel>
+      <div className={styles.transactionDetailModalHeader}>
+        <div className={styles.transactionDetailModalHeaderLeft}>
+          <h2>Cell Info</h2>
+          <div className={styles.outpoint}>
+            <span>Outpoint: </span>
+            <EllipsisMiddle style={{ maxWidth: '100%' }} useTextWidthForPlaceholderWidth>
+              0x2caf5a51b97e9a2c7488b80ad36f6924d975f65b449cc6e317fd3c25e9204970
+            </EllipsisMiddle>
+            <CopyIcon />
+          </div>
+        </div>
+        <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
+      </div>
+      <div className={styles.transactionDetailPanel}>
         <TransactionCellDetailTab
-          tabBarExtraContent={
-            <div className="transactionDetailModalClose">
-              <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
-            </div>
-          }
           tabBarStyle={{ fontSize: '10px' }}
           onTabClick={key => {
             const state = parseInt(key, 10)
@@ -350,19 +358,19 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
             key={CellInfo.CAPACITY}
           />
         </TransactionCellDetailTab>
-      </TransactionCellDetailPanel>
+      </div>
 
-      <TransactionDetailPanel>
+      <div className={styles.transactionDetailPanel}>
         {isFetched ? (
-          <div className="transactionDetailContent">
+          <div className={styles.transactionDetailContent}>
             <CellInfoValueJSONView content={content} state={selectedInfo} />
           </div>
         ) : (
-          <div className="transactionDetailLoading">{!isFetched ? <SmallLoading /> : null}</div>
+          <div className={styles.transactionDetailLoading}>{!isFetched ? <SmallLoading /> : null}</div>
         )}
 
         {!isFetched || !content ? null : (
-          <div className="transactionDetailCopy">
+          <div className={styles.transactionDetailCopy}>
             <button data-role="copy-script" className={styles.button} type="button" onClick={onCopy}>
               <div>{t('common.copy')}</div>
               <CopyIcon />
@@ -389,7 +397,7 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
             ) : null}
           </div>
         )}
-      </TransactionDetailPanel>
+      </div>
     </TransactionDetailContainer>
   )
 }
