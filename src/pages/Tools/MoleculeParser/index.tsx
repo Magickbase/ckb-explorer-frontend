@@ -3,29 +3,22 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CodecMap } from '@ckb-lumos/molecule'
+import { HelpTip } from '../../../components/HelpTip'
 import ToolsContainer from '../ToolsContainer'
 import { DataInput } from './DataInput'
 import { Molecule } from './Molecule'
 import { SchemaSelect } from './SchemaSelect'
 import styles from '../styles.module.scss'
 
-const STEP = {
-  // step 1 for parse schema
-  first: 1,
-  // step 2 for choose codec
-  second: 2,
-  // step 3 for decode!
-  third: 3,
-}
-
 export const MoleculeParser: React.FC = () => {
   const { t } = useTranslation()
-  const [step, setStep] = useState<number>(STEP.first)
   const [codecMap, setCodecMap] = useState<CodecMap>({})
   const [selectedCodecName, setSelectedCodecName] = useState<string>('')
   const handleCodecMap = (codecMap: CodecMap) => {
     setCodecMap(codecMap)
+    setSelectedCodecName(Object.keys(codecMap)[0])
   }
+
   const handleSelectCodec = (name: string) => {
     setSelectedCodecName(name)
   }
@@ -54,12 +47,16 @@ export const MoleculeParser: React.FC = () => {
             blockchain.mol
           </a>{' '}
           as built-in schemas to this tool.
+          <HelpTip title="Uint8/16...512,Byte32,BytesVec,Bytes,BytesVec,BytesOpt are used as primitive schemas, please do not override." />
         </div>
-        <Molecule onNextStep={() => setStep(STEP.second)} updateCodecMap={handleCodecMap} />
-        {step > STEP.first && (
-          <SchemaSelect codecMap={codecMap} onSelectCodec={handleSelectCodec} onNextStep={() => setStep(STEP.third)} />
+
+        <Molecule updateCodecMap={handleCodecMap} />
+        {Object.keys(codecMap).length > 0 && (
+          <SchemaSelect selectedCodecName={selectedCodecName} codecMap={codecMap} onSelectCodec={handleSelectCodec} />
         )}
-        {step > STEP.second && <DataInput codec={codecMap[selectedCodecName]} />}
+        {Object.keys(codecMap).length > 0 && selectedCodecName !== '' && (
+          <DataInput codec={codecMap[selectedCodecName]} />
+        )}
       </div>
     </ToolsContainer>
   )

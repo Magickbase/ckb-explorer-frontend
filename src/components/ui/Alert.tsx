@@ -3,21 +3,6 @@ import * as React from 'react'
 import classnames from 'classnames'
 import styles from './Alert.module.scss'
 
-// const alertVariants = cva(
-//   'relative w-full rounded-lg border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground [&>svg~*]:pl-7',
-//   {
-//     variants: {
-//       variant: {
-//         default: 'bg-background text-foreground',
-//         destructive: 'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
-//       },
-//     },
-//     defaultVariants: {
-//       variant: 'default',
-//     },
-//   },
-// )
-
 const Alert = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {

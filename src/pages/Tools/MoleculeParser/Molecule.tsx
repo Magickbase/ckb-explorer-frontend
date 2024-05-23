@@ -7,21 +7,13 @@ import styles from './styles.module.scss'
 
 type Props = {
   updateCodecMap: (token: any) => void
-  onNextStep: () => void
 }
 
-export const Molecule: React.FC<Props> = ({ onNextStep, updateCodecMap }) => {
+export const Molecule: React.FC<Props> = ({ updateCodecMap }) => {
   const [showAlert, setShowAlert] = React.useState(false)
   const [parseErrorMsg, setParseErrorMsg] = React.useState<string>('')
   const [inputMol, setInputMol] = useState('')
   const [parseSuccess, setParseSuccess] = useState(false)
-
-  // const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
-  //   if (reason === 'clickaway') {
-  //     return
-  //   }
-  //   setShowAlert(false)
-  // }
 
   const handleConfirm = () => {
     const parser = createParser()
@@ -34,11 +26,11 @@ export const Molecule: React.FC<Props> = ({ onNextStep, updateCodecMap }) => {
       setShowAlert(true)
       setParseErrorMsg('')
       updateCodecMap(codecMap)
-      onNextStep()
     } catch (error: any) {
       setParseSuccess(false)
       setShowAlert(true)
       setParseErrorMsg(error.message)
+      updateCodecMap({})
       console.error('error is:', error)
     }
   }
