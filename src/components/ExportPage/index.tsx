@@ -64,6 +64,7 @@ export const ExportPage: React.FC<ExportPageProps> = ({
       toHeight,
       tab,
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate, fromHeight, toHeight, tab])
 
   const locale = language === 'zh' ? cnLocale.default : enLocale.default
