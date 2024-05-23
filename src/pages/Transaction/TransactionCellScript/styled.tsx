@@ -82,8 +82,8 @@ export const TransactionCellDetailTab = styled(Tabs)`
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  background-color: #fff;
-  border-radius: 6px 6px 0 0;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 
   /* stylelint-disable-next-line selector-class-pattern */
   .ant-tabs-nav-operations {
@@ -119,6 +119,7 @@ export const TransactionCellDetailPanel = styled.div`
   font-weight: 500;
   display: flex;
   flex-direction: row;
+  background-color: #e5e5e5;
 
   @media (max-width: ${variables.mobileBreakPoint}) {
     div {
@@ -213,6 +214,11 @@ export const TransactionDetailPanel = styled.div`
 `
 
 export const TransactionCellInfoValuePanel = styled.div`
+  border-radius: 4px;
+  border: 1px solid #e5e5e5;
+  background: var(--Color, #fff);
+  padding: 16px;
+
   > div {
     display: flex;
     margin: 2px 0 2px 30px;

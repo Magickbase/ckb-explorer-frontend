@@ -170,10 +170,10 @@ export const TransactionCellNftInfo = styled.div`
 `
 
 export const TransactionCellDetailModal = styled.div`
+  border-radius: 4px;
   background-color: #fff;
   margin: 15% auto;
-  padding: 20px 40px;
-  border: 1px solid #888;
+  padding: 24px 40px;
   width: 75%;
 
   @media (max-width: ${variables.mobileBreakPoint}) {
