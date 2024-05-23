@@ -1,11 +1,13 @@
 import { useState, FC, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from '@tanstack/react-query'
 import { AddressAssetsTab, AddressAssetsTabPane, AddressAssetsTabPaneTitle, AddressUDTAssetsPanel } from './styled'
 import styles from './styles.module.scss'
 import { Address, UDTAccount } from '../../models/Address'
 import { Card } from '../../components/Card'
 import Cells from './Cells'
 import RgbppAssets from './RgbppAssets'
+import { explorerService } from '../../services/ExplorerService'
 // import RgbppAssets from './RgbppAssets'
 
 enum AssetInfo {
@@ -18,6 +20,11 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
   const { t, i18n } = useTranslation()
   const { udtAccounts = [] } = address
   const [activeTab, setActiveTab] = useState<AssetInfo>(AssetInfo.RGBPP)
+
+  const { data } = useQuery(['bitcoin addresses', address], () =>
+    explorerService.api.fetchBitcoinAddresses(address.bitcoinAddressHash || ''),
+  )
+  const { boundLiveCellsCount, unboundLiveCellsCount } = data || { boundLiveCellsCount: 0, unboundLiveCellsCount: 0 }
 
   const [udts, inscriptions] = udtAccounts.reduce(
     (acc, cur) => {
@@ -51,7 +58,8 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
   )
 
   const hasAssets = udts.length || inscriptions.length
-  const hasCells = +address.liveCellsCount > 0
+  const hasCells = boundLiveCellsCount > 0
+  const hasInvalid = unboundLiveCellsCount > 0
 
   useEffect(() => {
     if (hasAssets) {
@@ -106,7 +114,7 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
                 </div>
               </AddressAssetsTabPane>
             ) : null}
-            {hasCells ? (
+            {hasInvalid ? (
               <AddressAssetsTabPane
                 tab={
                   <AddressAssetsTabPaneTitle onClick={() => setActiveTab(AssetInfo.Invalid)}>

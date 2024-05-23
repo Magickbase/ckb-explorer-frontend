@@ -16,6 +16,7 @@ import {
   TransactionRecord,
   LiveCell,
   TokenCollection,
+  BitcoinAddresses,
 } from './types'
 import { assert } from '../../utils/error'
 import { Cell } from '../../models/Cell'
@@ -87,31 +88,31 @@ export type AggregateSearchResult =
   | Response.Wrapper<Script, SearchResultType.LockScript>
   | Response.Wrapper<TokenCollection, SearchResultType.TokenCollection>
   | Response.Wrapper<
-      {
-        name: string | null
-        iconUrl: string | null
-        metadataUrl: string | null
-        status: string
-        tokenId: string
-        tokenCollection: TokenCollection
-      },
-      SearchResultType.TokenItem
-    >
+    {
+      name: string | null
+      iconUrl: string | null
+      metadataUrl: string | null
+      status: string
+      tokenId: string
+      tokenCollection: TokenCollection
+    },
+    SearchResultType.TokenItem
+  >
   // This type is currently checked and inserted by the frontend
   | Response.Wrapper<
-      {
-        did: string
-        address: string
-      },
-      SearchResultType.DID
-    >
+    {
+      did: string
+      address: string
+    },
+    SearchResultType.DID
+  >
   // This type is currently checked and inserted by the frontend
   | Response.Wrapper<
-      {
-        addressHash: string
-      },
-      SearchResultType.BtcAddress
-    >
+    {
+      addressHash: string
+    },
+    SearchResultType.BtcAddress
+  >
 
 export const getBtcTxList = (idList: string[]): Promise<Record<string, RawBtcRPC.BtcTx>> => {
   if (idList.length === 0) return Promise.resolve({})
@@ -249,6 +250,9 @@ export const apiFetcher = {
     requesterV2
       .get(`ckb_transactions/${hash}/rgb_digest`)
       .then(res => toCamelcase<Response.Response<RGBDigest>>(res.data)),
+
+  fetchBitcoinAddresses: (address: string) =>
+    requesterV2.get(`bitcoin_addresses/${address}`).then(res => toCamelcase<BitcoinAddresses>(res.data)),
 
   fetchCellsByTxHash: (hash: string, type: 'inputs' | 'outputs', page: Record<'no' | 'size', number>) =>
     requesterV2
