@@ -59,7 +59,9 @@ const AddressText: FC<{
           {address}
         </EllipsisMiddle>
       ) : (
-        <span style={{ wordBreak: 'break-all', maxWidth: '100%' }}>{address}</span>
+        <span className={className} style={{ wordBreak: 'break-all', maxWidth: '100%' }}>
+          {address}
+        </span>
       )}
     </Tooltip>
   )
