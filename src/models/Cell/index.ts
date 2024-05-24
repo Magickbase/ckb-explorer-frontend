@@ -68,6 +68,8 @@ export interface Cell$Base {
     address: string
     index: string
     txid: string
+    consumedTxid: string
+    status: 'bound' | 'unbound' | 'binding' | 'normal'
   }
 }
 

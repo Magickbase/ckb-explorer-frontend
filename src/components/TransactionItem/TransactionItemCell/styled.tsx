@@ -69,15 +69,6 @@ export const TransactionCellCapacityPanel = styled.div`
   > span {
     margin-left: 5px;
   }
-
-  svg {
-    color: #999;
-    cursor: pointer;
-
-    &:hover {
-      color: var(--primary-color);
-    }
-  }
 `
 
 export const TransactionCellWithdraw = styled.div`

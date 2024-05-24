@@ -159,6 +159,11 @@
       "handling-reorg": " 检测到 {{time}} 发生 Reorg, CKB 浏览器正在彻底检查数据。所需时间约为半小时, 请稍后访问",
       "migration-notice": "浏览器服务将于 {{time}} 进行迁移, 可能出现短时不可用状态"
     },
+    "cell": {
+      "live_cell": "未消耗Cell",
+      "dead_cell": "已消耗Cell",
+      "cell_info": "Cell 信息"
+    },
     "navbar": {
       "wallet": "钱包",
       "charts": "图表",
@@ -506,6 +511,7 @@
       "script_data": "data",
       "export-transaction": "导出交易",
       "capacity_usage": "Capacity 使用情况",
+      "rgbpp": "RGB++",
       "declared_capacity": "declared",
       "occupied_capacity": "occupied",
       "size": "交易体积",

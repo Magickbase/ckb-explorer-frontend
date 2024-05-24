@@ -4,12 +4,11 @@ import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { scriptToHash } from '@nervosnetwork/ckb-sdk-utils'
+import classNames from 'classnames'
 import { explorerService } from '../../../services/ExplorerService'
 import { hexToUtf8 } from '../../../utils/string'
 import {
   TransactionDetailContainer,
-  // TransactionCellDetailPanel,
-  TransactionCellInfoValuePanel,
   TransactionCellDetailTab,
   TransactionCellDetailPane,
   TransactionCellDetailTitle,
@@ -21,6 +20,11 @@ import { getBtcTimeLockInfo, getBtcUtxo, getContractHashTag } from '../../../uti
 import { localeNumberString } from '../../../utils/number'
 import HashTag from '../../../components/HashTag'
 import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
+import { ReactComponent as ViewIcon } from '../../../assets/view-icon.svg'
+import { ReactComponent as PendingBindIcon } from '../../../assets/pending-bind-icon.svg'
+import { ReactComponent as BindIcon } from '../../../assets/bind-icon.svg'
+import { ReactComponent as UnBindIcon } from '../../../assets/unbind-icon.svg'
+import { ReactComponent as PointIcon } from '../../../assets/point.svg'
 import { ReactComponent as OuterLinkIcon } from './outer_link_icon.svg'
 import { ReactComponent as ScriptHashIcon } from './script_hash_icon.svg'
 import { HelpTip } from '../../../components/HelpTip'
@@ -31,12 +35,15 @@ import { Script } from '../../../models/Script'
 import { ReactComponent as CompassIcon } from './compass.svg'
 import styles from './styles.module.scss'
 import EllipsisMiddle from '../../../components/EllipsisMiddle'
+import { useIsMobile } from '../../../hooks'
+import { Link } from '../../../components/Link'
 
 enum CellInfo {
   LOCK = 1,
   TYPE = 2,
   DATA = 3,
   CAPACITY = 4,
+  RGBPP,
 }
 
 type CapacityUsage = Record<'declared' | 'occupied', string | null>
@@ -45,7 +52,11 @@ interface CellData {
   data: string
 }
 
-type CellInfoValue = Script | CellData | CapacityUsage | null | undefined
+interface RGBPP {
+  btcTx: string
+}
+
+type CellInfoValue = Script | CellData | CapacityUsage | RGBPP | null | undefined
 
 function isScript(content: CellInfoValue): content is Script {
   return content != null && 'codeHash' in content
@@ -57,6 +68,10 @@ function isCapacityUsage(content: CellInfoValue): content is CapacityUsage {
 
 function isCellData(content: CellInfoValue): content is CellData {
   return content != null && 'data' in content
+}
+
+function isRGBPP(content: CellInfoValue): content is RGBPP {
+  return content != null && 'btcTx' in content
 }
 
 const initCellInfoValue = {
@@ -138,15 +153,21 @@ const fetchCellInfo = async (cell: CellBasicInfo, state: CellInfo): Promise<Cell
       }
     }
 
+    case CellInfo.RGBPP: {
+      return {
+        btcTx: cell.rgbInfo?.txid ?? '',
+      }
+    }
+
     default:
       return null
   }
 }
 
 const JSONKeyValueView = ({ title = '', value = '' }: { title?: string; value?: ReactNode | string }) => (
-  <div>
-    <div>{title}</div>
-    <div className="monospace">{value}</div>
+  <div className={styles.jsonValue}>
+    <div className={styles.title}>{title}</div>
+    <div className={classNames(styles.value, 'monospace')}>{value}</div>
   </div>
 )
 
@@ -226,15 +247,51 @@ const CellInfoValueRender = ({ content }: { content: CellInfoValue }) => {
     )
   }
 
+  if (isRGBPP(content)) {
+    return (
+      <JSONKeyValueView
+        title="BTC TX: "
+        value={
+          <>
+            {content.btcTx}
+            <Link to={`${config.BITCOIN_EXPLORER}/tx/${content.btcTx}`}>
+              <ViewIcon />
+            </Link>
+          </>
+        }
+      />
+    )
+  }
+
   return <JSONKeyValueView title="null" />
 }
 
+const CellInfoValueView = ({ content, state }: { content: CellInfoValue; state: CellInfo }) => {
+  switch (state) {
+    case CellInfo.LOCK:
+    case CellInfo.TYPE:
+    case CellInfo.DATA:
+    case CellInfo.CAPACITY:
+      return <CellInfoValueJSONView content={content} state={state} />
+    case CellInfo.RGBPP:
+      return <CellInfoNormalValueView content={content} state={state} />
+    default:
+      return null
+  }
+}
+
+const CellInfoNormalValueView = ({ content, state }: { content: CellInfoValue; state: CellInfo }) => (
+  <div data-state={state} className={styles.transactionCellInfoValuePanel}>
+    <CellInfoValueRender content={content} />
+  </div>
+)
+
 const CellInfoValueJSONView = ({ content, state }: { content: CellInfoValue; state: CellInfo }) => (
-  <TransactionCellInfoValuePanel data-is-decodable="true" isData={state === CellInfo.DATA}>
+  <div data-state={state} data-is-decodable="true" className={styles.transactionCellInfoValuePanel}>
     <span>{'{'}</span>
     <CellInfoValueRender content={content} />
     <span>{'}'}</span>
-  </TransactionCellInfoValuePanel>
+  </div>
 )
 
 export default ({ cell, onClose }: TransactionCellScriptProps) => {
@@ -242,6 +299,7 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
   const { t } = useTranslation()
   const [selectedInfo, setSelectedInfo] = useState<CellInfo>(CellInfo.LOCK)
   const ref = useRef<HTMLDivElement>(null)
+  const isMobile = useIsMobile()
 
   const changeType = (newState: CellInfo) => {
     setSelectedInfo(selectedInfo !== newState ? newState : selectedInfo)
@@ -287,6 +345,10 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
         }
         break
       }
+      case 'copy-outpoint': {
+        v = `${cell.generatedTxHash}:${cell.cellIndex}`
+        break
+      }
       default: {
         // ignore
       }
@@ -301,19 +363,71 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
     )
   }
 
+  const renderBindIcon = () => {
+    switch (cell.rgbInfo?.status) {
+      case 'binding':
+        return <PendingBindIcon />
+      case 'bound':
+        return <BindIcon />
+      case 'unbound':
+        return <UnBindIcon />
+      default:
+        return null
+    }
+  }
+
   return (
     <TransactionDetailContainer ref={ref}>
       <div className={styles.transactionDetailModalHeader}>
-        <div className={styles.transactionDetailModalHeaderLeft}>
-          <h2>Cell Info</h2>
-          <div className={styles.outpoint}>
-            <span>Outpoint: </span>
-            <EllipsisMiddle style={{ maxWidth: '100%' }} useTextWidthForPlaceholderWidth>
-              0x2caf5a51b97e9a2c7488b80ad36f6924d975f65b449cc6e317fd3c25e9204970
-            </EllipsisMiddle>
-            <CopyIcon />
+        {isMobile ? (
+          <div className={styles.transactionDetailModalHeaderLeft}>
+            <div className={styles.mobileVision}>
+              <h2>{t('cell.cell_info')}</h2>
+              <PointIcon />
+              <span style={{ color: '#666' }}>Live Cell</span>
+            </div>
+            <div className={styles.mobileVision}>
+              <div className={styles.outpoint}>
+                <span>Outpoint: </span>
+                <EllipsisMiddle style={{ maxWidth: '100%' }} useTextWidthForPlaceholderWidth>
+                  {`${cell.generatedTxHash}:${cell.cellIndex}`}
+                </EllipsisMiddle>
+                <button
+                  data-role="copy-outpoint"
+                  type="button"
+                  onClick={onCopy}
+                  className={classNames(styles.copy, styles.hoverIconButton)}
+                >
+                  <CopyIcon />
+                </button>
+              </div>
+              {renderBindIcon()}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className={styles.transactionDetailModalHeaderLeft}>
+            <h2>{t('cell.cell_info')}</h2>
+            <div className={styles.outpoint}>
+              <span>Outpoint: </span>
+              <EllipsisMiddle style={{ maxWidth: '100%' }} useTextWidthForPlaceholderWidth>
+                {`${cell.generatedTxHash}:${cell.cellIndex}`}
+              </EllipsisMiddle>
+              <button
+                data-role="copy-outpoint"
+                type="button"
+                onClick={onCopy}
+                className={classNames(styles.copy, styles.hoverIconButton)}
+              >
+                <CopyIcon />
+              </button>
+            </div>
+            {renderBindIcon()}
+            <div className={styles.cellStatusIcon} data-cell-status={cell.status ?? 'dead'}>
+              <PointIcon />
+            </div>
+            <span style={{ color: '#666' }}>{t(`cell.${cell.status ?? 'dead'}_cell`)}</span>
+          </div>
+        )}
         <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
       </div>
       <div className={styles.transactionDetailPanel}>
@@ -357,13 +471,24 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
             }
             key={CellInfo.CAPACITY}
           />
+          {cell.rgbInfo && (
+            <TransactionCellDetailPane
+              tab={
+                <>
+                  <TransactionCellDetailTitle>{t('transaction.rgbpp')}</TransactionCellDetailTitle>
+                  <HelpTip title={t('glossary.capacity_usage')} placement="bottom" containerRef={ref} />
+                </>
+              }
+              key={CellInfo.RGBPP}
+            />
+          )}
         </TransactionCellDetailTab>
       </div>
 
       <div className={styles.transactionDetailPanel}>
         {isFetched ? (
           <div className={styles.transactionDetailContent}>
-            <CellInfoValueJSONView content={content} state={selectedInfo} />
+            <CellInfoValueView content={content} state={selectedInfo} />
           </div>
         ) : (
           <div className={styles.transactionDetailLoading}>{!isFetched ? <SmallLoading /> : null}</div>
@@ -371,10 +496,12 @@ export default ({ cell, onClose }: TransactionCellScriptProps) => {
 
         {!isFetched || !content ? null : (
           <div className={styles.transactionDetailCopy}>
-            <button data-role="copy-script" className={styles.button} type="button" onClick={onCopy}>
-              <div>{t('common.copy')}</div>
-              <CopyIcon />
-            </button>
+            {!isRGBPP(content) && (
+              <button data-role="copy-script" className={styles.button} type="button" onClick={onCopy}>
+                <div>{t('common.copy')}</div>
+                <CopyIcon />
+              </button>
+            )}
 
             {isScript(content) ? (
               <button data-role="copy-script-hash" className={styles.button} type="button" onClick={onCopy}>

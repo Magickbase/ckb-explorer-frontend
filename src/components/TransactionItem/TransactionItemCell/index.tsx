@@ -299,7 +299,7 @@ const TransactionCell = ({ cell, address, cellType }: { cell: Cell; address?: st
         )}
         <TransactionCellCapacity cell={cell} cellType={cellType} />
         <Tooltip placement="top" title={`${t('transaction.ckb-cell-info')} `}>
-          <CellInfoIcon onClick={() => setShowModal(true)} />
+          <CellInfoIcon className={styles.hoverIconButton} onClick={() => setShowModal(true)} />
         </Tooltip>
         <SimpleModal isShow={showModal} setIsShow={setShowModal}>
           <TransactionCellDetailModal>
