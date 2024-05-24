@@ -386,6 +386,11 @@
       "token_item": "Token Item",
       "did": "DID"
     },
+    "cell": {
+      "live_cell": "Live Cell",
+      "dead_cell": "Consumed Cell",
+      "cell_info": "Cell Info"
+    },
     "address": {
       "address": "Address",
       "vesting": "Vesting",
@@ -535,6 +540,7 @@
       "script_data": "data",
       "export-transaction": "Export Transaction",
       "capacity_usage": "Capacity Usage",
+      "rgbpp": "RGB++",
       "declared_capacity": "declared",
       "occupied_capacity": "occupied",
       "size": "Size",

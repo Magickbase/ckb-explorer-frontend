@@ -1,5 +1,14 @@
 @import '../../../styles//variables.module.scss';
 
+.hoverIconButton {
+  color: #999;
+
+  &:hover {
+    color: var(--primary-color);
+    cursor: pointer;
+  }
+}
+
 .button {
   appearance: none;
   display: flex;
@@ -93,15 +102,49 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
 
     @media screen and (width <= $mobileBreakPoint) {
+      gap: 12px;
       align-items: start;
       flex-direction: column;
     }
 
-    .outpoint {
+    .mobileVision {
       max-width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cellStatusIcon {
+      svg:hover {
+        cursor: auto;
+      }
+
+      &[data-cell-status='live'] {
+        color: var(--primary-color);
+      }
+
+      &[data-cell-status='dead'] {
+        color: #999;
+      }
+    }
+
+    .outpoint {
+      .copy {
+        appearance: none;
+        border: none;
+        background: none;
+        cursor: pointer;
+
+        svg {
+          vertical-align: middle;
+          pointer-events: none;
+        }
+      }
+
+      max-width: 90%;
       display: flex;
       padding: 5px 8px;
       justify-content: center;
@@ -160,7 +203,6 @@
     border: none;
     width: 100%;
     text-align: left;
-    min-height: 120px;
     max-height: 250px;
     overflow-y: auto;
     overflow-wrap: break-word;
@@ -175,6 +217,92 @@
     @media (width <= mobileBreakPoint) {
       font-size: 10px;
       padding: 10px;
+    }
+
+    .transactionCellInfoValuePanel {
+      border-radius: 4px;
+      border: 1px solid #e5e5e5;
+      background: var(--Color, #fff);
+      padding: 16px;
+
+      &[data-state='1'],
+      &[data-state='2'],
+      &[data-state='4'] {
+        .jsonValue {
+          .title {
+            min-width: 120px;
+
+            @media (width <= mobileBreakPoint) {
+              min-width: 70px;
+            }
+          }
+        }
+      }
+
+      &[data-state='3'] {
+        .jsonValue {
+          .title {
+            min-width: 80px;
+
+            @media (width <= mobileBreakPoint) {
+              min-width: 40px;
+            }
+          }
+        }
+      }
+
+      &[data-state='5'] {
+        .jsonValue {
+          display: flex;
+          gap: 8px;
+          margin: 0 0 16px;
+
+          &:last-child {
+            margin: 0;
+          }
+
+          .title {
+            color: var(--666666, #666);
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+          }
+
+          .value {
+            color: #333;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            text-transform: capitalize;
+            display: flex;
+            gap: 4px;
+
+            a {
+              color: #999;
+
+              &:hover {
+                color: var(--primary-color);
+              }
+            }
+          }
+        }
+      }
+
+      .jsonValue {
+        display: flex;
+        margin: 2px 0 2px 30px;
+
+        @media (width <= mobileBreakPoint) {
+          margin: 2px 0 2px 12px;
+        }
+
+        .value {
+          word-wrap: break-word;
+          word-break: break-all;
+        }
+      }
     }
   }
 
