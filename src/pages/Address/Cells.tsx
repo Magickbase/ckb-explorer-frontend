@@ -24,6 +24,7 @@ import { useSetToast } from '../../components/Toast'
 import { PAGE_SIZE } from '../../constants/common'
 import styles from './cells.module.scss'
 import SmallLoading from '../../components/Loading/SmallLoading'
+import { Link } from '../../components/Link'
 import { sliceNftName } from '../../utils/string'
 
 enum Sort {
@@ -80,6 +81,7 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
   const assetType: string = cell.extraInfo?.type ?? cell.cellType
   let icon: string | React.ReactElement | null = null
   let assetName = null
+  let assetLink = null
   let attribute = null
   let detailInfo = null
 
@@ -138,8 +140,8 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
       handleAssetNameClick = e => {
         e.stopPropagation()
         e.preventDefault()
-        history.push(`/xudt/${cell.typeHash}`)
       }
+      assetLink = `/xudt/${cell.typeHash}`
       break
     }
     case 'omiga_inscription': {
@@ -220,9 +222,15 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
         {typeof icon === 'string' ? <img src={icon} alt={assetName ?? 'sudt'} width="40" height="40" /> : null}
         {icon && typeof icon !== 'string' ? icon : null}
         <div className={styles.fields}>
-          <div className={styles.assetName} onClick={handleAssetNameClick} onKeyDown={undefined}>
-            {assetName}
-          </div>
+          {assetLink ? (
+            <div className={styles.assetName} onClick={handleAssetNameClick} onKeyDown={undefined}>
+              <Link to={assetLink} title={assetName}>
+                {assetName}
+              </Link>
+            </div>
+          ) : (
+            <div className={styles.assetName}>{assetName}</div>
+          )}
           <div className={styles.attribute} title={detailInfo ?? attribute}>
             <div className={styles.attributeContent}>{attribute}</div>
             {detailInfo ? (
