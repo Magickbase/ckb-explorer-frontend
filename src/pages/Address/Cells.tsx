@@ -71,8 +71,6 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
     })
   }
 
-  let handleAssetNameClick: ((e: React.MouseEvent<HTMLDivElement>) => void) | undefined
-
   const ckb = new BigNumber(shannonToCkb(+cell.capacity)).toFormat()
   const title = `${cell.txHash.slice(0, 8)}...${cell.txHash.slice(-8)}#${cell.cellIndex}`
   const link = `/transaction/${cell.txHash}?${new URLSearchParams({
@@ -137,10 +135,6 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
           ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
           : 'Unknown xUDT amount'
       detailInfo = cell.extraInfo?.amount
-      handleAssetNameClick = e => {
-        e.stopPropagation()
-        e.preventDefault()
-      }
       assetLink = `/xudt/${cell.typeHash}`
       break
     }
@@ -223,11 +217,14 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
         {icon && typeof icon !== 'string' ? icon : null}
         <div className={styles.fields}>
           {assetLink ? (
-            <div className={styles.assetName} onClick={handleAssetNameClick} onKeyDown={undefined}>
-              <Link to={assetLink} title={assetName}>
-                {assetName}
-              </Link>
-            </div>
+            <Link
+              className={styles.assetName}
+              to={assetLink}
+              onClick={(e: any) => e.stopPropagation()}
+              title={assetName}
+            >
+              {assetName}
+            </Link>
           ) : (
             <div className={styles.assetName}>{assetName}</div>
           )}
