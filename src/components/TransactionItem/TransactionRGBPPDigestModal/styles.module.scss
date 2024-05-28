@@ -90,14 +90,6 @@
 
   .txid {
     gap: 8px;
-
-    a {
-      color: var(--primary-color);
-      overflow: hidden;
-      flex: 1;
-      flex-shrink: 1;
-      max-width: 63ch;
-    }
   }
 
   .commitment {
@@ -147,6 +139,14 @@
 
   @media screen and (max-width: $mobileBreakPoint) {
     overflow-wrap: break-word;
+  }
+
+  a {
+    color: var(--primary-color);
+    overflow: hidden;
+    flex: 1;
+    flex-shrink: 1;
+    max-width: 63ch;
   }
 }
 
