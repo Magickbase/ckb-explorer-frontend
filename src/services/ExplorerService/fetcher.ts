@@ -50,6 +50,7 @@ const v1GetUnwrappedPagedList = <T>(...args: Parameters<typeof v1GetWrapped>) =>
     assert(res.meta, 'Unexpected paged list response')
     return {
       data: res.data.map(wrapper => wrapper.attributes),
+      origin: res.data,
       ...res.meta,
     }
   })
@@ -166,14 +167,20 @@ export const apiFetcher = {
 
   // sort field, block_timestamp, capacity
   // sort type, asc, desc
-  fetchAddressLiveCells: (address: string, page: number, size: number, sort?: string) => {
-    return v1GetUnwrappedPagedList<LiveCell>(`address_live_cells/${address}`, {
+  fetchAddressLiveCells: async (address: string, page: number, size: number, sort?: string) => {
+    const res = await v1GetUnwrappedPagedList<LiveCell>(`address_live_cells/${address}`, {
       params: {
         page,
         page_size: size,
         sort,
       },
     })
+
+    return {
+      data: res.data.map((cell, index) => ({ ...cell, id: parseInt(res.origin[index].id as unknown as string, 10) })),
+      pageSize: res.pageSize,
+      total: res.total,
+    }
   },
 
   fetchTransactionsByAddress: async (

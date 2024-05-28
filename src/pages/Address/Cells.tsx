@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import BigNumber from 'bignumber.js'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Tooltip } from 'antd'
-import { useHistory } from 'react-router-dom'
 import classNames from 'classnames'
 import { explorerService, LiveCell } from '../../services/ExplorerService'
 import SUDTTokenIcon from '../../assets/sudt_token.png'
@@ -26,6 +25,10 @@ import styles from './cells.module.scss'
 import SmallLoading from '../../components/Loading/SmallLoading'
 import { Link } from '../../components/Link'
 import { sliceNftName } from '../../utils/string'
+import SimpleModal from '../../components/Modal'
+import { TransactionCellDetailModal } from '../Transaction/TransactionCell/styled'
+import TransactionCellScript from '../Transaction/TransactionCellScript'
+import { transformLiveCellToCellBasicInfo } from '../../utils/transformer'
 
 enum Sort {
   TimeAsc = 'block_timestamp.asc',
@@ -59,7 +62,7 @@ const ATTRIBUTE_LENGTH = 18
 const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
   const setToast = useSetToast()
   const { t } = useTranslation()
-  const history = useHistory()
+  const [showModal, setShowModal] = useState(false)
 
   const handleCopy = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
@@ -194,19 +197,15 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
     index: `0x${cell.cellIndex.toString(16)}`,
   }
 
-  const handleClick = () => {
-    history.push(link)
-  }
-
   return (
     <li
       key={cell.txHash + cell.cellIndex}
       className={classNames(styles.card, styles.pointer)}
-      onClick={handleClick}
-      onKeyDown={handleClick}
+      onClick={() => setShowModal(true)}
+      onKeyDown={() => setShowModal(true)}
     >
       <h5>
-        {title}
+        <a href={link}>{title}</a>
         <button type="button" className={styles.copy} data-detail={JSON.stringify(outPoint)} onClick={handleCopy}>
           <CopyIcon />
         </button>
@@ -238,6 +237,11 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
           </div>
         </div>
       </div>
+      <SimpleModal isShow={showModal} setIsShow={setShowModal}>
+        <TransactionCellDetailModal>
+          <TransactionCellScript cell={transformLiveCellToCellBasicInfo(cell)} onClose={() => setShowModal(false)} />
+        </TransactionCellDetailModal>
+      </SimpleModal>
     </li>
   )
 }

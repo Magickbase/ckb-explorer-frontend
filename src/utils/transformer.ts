@@ -1,6 +1,6 @@
 import { Cell } from '../models/Cell'
 import { Transaction } from '../models/Transaction'
-import { RawBtcRPC } from '../services/ExplorerService'
+import { LiveCell, RawBtcRPC } from '../services/ExplorerService'
 import type { CellInScript, CKBTransactionInScript } from '../services/ExplorerService/fetcher'
 
 // TODO: move to models
@@ -40,6 +40,15 @@ export const transformToTransaction = (
 // TODO: move to models
 export type CellBasicInfo = Pick<Cell, 'id' | 'isGenesisOutput' | 'capacity' | 'occupiedCapacity'>
 export const transformToCellBasicInfo = (cell: CellInScript): CellBasicInfo => {
+  return {
+    id: cell.id,
+    capacity: cell.capacity,
+    occupiedCapacity: String(cell.occupiedCapacity),
+    isGenesisOutput: false,
+  }
+}
+
+export const transformLiveCellToCellBasicInfo = (cell: LiveCell): CellBasicInfo => {
   return {
     id: cell.id,
     capacity: cell.capacity,
