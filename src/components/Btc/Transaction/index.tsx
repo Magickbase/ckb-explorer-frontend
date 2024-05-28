@@ -109,13 +109,17 @@ const BtcTransaction: FC<{
             const boundIndex = boundCellIndex[key]
             return (
               <div key={key} className={styles.output}>
-                <a
-                  href={`${config.BITCOIN_EXPLORER}/address/${output.scriptPubKey.address}`}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <AddressText className="monospace">{output.scriptPubKey.address}</AddressText>
-                </a>
+                {output.scriptPubKey.address ? (
+                  <a
+                    href={`${config.BITCOIN_EXPLORER}/address/${output.scriptPubKey.address}`}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <AddressText className="monospace">{output.scriptPubKey.address}</AddressText>
+                  </a>
+                ) : (
+                  'OP RETURN'
+                )}
                 <div className={`${styles.btcAttr} monospace`}>
                   <div className={styles.btcValue}>
                     <span>{int}</span>
