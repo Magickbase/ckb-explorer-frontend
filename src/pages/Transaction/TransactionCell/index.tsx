@@ -12,7 +12,6 @@ import {
   TransactionCellDetailPanel,
   TransactionCellHashPanel,
   TransactionCellPanel,
-  TransactionCellDetailModal,
   TransactionCellCardPanel,
   TransactionCellAddressPanel,
   TransactionCellInfoPanel,
@@ -32,7 +31,6 @@ import CoTARegCellIcon from './cota_reg_cell.svg'
 import SporeCellIcon from './spore.svg'
 import { ReactComponent as LockTimeIcon } from './clock.svg'
 import { ReactComponent as BitAccountIcon } from '../../../assets/bit_account.svg'
-import TransactionCellScript from '../TransactionCellScript'
 import SimpleModal from '../../../components/Modal'
 import SimpleButton from '../../../components/SimpleButton'
 import TransactionReward from '../TransactionReward'
@@ -43,6 +41,7 @@ import { useDASAccount } from '../../../hooks/useDASAccount'
 import styles from './styles.module.scss'
 import AddressText from '../../../components/AddressText'
 import { Cell } from '../../../models/Cell'
+import CellModal from '../../../components/Cell/CellModal'
 
 export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBase }) => {
   const alias = useDASAccount(address)
@@ -280,9 +279,7 @@ const TransactionCellInfo = ({ cell, children }: { cell: Cell; children: string 
         <div className="transactionCellInfoSeparate" />
       </SimpleButton>
       <SimpleModal isShow={showModal} setIsShow={setShowModal}>
-        <TransactionCellDetailModal>
-          <TransactionCellScript cell={cell} onClose={() => setShowModal(false)} />
-        </TransactionCellDetailModal>
+        <CellModal cell={cell} onClose={() => setShowModal(false)} />
       </SimpleModal>
     </TransactionCellInfoPanel>
   )

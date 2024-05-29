@@ -32,8 +32,7 @@ import CopyTooltipText from '../../Text/CopyTooltipText'
 import EllipsisMiddle from '../../EllipsisMiddle'
 import { Cell, Cell$UDT, UDTInfo } from '../../../models/Cell'
 import SimpleModal from '../../Modal'
-import TransactionCellScript from '../../../pages/Transaction/TransactionCellScript'
-import { TransactionCellDetailModal } from '../../../pages/Transaction/TransactionCell/styled'
+import CellModal from '../../Cell/CellModal'
 
 const AddressTextWithAlias: FC<{
   address: string
@@ -302,9 +301,7 @@ const TransactionCell = ({ cell, address, cellType }: { cell: Cell; address?: st
           <CellInfoIcon className={styles.hoverIconButton} onClick={() => setShowModal(true)} />
         </Tooltip>
         <SimpleModal isShow={showModal} setIsShow={setShowModal}>
-          <TransactionCellDetailModal>
-            <TransactionCellScript cell={cell} onClose={() => setShowModal(false)} />
-          </TransactionCellDetailModal>
+          <CellModal cell={cell} onClose={() => setShowModal(false)} />
         </SimpleModal>
       </TransactionCellCapacityPanel>
     </TransactionCellPanel>

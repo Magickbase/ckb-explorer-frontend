@@ -13,12 +13,12 @@ import {
   TransactionCellDetailPane,
   TransactionCellDetailTitle,
 } from './styled'
-import SmallLoading from '../../../components/Loading/SmallLoading'
+import SmallLoading from '../../Loading/SmallLoading'
 import CloseIcon from './modal_close.png'
 import config from '../../../config'
 import { getBtcTimeLockInfo, getBtcUtxo, getContractHashTag } from '../../../utils/util'
 import { localeNumberString } from '../../../utils/number'
-import HashTag from '../../../components/HashTag'
+import HashTag from '../../HashTag'
 import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
 import { ReactComponent as ViewIcon } from '../../../assets/view-icon.svg'
 import { ReactComponent as PendingBindIcon } from '../../../assets/pending-bind-icon.svg'
@@ -27,16 +27,17 @@ import { ReactComponent as UnBindIcon } from '../../../assets/unbind-icon.svg'
 import { ReactComponent as PointIcon } from '../../../assets/point.svg'
 import { ReactComponent as OuterLinkIcon } from './outer_link_icon.svg'
 import { ReactComponent as ScriptHashIcon } from './script_hash_icon.svg'
-import { HelpTip } from '../../../components/HelpTip'
-import { useSetToast } from '../../../components/Toast'
+import { HelpTip } from '../../HelpTip'
+import { useSetToast } from '../../Toast'
 import { CellBasicInfo } from '../../../utils/transformer'
 import { isAxiosError } from '../../../utils/error'
 import { Script } from '../../../models/Script'
 import { ReactComponent as CompassIcon } from './compass.svg'
 import styles from './styles.module.scss'
-import EllipsisMiddle from '../../../components/EllipsisMiddle'
+import EllipsisMiddle from '../../EllipsisMiddle'
 import { useIsMobile } from '../../../hooks'
-import { Link } from '../../../components/Link'
+import { Link } from '../../Link'
+import { CellInfoProps } from './types'
 
 enum CellInfo {
   LOCK = 1,
@@ -80,11 +81,6 @@ const initCellInfoValue = {
   data: {
     data: '0x',
   },
-}
-
-type TransactionCellScriptProps = {
-  cell: CellBasicInfo
-  onClose: Function
 }
 
 const getContentJSONWithSnakeCase = (content: CellInfoValue): string => {
@@ -294,7 +290,7 @@ const CellInfoValueJSONView = ({ content, state }: { content: CellInfoValue; sta
   </div>
 )
 
-export default ({ cell, onClose }: TransactionCellScriptProps) => {
+export default ({ cell, onClose }: CellInfoProps) => {
   const setToast = useSetToast()
   const { t } = useTranslation()
   const [selectedInfo, setSelectedInfo] = useState<CellInfo>(CellInfo.LOCK)
