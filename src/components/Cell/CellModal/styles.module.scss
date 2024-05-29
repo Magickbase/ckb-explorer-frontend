@@ -1,0 +1,15 @@
+@import '../../../styles//variables.module.scss';
+
+.transactionCellDetailModal {
+  border-radius: 4px;
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 24px 40px;
+  width: 75%;
+
+  @media (width <= mobileBreakPoint) {
+    width: 90%;
+    margin-top: 40%;
+    padding: 10px;
+  }
+}

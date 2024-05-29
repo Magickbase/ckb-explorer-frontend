@@ -179,6 +179,9 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
     ...cell,
     id: Number(cell.cellId),
     isGenesisOutput: false,
+    generatedTxHash: cell.txHash,
+    cellIndex: cell.cellIndex.toString(16),
+    status: 'live',
   } as CellBasicInfo
 
   return {

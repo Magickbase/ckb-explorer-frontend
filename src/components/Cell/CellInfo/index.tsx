@@ -1,8 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { useState, ReactNode, useRef, FC } from 'react'
+import { useState, ReactNode, useRef } from 'react'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import type { Cell } from '@ckb-lumos/base'
 import { useQuery } from '@tanstack/react-query'
 import { scriptToHash } from '@nervosnetwork/ckb-sdk-utils'
 import classNames from 'classnames'
@@ -14,13 +13,12 @@ import {
   TransactionCellDetailPane,
   TransactionCellDetailTitle,
 } from './styled'
-import SmallLoading from '../../../components/Loading/SmallLoading'
+import SmallLoading from '../../Loading/SmallLoading'
 import CloseIcon from './modal_close.png'
 import config from '../../../config'
 import { getBtcTimeLockInfo, getBtcUtxo, getContractHashTag } from '../../../utils/util'
 import { localeNumberString } from '../../../utils/number'
-import { cellOccupied } from '../../../utils/cell'
-import HashTag from '../../../components/HashTag'
+import HashTag from '../../HashTag'
 import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
 import { ReactComponent as ViewIcon } from '../../../assets/view-icon.svg'
 import { ReactComponent as PendingBindIcon } from '../../../assets/pending-bind-icon.svg'
@@ -29,18 +27,17 @@ import { ReactComponent as UnBindIcon } from '../../../assets/unbind-icon.svg'
 import { ReactComponent as PointIcon } from '../../../assets/point.svg'
 import { ReactComponent as OuterLinkIcon } from './outer_link_icon.svg'
 import { ReactComponent as ScriptHashIcon } from './script_hash_icon.svg'
-import { HelpTip } from '../../../components/HelpTip'
-import { useSetToast } from '../../../components/Toast'
+import { HelpTip } from '../../HelpTip'
+import { useSetToast } from '../../Toast'
 import { CellBasicInfo } from '../../../utils/transformer'
 import { isAxiosError } from '../../../utils/error'
 import { Script } from '../../../models/Script'
 import { ReactComponent as CompassIcon } from './compass.svg'
 import styles from './styles.module.scss'
-import EllipsisMiddle from '../../../components/EllipsisMiddle'
+import EllipsisMiddle from '../../EllipsisMiddle'
 import { useIsMobile } from '../../../hooks'
-import { Link } from '../../../components/Link'
-import { getBtcChainIdentify } from '../../../services/BTCIdentifier'
-import { IS_MAINNET } from '../../../constants/common'
+import { Link } from '../../Link'
+import { CellInfoProps } from './types'
 
 enum CellInfo {
   LOCK = 1,
@@ -84,11 +81,6 @@ const initCellInfoValue = {
   data: {
     data: '0x',
   },
-}
-
-type TransactionCellScriptProps = {
-  cell: CellBasicInfo
-  onClose: Function
 }
 
 const getContentJSONWithSnakeCase = (content: CellInfoValue): string => {
@@ -175,66 +167,6 @@ const JSONKeyValueView = ({ title = '', value = '' }: { title?: string; value?: 
   </div>
 )
 
-const RGBPP: FC<{ btcUtxo: Partial<Record<'txid' | 'index', string>> }> = ({ btcUtxo }) => {
-  const { data: identity } = useQuery({
-    queryKey: ['btc-testnet-identity', btcUtxo.txid],
-    queryFn: () => (btcUtxo?.txid ? getBtcChainIdentify(btcUtxo.txid) : null),
-    enabled: !IS_MAINNET && !!btcUtxo.txid,
-  })
-
-  if (!IS_MAINNET && !identity) return null
-
-  return (
-    <JSONKeyValueView
-      value={
-        <a
-          href={`${config.BITCOIN_EXPLORER}${IS_MAINNET ? '' : `/${identity}`}/tx/${btcUtxo.txid}#vout=${parseInt(
-            btcUtxo.index!,
-            16,
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.btcUtxo}
-        >
-          BTC UTXO
-          <CompassIcon />
-        </a>
-      }
-    />
-  )
-}
-
-const BTCTimeLock: FC<{
-  btcTimeLockInfo: {
-    txid: string | undefined
-    after: number
-  }
-}> = ({ btcTimeLockInfo }) => {
-  const { data: identity } = useQuery({
-    queryKey: ['btc-testnet-identity', btcTimeLockInfo.txid],
-    queryFn: () => (btcTimeLockInfo?.txid ? getBtcChainIdentify(btcTimeLockInfo.txid) : null),
-    enabled: !IS_MAINNET && !!btcTimeLockInfo.txid,
-  })
-
-  if (!IS_MAINNET && !identity) return null
-
-  return (
-    <JSONKeyValueView
-      value={
-        <a
-          href={`${config.BITCOIN_EXPLORER}${IS_MAINNET ? '' : `/${identity}`}/tx/${btcTimeLockInfo.txid}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.btcUtxo}
-        >
-          {`${btcTimeLockInfo.after} confirmations after BTC Tx`}
-          <CompassIcon />
-        </a>
-      }
-    />
-  )
-}
-
 const CellInfoValueRender = ({ content }: { content: CellInfoValue }) => {
   const { t } = useTranslation()
 
@@ -256,8 +188,37 @@ const CellInfoValueRender = ({ content }: { content: CellInfoValue }) => {
         )}
         <JSONKeyValueView title={`"${t('transaction.script_hash_type')}": `} value={content.hashType} />
         <JSONKeyValueView title={`"${t('transaction.script_args')}": `} value={content.args} />
-        {btcUtxo ? <RGBPP btcUtxo={btcUtxo} /> : null}
-        {btcTimeLockInfo ? <BTCTimeLock btcTimeLockInfo={btcTimeLockInfo} /> : null}
+        {btcUtxo ? (
+          <JSONKeyValueView
+            value={
+              <a
+                href={`${config.BITCOIN_EXPLORER}/tx/${btcUtxo.txid}#vout=${parseInt(btcUtxo.index!, 16)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.btcUtxo}
+              >
+                BTC UTXO
+                <CompassIcon />
+              </a>
+            }
+          />
+        ) : null}
+
+        {btcTimeLockInfo ? (
+          <JSONKeyValueView
+            value={
+              <a
+                href={`${config.BITCOIN_EXPLORER}/tx/${btcTimeLockInfo.txid}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.btcUtxo}
+              >
+                {`${btcTimeLockInfo.after} confirmations after BTC Tx`}
+                <CompassIcon />
+              </a>
+            }
+          />
+        ) : null}
       </>
     )
   }
@@ -329,164 +290,7 @@ const CellInfoValueJSONView = ({ content, state }: { content: CellInfoValue; sta
   </div>
 )
 
-export const CellInfoModal = ({ cell, onClose }: { cell: Cell; onClose: Function }) => {
-  const setToast = useSetToast()
-  const { t } = useTranslation()
-  const [selectedInfo, setSelectedInfo] = useState<CellInfo>(CellInfo.LOCK)
-
-  const content = ((): CellInfoValue => {
-    if (selectedInfo === CellInfo.LOCK) {
-      return cell.cellOutput.lock
-    }
-
-    if (selectedInfo === CellInfo.TYPE) {
-      return cell.cellOutput.type
-    }
-
-    if (selectedInfo === CellInfo.DATA) {
-      return {
-        data: cell.data,
-      }
-    }
-
-    if (selectedInfo === CellInfo.CAPACITY) {
-      const declared = new BigNumber(cell.cellOutput.capacity)
-      const occupied = new BigNumber(cellOccupied(cell))
-
-      return {
-        declared: `${localeNumberString(declared.dividedBy(10 ** 8))} CKBytes`,
-        occupied: `${localeNumberString(occupied.dividedBy(10 ** 8))} CKBytes`,
-      }
-    }
-
-    return null
-  })()
-
-  const ref = useRef<HTMLDivElement>(null)
-
-  const changeType = (newState: CellInfo) => {
-    setSelectedInfo(selectedInfo !== newState ? newState : selectedInfo)
-  }
-
-  const onCopy = (e: React.SyntheticEvent<HTMLButtonElement>) => {
-    const { role } = e.currentTarget.dataset
-
-    let v = ''
-
-    switch (role) {
-      case 'copy-script': {
-        v = getContentJSONWithSnakeCase(content)
-        break
-      }
-      case 'copy-script-hash': {
-        if (isScript(content)) {
-          v = scriptToHash(content as CKBComponents.Script)
-        }
-        break
-      }
-      default: {
-        // ignore
-      }
-    }
-    if (!v) return
-
-    navigator.clipboard.writeText(v).then(
-      () => setToast({ message: t('common.copied') }),
-      error => {
-        console.error(error)
-      },
-    )
-  }
-
-  return (
-    <TransactionDetailContainer ref={ref}>
-      <TransactionCellDetailPanel>
-        <TransactionCellDetailTab
-          tabBarExtraContent={
-            <div className="transactionDetailModalClose">
-              <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
-            </div>
-          }
-          tabBarStyle={{ fontSize: '10px' }}
-          onTabClick={key => {
-            const state = parseInt(key, 10)
-            if (state && !Number.isNaN(state)) {
-              changeType(state)
-            }
-          }}
-        >
-          <TransactionCellDetailPane
-            tab={
-              <>
-                <TransactionCellDetailTitle>{t('transaction.lock_script')}</TransactionCellDetailTitle>
-                <HelpTip title={t('glossary.lock_script')} placement="bottom" containerRef={ref} />
-              </>
-            }
-            key={CellInfo.LOCK}
-          />
-          <TransactionCellDetailPane
-            tab={
-              <>
-                <TransactionCellDetailTitle>{t('transaction.type_script')}</TransactionCellDetailTitle>
-                <HelpTip title={t('glossary.type_script')} placement="bottom" containerRef={ref} />
-              </>
-            }
-            key={CellInfo.TYPE}
-          />
-          <TransactionCellDetailPane
-            tab={<TransactionCellDetailTitle>{t('transaction.data')}</TransactionCellDetailTitle>}
-            key={CellInfo.DATA}
-          />
-          <TransactionCellDetailPane
-            tab={
-              <>
-                <TransactionCellDetailTitle>{t('transaction.capacity_usage')}</TransactionCellDetailTitle>
-                <HelpTip title={t('glossary.capacity_usage')} placement="bottom" containerRef={ref} />
-              </>
-            }
-            key={CellInfo.CAPACITY}
-          />
-        </TransactionCellDetailTab>
-      </TransactionCellDetailPanel>
-
-      <TransactionDetailPanel>
-        <div className="transactionDetailContent">
-          <CellInfoValueJSONView content={content} state={selectedInfo} />
-        </div>
-        {!content ? null : (
-          <div className="transactionDetailCopy">
-            <button data-role="copy-script" className={styles.button} type="button" onClick={onCopy}>
-              <div>{t('common.copy')}</div>
-              <CopyIcon />
-            </button>
-
-            {isScript(content) ? (
-              <button data-role="copy-script-hash" className={styles.button} type="button" onClick={onCopy}>
-                <div>Script Hash</div>
-                <ScriptHashIcon />
-              </button>
-            ) : null}
-
-            {isScript(content) ? (
-              <a
-                data-role="script-info"
-                className={styles.button}
-                href={`/script/${content.codeHash}/${content.hashType}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div>{`${t('scripts.script')} Info`}</div>
-                <OuterLinkIcon />
-              </a>
-            ) : null}
-          </div>
-        )}
-      </TransactionDetailPanel>
-    </TransactionDetailContainer>
-  )
-}
-
-export default ({ cell, onClose }: TransactionCellScriptProps) => {
+export default ({ cell, onClose }: CellInfoProps) => {
   const setToast = useSetToast()
   const { t } = useTranslation()
   const [selectedInfo, setSelectedInfo] = useState<CellInfo>(CellInfo.LOCK)
