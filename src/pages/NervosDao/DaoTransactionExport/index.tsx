@@ -1,9 +1,11 @@
 import dayjs from 'dayjs'
+import { useTranslation } from 'react-i18next'
 import { useSearchParams, useUpdateSearchParams } from '../../../hooks'
 import { ExportPage } from '../../../components/ExportPage'
 import { explorerService } from '../../../services/ExplorerService'
 
 const ExportNervosDaoTransactions = () => {
+  const [t] = useTranslation()
   const {
     tab = 'date',
     'start-date': startDateStr,
@@ -22,13 +24,19 @@ const ExportNervosDaoTransactions = () => {
 
   return (
     <ExportPage
+      note={t('export_transactions.dao_tx_note_str')}
       fetchCSVData={params =>
-        explorerService.api.fetchNervosDaoTransactionsCsv({
-          startDate: params.startDate,
-          endDate: params.endDate,
-          startNumber: params.fromHeight,
-          endNumber: params.toHeight,
-        })
+        explorerService.api.fetchNervosDaoTransactionsCsv(
+          params.tab === 'date'
+            ? {
+                startDate: params.startDate,
+                endDate: params.endDate,
+              }
+            : {
+                startNumber: params.fromHeight,
+                endNumber: params.toHeight,
+              },
+        )
       }
       csvFileName="exported-nervosdao-txs"
       defaultParams={{

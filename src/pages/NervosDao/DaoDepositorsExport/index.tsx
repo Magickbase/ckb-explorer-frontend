@@ -26,12 +26,17 @@ const DaoDepositorsExport = () => {
     <ExportPage
       note={t('export_transactions.dao_depositor_note_str')}
       fetchCSVData={params =>
-        explorerService.api.fetchNervosDaoDepositorsCsv({
-          startDate: params.startDate,
-          endDate: params.endDate,
-          startNumber: params.fromHeight,
-          endNumber: params.toHeight,
-        })
+        explorerService.api.fetchNervosDaoDepositorsCsv(
+          params.tab === 'date'
+            ? {
+                startDate: params.startDate,
+                endDate: params.endDate,
+              }
+            : {
+                startNumber: params.fromHeight,
+                endNumber: params.toHeight,
+              },
+        )
       }
       csvFileName="exported-nervosdao-depositors"
       defaultParams={{

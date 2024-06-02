@@ -219,7 +219,7 @@ export const ExportPage: React.FC<ExportPageProps> = ({
                             value={dayjs(endDate)}
                             popupClassName={styles.calendar}
                             disabledDate={disabledEndDate}
-                            onChange={d => setEndDate(d ? d.valueOf() : undefined)}
+                            onChange={d => setEndDate(d ? d.endOf('D').valueOf() : undefined)}
                           />
                         </div>
                       </div>
