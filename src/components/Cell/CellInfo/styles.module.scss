@@ -1,335 +1,324 @@
-@import '../../../styles//variables.module.scss';
+@import '../../../styles/variables.module';
 
-.hoverIconButton {
-  color: #999;
-
-  &:hover {
-    color: var(--primary-color);
-    cursor: pointer;
-  }
-}
-
-.button {
-  appearance: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: none;
-  color: var(--primary-color);
-  font-size: 1rem;
-  margin: 0 1rem;
-  padding: 0 0.5rem;
-  white-space: nowrap;
-  width: 130px;
-  height: 40px;
-  border-radius: 6px;
-  cursor: pointer;
-  border: 1px solid currentcolor;
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  &:hover {
-    font-weight: bold;
-  }
-
-  &[data-role='copy-script'] {
-    svg {
-      path {
-        fill: currentcolor;
-      }
-    }
-  }
-
-  &[data-role='script-info'] {
-    background: var(--primary-color);
-    color: #fff;
+.container {
+  .hoverIconButton {
+    color: #999;
 
     &:hover {
-      color: #fff;
+      color: var(--primary-color);
+      cursor: pointer;
     }
   }
 
-  @media screen and (width < $largeBreakPoint) {
-    height: 30px;
-    font-size: 0.8rem;
-  }
-}
-
-.btcUtxo {
-  display: flex;
-  height: 20px;
-  padding: 0 8px;
-  gap: 4px;
-  justify-content: center;
-  align-items: center;
-  color: var(--btc-primary-color) !important;
-  font-size: 0.75rem;
-  white-space: nowrap;
-  border-radius: 4px;
-  border: 1px solid var(--btc-primary-color);
-  background: var(--btc-secondary-color);
-  cursor: pointer;
-  box-sizing: border-box;
-  line-height: 1;
-
-  a {
+  .button {
+    appearance: none;
     display: flex;
     align-items: center;
-    line-height: 1;
+    justify-content: space-between;
+    background: none;
+    color: var(--primary-color);
+    font-size: 1rem;
+    margin: 0 1rem;
+    padding: 0 0.5rem;
+    white-space: nowrap;
+    width: 130px;
+    height: 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid currentcolor;
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    &:hover {
+      font-weight: bold;
+    }
+
+    &[data-role='copy-script'] {
+      svg {
+        path {
+          fill: currentcolor;
+        }
+      }
+    }
+
+    &[data-role='script-info'] {
+      background: var(--primary-color);
+      color: #fff;
+
+      &:hover {
+        color: #fff;
+      }
+    }
+
+    @media screen and (width < $largeBreakPoint) {
+      height: 30px;
+      font-size: 0.8rem;
+    }
   }
 
-  svg {
-    width: 0.75rem;
-    height: 0.75rem;
-  }
-
-  @media screen and (width <= $mobileBreakPoint) {
-    height: 1rem;
-  }
-}
-
-.transactionDetailModalHeader {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  max-width: 100%;
-
-  .transactionDetailModalHeaderLeft {
-    max-width: 90%;
+  .btcUtxo {
     display: flex;
+    height: 20px;
+    padding: 0 8px;
+    gap: 4px;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    color: var(--btc-primary-color) !important;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    border-radius: 4px;
+    border: 1px solid var(--btc-primary-color);
+    background: var(--btc-secondary-color);
+    cursor: pointer;
+    box-sizing: border-box;
+    line-height: 1;
 
-    @media screen and (width <= $mobileBreakPoint) {
-      gap: 12px;
-      align-items: start;
-      flex-direction: column;
-    }
-
-    .mobileVision {
-      max-width: 100%;
+    a {
       display: flex;
       align-items: center;
-      gap: 12px;
+      line-height: 1;
     }
 
-    .cellStatusIcon {
-      svg:hover {
-        cursor: auto;
-      }
-
-      &[data-cell-status='live'] {
-        color: var(--primary-color);
-      }
-
-      &[data-cell-status='dead'] {
-        color: #999;
-      }
+    svg {
+      width: 0.75rem;
+      height: 0.75rem;
     }
 
-    .outpoint {
-      .copy {
-        appearance: none;
-        border: none;
-        background: none;
-        cursor: pointer;
+    @media screen and (width <= $mobileBreakPoint) {
+      height: 1rem;
+    }
+  }
 
-        svg {
-          vertical-align: middle;
-          pointer-events: none;
+  .transactionDetailModalHeader {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    max-width: 100%;
+
+    .transactionDetailModalHeaderLeft {
+      max-width: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+
+      @media screen and (width <= $mobileBreakPoint) {
+        gap: 12px;
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .mobileVision {
+        max-width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .cellStatusIcon {
+        svg:hover {
+          cursor: auto;
+        }
+
+        &[data-cell-status='live'] {
+          color: var(--primary-color);
+        }
+
+        &[data-cell-status='dead'] {
+          color: #999;
         }
       }
 
-      max-width: 90%;
-      display: flex;
-      padding: 5px 8px;
-      justify-content: center;
-      align-items: center;
-      gap: 4px;
-      border-radius: 16px;
-      border: 1px solid var(--E5E5E5, #e5e5e5);
-      background: #fafafa;
+      .outpoint {
+        .copy {
+          appearance: none;
+          border: none;
+          background: none;
+          cursor: pointer;
+
+          svg {
+            vertical-align: middle;
+            pointer-events: none;
+          }
+        }
+
+        max-width: 90%;
+        display: flex;
+        padding: 5px 8px;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+        border-radius: 16px;
+        border: 1px solid var(--E5E5E5, #e5e5e5);
+        background: #fafafa;
+      }
+
+      h2 {
+        margin: 0;
+        color: #333;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 1000;
+        line-height: normal;
+        text-transform: capitalize;
+      }
     }
-
-    h2 {
-      margin: 0;
-      color: #333;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 1000;
-      line-height: normal;
-      text-transform: capitalize;
-    }
-  }
-
-  > img {
-    align-self: center;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-  }
-
-  @media (width <= mobileBreakPoint) {
-    padding: 15px 0 15px 15px;
-    display: flex;
-    justify-content: space-between;
 
     > img {
       align-self: center;
-      width: 12px;
-      height: 12px;
-    }
-  }
-}
-
-.transactionDetailPanel {
-  width: 100%;
-  background-color: #fafafa;
-  padding: 8px 16px;
-
-  &:last-child {
-    padding-bottom: 16px;
-  }
-
-  @media (width <= mobileBreakPoint) {
-    margin-top: 10px;
-  }
-
-  .transactionDetailContent {
-    border: none;
-    width: 100%;
-    text-align: left;
-    max-height: 250px;
-    overflow-y: auto;
-    overflow-wrap: break-word;
-    white-space: pre-wrap;
-    word-break: break-all;
-    font-size: 16px;
-    color: #888;
-    font-weight: bold;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-
-    @media (width <= mobileBreakPoint) {
-      font-size: 10px;
-      padding: 10px;
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
     }
 
-    .transactionCellInfoValuePanel {
-      border-radius: 4px;
-      border: 1px solid #e5e5e5;
-      background: var(--Color, #fff);
-      padding: 16px;
+    @media screen and (width <= $mobileBreakPoint) {
+      padding: 15px 0 15px 15px;
+      display: flex;
+      justify-content: space-between;
 
-      &[data-state='1'],
-      &[data-state='2'],
-      &[data-state='4'] {
-        .jsonValue {
-          .title {
-            min-width: 120px;
-
-            @media (width <= mobileBreakPoint) {
-              min-width: 70px;
-            }
-          }
-        }
-      }
-
-      &[data-state='3'] {
-        .jsonValue {
-          .title {
-            min-width: 80px;
-
-            @media (width <= mobileBreakPoint) {
-              min-width: 40px;
-            }
-          }
-        }
-      }
-
-      &[data-state='5'] {
-        .jsonValue {
-          display: flex;
-          gap: 8px;
-          margin: 0 0 16px;
-
-          &:last-child {
-            margin: 0;
-          }
-
-          .title {
-            color: var(--666666, #666);
-            font-size: 14px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
-          }
-
-          .value {
-            color: #333;
-            font-size: 14px;
-            font-style: normal;
-            font-weight: 500;
-            line-height: normal;
-            text-transform: capitalize;
-            display: flex;
-            gap: 4px;
-
-            a {
-              color: #999;
-
-              &:hover {
-                color: var(--primary-color);
-              }
-            }
-          }
-        }
-      }
-
-      .jsonValue {
-        display: flex;
-        margin: 2px 0 2px 30px;
-
-        @media (width <= mobileBreakPoint) {
-          margin: 2px 0 2px 12px;
-        }
-
-        .value {
-          word-wrap: break-word;
-          word-break: break-all;
-        }
-      }
-    }
-  }
-
-  .transactionDetailCopy {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding-top: 16px;
-    width: 100%;
-
-    @media (width <= mobileBreakPoint) {
-      margin-top: 10px;
-
-      svg {
+      > img {
+        align-self: center;
         width: 12px;
         height: 12px;
-        margin-left: 6px;
       }
     }
   }
 
-  .transactionDetailLoading {
-    padding: 20px 0;
+  /* .transactionDetailPanel { */
+  /*   width: 100%; */
+  /*   background-color: #fafafa; */
+  /*   padding: 8px 16px; */
+  /*   &:last-child { */
+  /*     padding-bottom: 16px; */
+  /*   } */
+  /*   @media screen and (width <= $mobileBreakPoint) { */
+  /*     margin-top: 10px; */
+  /*   } */
+  /*   .transactionDetailContent { */
+  /*     border: none; */
+  /*     width: 100%; */
+  /*     text-align: left; */
+  /*     max-height: 250px; */
+  /*     overflow-y: auto; */
+  /*     overflow-wrap: break-word; */
+  /*     white-space: pre-wrap; */
+  /*     word-break: break-all; */
+  /*     font-size: 16px; */
+  /*     color: #888; */
+  /*     font-weight: bold; */
+  /*     border-bottom-left-radius: 4px; */
+  /*     border-bottom-right-radius: 4px; */
+  /*     @media screen and (width <= $mobileBreakPoint) { */
+  /*       font-size: 10px; */
+  /*       padding: 10px; */
+  /*     } */
+  /*     .transactionCellInfoValuePanel { */
+  /*       border-radius: 4px; */
+  /*       border: 1px solid #e5e5e5; */
+  /*       background: var(--Color, #fff); */
+  /*       padding: 16px; */
+  /*       &[data-state='1'], */
+  /*       &[data-state='2'], */
+  /*       &[data-state='4'] { */
+  /*         .jsonValue { */
+  /*           .title { */
+  /*             min-width: 120px; */
+  /*             @media screen and (width <= $mobileBreakPoint) { */
+  /*               min-width: 70px; */
+  /*             } */
+  /*           } */
+  /*         } */
+  /*       } */
 
-    @media (width <= mobileBreakPoint) {
-      padding: 10px 0;
-    }
-  }
+  /*       &[data-state='3'] { */
+  /*         .jsonValue { */
+  /*           .title { */
+  /*             min-width: 80px; */
+  /*             @media screen and (width <= $mobileBreakPoint) { */
+  /*               min-width: 40px; */
+  /*             } */
+  /*           } */
+  /*         } */
+  /*       } */
+
+  /*       &[data-state='5'] { */
+  /*         .jsonValue { */
+  /*           display: flex; */
+  /*           gap: 8px; */
+  /*           margin: 0 0 16px; */
+  /*           &:last-child { */
+  /*             margin: 0; */
+  /*           } */
+
+  /*           .title { */
+  /*             color: var(--666666, #666); */
+  /*             font-size: 14px; */
+  /*             font-style: normal; */
+  /*             font-weight: 400; */
+  /*             line-height: normal; */
+  /*           } */
+
+  /*           .value { */
+  /*             color: #333; */
+  /*             font-size: 14px; */
+  /*             font-style: normal; */
+  /*             font-weight: 500; */
+  /*             line-height: normal; */
+  /*             text-transform: capitalize; */
+  /*             display: flex; */
+  /*             gap: 4px; */
+
+  /*             a { */
+  /*               color: #999; */
+  /*               &:hover { */
+  /*                 color: var(--primary-color); */
+  /*               } */
+  /*             } */
+  /*           } */
+  /*         } */
+  /*       } */
+
+  /*       .jsonValue { */
+  /*         display: flex; */
+  /*         margin: 2px 0 2px 30px; */
+  /*         @media screen and (width <= $mobileBreakPoint) { */
+  /*           margin: 2px 0 2px 12px; */
+  /*         } */
+
+  /*         .value { */
+  /*           word-wrap: break-word; */
+  /*           word-break: break-all; */
+  /*         } */
+  /*       } */
+  /*     } */
+  /*   } */
+
+  /*   .transactionDetailCopy { */
+  /*     display: flex; */
+  /*     flex-direction: row; */
+  /*     align-items: center; */
+  /*     justify-content: center; */
+  /*     padding-top: 16px; */
+  /*     width: 100%; */
+
+  /*     @media screen and (width <= $mobileBreakPoint) { */
+  /*       margin-top: 10px; */
+  /*       svg { */
+  /*         width: 12px; */
+  /*         height: 12px; */
+  /*         margin-left: 6px; */
+  /*       } */
+  /*     } */
+  /*   } */
+
+  /*   .transactionDetailLoading { */
+  /*     padding: 20px 0; */
+  /*     @media screen and (width <= $mobileBreakPoint) { */
+  /*       padding: 10px 0; */
+  /*     } */
+  /*   } */
+  /* } */
 }

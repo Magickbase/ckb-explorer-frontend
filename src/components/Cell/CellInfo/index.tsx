@@ -373,7 +373,7 @@ export default ({ cell, onClose }: CellInfoProps) => {
   }
 
   return (
-    <TransactionDetailContainer ref={ref}>
+    <TransactionDetailContainer ref={ref} className={styles.container}>
       <div className={styles.transactionDetailModalHeader}>
         {isMobile ? (
           <div className={styles.transactionDetailModalHeaderLeft}>

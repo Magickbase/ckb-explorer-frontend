@@ -1,4 +1,4 @@
-@import '../../../styles//variables.module.scss';
+@import '../../../styles/variables.module';
 
 .transactionCellDetailModal {
   border-radius: 4px;
@@ -7,7 +7,7 @@
   padding: 24px 40px;
   width: 75%;
 
-  @media (width <= mobileBreakPoint) {
+  @media (width <= $mobileBreakPoint) {
     width: 90%;
     margin-top: 40%;
     padding: 10px;
