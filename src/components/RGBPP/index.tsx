@@ -32,7 +32,7 @@ const RGBPP = ({ transaction }: { transaction: Transaction }) => {
         }}
       >
         <div className={styles.rgbpp}>
-          <span>{t('transaction.view_rgbpp_digest')}</span>
+          <span>RGB++: {t(`rgbpp.transaction.${transaction.rgbTransferStep}`)}</span>
         </div>
       </SimpleButton>
       <SimpleModal isShow={showModal} setIsShow={setShowModal}>
