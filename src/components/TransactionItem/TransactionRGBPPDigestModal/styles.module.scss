@@ -71,7 +71,9 @@
 
   .txid,
   .commitment {
+    max-width: 100%;
     display: flex;
+    flex: 1 1;
     flex-shrink: 1;
     overflow: hidden;
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;

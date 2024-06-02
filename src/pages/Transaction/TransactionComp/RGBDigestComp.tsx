@@ -18,6 +18,8 @@ export const RGBDigestComp = ({ hash, txid }: { hash: string; txid?: string }) =
       : undefined,
   )
 
+  const { data: rgbDigest } = useQuery(['rgb-digest', hash], () => explorerService.api.fetchRGBDigest(hash))
+
   const { data: displayInputs } = useQuery(
     ['transaction_inputs', hash, 1, 10],
     async () => {
@@ -64,23 +66,26 @@ export const RGBDigestComp = ({ hash, txid }: { hash: string; txid?: string }) =
   }, [displayInputs, displayOutputs])
 
   const direction = useMemo(() => {
-    // FIXME: should be from API because inputs/outputs are paginated
-    const inputCellCount = displayInputs.data.filter(c => c.rgbInfo).length
-    const outputCellCount = displayOutputs.data.filter(c => c.rgbInfo).length
-    if (inputCellCount === outputCellCount) {
-      return TransactionLeapDirection.NONE
+    switch (rgbDigest?.data.leapDirection) {
+      case 'in':
+        return TransactionLeapDirection.IN
+      case 'out':
+        return TransactionLeapDirection.OUT
+      case 'within':
+        return TransactionLeapDirection.WITH_IN_BTC
+      default:
+        return TransactionLeapDirection.NONE
     }
-    if (inputCellCount > outputCellCount) {
-      return TransactionLeapDirection.OUT
-    }
-    return TransactionLeapDirection.IN
-  }, [displayInputs, displayOutputs])
+  }, [rgbDigest])
 
   return (
     <>
       <Card className={styles.transactionHeader}>
         <div className={styles.headerContent}>
           <p>{t('transaction.rgb_digest')} </p>
+          {direction !== TransactionLeapDirection.NONE && (
+            <span className={styles.leap}>{t(`address.leap_${direction}`)}</span>
+          )}
         </div>
       </Card>
       <Card className={styles.digestContent}>
