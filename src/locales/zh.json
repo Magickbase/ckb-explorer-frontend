@@ -455,8 +455,8 @@
         "cells": "Cells",
         "view_on_bitcoin_explorer": "在 Bitcoin 浏览器查看",
         "step": {
-          "isomorphic": "Isomorphic",
-          "unlock": "Unlock"
+          "isomorphic": "同构",
+          "unlock": "解锁"
         }
       },
       "amount": "数量"
