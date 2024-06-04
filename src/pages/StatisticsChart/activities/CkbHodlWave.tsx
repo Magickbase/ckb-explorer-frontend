@@ -25,8 +25,8 @@ const useTooltip = () => {
   }: SeriesItem & {
     data: [string, string, string, string, string, string, string, string, string]
   }): string => {
-    if (seriesName === t('statistic.latest_day')) {
-      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.latest_day'), currentLanguage)} ${handleAxis(
+    if (seriesName === t('statistic.24h')) {
+      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.24h'), currentLanguage)} ${handleAxis(
         data[1],
         2,
       )}% </div>`
@@ -35,7 +35,7 @@ const useTooltip = () => {
       return `<div>${tooltipColor(color)}${widthSpan(t('statistic.day_to_one_week'), currentLanguage)} ${handleAxis(
         data[2],
         2,
-      )}</div>`
+      )}%</div>`
     }
     if (seriesName === t('statistic.one_week_to_one_month')) {
       return `<div>${tooltipColor(color)}${widthSpan(
@@ -124,7 +124,7 @@ const useOption = (
         ? []
         : [
             {
-              name: t('statistic.latest_day'),
+              name: t('statistic.24h'),
             },
             {
               name: t('statistic.day_to_one_week'),
@@ -149,7 +149,7 @@ const useOption = (
             },
           ],
       selected: {
-        [t('statistic.latest_day')]: true,
+        [t('statistic.24h')]: true,
         [t('statistic.day_to_one_week')]: true,
         [t('statistic.one_week_to_one_month')]: true,
         [t('statistic.one_month_to_three_months')]: true,
@@ -187,7 +187,7 @@ const useOption = (
     ],
     series: [
       {
-        name: t('statistic.latest_day'),
+        name: t('statistic.24h'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
