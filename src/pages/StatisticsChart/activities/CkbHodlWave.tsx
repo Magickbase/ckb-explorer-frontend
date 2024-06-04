@@ -102,7 +102,7 @@ const useOption = (
   }
   const parseTooltip = useTooltip()
   return {
-    color: chartColor.colors,
+    color: chartColor.moreColors,
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
