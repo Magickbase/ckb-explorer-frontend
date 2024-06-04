@@ -202,7 +202,7 @@ export const TransactionOverviewCard: FC<{
   if (isRGB && transaction.rgbTransferStep) {
     overviewItems.push({
       title: 'RGB++',
-      content: t(`rgbpp.transaction.${transaction.rgbTransferStep}`),
+      content: t(`rgbpp.transaction.step.${transaction.rgbTransferStep}`),
     })
   }
 
