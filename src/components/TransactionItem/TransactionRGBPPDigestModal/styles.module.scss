@@ -82,7 +82,7 @@
       gap: 8px;
     }
 
-    @media screen and (max-width: $mobileBreakPoint) {
+    @media screen and (width <= 814px) {
       flex-direction: column;
       gap: 4px;
     }
