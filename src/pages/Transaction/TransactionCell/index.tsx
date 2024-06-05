@@ -7,18 +7,6 @@ import { parseUDTAmount } from '../../../utils/number'
 import { parseSimpleDate } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
 import { shannonToCkb, shannonToCkbDecimal, parseSince } from '../../../utils/util'
-import {
-  TransactionCellContentPanel,
-  TransactionCellDetailPanel,
-  TransactionCellHashPanel,
-  TransactionCellPanel,
-  TransactionCellCardPanel,
-  TransactionCellAddressPanel,
-  TransactionCellInfoPanel,
-  TransactionCellMobileItem,
-  TransactionCellNftInfo,
-  TransactionCellCardSeparate,
-} from './styled'
 import TransactionCellArrow from '../../../components/Transaction/TransactionCellArrow'
 import Capacity from '../../../components/Capacity'
 import NervosDAODepositIcon from '../../../assets/nervos_dao_cell.png'
@@ -69,7 +57,7 @@ export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, is
     return (
       <AddressText
         linkProps={{
-          className: 'transactionCellAddressLink',
+          className: styles.transactionCellAddressLink,
           to: `/address/${address}`,
         }}
       >
@@ -78,7 +66,9 @@ export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, is
     )
   }
   return (
-    <span className="transactionCellAddressNoLink">{isCellBase ? 'Cellbase' : t('address.unable_decode_address')}</span>
+    <span className={styles.transactionCellAddressNoLink}>
+      {isCellBase ? 'Cellbase' : t('address.unable_decode_address')}
+    </span>
   )
 }
 
@@ -114,11 +104,11 @@ const TransactionCellIndexAddress = ({
     // ignore
   }
   return (
-    <TransactionCellAddressPanel>
-      <div className="transactionCellIndex">
+    <div className={styles.transactionCellAddressPanel}>
+      <div className={styles.transactionCellIndex}>
         <div>{`#${index}`}</div>
       </div>
-      <TransactionCellHashPanel highLight={cell.addressHash !== null}>
+      <div className={styles.transactionCellHashPanel} data-is-highlight={cell.addressHash !== null}>
         {!cell.fromCellbase && ioType === IOType.Input && (
           <span>
             <TransactionCellArrow cell={cell} ioType={ioType} />
@@ -136,8 +126,8 @@ const TransactionCellIndexAddress = ({
             <LockTimeIcon className={styles.locktime} />
           </Tooltip>
         ) : null}
-      </TransactionCellHashPanel>
-    </TransactionCellAddressPanel>
+      </div>
+    </div>
   )
 }
 
@@ -145,7 +135,7 @@ const useParseNftInfo = (cell: Cell) => {
   const { t } = useTranslation()
   if (cell.cellType === 'nrc_721_token') {
     const nftInfo = cell.extraInfo
-    return <TransactionCellNftInfo>{`${nftInfo.symbol} #${nftInfo.amount}`}</TransactionCellNftInfo>
+    return <div className={styles.transactionCellNftInfo}>{`${nftInfo.symbol} #${nftInfo.amount}`}</div>
   }
 
   if (cell.cellType === 'm_nft_issuer') {
@@ -161,14 +151,16 @@ const useParseNftInfo = (cell: Cell) => {
     const className = nftInfo.className ? sliceNftName(nftInfo.className) : t('transaction.unknown_nft')
     const limit = nftInfo.total === '0' ? t('transaction.nft_unlimited') : t('transaction.nft_limited')
     const total = nftInfo.total === '0' ? '' : nftInfo.total
-    return <TransactionCellNftInfo>{`${className}\n${limit} ${total}`}</TransactionCellNftInfo>
+    return <div className={styles.transactionCellNftInfo}>{`${className}\n${limit} ${total}`}</div>
   }
 
   if (cell.cellType === 'm_nft_token') {
     const nftInfo = cell.extraInfo
     const className = nftInfo.className ? sliceNftName(nftInfo.className) : t('transaction.unknown_nft')
     const total = nftInfo.total === '0' ? '' : ` / ${nftInfo.total}`
-    return <TransactionCellNftInfo>{`${className}\n#${parseInt(nftInfo.tokenId, 16)}${total}`}</TransactionCellNftInfo>
+    return (
+      <div className={styles.transactionCellNftInfo}>{`${className}\n#${parseInt(nftInfo.tokenId, 16)}${total}`}</div>
+    )
   }
 }
 
@@ -258,18 +250,16 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       break
   }
   return (
-    <TransactionCellDetailPanel isWithdraw={cell.cellType === 'nervos_dao_withdrawing'}>
-      <div className="transactionCellDetailPanel">
-        {tooltip ? (
-          <Tooltip placement="top" title={tooltip}>
-            <img src={detailIcon} alt="cell detail" />
-          </Tooltip>
-        ) : (
-          detailIcon && <img src={detailIcon} alt="cell detail" />
-        )}
-        <div>{detailTitle}</div>
-      </div>
-    </TransactionCellDetailPanel>
+    <div className={styles.transactionCellDetailPanel} data-is-withdraw={cell.cellType === 'nervos_dao_withdrawing'}>
+      {tooltip ? (
+        <Tooltip placement="top" title={tooltip}>
+          <img src={detailIcon} alt="cell detail" />
+        </Tooltip>
+      ) : (
+        detailIcon && <img src={detailIcon} alt="cell detail" />
+      )}
+      <div>{detailTitle}</div>
+    </div>
   )
 }
 
@@ -284,7 +274,7 @@ export const TransactionCellInfo = ({
 }) => {
   const [showModal, setShowModal] = useState(false)
   return (
-    <TransactionCellInfoPanel>
+    <div className={styles.transactionCellInfoPanel}>
       <SimpleButton
         className={isDefaultStyle ? 'transactionCellInfoContent' : ''}
         onClick={() => {
@@ -298,7 +288,7 @@ export const TransactionCellInfo = ({
       <SimpleModal isShow={showModal} setIsShow={setShowModal}>
         <CellModal cell={cell} onClose={() => setShowModal(false)} />
       </SimpleModal>
-    </TransactionCellInfoPanel>
+    </div>
   )
 }
 
@@ -328,6 +318,13 @@ const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
   return <Capacity capacity={shannonToCkb(cell.capacity)} layout="responsive" />
 }
 
+const TransactionCellMobileItem = ({ title, value = null }: { title: string | ReactNode; value?: ReactNode }) => (
+  <div className={styles.transactionCellCardContent}>
+    <div className={styles.transactionCellCardTitle}>{title}</div>
+    <div className={styles.transactionCellCardValue}>{value}</div>
+  </div>
+)
+
 export default ({
   cell,
   ioType,
@@ -356,8 +353,8 @@ export default ({
 
   if (isMobile) {
     return (
-      <TransactionCellCardPanel>
-        <TransactionCellCardSeparate />
+      <div className={styles.transactionCellCardPanel}>
+        <div className={styles.transactionCellCardSeparate} />
         <TransactionCellMobileItem
           title={
             cell.fromCellbase && ioType === IOType.Input ? (
@@ -385,14 +382,14 @@ export default ({
             />
           </>
         )}
-      </TransactionCellCardPanel>
+      </div>
     )
   }
 
   return (
-    <TransactionCellPanel id={ioType === IOType.Output ? `output_${index}_${txHash}` : ''}>
-      <TransactionCellContentPanel isCellbase={cell.fromCellbase}>
-        <div className="transactionCellAddress">
+    <div className={styles.transactionCellPanel} id={ioType === IOType.Output ? `output_${index}_${txHash}` : ''}>
+      <div className={styles.transactionCellContentPanel} data-is-cell-base={cell.fromCellbase}>
+        <div className={styles.transactionCellAddress}>
           {cell.fromCellbase && ioType === IOType.Input ? (
             <Cellbase cell={cell} isDetail />
           ) : (
@@ -400,18 +397,18 @@ export default ({
           )}
         </div>
 
-        <div className="transactionCellDetail">
+        <div className={styles.transactionCellDetail}>
           {cell.fromCellbase && ioType === IOType.Input ? cellbaseReward : <TransactionCellDetail cell={cell} />}
         </div>
 
-        <div className="transactionCellCapacity">
+        <div className={styles.transactionCellCapacity}>
           <TransactionCellCapacityAmount cell={cell} />
         </div>
 
-        <div className="transactionDetailCellInfo">
+        <div className={styles.transactionDetailCellInfo}>
           <TransactionCellInfo cell={cell}>Cell Info</TransactionCellInfo>
         </div>
-      </TransactionCellContentPanel>
-    </TransactionCellPanel>
+      </div>
+    </div>
   )
 }
