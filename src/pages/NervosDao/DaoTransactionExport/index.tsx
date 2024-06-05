@@ -55,10 +55,14 @@ const ExportNervosDaoTransactions = () => {
               ? {
                   'start-date': params.startDate ? dayjs(params.startDate).format('YYYY-MM-DD') : undefined,
                   'end-date': params.endDate ? dayjs(params.endDate).format('YYYY-MM-DD') : undefined,
+                  'from-height': undefined,
+                  'to-height': undefined,
                 }
               : {}),
             ...(params.tab === 'height'
               ? {
+                  'start-date': undefined,
+                  'end-date': undefined,
                   'from-height': params.fromHeight ? params.fromHeight.toString() : undefined,
                   'to-height': params.toHeight ? params.toHeight.toString() : undefined,
                 }
