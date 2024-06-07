@@ -46,9 +46,6 @@ const BtcTransaction: FC<{
             >
               <EllipsisMiddle className="monospace" text={tx.txid} />
             </a>
-            <div className={styles.confirmation}>
-              <span>Bitcoin TX: {tx.confirmations} Confirmed</span>
-            </div>
           </h3>
           {time && tx.confirmations ? (
             <time dateTime={time.toISOString()}>{`${tx.confirmations.toLocaleString('en')} Confirmations (${time.format(
