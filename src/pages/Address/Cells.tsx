@@ -225,7 +225,7 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
     <li key={cell.txHash + cell.cellIndex} className={styles.card}>
       <TransactionCellInfo cell={cellInfo} isDefaultStyle={false}>
         <Tooltip placement="top" title={`${title} CKB (${parsedBlockCreateAt})`}>
-          <h5>
+          <h5 className={styles.cellTitle}>
             <span>{title}</span>
             <span> CKB ({parsedBlockCreateAt})</span>
           </h5>
