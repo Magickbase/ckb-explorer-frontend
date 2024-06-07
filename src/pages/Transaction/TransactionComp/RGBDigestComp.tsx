@@ -71,7 +71,7 @@ export const RGBDigestComp = ({ hash, txid }: { hash: string; txid?: string }) =
         return TransactionLeapDirection.IN
       case 'out':
         return TransactionLeapDirection.OUT
-      case 'within':
+      case 'withinBTC':
         return TransactionLeapDirection.WITH_IN_BTC
       default:
         return TransactionLeapDirection.NONE
