@@ -89,7 +89,7 @@ export const RGBDigestComp = ({ hash, txid }: { hash: string; txid?: string }) =
         </div>
       </Card>
       <Card className={styles.digestContent}>
-        <TransactionRGBPPDigestContent hash={hash} leapDirection={direction} />
+        <TransactionRGBPPDigestContent hash={hash} />
         <div className={styles.btcTxContent}>
           {isBtcTxLoading ? <SmallLoading /> : null}
           {btcTx?.vout.some(v => v.scriptPubKey.asm.includes('OP_RETURN')) ? (

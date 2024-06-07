@@ -18,18 +18,25 @@ import { useIsMobile } from '../../../hooks'
 import { Link } from '../../Link'
 import config from '../../../config'
 
-export const TransactionRGBPPDigestContent = ({
-  leapDirection,
-  hash,
-}: {
-  leapDirection: TransactionLeapDirection
-  hash: string
-}) => {
+export const TransactionRGBPPDigestContent = ({ hash }: { hash: string }) => {
   const { t } = useTranslation()
   const setToast = useSetToast()
   const isMobile = useIsMobile()
 
   const { data, isFetched } = useQuery(['rgb-digest', hash], () => explorerService.api.fetchRGBDigest(hash))
+
+  const direction = useMemo(() => {
+    switch (data?.data.leapDirection) {
+      case 'in':
+        return TransactionLeapDirection.IN
+      case 'out':
+        return TransactionLeapDirection.OUT
+      case 'withinBTC':
+        return TransactionLeapDirection.WITH_IN_BTC
+      default:
+        return TransactionLeapDirection.NONE
+    }
+  }, [data])
 
   const transfers = useMemo(() => {
     const m = new Map<string, LiteTransfer.Transfer[]>()
@@ -125,9 +132,9 @@ export const TransactionRGBPPDigestContent = ({
             {typeof data.data.confirmations === 'number' && (
               <span className={styles.blockConfirm}>({data.data.confirmations} Confirmations on Bitcoin)</span>
             )}
-            {leapDirection !== TransactionLeapDirection.NONE ? (
-              <Tooltip placement="top" title={t(`address.leap_${leapDirection}_tip`)}>
-                <span className={styles.leap}>{t(`address.leap_${leapDirection}`)}</span>
+            {direction !== TransactionLeapDirection.NONE ? (
+              <Tooltip placement="top" title={t(`address.leap_${direction}_tip`)}>
+                <span className={styles.leap}>{t(`address.leap_${direction}`)}</span>
               </Tooltip>
             ) : null}
           </div>
