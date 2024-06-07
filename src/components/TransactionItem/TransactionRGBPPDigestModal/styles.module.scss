@@ -90,6 +90,7 @@
 
   .txid {
     gap: 8px;
+    min-width: 500px;
   }
 
   .commitment {
@@ -100,7 +101,6 @@
       flex: 1;
       flex-shrink: 0;
       overflow: hidden;
-      max-width: 63ch;
     }
   }
 
