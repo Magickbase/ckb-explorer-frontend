@@ -388,7 +388,7 @@ export default ({
 
   return (
     <div className={styles.transactionCellPanel} id={ioType === IOType.Output ? `output_${index}_${txHash}` : ''}>
-      <div className={styles.transactionCellContentPanel} data-is-cell-base={cell.fromCellbase}>
+      <div className={styles.transactionCellContentPanel} data-is-cell-base={cell.fromCellbase ?? false}>
         <div className={styles.transactionCellAddress}>
           {cell.fromCellbase && ioType === IOType.Input ? (
             <Cellbase cell={cell} isDetail />
