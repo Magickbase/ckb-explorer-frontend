@@ -67,7 +67,7 @@
     margin-right: 21px;
   }
 
-  @media (width <= mobilebreakpoint) {
+  @media (max-width: $mobileBreakPoint) {
     margin-left: 0;
     margin-top: 5px;
     height: 16px;

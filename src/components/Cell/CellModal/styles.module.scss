@@ -7,9 +7,10 @@
   padding: 24px 40px;
   width: 75%;
 
-  @media (width <= mobileBreakPoint) {
+  @media (max-width: $mobileBreakPoint) {
     width: 90%;
     margin-top: 40%;
+    margin-left: 15% auto;
     padding: 10px;
   }
 }
