@@ -160,8 +160,8 @@
       "migration-notice": "浏览器服务将于 {{time}} 进行迁移, 可能出现短时不可用状态"
     },
     "cell": {
-      "live_cell": "未消耗Cell",
-      "dead_cell": "已消耗Cell",
+      "live_cell": "未消耗 Cell",
+      "dead_cell": "已消耗 Cell",
       "cell_info": "Cell 信息"
     },
     "navbar": {
