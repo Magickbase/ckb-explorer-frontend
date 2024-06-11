@@ -23,7 +23,7 @@ import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
 import { ReactComponent as ViewIcon } from '../../../assets/view-icon.svg'
 import { ReactComponent as PendingBindIcon } from '../../../assets/pending-bind-icon.svg'
 import { ReactComponent as BindIcon } from '../../../assets/bind-icon.svg'
-import { ReactComponent as UnBindIcon } from '../../../assets/unbind-icon.svg'
+import { ReactComponent as UnboundIcon } from '../../../assets/unbind-icon.svg'
 import { ReactComponent as PointIcon } from '../../../assets/point.svg'
 import { ReactComponent as OuterLinkIcon } from './outer_link_icon.svg'
 import { ReactComponent as ScriptHashIcon } from './script_hash_icon.svg'
@@ -366,7 +366,7 @@ export default ({ cell, onClose }: CellInfoProps) => {
       case 'bound':
         return <BindIcon />
       case 'unbound':
-        return <UnBindIcon />
+        return <UnboundIcon />
       default:
         return null
     }
