@@ -151,7 +151,7 @@
       align-items: center;
       gap: 4px;
       border-radius: 16px;
-      border: 1px solid var(--E5E5E5, #e5e5e5);
+      border: 1px solid var(--primary-color, #e5e5e5);
       background: #fafafa;
     }
 
@@ -173,7 +173,7 @@
     height: 16px;
   }
 
-  @media (width <= mobileBreakPoint) {
+  @media (max-width: $mobileBreakPoint) {
     padding: 15px 0 15px 15px;
     display: flex;
     justify-content: space-between;
@@ -195,7 +195,7 @@
     padding-bottom: 16px;
   }
 
-  @media (width <= mobileBreakPoint) {
+  @media (max-width: $mobileBreakPoint) {
     margin-top: 10px;
   }
 
@@ -214,7 +214,7 @@
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
 
-    @media (width <= mobileBreakPoint) {
+    @media (max-width: $mobileBreakPoint) {
       font-size: 10px;
       padding: 10px;
     }
@@ -232,7 +232,7 @@
           .title {
             min-width: 120px;
 
-            @media (width <= mobileBreakPoint) {
+            @media (max-width: $mobileBreakPoint) {
               min-width: 70px;
             }
           }
@@ -244,7 +244,7 @@
           .title {
             min-width: 80px;
 
-            @media (width <= mobileBreakPoint) {
+            @media (max-width: $mobileBreakPoint) {
               min-width: 40px;
             }
           }
@@ -294,7 +294,7 @@
         display: flex;
         margin: 2px 0 2px 30px;
 
-        @media (width <= mobileBreakPoint) {
+        @media (max-width: $mobileBreakPoint) {
           margin: 2px 0 2px 12px;
         }
 
@@ -314,7 +314,7 @@
     padding-top: 16px;
     width: 100%;
 
-    @media (width <= mobileBreakPoint) {
+    @media (max-width: $mobileBreakPoint) {
       margin-top: 10px;
 
       svg {
@@ -328,7 +328,7 @@
   .transactionDetailLoading {
     padding: 20px 0;
 
-    @media (width <= mobileBreakPoint) {
+    @media (max-width: $mobileBreakPoint) {
       padding: 10px 0;
     }
   }
