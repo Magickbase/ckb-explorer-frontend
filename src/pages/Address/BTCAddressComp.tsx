@@ -129,7 +129,8 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
                     count={+address.liveCellsCount}
                     udts={udts}
                     isUnBounded
-                    inscriptions={inscriptions}
+                    // TODO invalid asset will be added in the future
+                    inscriptions={[]}
                   />
                 </div>
               </AddressAssetsTabPane>
