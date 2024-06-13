@@ -115,7 +115,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
         ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
         : 'Unknown UDT amount'
       detailInfo = cell.extraInfo.amount
-      assetLink = `/udt/${cell.typeHash}`
+      assetLink = `/sudt/${cell.typeHash}`
       break
     }
     case 'xudt_compatible': {
