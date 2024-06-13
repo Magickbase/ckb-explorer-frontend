@@ -224,7 +224,7 @@
       width: 70px;
       text-align: start;
 
-      @media (width <= xxlBreakPoint) {
+      @media (max-width: $xxlBreakPoint) {
         width: 50px;
       }
     }
@@ -298,14 +298,6 @@
     display: flex;
     font-size: 16px;
     color: #000;
-  }
-
-  a {
-    color: var(--primary-color);
-  }
-
-  a:hover {
-    color: var(--primary-color);
   }
 }
 
