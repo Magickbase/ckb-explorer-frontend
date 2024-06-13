@@ -225,9 +225,9 @@
       background: var(--Color, #fff);
       padding: 16px;
 
-      &[data-state='1'],
-      &[data-state='2'],
-      &[data-state='4'] {
+      &[data-state='lock'],
+      &[data-state='type'],
+      &[data-state='capacity'] {
         .jsonValue {
           .title {
             min-width: 120px;
@@ -239,7 +239,7 @@
         }
       }
 
-      &[data-state='3'] {
+      &[data-state='data'] {
         .jsonValue {
           .title {
             min-width: 80px;
@@ -251,7 +251,7 @@
         }
       }
 
-      &[data-state='5'] {
+      &[data-state='rgbpp'] {
         .jsonValue {
           display: flex;
           gap: 8px;

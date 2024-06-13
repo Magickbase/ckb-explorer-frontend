@@ -276,13 +276,13 @@ export const TransactionCellInfo = ({
   return (
     <div className={styles.transactionCellInfoPanel}>
       <SimpleButton
-        className={isDefaultStyle ? 'transactionCellInfoContent' : ''}
+        className={isDefaultStyle ? styles.transactionCellInfoContent : ''}
         onClick={() => {
           setShowModal(true)
         }}
       >
         <div>{children}</div>
-        <div className="transactionCellInfoSeparate" />
+        <div className={styles.transactionCellInfoSeparate} />
       </SimpleButton>
 
       <SimpleModal isShow={showModal} setIsShow={setShowModal}>

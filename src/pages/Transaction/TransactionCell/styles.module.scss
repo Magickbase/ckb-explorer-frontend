@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import '../../../styles/variables.module';
 
 .locktime {
@@ -262,8 +263,6 @@
       background: rgb(0 0 0 / 60%);
       width: 45px;
       height: 1px;
-
-      // transform: ${() => `scaleY(${Math.ceil((1.0 / window.devicePixelRatio) * 10.0) / 10.0})`};
 
       @media (max-width: $mobileBreakPoint) {
         width: auto;

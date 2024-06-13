@@ -40,11 +40,11 @@ import { Link } from '../../Link'
 import { CellInfoProps } from './types'
 
 enum CellInfo {
-  LOCK = 1,
-  TYPE = 2,
-  DATA = 3,
-  CAPACITY = 4,
-  RGBPP,
+  LOCK = 'lock',
+  TYPE = 'type',
+  DATA = 'data',
+  CAPACITY = 'capacity',
+  RGBPP = 'rgbpp',
 }
 
 type CapacityUsage = Record<'declared' | 'occupied', string | null>
@@ -430,8 +430,8 @@ export default ({ cell, onClose }: CellInfoProps) => {
         <TransactionCellDetailTab
           tabBarStyle={{ fontSize: '10px' }}
           onTabClick={key => {
-            const state = parseInt(key, 10)
-            if (state && !Number.isNaN(state)) {
+            const state = key as CellInfo
+            if (state) {
               changeType(state)
             }
           }}
