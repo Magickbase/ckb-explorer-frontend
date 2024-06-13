@@ -208,6 +208,7 @@
       "estimated_epoch_time": "Estimated Epoch Time",
       "transactions_per_minute": "Transactions per Minute",
       "transactions_last_24hrs": "Transactions in Last 24hrs",
+      "tags": "Tags",
       "nervos_dao": "Nervos DAO",
       "mainnet": "Lina Mainnet",
       "testnet": "Testnet"

@@ -167,9 +167,16 @@ dt {
     }
   }
 
-  .colName {
-    width: 40%;
+  .colTags {
+    .tags {
+      flex-wrap: wrap;
+      display: flex;
+      gap: 8px;
+      margin-left: 8px;
+    }
+  }
 
+  .colName {
     .container {
       display: flex;
       position: relative;
@@ -189,13 +196,6 @@ dt {
       .right {
         display: flex;
         align-items: center;
-
-        .tags {
-          flex-wrap: wrap;
-          display: flex;
-          gap: 8px;
-          margin-left: 8px;
-        }
 
         .symbolAndName {
           display: flex;

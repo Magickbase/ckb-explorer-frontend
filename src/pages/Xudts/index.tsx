@@ -9,6 +9,7 @@ import { Link } from '../../components/Link'
 import Content from '../../components/Content'
 import Pagination from '../../components/Pagination'
 import SortButton from '../../components/SortButton'
+import FilterButton from '../../components/FilterButton'
 import { TokensPanel, TokensContentEmpty, TokensLoadingPanel } from './styled'
 import { localeNumberString } from '../../utils/number'
 import Loading from '../../components/Loading'
@@ -155,7 +156,6 @@ const TokenTable: FC<{
       className: styles.colName,
       render: (_, token) => {
         const symbol = token.symbol || `#${token.typeHash.substring(token.typeHash.length - 4)}`
-        const tags = token.xudtTags ?? []
         return (
           <div className={styles.container}>
             <img className={styles.icon} src={token.iconFile ? token.iconFile : XUDTTokenIcon} alt="token icon" />
@@ -172,15 +172,26 @@ const TokenTable: FC<{
                   symbol
                 )}
               </div>
-              <div className={styles.tags}>
-                {tags.map(tag => (
-                  <XUDTTag tagName={tag} />
-                ))}
-              </div>
             </div>
           </div>
         )
       },
+    },
+    {
+      title: (
+        <>
+          {t('xudt.tags')}
+          <FilterButton filterName="type" key="" filteredList={[]} />
+        </>
+      ),
+      className: styles.colTags,
+      render: (_, token) => (
+        <div className={styles.tags}>
+          {token.xudtTags?.map(tag => (
+            <XUDTTag tagName={tag} />
+          ))}
+        </div>
+      ),
     },
     {
       title: (

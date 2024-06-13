@@ -218,6 +218,7 @@
       "estimated_epoch_time": "预计 Epoch 时间",
       "transactions_per_minute": "每分钟的交易数",
       "transactions_last_24hrs": "最近 24 小时的交易数",
+      "tags": "Tags",
       "nervos_dao": "Nervos DAO",
       "mainnet": "Lina Mainnet",
       "testnet": "Testnet"
