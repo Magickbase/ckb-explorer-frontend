@@ -18,7 +18,9 @@ export const RGBDigestComp = ({ hash, txid }: { hash: string; txid?: string }) =
       : undefined,
   )
 
-  const { data: rgbDigest } = useQuery(['rgb-digest', hash], () => explorerService.api.fetchRGBDigest(hash))
+  const { data: rgbDigest, isFetched: isDigestFetched } = useQuery(['rgb-digest', hash], () =>
+    explorerService.api.fetchRGBDigest(hash),
+  )
 
   const { data: displayInputs } = useQuery(
     ['transaction_inputs', hash, 1, 10],
@@ -89,7 +91,9 @@ export const RGBDigestComp = ({ hash, txid }: { hash: string; txid?: string }) =
         </div>
       </Card>
       <Card className={styles.digestContent}>
-        <TransactionRGBPPDigestContent hash={hash} />
+        {rgbDigest && (
+          <TransactionRGBPPDigestContent hash={hash} digest={rgbDigest?.data} isFetched={isDigestFetched} />
+        )}
         <div className={styles.btcTxContent}>
           {isBtcTxLoading ? <SmallLoading /> : null}
           {btcTx?.vout.some(v => v.scriptPubKey.asm.includes('OP_RETURN')) ? (

@@ -17,6 +17,13 @@
 .header {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 10px;
+
+  .left {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
 
   > span {
     font-family: Roboto, sans-serif;
