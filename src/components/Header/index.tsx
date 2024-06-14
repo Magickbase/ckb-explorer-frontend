@@ -102,7 +102,7 @@ export default () => {
         )}
       </HeaderPanel>
       <MaintainAlert />
-      {activate && <NodeAlert />}
+      {activate ? <NodeAlert /> : null}
       <Sheet />
       {mobileMenuVisible && isMobile && <MobileMenu hideMobileMenu={() => setMobileMenuVisible(false)} />}
     </div>
