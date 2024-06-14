@@ -177,7 +177,7 @@ export const UDTOverviewCard = ({
 
         <div className={styles.tags}>
           {xudt?.xudtTags?.map(tag => (
-            <XUDTTag tagName={tag} />
+            <XUDTTag key={tag} tagName={tag} />
           ))}
         </div>
 

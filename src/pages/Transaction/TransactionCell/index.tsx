@@ -2,7 +2,7 @@ import { useState, ReactNode, FC } from 'react'
 import { Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { Link } from '../../../components/Link'
-import { CellType } from '../../../constants/common'
+import { IOType } from '../../../constants/common'
 import { parseUDTAmount } from '../../../utils/number'
 import { parseSimpleDate } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
@@ -84,19 +84,19 @@ export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, is
 
 const TransactionCellIndexAddress = ({
   cell,
-  cellType,
+  ioType,
   index,
   isAddrNew,
 }: {
   cell: Cell
-  cellType: CellType
+  ioType: IOType
   index: number
   isAddrNew: boolean
 }) => {
   const { t } = useTranslation()
   const deprecatedAddr = useDeprecatedAddr(cell.addressHash)!
   const newAddr = useNewAddr(cell.addressHash)
-  const address = !isAddrNew ? deprecatedAddr : newAddr
+  const address = isAddrNew ? newAddr : deprecatedAddr
 
   let since
   try {
@@ -119,13 +119,13 @@ const TransactionCellIndexAddress = ({
         <div>{`#${index}`}</div>
       </div>
       <TransactionCellHashPanel highLight={cell.addressHash !== null}>
-        {!cell.fromCellbase && cellType === CellType.Input && (
+        {!cell.fromCellbase && ioType === IOType.Input && (
           <span>
-            <TransactionCellArrow cell={cell} cellType={cellType} />
+            <TransactionCellArrow cell={cell} ioType={ioType} />
           </span>
         )}
         <Addr address={cell.rgbInfo?.address ?? address} isCellBase={cell.fromCellbase} />
-        {cellType === CellType.Output && <TransactionCellArrow cell={cell} cellType={cellType} />}
+        {ioType === IOType.Output && <TransactionCellArrow cell={cell} ioType={ioType} />}
         {since ? (
           <Tooltip
             placement="top"
@@ -339,14 +339,14 @@ const TransactionCellMobileItem = ({ title, value = null }: { title: string | Re
 
 export default ({
   cell,
-  cellType,
+  ioType,
   index,
   txHash,
   showReward,
   isAddrNew,
 }: {
   cell: Cell
-  cellType: CellType
+  ioType: IOType
   index: number
   txHash?: string
   showReward?: boolean
@@ -361,14 +361,14 @@ export default ({
         <div className="transactionCellCardSeparate" />
         <TransactionCellMobileItem
           title={
-            cell.fromCellbase && cellType === CellType.Input ? (
-              <Cellbase cell={cell} cellType={cellType} isDetail />
+            cell.fromCellbase && ioType === IOType.Input ? (
+              <Cellbase cell={cell} ioType={ioType} isDetail />
             ) : (
-              <TransactionCellIndexAddress cell={cell} cellType={cellType} index={index} isAddrNew={isAddrNew} />
+              <TransactionCellIndexAddress cell={cell} ioType={ioType} index={index} isAddrNew={isAddrNew} />
             )
           }
         />
-        {cell.fromCellbase && cellType === CellType.Input ? (
+        {cell.fromCellbase && ioType === IOType.Input ? (
           <TransactionReward showReward={showReward} cell={cell} />
         ) : (
           <>
@@ -391,18 +391,18 @@ export default ({
   }
 
   return (
-    <TransactionCellPanel id={cellType === CellType.Output ? `output_${index}_${txHash}` : ''}>
+    <TransactionCellPanel id={ioType === IOType.Output ? `output_${index}_${txHash}` : ''}>
       <TransactionCellContentPanel isCellbase={cell.fromCellbase}>
         <div className="transactionCellAddress">
-          {cell.fromCellbase && cellType === CellType.Input ? (
-            <Cellbase cell={cell} cellType={cellType} isDetail />
+          {cell.fromCellbase && ioType === IOType.Input ? (
+            <Cellbase cell={cell} ioType={ioType} isDetail />
           ) : (
-            <TransactionCellIndexAddress cell={cell} cellType={cellType} index={index} isAddrNew={isAddrNew} />
+            <TransactionCellIndexAddress cell={cell} ioType={ioType} index={index} isAddrNew={isAddrNew} />
           )}
         </div>
 
         <div className="transactionCellDetail">
-          {cell.fromCellbase && cellType === CellType.Input ? (
+          {cell.fromCellbase && ioType === IOType.Input ? (
             <TransactionReward showReward={showReward} cell={cell} />
           ) : (
             <TransactionCellDetail cell={cell} />
