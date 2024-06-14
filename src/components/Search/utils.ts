@@ -43,7 +43,7 @@ export const getURLByAggregateSearchResult = (result: AggregateSearchResult) => 
       return `/nft-collections/${attributes.sn}`
 
     case SearchResultType.TokenItem:
-      return `/nft-collections/${attributes.tokenCollection.sn}/${attributes.tokenId}`
+      return `/nft-info/${attributes.tokenCollection.sn}/${attributes.tokenId}`
 
     case SearchResultType.BtcTx:
       return `/transaction/${attributes.ckbTransactionHash}`
