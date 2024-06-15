@@ -3,30 +3,13 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { IOType } from '../../../constants/common'
 import TransactionCell from '../TransactionCell'
-import { TransactionCellListPanel, TransactionCellListTitlePanel, TransactionCellsPanel } from './styled'
 import { ReactComponent as DeprecatedAddrOn } from './deprecated_addr_on.svg'
 import { ReactComponent as DeprecatedAddrOff } from './deprecated_addr_off.svg'
 import { ReactComponent as Warning } from './warning.svg'
 import styles from './styles.module.scss'
 import { Cell } from '../../../models/Cell'
-import { useSearchParams, useUpdateSearchParams } from '../../../hooks'
-
-function useIsDeprecatedAddressesDisplayed() {
-  const { addr_format } = useSearchParams('addr_format')
-  const updateSearchParams = useUpdateSearchParams<'addr_format'>()
-
-  const isDeprecatedAddressesDisplayed = addr_format === 'deprecated'
-  const addrFormatToggleURL = updateSearchParams(
-    params => ({
-      ...params,
-      addr_format: isDeprecatedAddressesDisplayed ? null : 'deprecated',
-    }),
-    false,
-    false,
-  )
-
-  return [isDeprecatedAddressesDisplayed, addrFormatToggleURL] as const
-}
+import { useIsDeprecatedAddressesDisplayed } from './useIsDeprecatedAddressesDisplayed'
+import { TransactionCellList } from './TransactionCellList'
 
 export default ({
   total,
@@ -49,7 +32,7 @@ export default ({
 
   const [isDeprecatedAddressesDisplayed, addrFormatToggleURL] = useIsDeprecatedAddressesDisplayed()
 
-  const cellTitle = () => {
+  const cellTitle = (() => {
     const title = inputs ? t('transaction.input') : t('transaction.output')
     return (
       <div className={styles.cellListTitle}>
@@ -66,47 +49,33 @@ export default ({
         )}
       </div>
     )
-  }
-  if (!cells.length) {
-    return (
-      <TransactionCellListPanel>
-        <TransactionCellListTitlePanel>
-          <div className="transactionCellListTitles">
-            <div>{cellTitle()}</div>
-            <div>{isCellbaseInput ? t('transaction.reward_info') : t('transaction.detail')}</div>
-            <div>{isCellbaseInput ? '' : t('transaction.capacity_amount')}</div>
-          </div>
-        </TransactionCellListTitlePanel>
-        <div className={styles.dataBeingProcessed}>{t('transaction.data-being-processed')}</div>
-      </TransactionCellListPanel>
-    )
-  }
+  })()
 
   return (
-    <TransactionCellListPanel>
-      <TransactionCellListTitlePanel>
-        <div className="transactionCellListTitles">
-          <div>{cellTitle()}</div>
+    <TransactionCellList
+      title={cellTitle}
+      extra={
+        <>
           <div>{isCellbaseInput ? t('transaction.reward_info') : t('transaction.detail')}</div>
           <div>{isCellbaseInput ? '' : t('transaction.capacity_amount')}</div>
-        </div>
-      </TransactionCellListTitlePanel>
-      <TransactionCellsPanel>
-        <div className="transactionCellTitle">{cellTitle()}</div>
-        <div className="transactionCellListContainer">
-          {cells?.map((cell, index) => (
-            <TransactionCell
-              key={cell.id}
-              cell={cell}
-              ioType={inputs ? IOType.Input : IOType.Output}
-              index={index + startIndex}
-              txHash={txHash}
-              showReward={showReward}
-              isAddrNew={!isDeprecatedAddressesDisplayed}
-            />
-          ))}
-        </div>
-      </TransactionCellsPanel>
-    </TransactionCellListPanel>
+        </>
+      }
+    >
+      {!cells.length ? (
+        <div className={styles.dataBeingProcessed}>{t('transaction.data-being-processed')}</div>
+      ) : (
+        cells?.map((cell, index) => (
+          <TransactionCell
+            key={cell.id}
+            cell={cell}
+            ioType={inputs ? IOType.Input : IOType.Output}
+            index={index + startIndex}
+            txHash={txHash}
+            showReward={showReward}
+            isAddrNew={!isDeprecatedAddressesDisplayed}
+          />
+        ))
+      )}
+    </TransactionCellList>
   )
 }

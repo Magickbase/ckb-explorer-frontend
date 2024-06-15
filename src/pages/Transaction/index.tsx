@@ -74,7 +74,11 @@ export default () => {
           <QueryResult query={nodeTxQuery}>
             {nodeTx =>
               nodeTx && nodeTx.result.transaction ? (
-                <NodeTransactionComp transaction={ResultFormatter.toTransaction(nodeTx.result.transaction)} />
+                <NodeTransactionComp
+                  transaction={ResultFormatter.toTransaction(nodeTx.result.transaction)}
+                  blockHash={nodeTx.result.tx_status.block_hash ?? undefined}
+                  blockNumber={nodeTx.result.tx_status.block_number ?? undefined}
+                />
               ) : (
                 <div>{`Transaction ${txHash} not loaded`}</div>
               )

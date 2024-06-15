@@ -93,7 +93,7 @@ export const TransactionComp = ({
           total={displayInputs.meta?.total}
           inputs={inputs}
           startIndex={(inputsPage - 1) * pageSize}
-          showReward={Number(blockNumber) > 0 && isCellbase}
+          showReward={Number(blockNumber) - 11 > 0 && isCellbase}
         />
         <div style={{ height: 4 }} />
         <Pagination

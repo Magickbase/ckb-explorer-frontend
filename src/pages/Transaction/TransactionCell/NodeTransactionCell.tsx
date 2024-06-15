@@ -14,9 +14,10 @@ import {
   TransactionCellPanel,
   TransactionCellDetailModal,
   TransactionCellCardPanel,
+  TransactionCellCardSeparate,
   TransactionCellAddressPanel,
   TransactionCellInfoPanel,
-  TransactionCellCardContent,
+  TransactionCellMobileItem,
 } from './styled'
 import { LeftArrow } from '../../../components/Transaction/TransactionCellArrow'
 import Capacity from '../../../components/Capacity'
@@ -226,13 +227,6 @@ const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
   return <Capacity capacity={shannonToCkb(cell.cellOutput.capacity)} layout="responsive" />
 }
 
-const TransactionCellMobileItem = ({ title, value = null }: { title: string | ReactNode; value?: ReactNode }) => (
-  <TransactionCellCardContent>
-    <div className="transactionCellCardTitle">{title}</div>
-    <div className="transactionCellCardValue">{value}</div>
-  </TransactionCellCardContent>
-)
-
 export default ({
   cell,
   index,
@@ -250,7 +244,7 @@ export default ({
   if (isMobile) {
     return (
       <TransactionCellCardPanel>
-        <div className="transactionCellCardSeparate" />
+        <TransactionCellCardSeparate />
         <TransactionCellMobileItem
           title={<TransactionCellIndexAddress cell={cell} ioType={ioType} index={index} isAddrNew={isAddrNew} />}
         />

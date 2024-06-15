@@ -95,6 +95,8 @@ export namespace NodeRpc {
           status: NodeRpc.TransactionStatus.Committed
         }
       | {
+          block_hash: null
+          block_number: null
           reason?: string
           status:
             | NodeRpc.TransactionStatus.Pending

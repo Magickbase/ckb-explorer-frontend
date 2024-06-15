@@ -19,7 +19,7 @@ import {
   TransactionCellUDTPanel,
 } from './styled'
 import { IOType } from '../../../constants/common'
-import TransactionCellArrow from '../../Transaction/TransactionCellArrow'
+import { CellInputIcon, CellOutputIcon } from '../../Transaction/TransactionCellArrow'
 import Capacity from '../../Capacity'
 import { parseDiffDate } from '../../../utils/date'
 import Cellbase from '../../Transaction/Cellbase'
@@ -259,7 +259,7 @@ const TransactionCell = ({ cell, address, ioType }: { cell: Cell; address?: stri
   const isMobile = useIsMobile()
   const { t } = useTranslation()
   if (cell.fromCellbase) {
-    return <Cellbase cell={cell} ioType={ioType} />
+    return <Cellbase cell={cell} />
   }
 
   let addressText = t('address.unable_decode_address')
@@ -274,12 +274,12 @@ const TransactionCell = ({ cell, address, ioType }: { cell: Cell; address?: stri
   return (
     <TransactionCellPanel highLight={highLight}>
       <div className="transactionCellAddress">
-        {ioType === IOType.Input && <TransactionCellArrow cell={cell} ioType={ioType} />}
+        {ioType === IOType.Input && <CellInputIcon cell={cell} />}
         <AddressTextWithAlias
           address={addressText}
           to={highLight ? `/address/${cell.rgbInfo?.address || cell.addressHash}` : undefined}
         />
-        {ioType === IOType.Output && <TransactionCellArrow cell={cell} ioType={ioType} />}
+        {ioType === IOType.Output && <CellOutputIcon cell={cell} />}
         {!highLight && !isMobile && (
           <Tooltip placement="top" title={`${t('address.current-address')} `}>
             <img className={styles.currentAddressIcon} src={CurrentAddressIcon} alt="current Address" />

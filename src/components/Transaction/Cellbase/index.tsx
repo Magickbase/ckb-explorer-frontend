@@ -2,14 +2,19 @@ import { Tooltip } from 'antd'
 import { Trans } from 'react-i18next'
 import { Link } from '../../Link'
 import { CellbasePanel } from './styled'
-import { IOType } from '../../../constants/common'
-import TransactionCellArrow from '../TransactionCellArrow'
+import { CellInputIcon } from '../TransactionCellArrow'
 import { localeNumberString } from '../../../utils/number'
 import HelpIcon from '../../../assets/qa_help.png'
 import styles from './index.module.scss'
 import { Cell } from '../../../models/Cell'
 
-const Cellbase = ({ cell, ioType, isDetail }: { cell: Cell; ioType: IOType; isDetail?: boolean }) => {
+const Cellbase = ({
+  cell,
+  isDetail,
+}: {
+  cell: Partial<Pick<Cell, 'generatedTxHash' | 'cellIndex' | 'targetBlockNumber'>>
+  isDetail?: boolean
+}) => {
   if (!cell.targetBlockNumber || cell.targetBlockNumber <= 0) {
     return (
       <CellbasePanel>
@@ -30,7 +35,7 @@ const Cellbase = ({ cell, ioType, isDetail }: { cell: Cell; ioType: IOType; isDe
 
   return (
     <CellbasePanel isDetail={isDetail}>
-      {ioType === IOType.Input && <TransactionCellArrow cell={cell} ioType={ioType} />}
+      <CellInputIcon cell={cell} />
       <div className="cellbaseContent">Cellbase for Block</div>
       <Tooltip overlayClassName={styles.tooltip} placement="top" title={tooltipContent}>
         <img className="cellbaseHelpIcon" alt="cellbase help" src={HelpIcon} />

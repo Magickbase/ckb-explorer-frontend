@@ -10,7 +10,7 @@ import { isMainnet } from '../../../utils/chain'
 import { RightArrowImage, LeftArrowImage } from './styled'
 import { Cell } from '../../../models/Cell'
 
-export const RightArrow = ({ status = 'live' }: { status?: 'dead' | 'live' }) => {
+export const RightArrow = ({ status = 'live' }: { status?: Cell['status'] }) => {
   if (status === 'live') {
     return <RightArrowImage src={isMainnet() ? LiveCellIcon : LiveCellBlueIcon} alt="right arrow" />
   }
@@ -26,14 +26,14 @@ export const LeftArrow = () => (
   />
 )
 
-const CellInputIcon = ({ cell }: { cell: Cell }) =>
+export const CellInputIcon = ({ cell }: { cell: Partial<Pick<Cell, 'generatedTxHash' | 'cellIndex'>> }) =>
   cell.generatedTxHash ? (
     <Link to={`/transaction/${cell.generatedTxHash}#${cell.cellIndex}`}>
       <LeftArrow />
     </Link>
   ) : null
 
-const CellOutputIcon = ({ cell }: { cell: Cell }) => {
+export const CellOutputIcon = ({ cell }: { cell: Pick<Cell, 'status' | 'consumedTxHash'> }) => {
   const { t } = useTranslation()
 
   if (cell.status === 'dead') {

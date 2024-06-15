@@ -16,8 +16,9 @@ import {
   TransactionCellCardPanel,
   TransactionCellAddressPanel,
   TransactionCellInfoPanel,
-  TransactionCellCardContent,
+  TransactionCellMobileItem,
   TransactionCellNftInfo,
+  TransactionCellCardSeparate,
 } from './styled'
 import TransactionCellArrow from '../../../components/Transaction/TransactionCellArrow'
 import Capacity from '../../../components/Capacity'
@@ -330,13 +331,6 @@ const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
   return <Capacity capacity={shannonToCkb(cell.capacity)} layout="responsive" />
 }
 
-const TransactionCellMobileItem = ({ title, value = null }: { title: string | ReactNode; value?: ReactNode }) => (
-  <TransactionCellCardContent>
-    <div className="transactionCellCardTitle">{title}</div>
-    <div className="transactionCellCardValue">{value}</div>
-  </TransactionCellCardContent>
-)
-
 export default ({
   cell,
   ioType,
@@ -355,21 +349,29 @@ export default ({
   const isMobile = useIsMobile()
   const { t } = useTranslation()
 
+  const cellbaseReward = (() => {
+    if (!showReward) {
+      return null
+    }
+
+    return <TransactionReward reward={cell} />
+  })()
+
   if (isMobile) {
     return (
       <TransactionCellCardPanel>
-        <div className="transactionCellCardSeparate" />
+        <TransactionCellCardSeparate />
         <TransactionCellMobileItem
           title={
             cell.fromCellbase && ioType === IOType.Input ? (
-              <Cellbase cell={cell} ioType={ioType} isDetail />
+              <Cellbase cell={cell} isDetail />
             ) : (
               <TransactionCellIndexAddress cell={cell} ioType={ioType} index={index} isAddrNew={isAddrNew} />
             )
           }
         />
-        {cell.fromCellbase && ioType === IOType.Input ? (
-          <TransactionReward showReward={showReward} cell={cell} />
+        {cell.fromCellbase && showReward && ioType === IOType.Input ? (
+          cellbaseReward
         ) : (
           <>
             <TransactionCellMobileItem
@@ -395,18 +397,14 @@ export default ({
       <TransactionCellContentPanel isCellbase={cell.fromCellbase}>
         <div className="transactionCellAddress">
           {cell.fromCellbase && ioType === IOType.Input ? (
-            <Cellbase cell={cell} ioType={ioType} isDetail />
+            <Cellbase cell={cell} isDetail />
           ) : (
             <TransactionCellIndexAddress cell={cell} ioType={ioType} index={index} isAddrNew={isAddrNew} />
           )}
         </div>
 
         <div className="transactionCellDetail">
-          {cell.fromCellbase && ioType === IOType.Input ? (
-            <TransactionReward showReward={showReward} cell={cell} />
-          ) : (
-            <TransactionCellDetail cell={cell} />
-          )}
+          {cell.fromCellbase && ioType === IOType.Input ? cellbaseReward : <TransactionCellDetail cell={cell} />}
         </div>
 
         <div className="transactionCellCapacity">
