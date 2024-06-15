@@ -10,7 +10,7 @@ import styles from './style.module.scss'
 export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation()
   const ref = useRef<HTMLDivElement>(null)
-  const { activate, setActivate } = useCKBNode()
+  const { isActivated, setIsActivated } = useCKBNode()
 
   return (
     <CommonModal isOpen onClose={onClose}>
@@ -29,8 +29,8 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
             <Switch
               id="node-connect-mode"
               style={{ marginLeft: 'auto' }}
-              checked={activate}
-              onCheckedChange={checked => setActivate(checked)}
+              checked={isActivated}
+              onCheckedChange={checked => setIsActivated(checked)}
             />
           </div>
 

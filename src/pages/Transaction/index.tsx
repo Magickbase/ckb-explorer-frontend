@@ -20,7 +20,7 @@ import { RGBDigestComp } from './TransactionComp/RGBDigestComp'
 export default () => {
   const { Professional, Lite } = LayoutLiteProfessional
   const { hash: txHash } = useParams<{ hash: string }>()
-  const { nodeService, activate: nodeActivate } = useCKBNode()
+  const { nodeService, isActivated: nodeActivated } = useCKBNode()
 
   const query = useQuery(
     ['transaction', txHash],
@@ -32,12 +32,12 @@ export default () => {
       return transaction
     },
     {
-      enabled: !nodeActivate,
+      enabled: !nodeActivated,
     },
   )
 
   const nodeTxQuery = useQuery(['node', 'transaction', txHash], () => nodeService.getTx(txHash), {
-    enabled: nodeActivate,
+    enabled: nodeActivated,
   })
 
   const transaction = query.data ?? defaultTransactionInfo
@@ -47,7 +47,7 @@ export default () => {
   return (
     <Content>
       <TransactionPanel>
-        {nodeActivate ? (
+        {nodeActivated ? (
           <QueryResult query={nodeTxQuery} delayLoading>
             {nodeTx =>
               nodeTx ? (
@@ -68,9 +68,9 @@ export default () => {
 
         {transaction.isRgbTransaction && <RGBDigestComp hash={txHash} txid={transaction.rgbTxid ?? undefined} />}
 
-        <TransactionDetailsHeader showLayoutSwitcher={!nodeActivate} layout={layout} />
+        <TransactionDetailsHeader showLayoutSwitcher={!nodeActivated} layout={layout} />
 
-        {nodeActivate ? (
+        {nodeActivated ? (
           <QueryResult query={nodeTxQuery}>
             {nodeTx =>
               nodeTx && nodeTx.result.transaction ? (

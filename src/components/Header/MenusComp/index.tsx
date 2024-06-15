@@ -121,7 +121,7 @@ const SubmenuDropdown: FC<PropsWithChildren<DropdownProps & { menu: MenuData[] }
 
 export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
   const { t } = useTranslation()
-  const { activate } = useCKBNode()
+  const { isActivated } = useCKBNode()
   const [open, setOpen] = useState(false)
   const [languageModalVisible, setLanguageModalVisible] = useState(false)
   const [nodeModalVisible, setNodeModalVisible] = useState(false)
@@ -155,7 +155,7 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
               }}
             >
               {t('navbar.node')}
-              <span className={classNames(styles.nodeStatus, { [styles.activate]: activate })} />
+              <span className={classNames(styles.nodeStatus, { [styles.activate]: isActivated })} />
             </span>
           </div>
         }

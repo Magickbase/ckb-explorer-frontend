@@ -57,7 +57,7 @@ export function useIsShowSearchBarInHeader() {
 
 export default () => {
   const isMobile = useMediaQuery(`(max-width: 1023px)`)
-  const { activate } = useCKBNode()
+  const { isActivated } = useCKBNode()
   const { pathname } = useLocation()
   const history = useHistory()
   // TODO: This hard-coded implementation is not ideal, but currently the header is loaded before the page component,
@@ -102,7 +102,7 @@ export default () => {
         )}
       </HeaderPanel>
       <MaintainAlert />
-      {activate ? <NodeAlert /> : null}
+      {isActivated ? <NodeAlert /> : null}
       <Sheet />
       {mobileMenuVisible && isMobile && <MobileMenu hideMobileMenu={() => setMobileMenuVisible(false)} />}
     </div>

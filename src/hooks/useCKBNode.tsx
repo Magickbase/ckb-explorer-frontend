@@ -3,8 +3,8 @@ import { NodeService } from '../services/NodeService'
 
 export interface ICKBNodeContext {
   nodeService: NodeService
-  activate: boolean
-  setActivate: (activate: boolean) => void
+  isActivated: boolean
+  setIsActivated: (isActivated: boolean) => void
 }
 
 export const CKBNodeContext = createContext<ICKBNodeContext | undefined>(undefined)
@@ -23,7 +23,9 @@ interface CKBNodeProviderProps {
 
 export const CKBNodeProvider = ({ children, defaultEndpoint }: PropsWithChildren<CKBNodeProviderProps>) => {
   const nodeService = new NodeService(defaultEndpoint)
-  const [activate, setActivate] = useState(false)
+  const [isActivated, setIsActivated] = useState(false)
 
-  return <CKBNodeContext.Provider value={{ nodeService, activate, setActivate }}>{children}</CKBNodeContext.Provider>
+  return (
+    <CKBNodeContext.Provider value={{ nodeService, isActivated, setIsActivated }}>{children}</CKBNodeContext.Provider>
+  )
 }

@@ -52,7 +52,7 @@ export default ({ blockHash, blockNumber }: { blockHash?: string; blockNumber?: 
     )
   })()
 
-  const cellbaseConetnt = (() => {
+  const cellbaseContent = (() => {
     if (isLoading) {
       return <Loading show />
     }
@@ -107,7 +107,7 @@ export default ({ blockHash, blockNumber }: { blockHash?: string; blockNumber?: 
         </>
       }
     >
-      {cellbaseConetnt}
+      {cellbaseContent}
     </TransactionCellList>
   )
 }
