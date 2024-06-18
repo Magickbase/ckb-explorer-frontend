@@ -42,97 +42,106 @@
   }
 }
 
-.transactionDetailModalHeader {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  max-width: 100%;
-
-  .transactionDetailModalHeaderLeft {
-    max-width: 90%;
+.transactionDetailContainer {
+  .transactionDetailModalHeader {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    max-width: 100%;
 
-    @media screen and (width <= $mobileBreakPoint) {
-      gap: 12px;
-      align-items: start;
-      flex-direction: column;
-    }
-
-    .mobileVision {
-      max-width: 100%;
+    .transactionDetailModalHeaderLeft {
+      max-width: 90%;
       display: flex;
+      justify-content: flex-start;
       align-items: center;
-      gap: 12px;
-    }
+      gap: 8px;
 
-    .cellStatusIcon {
-      svg:hover {
-        cursor: auto;
+      span {
+        white-space: nowrap;
       }
 
-      &[data-cell-status='live'] {
-        color: var(--primary-color);
+      @media screen and (width <= $mobileBreakPoint) {
+        gap: 12px;
+        align-items: start;
+        flex-direction: column;
       }
 
-      &[data-cell-status='dead'] {
-        color: #999;
+      .mobileVision {
+        max-width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
-    }
 
-    .outpoint {
-      .copy {
-        appearance: none;
-        border: none;
-        background: none;
-        cursor: pointer;
+      .cellStatusIcon {
+        svg:hover {
+          cursor: auto;
+        }
 
-        svg {
-          vertical-align: middle;
-          pointer-events: none;
+        &[data-cell-status='live'] {
+          color: var(--primary-color);
+        }
+
+        &[data-cell-status='dead'] {
+          color: #999;
         }
       }
 
-      max-width: 90%;
-      display: flex;
-      padding: 5px 8px;
-      justify-content: center;
-      align-items: center;
-      gap: 4px;
-      border-radius: 16px;
-      border: 1px solid var(--primary-color, #e5e5e5);
-      background: #fafafa;
+      .outpoint {
+        overflow: hidden;
+
+        .copy {
+          appearance: none;
+          border: none;
+          background: none;
+          cursor: pointer;
+
+          svg {
+            vertical-align: middle;
+            pointer-events: none;
+          }
+        }
+
+        max-width: 100%;
+        display: flex;
+        padding: 5px 8px;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+        border-radius: 16px;
+        border: 1px solid var(--primary-color, #e5e5e5);
+        background: #fafafa;
+      }
+
+      h2 {
+        white-space: nowrap;
+        margin: 0;
+        color: #333;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 1000;
+        line-height: normal;
+        text-transform: capitalize;
+      }
     }
-
-    h2 {
-      margin: 0;
-      color: #333;
-      font-size: 16px;
-      font-style: normal;
-      font-weight: 1000;
-      line-height: normal;
-      text-transform: capitalize;
-    }
-  }
-
-  > img {
-    align-self: center;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-  }
-
-  @media (max-width: $mobileBreakPoint) {
-    padding: 15px 0 15px 15px;
-    display: flex;
-    justify-content: space-between;
 
     > img {
       align-self: center;
-      width: 12px;
-      height: 12px;
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+    }
+
+    @media (max-width: $mobileBreakPoint) {
+      padding: 15px;
+      display: flex;
+      margin: 0;
+
+      > img {
+        align-self: center;
+        width: 12px;
+        height: 12px;
+      }
     }
   }
 }

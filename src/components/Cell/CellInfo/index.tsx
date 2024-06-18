@@ -7,12 +7,7 @@ import { scriptToHash } from '@nervosnetwork/ckb-sdk-utils'
 import classNames from 'classnames'
 import { explorerService } from '../../../services/ExplorerService'
 import { hexToUtf8 } from '../../../utils/string'
-import {
-  TransactionDetailContainer,
-  TransactionCellDetailTab,
-  TransactionCellDetailPane,
-  TransactionCellDetailTitle,
-} from './styled'
+import { TransactionCellDetailTab, TransactionCellDetailPane, TransactionCellDetailTitle } from './styled'
 import SmallLoading from '../../Loading/SmallLoading'
 import CloseIcon from './modal_close.png'
 import config from '../../../config'
@@ -373,7 +368,7 @@ export default ({ cell, onClose }: CellInfoProps) => {
   }
 
   return (
-    <TransactionDetailContainer ref={ref}>
+    <div className={styles.transactionDetailContainer} ref={ref}>
       <div className={styles.transactionDetailModalHeader}>
         {isMobile ? (
           <div className={styles.transactionDetailModalHeaderLeft}>
@@ -384,10 +379,9 @@ export default ({ cell, onClose }: CellInfoProps) => {
             </div>
             <div className={styles.mobileVision}>
               <div className={styles.outpoint}>
-                <span>Outpoint: </span>
-                <EllipsisMiddle style={{ maxWidth: '100%' }} useTextWidthForPlaceholderWidth>
-                  {`${cell.generatedTxHash}:${cell.cellIndex}`}
-                </EllipsisMiddle>
+                <EllipsisMiddle
+                  useTextWidthForPlaceholderWidth
+                >{`Outpoint: ${cell.generatedTxHash}:${cell.cellIndex}`}</EllipsisMiddle>
                 <button
                   data-role="copy-outpoint"
                   type="button"
@@ -404,9 +398,8 @@ export default ({ cell, onClose }: CellInfoProps) => {
           <div className={styles.transactionDetailModalHeaderLeft}>
             <h2>{t('cell.cell_info')}</h2>
             <div className={styles.outpoint}>
-              <span>Outpoint: </span>
-              <EllipsisMiddle style={{ maxWidth: '100%' }} useTextWidthForPlaceholderWidth>
-                {`${cell.generatedTxHash}:${cell.cellIndex}`}
+              <EllipsisMiddle useTextWidthForPlaceholderWidth>
+                {`Outpoint: ${cell.generatedTxHash}:${cell.cellIndex}`}
               </EllipsisMiddle>
               <button
                 data-role="copy-outpoint"
@@ -421,7 +414,7 @@ export default ({ cell, onClose }: CellInfoProps) => {
             <div className={styles.cellStatusIcon} data-cell-status={cell.status ?? 'dead'}>
               <PointIcon />
             </div>
-            <span style={{ color: '#666' }}>{t(`cell.${cell.status ?? 'dead'}_cell`)}</span>
+            <span style={{ color: '#666', flexShrink: 1 }}>{t(`cell.${cell.status ?? 'dead'}_cell`)}</span>
           </div>
         )}
         <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
@@ -521,6 +514,6 @@ export default ({ cell, onClose }: CellInfoProps) => {
           </div>
         )}
       </div>
-    </TransactionDetailContainer>
+    </div>
   )
 }
