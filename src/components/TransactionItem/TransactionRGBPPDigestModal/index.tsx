@@ -16,7 +16,7 @@ const TransactionRGBPPDigestModal = ({ hash, onClickClose }: { onClickClose: Fun
     switch (data?.data.leapDirection) {
       case 'in':
         return TransactionLeapDirection.IN
-      case 'out':
+      case 'leapoutBTC':
         return TransactionLeapDirection.OUT
       case 'withinBTC':
         return TransactionLeapDirection.WITH_IN_BTC
