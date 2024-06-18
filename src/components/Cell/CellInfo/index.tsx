@@ -244,7 +244,7 @@ const CellInfoValueRender = ({ content }: { content: CellInfoValue }) => {
         title="BTC TX: "
         value={
           <>
-            {content.btcTx}
+            <EllipsisMiddle useTextWidthForPlaceholderWidth>{content.btcTx}</EllipsisMiddle>
             <Link to={`${config.BITCOIN_EXPLORER}/tx/${content.btcTx}`}>
               <ViewIcon />
             </Link>

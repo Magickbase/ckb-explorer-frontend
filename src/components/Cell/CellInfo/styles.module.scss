@@ -227,6 +227,7 @@
           }
 
           .title {
+            white-space: nowrap;
             color: var(--666666, #666);
             font-size: 14px;
             font-style: normal;
@@ -235,6 +236,7 @@
           }
 
           .value {
+            overflow: hidden;
             color: #333;
             font-size: 14px;
             font-style: normal;
