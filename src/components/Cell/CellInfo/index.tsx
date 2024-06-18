@@ -374,8 +374,10 @@ export default ({ cell, onClose }: CellInfoProps) => {
           <div className={styles.transactionDetailModalHeaderLeft}>
             <div className={styles.mobileVision}>
               <h2>{t('cell.cell_info')}</h2>
-              <PointIcon />
-              <span style={{ color: '#666' }}>Live Cell</span>
+              <div className={styles.cellStatusIcon} data-cell-status={cell.status ?? 'dead'}>
+                <PointIcon />
+              </div>
+              <span style={{ color: '#666', flexShrink: 1 }}>{t(`cell.${cell.status ?? 'dead'}_cell`)}</span>
             </div>
             <div className={styles.mobileVision}>
               <div className={styles.outpoint}>
@@ -391,7 +393,7 @@ export default ({ cell, onClose }: CellInfoProps) => {
                   <CopyIcon />
                 </button>
               </div>
-              {renderBindIcon()}
+              <div className={styles.svgContainer}>{renderBindIcon()}</div>
             </div>
           </div>
         ) : (
@@ -410,7 +412,7 @@ export default ({ cell, onClose }: CellInfoProps) => {
                 <CopyIcon />
               </button>
             </div>
-            {renderBindIcon()}
+            <div className={styles.svgContainer}>{renderBindIcon()}</div>
             <div className={styles.cellStatusIcon} data-cell-status={cell.status ?? 'dead'}>
               <PointIcon />
             </div>
