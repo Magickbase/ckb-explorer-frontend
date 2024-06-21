@@ -23,14 +23,14 @@ function useLatestBlocks(count = 15) {
 
   const blockNumbers = tipBlockNumber ? Array.from({ length: count }, (_, i) => parseInt(tipBlockNumber, 16) - i) : []
 
-  const queryies = useQueries({
+  const queries = useQueries({
     queries: blockNumbers.map(blockNumber => ({
       queryKey: ['node', 'block', blockNumber],
       queryFn: () => nodeService.rpc.getBlockByNumber(`0x${blockNumber.toString(16)}`),
     })),
   })
 
-  return queryies.map(({ data }) => data).filter(data => data) as Block[]
+  return queries.map(({ data }) => data).filter(data => data) as Block[]
 }
 
 export function useNodeLatestBlocks(count = 15) {
