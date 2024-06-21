@@ -71,7 +71,7 @@ export const Xudt = () => {
       <div className={classNames(styles.container, 'container')}>
         <UDTOverviewCard typeHash={typeHash} xudt={xudt} refetchUDT={queryUDT.refetch} />
 
-        <div className={styles.uDTTransactionTitlePanel}>
+        <div className={styles.udtTransactionTitlePanel}>
           <div className={styles.udtTransactionContainer}>
             <div className={styles.udtTransactionTitle}>
               {`${t('transaction.transactions')} (${localeNumberString(total)})`}

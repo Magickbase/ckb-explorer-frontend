@@ -258,14 +258,14 @@ export const UDTComp = ({
 
   if (filterNoResult) {
     return (
-      <div className={styles.uDTNoResultPanel}>
+      <div className={styles.udtNoResultPanel}>
         <span>{t('search.udt_filter_no_result')}</span>
       </div>
     )
   }
   return (
     <>
-      <div className={styles.uDTTransactionsPanel}>
+      <div className={styles.udtTransactionsPanel}>
         {transactions.map(
           (transaction, index) =>
             transaction && (
@@ -279,7 +279,7 @@ export const UDTComp = ({
             ),
         )}
       </div>
-      <div className={styles.uDTTransactionsPagination}>
+      <div className={styles.udtTransactionsPagination}>
         <PaginationWithRear
           currentPage={currentPage}
           totalPages={totalPages}
