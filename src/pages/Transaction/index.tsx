@@ -76,7 +76,6 @@ export default () => {
               nodeTx && nodeTx.result.transaction ? (
                 <NodeTransactionComp
                   transaction={ResultFormatter.toTransaction(nodeTx.result.transaction)}
-                  blockHash={nodeTx.result.tx_status.block_hash ?? undefined}
                   blockNumber={nodeTx.result.tx_status.block_number ?? undefined}
                 />
               ) : (

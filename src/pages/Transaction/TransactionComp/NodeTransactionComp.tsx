@@ -9,15 +9,21 @@ import { IOType } from '../../../constants/common'
 
 export const NodeTransactionComp = ({
   transaction,
-  blockHash,
   blockNumber,
 }: {
   transaction: Transaction
-  blockHash?: string
   blockNumber?: string
 }) => {
   const isCellBase = checkIsCellBase(transaction)
   const { nodeService } = useCKBNode()
+  const { data: cellBaseBlockHeader } = useQuery(
+    ['node', 'block', blockNumber ? parseInt(blockNumber, 16) - 11 : null],
+    () => (blockNumber ? nodeService.rpc.getBlockByNumber((parseInt(blockNumber, 16) - 11).toString(16)) : null),
+    {
+      enabled: isCellBase,
+    },
+  )
+
   const { data: inputCells, isFetching: isInputsLoading } = useQuery(['node', 'inputCells', transaction?.hash], () =>
     nodeService.getInputCells(transaction.inputs),
   )
@@ -27,7 +33,7 @@ export const NodeTransactionComp = ({
     <>
       <div className="transactionInputs">
         {isCellBase ? (
-          <NodeTransactionCellBase blockHash={blockHash} blockNumber={blockNumber} />
+          <NodeTransactionCellBase blockHash={cellBaseBlockHeader?.header.hash} blockNumber={blockNumber} />
         ) : (
           <>
             <Loading show={isInputsLoading} />
