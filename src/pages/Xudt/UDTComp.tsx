@@ -197,7 +197,12 @@ export const UDTOverviewCard = ({
 
         <CardCellsLayout type="left-right" cells={items} borderTop />
         <SimpleModal isShow={showHolderAmountModal} setIsShow={setShowHolderAmountModal}>
-          <HolderAllocation typeHash={typeHash} />
+          <HolderAllocation
+            onClose={() => setShowHolderAmountModal(false)}
+            ckbHolderAmount={xudt?.holderAllocation.ckbHoldersCount ?? '0'}
+            btcHolderAmount={xudt?.holderAllocation.btcHoldersCount ?? '0'}
+            lockHoderAmount={xudt?.holderAllocation.lockHoderAmount}
+          />
         </SimpleModal>
 
         <SimpleButton className={styles.typeScriptController} onClick={toggleScriptDisplay}>
