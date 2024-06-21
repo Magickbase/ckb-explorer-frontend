@@ -214,7 +214,7 @@ const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
   if (isUDTCell && udtTypeHash && udtInfo.data) {
     const amount = getUDTAmountByData(cell.data)
     if (cellType === 'udt' && udtInfo.data.published) {
-      return <span>{`${parseUDTAmount(amount, udtInfo.data.decimal)} ${udtInfo.data.uan || udtInfo.data.symbol}`}</span>
+      return <span>{`${parseUDTAmount(amount, udtInfo.data.decimal)} ${udtInfo.data.symbol}`}</span>
     }
 
     if (cellType === 'xudt' && udtInfo.data.decimal && udtInfo.data.symbol) {

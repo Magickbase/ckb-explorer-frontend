@@ -88,9 +88,14 @@
   text-align: center;
   padding: 1rem;
   background-color: #fa8f00;
-  z-index: 9;
 
   @media (width <= $mobileBreakPoint) {
     text-align: left;
   }
+}
+
+.clickable {
+  color: var(--primary-color);
+  cursor: pointer;
+  text-decoration: underline;
 }

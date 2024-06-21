@@ -968,7 +968,7 @@
       "tx_in_camel_case": "Transaction in Camel Case"
     },
     "node": {
-      "alert": "Currently on the node-connect mode. The explorer data will be fetched from the node, so some features/data cannot be supported on the node-connect mode. You can switch mode in the upper right corner of the browser",
+      "alert": "Currently on the node-connect mode. The explorer data will be fetched from the node, so some features/data cannot be supported. You can <switcher>click here</switcher> for switch",
       "done": "Done",
       "node_connect_mode": "Node Connect Mode",
       "node_connect_tooltip": "When the node-connection mode is enabled, the data will be fetched from the node directly, so some features/data will not be supported."

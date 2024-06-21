@@ -1,6 +1,8 @@
 import { useContext, createContext, useState, PropsWithChildren } from 'react'
 import { NodeService } from '../services/NodeService'
 
+const NODE_CONNECT_MODE_KEY = 'node_connect_mode'
+
 export interface ICKBNodeContext {
   nodeService: NodeService
   isActivated: boolean
@@ -23,7 +25,12 @@ interface CKBNodeProviderProps {
 
 export const CKBNodeProvider = ({ children, defaultEndpoint }: PropsWithChildren<CKBNodeProviderProps>) => {
   const nodeService = new NodeService(defaultEndpoint)
-  const [isActivated, setIsActivated] = useState(false)
+  const [isActivated, _setIsActivated] = useState(localStorage.getItem(NODE_CONNECT_MODE_KEY) === 'true')
+
+  const setIsActivated = (value: boolean) => {
+    localStorage.setItem(NODE_CONNECT_MODE_KEY, value.toString())
+    _setIsActivated(value)
+  }
 
   return (
     <CKBNodeContext.Provider value={{ nodeService, isActivated, setIsActivated }}>{children}</CKBNodeContext.Provider>
