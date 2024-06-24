@@ -217,6 +217,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
 }
 
 const AssetItem: FC<{ cells: LiveCell[]; btcTxId: string; vout: number }> = ({ cells, btcTxId, vout }) => {
+  const { t } = useTranslation()
   const { data: identity } = useQuery({
     queryKey: ['btc-testnet-identity', btcTxId],
     queryFn: () => (btcTxId ? getBtcChainIdentify(btcTxId) : null),
@@ -245,7 +246,9 @@ const AssetItem: FC<{ cells: LiveCell[]; btcTxId: string; vout: number }> = ({ c
         {cells.length > 1 ? (
           <div className={styles.multipleAssetsAlert}>
             <span>({cells.length})</span>
-            <AlertIcon />
+            <Tooltip title={t('rgbpp.assets.multiple_warning')} arrowPointAtCenter>
+              <AlertIcon />
+            </Tooltip>
           </div>
         ) : null}
       </h5>
