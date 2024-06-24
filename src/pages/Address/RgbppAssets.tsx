@@ -379,7 +379,7 @@ const RGBAssetsCellView: FC<{ address: string; count: number }> = ({ address, co
   const rgbCells =
     data?.pages.reduce((acc, cur) => {
       const item = Object.keys(cur.data.rgbCells).map(key => {
-        const cells = cur.data.rgbCells[key].map(rgbCell => rgbCell.data.attributes)
+        const cells = cur.data.rgbCells[key].filter(rgbCell => !!rgbCell.data).map(rgbCell => rgbCell.data.attributes)
         const [btcTxId, vout]: [string, number] = JSON.parse(key)
 
         return { cells, btcTxId, vout }
