@@ -355,6 +355,10 @@ export default ({ cell, onClose }: CellInfoProps) => {
   }
 
   const renderBindIcon = () => {
+    if (!cell.status || cell.status === 'dead') {
+      return null
+    }
+
     switch (cell.rgbInfo?.status) {
       case 'binding':
         return <PendingBindIcon />
