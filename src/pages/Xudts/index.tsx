@@ -9,7 +9,7 @@ import { Link } from '../../components/Link'
 import Content from '../../components/Content'
 import Pagination from '../../components/Pagination'
 import SortButton from '../../components/SortButton'
-import FilterButton from '../../components/FilterButton'
+import MultiFilterButton from '../../components/MultiFilterButton'
 import { TokensPanel, TokensContentEmpty, TokensLoadingPanel } from './styled'
 import { localeNumberString } from '../../utils/number'
 import Loading from '../../components/Loading'
@@ -113,6 +113,10 @@ export function TokensCard({
             {t('xudt.created_time')}
             <SortButton field="created_time" sortParam={sortParam} />
           </span>
+          <span className={styles.sortOption}>
+            {t('xudt.title.tags')}
+            <MultiFilterButton filterName="tags" key="" filteredList={getFilterList()} />
+          </span>
         </FilterSortContainerOnMobile>
       </Card>
 
@@ -135,6 +139,77 @@ export function TokensCard({
       </QueryResult>
     </>
   )
+}
+
+const getFilterList = (): { key: string; value: string; to: string; title: string | JSX.Element }[] => {
+  return [
+    {
+      key: 'invalid',
+      value: 'invalid',
+      title: <XUDTTag tagName="invalid" />,
+      to: '',
+    },
+    {
+      key: 'suspicious',
+      value: 'suspicious',
+      title: <XUDTTag tagName="suspicious" />,
+      to: '',
+    },
+    {
+      key: 'out-of-length-range',
+      value: 'out-of-length-range',
+      title: <XUDTTag tagName="out-of-length-range" />,
+      to: '',
+    },
+    {
+      key: 'duplicate',
+      value: 'duplicate',
+      title: <XUDTTag tagName="duplicate" />,
+      to: '',
+    },
+    {
+      key: 'layer-1-asset',
+      value: 'layer-1-asset',
+      title: <XUDTTag tagName="layer-1-asset" />,
+      to: '',
+    },
+    {
+      key: 'layer-2-asset',
+      value: 'layer-2-asset',
+      title: <XUDTTag tagName="layer-2-asset" />,
+      to: '',
+    },
+    {
+      key: 'verified-on',
+      value: 'verified-on',
+      title: <XUDTTag tagName="verified-on" />,
+      to: '',
+    },
+    {
+      key: 'supply-limited',
+      value: 'supply-limited',
+      title: <XUDTTag tagName="supply-limited" />,
+      to: '',
+    },
+    {
+      key: 'supply-unlimited',
+      value: 'supply-unlimited',
+      title: <XUDTTag tagName="supply-unlimited" />,
+      to: '',
+    },
+    {
+      key: 'rgbpp-compatible',
+      value: 'rgbpp-compatible',
+      title: <XUDTTag tagName="rgbpp-compatible" />,
+      to: '',
+    },
+    {
+      key: 'category',
+      value: 'category',
+      title: <XUDTTag tagName="category" />,
+      to: '',
+    },
+  ]
 }
 
 const TokenTable: FC<{
@@ -180,8 +255,8 @@ const TokenTable: FC<{
     {
       title: (
         <>
-          {t('xudt.tags')}
-          <FilterButton filterName="type" key="" filteredList={[]} />
+          {t('xudt.title.tags')}
+          <MultiFilterButton filterName="tags" key="" filteredList={getFilterList()} />
         </>
       ),
       className: styles.colTags,

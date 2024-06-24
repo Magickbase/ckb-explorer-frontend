@@ -758,6 +758,9 @@
       "repeat_inscription_symbol": "This inscription is a duplicate with an earlier release of the same symbol."
     },
     "xudt": {
+      "title": {
+        "tags": "Tags"
+      },
       "holder_allocation": "Holder Allocation",
       "holder_allocation_description": "There are {{ckb}} CKB Holder and {{btc}} BTC holder of the current asset.",
       "lock_hash": "Lock Hash",
@@ -778,17 +781,19 @@
       "address_count": "Address Count",
       "created_time": "Created Time",
       "tokens_empty": "There are no xUDTs at this time.",
-      "invalid": "Invalid",
-      "suspicious": "Suspicious",
-      "out-of-length-range": "Out Of Length Range",
-      "duplicate": "Duplicate",
-      "layer-1-asset": "Layer 1 Asset",
-      "layer-2-asset": "Layer 2 Asset",
-      "verified-on": "Verified On Platform",
-      "supply-limited": "Supply Limited",
-      "supply-unlimited": "Supply Unlimited",
-      "rgbpp-compatible": "RGB++ Compatible",
-      "category": "Category"
+      "tags": {
+        "invalid": "Invalid",
+        "suspicious": "Suspicious",
+        "out-of-length-range": "Out Of Length Range",
+        "duplicate": "Duplicate",
+        "layer-1-asset": "Layer 1 Asset",
+        "layer-2-asset": "Layer 2 Asset",
+        "verified-on": "Verified On Platform",
+        "supply-limited": "Supply Limited",
+        "supply-unlimited": "Supply Unlimited",
+        "rgbpp-compatible": "RGB++ Compatible",
+        "category": "Category"
+      }
     },
     "nft": {
       "nft_collection": "NFT Collection",
