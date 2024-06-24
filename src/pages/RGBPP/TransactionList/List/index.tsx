@@ -101,9 +101,9 @@ const getFilterList = (t: TFunction): Record<'key' | 'title' | 'value' | 'to', s
       to: '',
     },
     {
-      key: 'equal',
+      key: 'leap_with_in_btc',
       value: 'equal',
-      title: '-',
+      title: t('address.leap_with_in_btc'),
       to: '',
     },
   ]
