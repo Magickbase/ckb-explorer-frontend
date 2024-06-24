@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { scriptToHash } from '@nervosnetwork/ckb-sdk-utils'
 import classNames from 'classnames'
+import { Tooltip } from 'antd'
 import { explorerService } from '../../../services/ExplorerService'
 import { hexToUtf8 } from '../../../utils/string'
 import { TransactionCellDetailTab, TransactionCellDetailPane, TransactionCellDetailTitle } from './styled'
@@ -361,11 +362,23 @@ export default ({ cell, onClose }: CellInfoProps) => {
 
     switch (cell.rgbInfo?.status) {
       case 'binding':
-        return <PendingBindIcon />
+        return (
+          <Tooltip placement="top" title={t('cell.bind_description.binding')}>
+            <PendingBindIcon />
+          </Tooltip>
+        )
       case 'bound':
-        return <BindIcon />
+        return (
+          <Tooltip placement="top" title={t('cell.bind_description.bound')}>
+            <BindIcon />
+          </Tooltip>
+        )
       case 'unbound':
-        return <UnboundIcon />
+        return (
+          <Tooltip placement="top" title={t('cell.bind_description.unbound')}>
+            <UnboundIcon />
+          </Tooltip>
+        )
       default:
         return null
     }
