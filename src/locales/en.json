@@ -445,7 +445,7 @@
     },
     "rgbpp": {
       "assets": {
-        "multiple_warning": "The current UTXO contains multiple assets; please ensure that the assets are not lost when consuming the UTXO."
+        "multiple_warning": "The current UTXO contains multiple assets. Please ensure that the assets are not lost when consuming the UTXO."
       },
       "transaction": {
         "ckb_tx": "CKB Tx",
