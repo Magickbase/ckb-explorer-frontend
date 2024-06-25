@@ -245,7 +245,6 @@ const AssetItem: FC<{ cells: LiveCell[]; btcTxId: string; vout: number }> = ({ c
 
         {cells.length > 1 ? (
           <div className={styles.multipleAssetsAlert}>
-            <span>({cells.length})</span>
             <Tooltip title={t('rgbpp.assets.multiple_warning')} arrowPointAtCenter>
               <AlertIcon />
             </Tooltip>
