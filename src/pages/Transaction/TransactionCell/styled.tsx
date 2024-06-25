@@ -177,6 +177,20 @@ export const TransactionCellCardSeparate = styled.div`
   transform: ${() => `scaleY(${Math.ceil((1.0 / window.devicePixelRatio) * 10.0) / 10.0})`};
 `
 
+export const TransactionCellDetailModal = styled.div`
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px 40px;
+  border: 1px solid #888;
+  width: 75%;
+
+  @media (max-width: ${variables.mobileBreakPoint}) {
+    width: 90%;
+    margin-top: 40%;
+    padding: 10px;
+  }
+`
+
 export const TransactionCellCardPanel = styled.div`
   > div:nth-child(2) {
     margin-bottom: 15px;
