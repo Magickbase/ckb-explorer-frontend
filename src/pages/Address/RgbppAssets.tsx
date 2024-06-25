@@ -226,7 +226,7 @@ const AssetItem: FC<{ cells: LiveCell[]; btcTxId: string; vout: number }> = ({ c
   const btcExplorer = `${config.BITCOIN_EXPLORER}${IS_MAINNET ? '' : `/${identity}`}`
 
   return (
-    <li key={btcTxId + vout} className={styles.card}>
+    <div key={btcTxId + vout} className={styles.card}>
       <h5
         style={{
           background: `linear-gradient(90.24deg,#ffd176 .23%,#ffdb81 6.7%,#84ffcb 99.82%)`,
@@ -257,7 +257,7 @@ const AssetItem: FC<{ cells: LiveCell[]; btcTxId: string; vout: number }> = ({ c
           <AssetItemContent cell={cell} />
         ))}
       </div>
-    </li>
+    </div>
   )
 }
 
@@ -390,7 +390,7 @@ const RGBAssetsCellView: FC<{ address: string; count: number }> = ({ address, co
 
   return (
     <>
-      <ul>
+      <div className={styles.cardsContainer}>
         {rgbCells.map(rgbCell => (
           <AssetItem
             cells={rgbCell.cells}
@@ -399,7 +399,7 @@ const RGBAssetsCellView: FC<{ address: string; count: number }> = ({ address, co
             key={`${rgbCell.btcTxId}-${rgbCell.vout}`}
           />
         ))}
-      </ul>
+      </div>
       {isFetchingNextPage ? (
         <span className={styles.loading}>
           <SmallLoading />
