@@ -11,6 +11,7 @@ import { CKBNodeModal } from '../CKBNodeComp/CKBNodeModal'
 import { ReactComponent as ArrowIcon } from './arrow.svg'
 import { IS_MAINNET } from '../../../constants/common'
 import { ReactComponent as MenuIcon } from './menu.svg'
+import { ReactComponent as NewIcon } from './new.svg'
 import { useCKBNode } from '../../../hooks/useCKBNode'
 
 export enum LinkType {
@@ -137,6 +138,9 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
           <div className={styles.submenu}>
             <Link className={styles.link} to="/tools/address-conversion">
               {t('footer.tools')}
+              <span className={styles.newTag} style={{ marginLeft: 4 }}>
+                NEW
+              </span>
             </Link>
             <span
               className={classNames(styles.link, styles.clickable)}
@@ -173,6 +177,7 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
             className={classNames(styles.clickable, styles.headerMenusItem, styles.submenuTrigger, styles.moreMenus)}
           >
             <MenuIcon className={styles.moreIcon} />
+            <NewIcon className={styles.newIcon} />
           </span>
         )}
       </Dropdown>
