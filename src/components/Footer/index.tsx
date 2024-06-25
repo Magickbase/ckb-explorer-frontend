@@ -156,9 +156,12 @@ export default memo(() => {
           ))}
         </div>
       </FooterMenuPanel>
-      <div className="footerCopyright">
-        <span>{`Copyright © ${getCurrentYear()} Nervos Foundation. `}</span>
-        <span>All Rights Reserved.</span>
+      <div style={{ width: '100%' }}>
+        <div className="footerCopyright container">
+          <span className="power">Powered by MagicKBase</span>
+          <span>{`Copyright © ${getCurrentYear()} Nervos Foundation. `}</span>
+          <span>All Rights Reserved.</span>
+        </div>
       </div>
       {isTokenFormDisplayed ? <SubmitTokenInfo onClose={() => setIsTokenFormDisplayed(false)} /> : null}
     </FooterPanel>

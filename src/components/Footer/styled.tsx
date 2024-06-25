@@ -14,10 +14,14 @@ export const FooterPanel = styled.div`
   .footerCopyright {
     display: flex;
     flex-direction: row;
-    justify-content: center;
     margin-bottom: 16px;
     font-size: 12px;
     color: #acacac;
+
+    .power {
+      color: #fff;
+      margin-right: auto;
+    }
 
     @media (max-width: ${variables.mobileBreakPoint}) {
       margin: 0 0 20px 20px;
