@@ -45,7 +45,7 @@ export function MultiFilterButton({
                 } else {
                   subTypes.push(f.value)
                 }
-                return `${f.to}?${filterName}=${subTypes.slice().join(',')}`
+                return `${f.to}?${new URLSearchParams({ [filterName]: subTypes.join(',') }).toString()}`
               }}
               data-is-active={types.includes(f.value)}
             >
