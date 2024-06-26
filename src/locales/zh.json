@@ -96,6 +96,11 @@
       "expected": "预计",
       "share_text": "📢 @NervosNetwork CKB 预计于 {{date}} 迎来{{times}}减半🚀，\n\n📅距离减半倒计时还有 {{countdown}}。\n\n🔗 访问👉 https://explorer.nervos.org 了解更多"
     },
+    "components": {
+      "multi_filter_button": {
+        "select": "选择"
+      }
+    },
     "glossary": {
       "block_height": "区块高度，又称为区块编号，表示区块链的长度，在添加新区块后会增加。",
       "cell": "CKB 采用了更通用的 Cell 模型，而不是 UTXO 模型。交易会销毁先前交易中创建的某些输出，并创建一些新的输出。每个交易的输出都是一个 Cell。",

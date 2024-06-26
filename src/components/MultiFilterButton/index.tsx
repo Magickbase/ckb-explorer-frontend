@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Popover } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
 import { ReactComponent as SelectedIcon } from '../../assets/selected-icon.svg'
 import { ReactComponent as NotSelectedIcon } from '../../assets/not-selected-icon.svg'
@@ -16,6 +17,7 @@ export function MultiFilterButton({
   filteredList: { key: string; value: string; to: string; title: string | JSX.Element }[]
   isMobile?: boolean
 }) {
+  const { t } = useTranslation()
   const params = useSearchParams(filterName)
   const types = params[filterName]?.split(',').filter(t => t !== '') ?? []
 
@@ -28,7 +30,7 @@ export function MultiFilterButton({
       content={
         <div className={styles.filterItems}>
           <div className={styles.selectTitle}>
-            <h2>Select</h2>
+            <h2>{t('components.multi_filter_button.select')}</h2>
             {types.length > 0 ? (
               <>{types.length === filteredList.length ? <SelectedIcon /> : <PartialSelectedIcon />}</>
             ) : (
