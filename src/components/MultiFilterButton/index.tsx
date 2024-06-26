@@ -16,8 +16,8 @@ export function MultiFilterButton({
   filteredList: { key: string; value: string; to: string; title: string | JSX.Element }[]
   isMobile?: boolean
 }) {
-  const params = useSearchParams('tags')
-  const types = params.tags?.split(',').filter(t => t !== '') ?? []
+  const params = useSearchParams(filterName)
+  const types = params[filterName]?.split(',').filter(t => t !== '') ?? []
 
   return (
     <Popover
