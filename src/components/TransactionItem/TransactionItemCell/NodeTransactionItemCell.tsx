@@ -3,9 +3,8 @@ import { Cell } from '@ckb-lumos/base'
 import { Tooltip } from 'antd'
 import classNames from 'classnames'
 import { Link } from '../../Link'
-import { shannonToCkb } from '../../../utils/util'
 import { TransactionCellPanel, TransactionCellCapacityPanel } from './styled'
-import Capacity from '../../Capacity'
+import { NodeCellCapacityAmount } from './NodeCellCapacityAmount'
 import { encodeNewAddress } from '../../../utils/address'
 import styles from './index.module.scss'
 import { useBoolean } from '../../../hooks'
@@ -49,7 +48,7 @@ const NodeTransactionItemCell = ({ cell }: { cell: Cell }) => {
       </div>
       <TransactionCellCapacityPanel>
         <div className="transactionCellWithoutIcon">
-          <Capacity capacity={shannonToCkb(cell.cellOutput.capacity)} />
+          <NodeCellCapacityAmount cell={cell} />
         </div>
       </TransactionCellCapacityPanel>
     </TransactionCellPanel>

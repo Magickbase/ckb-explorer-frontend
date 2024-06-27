@@ -1,0 +1,49 @@
+import { RPC } from '@ckb-lumos/rpc'
+import { Hash, Transaction } from '@ckb-lumos/base'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useCKBNode } from './useCKBNode'
+
+export const useTransactions = ({
+  searchKey,
+  pageSize = 100,
+  order = 'desc',
+}: {
+  searchKey: Parameters<RPC['getTransactions']>['0']
+  pageSize?: number
+  order?: 'desc' | 'asc'
+}) => {
+  const { nodeService } = useCKBNode()
+
+  return useInfiniteQuery({
+    queryKey: ['node', 'transactions', searchKey, pageSize, order],
+    queryFn: async ({ pageParam = undefined }) => {
+      const { lastCursor, objects } = await nodeService.rpc.getTransactions(
+        { ...searchKey, groupByTransaction: true },
+        order,
+        `0x${pageSize.toString(16)}`,
+        pageParam,
+      )
+
+      if (objects.length === 0) {
+        return {
+          lastCursor: undefined,
+          txs: [],
+        }
+      }
+
+      const txHashs = objects.map(tx => tx.txHash)
+
+      const txs = await nodeService.rpc
+        .createBatchRequest<'getTransaction', [Hash], CKBComponents.TransactionWithStatus[]>(
+          txHashs.map(txHash => ['getTransaction', txHash]),
+        )
+        .exec()
+
+      return {
+        lastCursor,
+        txs: txs.map(tx => tx.transaction as Transaction),
+      }
+    },
+    getNextPageParam: options => options.lastCursor,
+  })
+}
