@@ -55,7 +55,7 @@ const AddressTextWithAlias: FC<{
         </Tooltip>
       )}
 
-      {to != null ? (
+      {to ? (
         <Link className={styles.link} to={to}>
           {content}
         </Link>

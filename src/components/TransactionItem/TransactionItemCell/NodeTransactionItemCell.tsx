@@ -28,7 +28,7 @@ const Address: FC<{
 
   return (
     <div className={classNames(styles.addressTextWithAlias, styles.addressWidthModify)}>
-      {to != null ? (
+      {to ? (
         <Link className={styles.link} to={to}>
           {content}
         </Link>
