@@ -31,11 +31,11 @@ export const useTransactions = ({
         }
       }
 
-      const txHashs = objects.map(tx => tx.txHash)
+      const txHashes = objects.map(tx => tx.txHash)
 
       const txs = await nodeService.rpc
         .createBatchRequest<'getTransaction', [Hash], CKBComponents.TransactionWithStatus[]>(
-          txHashs.map(txHash => ['getTransaction', txHash]),
+          txHashes.map(txHash => ['getTransaction', txHash]),
         )
         .exec()
 
