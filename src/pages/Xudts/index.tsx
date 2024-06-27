@@ -27,6 +27,75 @@ import XUDTTokenIcon from '../../assets/sudt_token.png'
 
 type SortField = 'transactions' | 'addresses_count' | 'created_time' | 'mint_status'
 
+const filterList = [
+  {
+    key: 'invalid',
+    value: 'invalid',
+    title: <XUDTTag tagName="invalid" />,
+    to: '',
+  },
+  {
+    key: 'suspicious',
+    value: 'suspicious',
+    title: <XUDTTag tagName="suspicious" />,
+    to: '',
+  },
+  {
+    key: 'out-of-length-range',
+    value: 'out-of-length-range',
+    title: <XUDTTag tagName="out-of-length-range" />,
+    to: '',
+  },
+  {
+    key: 'duplicate',
+    value: 'duplicate',
+    title: <XUDTTag tagName="duplicate" />,
+    to: '',
+  },
+  {
+    key: 'layer-1-asset',
+    value: 'layer-1-asset',
+    title: <XUDTTag tagName="layer-1-asset" />,
+    to: '',
+  },
+  {
+    key: 'layer-2-asset',
+    value: 'layer-2-asset',
+    title: <XUDTTag tagName="layer-2-asset" />,
+    to: '',
+  },
+  {
+    key: 'verified-on',
+    value: 'verified-on',
+    title: <XUDTTag tagName="verified-on" />,
+    to: '',
+  },
+  {
+    key: 'supply-limited',
+    value: 'supply-limited',
+    title: <XUDTTag tagName="supply-limited" />,
+    to: '',
+  },
+  {
+    key: 'supply-unlimited',
+    value: 'supply-unlimited',
+    title: <XUDTTag tagName="supply-unlimited" />,
+    to: '',
+  },
+  {
+    key: 'rgbpp-compatible',
+    value: 'rgbpp-compatible',
+    title: <XUDTTag tagName="rgbpp-compatible" />,
+    to: '',
+  },
+  {
+    key: 'category',
+    value: 'category',
+    title: <XUDTTag tagName="category" />,
+    to: '',
+  },
+]
+
 const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
   const { t } = useTranslation()
 
@@ -115,7 +184,7 @@ export function TokensCard({
           </span>
           <span className={styles.sortOption}>
             {t('xudt.title.tags')}
-            <MultiFilterButton filterName="tags" key="" filteredList={getFilterList()} />
+            <MultiFilterButton filterName="tags" key="" filteredList={filterList} />
           </span>
         </FilterSortContainerOnMobile>
       </Card>
@@ -139,77 +208,6 @@ export function TokensCard({
       </QueryResult>
     </>
   )
-}
-
-const getFilterList = (): { key: string; value: string; to: string; title: string | JSX.Element }[] => {
-  return [
-    {
-      key: 'invalid',
-      value: 'invalid',
-      title: <XUDTTag tagName="invalid" />,
-      to: '',
-    },
-    {
-      key: 'suspicious',
-      value: 'suspicious',
-      title: <XUDTTag tagName="suspicious" />,
-      to: '',
-    },
-    {
-      key: 'out-of-length-range',
-      value: 'out-of-length-range',
-      title: <XUDTTag tagName="out-of-length-range" />,
-      to: '',
-    },
-    {
-      key: 'duplicate',
-      value: 'duplicate',
-      title: <XUDTTag tagName="duplicate" />,
-      to: '',
-    },
-    {
-      key: 'layer-1-asset',
-      value: 'layer-1-asset',
-      title: <XUDTTag tagName="layer-1-asset" />,
-      to: '',
-    },
-    {
-      key: 'layer-2-asset',
-      value: 'layer-2-asset',
-      title: <XUDTTag tagName="layer-2-asset" />,
-      to: '',
-    },
-    {
-      key: 'verified-on',
-      value: 'verified-on',
-      title: <XUDTTag tagName="verified-on" />,
-      to: '',
-    },
-    {
-      key: 'supply-limited',
-      value: 'supply-limited',
-      title: <XUDTTag tagName="supply-limited" />,
-      to: '',
-    },
-    {
-      key: 'supply-unlimited',
-      value: 'supply-unlimited',
-      title: <XUDTTag tagName="supply-unlimited" />,
-      to: '',
-    },
-    {
-      key: 'rgbpp-compatible',
-      value: 'rgbpp-compatible',
-      title: <XUDTTag tagName="rgbpp-compatible" />,
-      to: '',
-    },
-    {
-      key: 'category',
-      value: 'category',
-      title: <XUDTTag tagName="category" />,
-      to: '',
-    },
-  ]
 }
 
 const TokenTable: FC<{
@@ -256,7 +254,7 @@ const TokenTable: FC<{
       title: (
         <>
           {t('xudt.title.tags')}
-          <MultiFilterButton filterName="tags" key="" filteredList={getFilterList()} />
+          <MultiFilterButton filterName="tags" key="" filteredList={filterList} />
         </>
       ),
       className: styles.colTags,
