@@ -4,6 +4,8 @@ import styles from './HolderAllocation.module.scss'
 import { localeNumberString } from '../../utils/number'
 import CloseIcon from '../../assets/modal_close.png'
 import SimpleButton from '../../components/SimpleButton'
+import { matchScript } from '../../utils/util'
+import EllipsisMiddle from '../../components/EllipsisMiddle'
 
 const HolderAllocation = ({
   ckbHolderAmount,
@@ -50,7 +52,7 @@ const HolderAllocation = ({
                   .map(amount => (
                     <tr>
                       <td>
-                        <div>{amount.name ?? `#${amount.codeHash.slice(2, 6)}`}</div>
+                        <EllipsisMiddle>{matchScript(amount.codeHash)?.tag ?? amount.codeHash}</EllipsisMiddle>
                       </td>
                       <td>
                         <div>{localeNumberString(amount.holderCount)}</div>
