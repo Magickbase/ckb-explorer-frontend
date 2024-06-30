@@ -2,6 +2,7 @@ import { ReactNode, FC } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { Tooltip } from 'antd'
+import { useQuery } from '@tanstack/react-query'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from '../../components/Link'
 import Pagination from '../../components/Pagination'
@@ -26,6 +27,7 @@ import Filter from '../../components/Filter'
 import { RawBtcRPC, useLatestBlockNumber } from '../../services/ExplorerService'
 import { Transaction } from '../../models/Transaction'
 import { CardHeader } from '../../components/Card/CardHeader'
+import { useCKBNode } from '../../hooks/useCKBNode'
 
 const CELL_BASE_ANCHOR = 'cellbase'
 
@@ -120,9 +122,23 @@ export interface BlockOverviewCardProps {
 }
 
 export const BlockOverviewCard: FC<BlockOverviewCardProps> = ({ block }) => {
+  const { nodeService, isActivated: nodeModeActivated } = useCKBNode()
   const isMobile = useIsMobile()
   const { t } = useTranslation()
-  const tipBlockNumber = useLatestBlockNumber()
+  const backendTipBlockNumber = useLatestBlockNumber()
+  const { data: nodeTipBlockNumber = 0 } = useQuery(
+    ['node', 'tipBlockNumber'],
+    () => nodeService.rpc.getTipBlockNumber().then(res => parseInt(res, 16)),
+    {
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: true,
+      staleTime: 12 * 1000,
+      enabled: nodeModeActivated,
+    },
+  )
+
+  const tipBlockNumber = nodeModeActivated ? nodeTipBlockNumber : backendTipBlockNumber
   const rootInfoItem: CardCellInfo = {
     title: t('block.transactions_root'),
     tooltip: t('glossary.transactions_root'),
