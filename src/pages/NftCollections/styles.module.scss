@@ -4,6 +4,13 @@
   margin: 40px 120px 60px;
 }
 
+.tags {
+  flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  margin-left: 8px;
+}
+
 .header {
   display: flex;
   justify-content: space-between;

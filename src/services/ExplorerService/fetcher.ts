@@ -928,7 +928,7 @@ export const apiFetcher = {
       .then(res => toCamelcase<string>(res.data))
   },
 
-  fetchNFTCollections: (page: string, sort?: string, type?: string) =>
+  fetchNFTCollections: (page: string, sort?: string, type?: string, tags?: string) =>
     requesterV2
       .get<{
         data: NFTCollection[]
@@ -941,6 +941,7 @@ export const apiFetcher = {
         }
       }>('nft/collections', {
         params: {
+          tags,
           page,
           sort,
           type,
@@ -1218,6 +1219,7 @@ export interface NFTCollection {
   items_count: number | null
   holders_count: number | null
   type_script: { code_hash: string; hash_type: 'data' | 'type'; args: string } | null
+  tags: string[]
   sn: string
   timestamp: number
 }

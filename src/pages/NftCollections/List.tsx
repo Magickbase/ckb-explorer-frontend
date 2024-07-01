@@ -13,6 +13,8 @@ import styles from './styles.module.scss'
 import type { NFTCollection } from '../../services/ExplorerService/fetcher'
 import { useNFTCollectionsSortParam } from './util'
 import { parseSimpleDate } from '../../utils/date'
+import MultiFilterButton from '../../components/MultiFilterButton'
+import XUDTTag from '../../components/XUDTTag'
 
 const primaryColor = getPrimaryColor()
 function useFilterList(): Record<'title' | 'value', string>[] {
@@ -75,6 +77,86 @@ const TypeFilter = () => {
       >
         <FilterIcon className={styles.filter} />
       </Popover>
+    </div>
+  )
+}
+
+const Tags = () => {
+  const { t } = useTranslation()
+
+  const filterList = [
+    {
+      key: 'invalid',
+      value: 'invalid',
+      title: <XUDTTag tagName="invalid" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'suspicious',
+      value: 'suspicious',
+      title: <XUDTTag tagName="suspicious" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'out-of-length-range',
+      value: 'out-of-length-range',
+      title: <XUDTTag tagName="out-of-length-range" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'duplicate',
+      value: 'duplicate',
+      title: <XUDTTag tagName="duplicate" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'layer-1-asset',
+      value: 'layer-1-asset',
+      title: <XUDTTag tagName="layer-1-asset" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'layer-2-asset',
+      value: 'layer-2-asset',
+      title: <XUDTTag tagName="layer-2-asset" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'verified-on',
+      value: 'verified-on',
+      title: <XUDTTag tagName="verified-on" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'supply-limited',
+      value: 'supply-limited',
+      title: <XUDTTag tagName="supply-limited" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'supply-unlimited',
+      value: 'supply-unlimited',
+      title: <XUDTTag tagName="supply-unlimited" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'rgbpp-compatible',
+      value: 'rgbpp-compatible',
+      title: <XUDTTag tagName="rgbpp-compatible" />,
+      to: '/nft-collections',
+    },
+    {
+      key: 'category',
+      value: 'category',
+      title: <XUDTTag tagName="category" />,
+      to: '/nft-collections',
+    },
+  ]
+
+  return (
+    <div className={styles.colTags}>
+      {t('xudt.title.tags')}
+      <MultiFilterButton filterName="tags" key="" filteredList={filterList} />
     </div>
   )
 }
@@ -174,6 +256,9 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: NFTCollection[]
         <tr>
           <th>{t('nft.collection_name')}</th>
           <th>
+            <Tags />
+          </th>
+          <th>
             <TypeFilter />
           </th>
           <th className={styles.transactionsHeader}>
@@ -235,6 +320,13 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: NFTCollection[]
                     >
                       {itemName}
                     </Link>
+                  </div>
+                </td>
+                <td>
+                  <div className={styles.tags}>
+                    {item.tags.map(tag => (
+                      <XUDTTag tagName={tag} />
+                    ))}
                   </div>
                 </td>
                 <td>

@@ -22,13 +22,13 @@ const NftCollections = () => {
     i18n: { language },
   } = useTranslation()
   const { search } = useLocation()
-  const { page = '1', type } = useSearchParams('page', 'type')
+  const { page = '1', type, tags } = useSearchParams('page', 'type', 'tags')
   const { sort } = useNFTCollectionsSortParam()
 
   const isValidFilter = isTxFilterType(type) && type !== 'all'
 
-  const { isLoading, data } = useQuery(['nft-collections', page, sort, type], () =>
-    explorerService.api.fetchNFTCollections(page, sort, isValidFilter ? type : undefined),
+  const { isLoading, data } = useQuery(['nft-collections', page, sort, type, tags], () =>
+    explorerService.api.fetchNFTCollections(page, sort, isValidFilter ? type : undefined, tags),
   )
 
   const list = data?.data ?? []
