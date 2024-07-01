@@ -5,7 +5,7 @@ import styles from './styles.module.scss'
 
 const HIDDEN_TAGS = ['duplicate', 'suspicious', 'utility', 'supply-unlimited', 'out-of-length-range']
 
-const XUDTTag = ({ tagName }: { tagName: string }) => {
+const XUDTTag = ({ tagName, to }: { tagName: string; to?: string }) => {
   const { t } = useTranslation()
   const { push } = useHistory()
 
@@ -39,7 +39,7 @@ const XUDTTag = ({ tagName }: { tagName: string }) => {
     } else {
       search.set('tags', [...tags, tag].join(','))
     }
-    push(`${window.location.pathname}?${search}`)
+    push(`${to ?? window.location.pathname}?${search}`)
   }
 
   return (
