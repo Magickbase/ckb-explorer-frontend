@@ -139,6 +139,7 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
           <div className={styles.submenu}>
             <Link className={styles.link} to="/tools/address-conversion">
               {t('footer.tools')}
+              {/* TODO: remove this tag after 2024-08-01 */}
               {dayjs().isBefore(dayjs('2024-08-01')) && (
                 <span className={styles.newTag} style={{ marginLeft: 4 }}>
                   NEW
