@@ -36,7 +36,8 @@ export const FooterPanel = styled.div`
 
 export const FooterMenuPanel = styled.div`
   overflow: hidden;
-  margin: 44px auto 52px;
+  margin-top: 44px;
+  margin-bottom: 52px;
   display: flex;
   flex-direction: row;
   justify-content: center;

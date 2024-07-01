@@ -132,33 +132,37 @@ export default memo(() => {
 
   return (
     <FooterPanel>
-      <FooterMenuPanel>
-        <div className="footerFoundation">
-          <div className="footerTitle">{Footers[0].name}</div>
-          {Footers[0].items.map(item => (
-            <FooterItem item={item} key={item.label} />
-          ))}
-        </div>
-        <div className="footerDeveloper">
-          <div className="footerTitle">{Footers[1].name}</div>
-          {Footers[1].items
-            .filter(item => item.label !== undefined)
-            .map(item => (
+      <div style={{ width: '100%' }}>
+        <FooterMenuPanel className="container">
+          <div className="footerFoundation">
+            <div className="footerTitle">{Footers[0].name}</div>
+            {Footers[0].items.map(item => (
               <FooterItem item={item} key={item.label} />
             ))}
-          <button type="button" onClick={onSubmitToken} className={styles.tokenFormBtn}>
-            {t('udt.submit_token_info')}
-          </button>
-        </div>
-        <div className="footerCommunity">
-          {Footers[2].items.map(item => (
-            <FooterImageItem item={item} key={item.label} />
-          ))}
-        </div>
-      </FooterMenuPanel>
+          </div>
+          <div className="footerDeveloper">
+            <div className="footerTitle">{Footers[1].name}</div>
+            {Footers[1].items
+              .filter(item => item.label !== undefined)
+              .map(item => (
+                <FooterItem item={item} key={item.label} />
+              ))}
+            <button type="button" onClick={onSubmitToken} className={styles.tokenFormBtn}>
+              {t('udt.submit_token_info')}
+            </button>
+          </div>
+          <div className="footerCommunity" style={{ marginLeft: 'auto' }}>
+            {Footers[2].items.map(item => (
+              <FooterImageItem item={item} key={item.label} />
+            ))}
+          </div>
+        </FooterMenuPanel>
+      </div>
       <div style={{ width: '100%' }}>
         <div className="footerCopyright container">
-          <span className="power">Powered by MagicKBase</span>
+          <a className="power" href="https://www.magickbase.com" target="_blank" rel="noreferrer">
+            Powered by MagicKBase
+          </a>
           <span>{`Copyright © ${getCurrentYear()} Nervos Foundation. `}</span>
           <span>All Rights Reserved.</span>
         </div>
