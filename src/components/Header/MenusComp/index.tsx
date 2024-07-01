@@ -181,7 +181,8 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
             className={classNames(styles.clickable, styles.headerMenusItem, styles.submenuTrigger, styles.moreMenus)}
           >
             <MenuIcon className={styles.moreIcon} />
-            <NewIcon className={styles.newIcon} />
+            {/* TODO: remove this after 2024-08-01 */}
+            {dayjs().isBefore(dayjs('2024-08-01')) && <NewIcon className={styles.newIcon} />}
           </span>
         )}
       </Dropdown>
