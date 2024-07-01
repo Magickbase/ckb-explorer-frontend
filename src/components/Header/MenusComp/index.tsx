@@ -3,6 +3,7 @@ import { FC, memo, PropsWithChildren, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dropdown, DropdownProps } from 'antd'
 import classNames from 'classnames'
+import dayjs from 'dayjs'
 import { Link } from '../../Link'
 import { MobileMenuItem, MobileMenuOuterLink, HeaderMenuPanel, MobileMenuInnerLink } from './styled'
 import styles from './index.module.scss'
@@ -138,9 +139,11 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
           <div className={styles.submenu}>
             <Link className={styles.link} to="/tools/address-conversion">
               {t('footer.tools')}
-              <span className={styles.newTag} style={{ marginLeft: 4 }}>
-                NEW
-              </span>
+              {dayjs().isBefore(dayjs('2024-08-01')) && (
+                <span className={styles.newTag} style={{ marginLeft: 4 }}>
+                  NEW
+                </span>
+              )}
             </Link>
             <span
               className={classNames(styles.link, styles.clickable)}
