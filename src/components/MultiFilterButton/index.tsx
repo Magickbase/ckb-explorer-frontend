@@ -19,7 +19,11 @@ export function MultiFilterButton({
 }) {
   const { t } = useTranslation()
   const params = useSearchParams(filterName)
-  const types = params[filterName]?.split(',').filter(t => t !== '') ?? []
+  const filter = params[filterName]
+  let types = filteredList.map(f => f.value)
+  if (filter !== undefined) {
+    types = filter.split(',').filter(t => t !== '')
+  }
 
   return (
     <Popover
@@ -31,11 +35,20 @@ export function MultiFilterButton({
         <div className={styles.filterItems}>
           <div className={styles.selectTitle}>
             <h2>{t('components.multi_filter_button.select')}</h2>
-            {types.length > 0 ? (
-              <>{types.length === filteredList.length ? <SelectedIcon /> : <PartialSelectedIcon />}</>
-            ) : (
-              <NotSelectedIcon />
-            )}
+            <Link
+              key="all"
+              to={() => {
+                return types.length === 0 || types.length !== filteredList.length
+                  ? filteredList[0].to
+                  : `${filteredList[0].to}?${new URLSearchParams({ [filterName]: '' }).toString()}`
+              }}
+            >
+              {types.length > 0 ? (
+                <>{types.length === filteredList.length ? <SelectedIcon /> : <PartialSelectedIcon />}</>
+              ) : (
+                <NotSelectedIcon />
+              )}
+            </Link>
           </div>
           {filteredList.map(f => (
             <Link
