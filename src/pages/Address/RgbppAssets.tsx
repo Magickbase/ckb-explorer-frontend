@@ -30,21 +30,20 @@ import { CellBasicInfo } from '../../utils/transformer'
 import { isTypeIdScript } from '../../utils/typeid'
 import config from '../../config'
 import { getBtcChainIdentify } from '../../services/BTCIdentifier'
+import InvalidRGBPPAssetList from './InvalidRGBPPAssetList'
 
 const fetchCells = async ({
   address,
   size = 10,
   sort = 'capacity.desc',
   page = 1,
-  boundStatus = 'bound',
 }: {
-  boundStatus: 'bound' | 'unbound'
   address: string
   size: number
   sort: string
   page: number
 }) => {
-  const res = await explorerService.api.fetchAddressLiveCells(address, page, size, sort, boundStatus)
+  const res = await explorerService.api.fetchAddressLiveCells(address, page, size, sort)
   return {
     data: res.data,
     nextPage: page + 1,
@@ -441,9 +440,8 @@ const RGBAssetsTableView: FC<{ address: string; count: number }> = ({ address, c
   const loadMoreRef = useRef<HTMLDivElement | null>(null)
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
-    ['address live cells', address, params.size, params.sort, isUnbounded ? 'unbound' : 'bound'],
-    ({ pageParam = 1 }) =>
-      fetchCells({ ...params, address, page: pageParam, boundStatus: isUnbounded ? 'unbound' : 'bound' }),
+    ['address live cells', address, params.size, params.sort],
+    ({ pageParam = 1 }) => fetchCells({ ...params, address, page: pageParam }),
     {
       getNextPageParam: (lastPage: any) => {
         if (lastPage.data.length < params.size) return false
@@ -578,7 +576,13 @@ const RgbAssets: FC<{
             {isMerged && !isUnBounded ? (
               <MergedAssetList udts={udts} inscriptions={inscriptions} />
             ) : (
-              <RGBAssetsCellView address={address} count={count} width={width} />
+              <>
+                {isUnBounded ? (
+                  <InvalidRGBPPAssetList address={address} count={count} />
+                ) : (
+                  <RGBAssetsCellView address={address} count={count} width={width} />
+                )}
+              </>
             )}
           </>
         )}
