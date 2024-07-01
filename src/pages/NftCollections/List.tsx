@@ -15,6 +15,8 @@ import { useNFTCollectionsSortParam } from './util'
 import { parseSimpleDate } from '../../utils/date'
 import MultiFilterButton from '../../components/MultiFilterButton'
 import XUDTTag from '../../components/XUDTTag'
+import { Card } from '../../components/Card'
+import { FilterSortContainerOnMobile } from '../../components/FilterSortContainer'
 
 const primaryColor = getPrimaryColor()
 function useFilterList(): Record<'title' | 'value', string>[] {
@@ -42,6 +44,75 @@ function useFilterList(): Record<'title' | 'value', string>[] {
     },
   ]
 }
+
+const filterList = [
+  {
+    key: 'invalid',
+    value: 'invalid',
+    title: <XUDTTag tagName="invalid" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'suspicious',
+    value: 'suspicious',
+    title: <XUDTTag tagName="suspicious" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'out-of-length-range',
+    value: 'out-of-length-range',
+    title: <XUDTTag tagName="out-of-length-range" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'duplicate',
+    value: 'duplicate',
+    title: <XUDTTag tagName="duplicate" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'layer-1-asset',
+    value: 'layer-1-asset',
+    title: <XUDTTag tagName="layer-1-asset" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'layer-2-asset',
+    value: 'layer-2-asset',
+    title: <XUDTTag tagName="layer-2-asset" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'verified-on',
+    value: 'verified-on',
+    title: <XUDTTag tagName="verified-on" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'supply-limited',
+    value: 'supply-limited',
+    title: <XUDTTag tagName="supply-limited" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'supply-unlimited',
+    value: 'supply-unlimited',
+    title: <XUDTTag tagName="supply-unlimited" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'rgbpp-compatible',
+    value: 'rgbpp-compatible',
+    title: <XUDTTag tagName="rgbpp-compatible" />,
+    to: '/nft-collections',
+  },
+  {
+    key: 'category',
+    value: 'category',
+    title: <XUDTTag tagName="category" />,
+    to: '/nft-collections',
+  },
+]
 
 export const isTxFilterType = (s?: string): boolean => {
   return s ? ['all', 'm_nft', 'nrc721', 'cota', 'spore'].includes(s) : false
@@ -83,75 +154,6 @@ const TypeFilter = () => {
 
 const Tags = () => {
   const { t } = useTranslation()
-
-  const filterList = [
-    {
-      key: 'invalid',
-      value: 'invalid',
-      title: <XUDTTag tagName="invalid" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'suspicious',
-      value: 'suspicious',
-      title: <XUDTTag tagName="suspicious" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'out-of-length-range',
-      value: 'out-of-length-range',
-      title: <XUDTTag tagName="out-of-length-range" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'duplicate',
-      value: 'duplicate',
-      title: <XUDTTag tagName="duplicate" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'layer-1-asset',
-      value: 'layer-1-asset',
-      title: <XUDTTag tagName="layer-1-asset" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'layer-2-asset',
-      value: 'layer-2-asset',
-      title: <XUDTTag tagName="layer-2-asset" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'verified-on',
-      value: 'verified-on',
-      title: <XUDTTag tagName="verified-on" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'supply-limited',
-      value: 'supply-limited',
-      title: <XUDTTag tagName="supply-limited" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'supply-unlimited',
-      value: 'supply-unlimited',
-      title: <XUDTTag tagName="supply-unlimited" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'rgbpp-compatible',
-      value: 'rgbpp-compatible',
-      title: <XUDTTag tagName="rgbpp-compatible" />,
-      to: '/nft-collections',
-    },
-    {
-      key: 'category',
-      value: 'category',
-      title: <XUDTTag tagName="category" />,
-      to: '/nft-collections',
-    },
-  ]
 
   return (
     <div className={styles.colTags}>
@@ -374,13 +376,19 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
   const { t } = useTranslation()
 
   return (
-    <div data-role="mobile-list">
-      <div className={styles.listHeader}>
-        <TypeFilter />
-        <SimpleSortHeader sortField="transactions" fieldI18n={t('nft.transactions')} />
-        <HolderMinterSort />
-        <SimpleSortHeader sortField="timestamp" fieldI18n={t('nft.created_time')} />
-      </div>
+    <>
+      <Card className={styles.filterSortCard} shadow={false}>
+        <FilterSortContainerOnMobile>
+          <TypeFilter />
+          <SimpleSortHeader sortField="transactions" fieldI18n={t('nft.transactions')} />
+          <HolderMinterSort />
+          <SimpleSortHeader sortField="timestamp" fieldI18n={t('nft.created_time')} />
+          <div>
+            {t('xudt.title.tags')}
+            <MultiFilterButton filterName="tags" key="" filteredList={filterList} />
+          </div>
+        </FilterSortContainerOnMobile>
+      </Card>
       <div>
         {list.length ? (
           list.map(item => {
@@ -398,45 +406,44 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
               // ignore
             }
             return (
-              <div key={item.id} className={styles.listItem}>
+              <Card key={item.id} className={styles.tokensCard}>
                 <div>
-                  <div className={styles.name}>
-                    {item.icon_url ? (
-                      <img
-                        src={`${patchMibaoImg(item.icon_url)}?size=small`}
-                        alt="cover"
-                        loading="lazy"
-                        className={styles.icon}
-                        onError={handleNftImgError}
-                      />
-                    ) : (
-                      <img
-                        src={
-                          item.standard === 'spore' ? '/images/spore_placeholder.svg' : '/images/nft_placeholder.png'
-                        }
-                        alt="cover"
-                        loading="lazy"
-                        className={styles.icon}
-                      />
-                    )}
-                    <Link
-                      to={`/nft-collections/${typeHash || item.id}`}
-                      title={itemName}
-                      style={{
-                        color: primaryColor,
-                      }}
-                    >
-                      {itemName}
-                    </Link>
-                  </div>
+                  <dl className={styles.tokenInfo}>
+                    <dt className={styles.title}>Name</dt>
+                    <dd>
+                      {item.icon_url ? (
+                        <img
+                          src={`${patchMibaoImg(item.icon_url)}?size=small`}
+                          alt="cover"
+                          loading="lazy"
+                          className={styles.icon}
+                          onError={handleNftImgError}
+                        />
+                      ) : (
+                        <img
+                          src={
+                            item.standard === 'spore' ? '/images/spore_placeholder.svg' : '/images/nft_placeholder.png'
+                          }
+                          alt="cover"
+                          loading="lazy"
+                          className={styles.icon}
+                        />
+                      )}
+                      <Link to={`/nft-collections/${typeHash || item.id}`} title={itemName} className={styles.link}>
+                        {itemName}
+                      </Link>
+                    </dd>
+                  </dl>
+                  <div className={styles.name} />
                 </div>
-                <dl>
-                  <dt>{t(`nft.standard`)}</dt>
-                  <dd>
+                <dl className={styles.tokenInfo}>
+                  <dt className={styles.title}>{t(`nft.standard`)}</dt>
+                  <dd className={styles.value}>
                     <TypeInfo nft={item} />
                   </dd>
                 </dl>
-                <dl>
+
+                <dl className={styles.tokenInfo}>
                   <dt>{`${t('nft.holder')}/${t('nft.minted')}`}</dt>
                   <dd>
                     {`${(item.holders_count ?? 0).toLocaleString('en')}/${(item.items_count ?? 0).toLocaleString(
@@ -444,16 +451,16 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
                     )}`}
                   </dd>
                 </dl>
-                <dl>
+                <dl className={styles.tokenInfo}>
                   <dt>{t('nft.transactions')}</dt>
                   <dd>{item.h24_ckb_transactions_count}</dd>
                 </dl>
-                <dl>
+                <dl className={styles.tokenInfo}>
                   <dt>{t('nft.created_time')}</dt>
                   <dd>{item.timestamp === null ? '' : parseSimpleDate(item.timestamp)}</dd>
                 </dl>
                 {item.creator ? (
-                  <dl>
+                  <dl className={styles.tokenInfo}>
                     <dt>{t(`nft.minter_address`)}</dt>
                     <dd>
                       <Tooltip title={item.creator}>
@@ -469,13 +476,18 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
                     </dd>
                   </dl>
                 ) : null}
-              </div>
+                <dl className={styles.tokenInfo} style={{ flexDirection: 'row' }}>
+                  {item.tags.map(tag => (
+                    <XUDTTag tagName={tag} />
+                  ))}
+                </dl>
+              </Card>
             )
           })
         ) : (
           <div className={styles.loading}>{isLoading ? 'loading' : t(`nft.no_record`)}</div>
         )}
       </div>
-    </div>
+    </>
   )
 }
