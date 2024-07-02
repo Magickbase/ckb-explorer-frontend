@@ -25,6 +25,9 @@ export function MultiFilterButton({
     types = filter.split(',').filter(t => t !== '')
   }
 
+  const isAllSelected = types.length === filteredList.length
+  const isNoneSelected = types.length === 0
+
   return (
     <Popover
       className={styles.container}
@@ -38,13 +41,13 @@ export function MultiFilterButton({
             <Link
               key="all"
               to={() => {
-                return types.length === 0 || types.length !== filteredList.length
+                return isNoneSelected || !isAllSelected
                   ? filteredList[0].to
                   : `${filteredList[0].to}?${new URLSearchParams({ [filterName]: '' }).toString()}`
               }}
             >
               {types.length > 0 ? (
-                <>{types.length === filteredList.length ? <SelectedIcon /> : <PartialSelectedIcon />}</>
+                <>{isAllSelected ? <SelectedIcon /> : <PartialSelectedIcon />}</>
               ) : (
                 <NotSelectedIcon />
               )}
