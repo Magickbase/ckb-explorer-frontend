@@ -220,7 +220,8 @@ const TokenTable: FC<{
     unknown
   >
   sortParam?: ReturnType<typeof useSortParam<SortField>>
-}> = ({ query, sortParam }) => {
+  isEmpty: boolean
+}> = ({ query, sortParam, isEmpty }) => {
   const { t } = useTranslation()
 
   const nullableColumns: (ColumnGroupType<XUDT> | ColumnType<XUDT> | false | undefined)[] = [
@@ -303,7 +304,7 @@ const TokenTable: FC<{
     <Table
       className={styles.tokensTable}
       columns={columns}
-      dataSource={query.data?.tokens ?? []}
+      dataSource={isEmpty ? [] : query.data?.tokens ?? []}
       pagination={false}
       loading={
         query.isLoading
@@ -362,7 +363,7 @@ const Xudts = () => {
           <TokensCard query={query} sortParam={sortParam} />
         </div>
         <div className={styles.table}>
-          <TokenTable query={query} sortParam={sortParam} />
+          <TokenTable query={query} sortParam={sortParam} isEmpty={tags === ''} />
         </div>
 
         <Pagination

@@ -28,6 +28,7 @@ export function MultiFilterButton({
   const isAllSelected = types.length === filterList.length
   const isNoneSelected = types.length === 0
   const search = new URLSearchParams(useLocation().search)
+  search.delete(filterName)
 
   return (
     <Popover
@@ -43,7 +44,6 @@ export function MultiFilterButton({
               key="all"
               to={() => {
                 const newSearch = new URLSearchParams(search)
-                newSearch.delete(filterName)
                 if (!isNoneSelected && isAllSelected) {
                   newSearch.append(filterName, '')
                 }
@@ -61,9 +61,6 @@ export function MultiFilterButton({
             <Link
               key={f.key}
               to={() => {
-                const newSearch = new URLSearchParams(search)
-                newSearch.delete(filterName)
-
                 const subTypes = new Set(types)
                 if (subTypes.has(f.value)) {
                   subTypes.delete(f.value)
@@ -71,6 +68,7 @@ export function MultiFilterButton({
                   subTypes.add(f.value)
                 }
 
+                const newSearch = new URLSearchParams(search)
                 newSearch.append(filterName, Array.from(subTypes).join(','))
                 return `${f.to}?${newSearch.toString()}`
               }}
