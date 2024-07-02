@@ -62,9 +62,9 @@ const NftCollections = () => {
         </div>
         <div className={styles.list}>
           {isMobile ? (
-            <ListOnMobile isLoading={isLoading} list={list} />
+            <ListOnMobile isLoading={isLoading} list={tags === '' ? [] : list} />
           ) : (
-            <ListOnDesktop isLoading={isLoading} list={list} />
+            <ListOnDesktop isLoading={isLoading} list={tags === '' ? [] : list} />
           )}
         </div>
 

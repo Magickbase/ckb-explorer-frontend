@@ -82,36 +82,6 @@ const filterList = [
     title: <XUDTTag tagName="layer-2-asset" />,
     to: '/nft-collections',
   },
-  {
-    key: 'verified-on',
-    value: 'verified-on',
-    title: <XUDTTag tagName="verified-on" />,
-    to: '/nft-collections',
-  },
-  {
-    key: 'supply-limited',
-    value: 'supply-limited',
-    title: <XUDTTag tagName="supply-limited" />,
-    to: '/nft-collections',
-  },
-  {
-    key: 'supply-unlimited',
-    value: 'supply-unlimited',
-    title: <XUDTTag tagName="supply-unlimited" />,
-    to: '/nft-collections',
-  },
-  {
-    key: 'rgbpp-compatible',
-    value: 'rgbpp-compatible',
-    title: <XUDTTag tagName="rgbpp-compatible" />,
-    to: '/nft-collections',
-  },
-  {
-    key: 'category',
-    value: 'category',
-    title: <XUDTTag tagName="category" />,
-    to: '/nft-collections',
-  },
 ]
 
 export const isTxFilterType = (s?: string): boolean => {
@@ -158,7 +128,7 @@ const Tags = () => {
   return (
     <div className={styles.colTags}>
       {t('xudt.title.tags')}
-      <MultiFilterButton filterName="tags" key="" filteredList={filterList} />
+      <MultiFilterButton filterName="tags" key="" filterList={filterList} />
     </div>
   )
 }
@@ -385,7 +355,7 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
           <SimpleSortHeader sortField="timestamp" fieldI18n={t('nft.created_time')} />
           <div>
             {t('xudt.title.tags')}
-            <MultiFilterButton filterName="tags" key="" filteredList={filterList} />
+            <MultiFilterButton filterName="tags" key="" filterList={filterList} />
           </div>
         </FilterSortContainerOnMobile>
       </Card>
@@ -485,7 +455,7 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
             )
           })
         ) : (
-          <div className={styles.loading}>{isLoading ? 'loading' : t(`nft.no_record`)}</div>
+          <div className={styles.noRecord}>{isLoading ? 'loading' : t(`nft.no_record`)}</div>
         )}
       </div>
     </>
