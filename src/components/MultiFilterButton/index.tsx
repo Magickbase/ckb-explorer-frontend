@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Popover } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as FilterIcon } from '../../assets/filter_icon.svg'
@@ -27,6 +27,7 @@ export function MultiFilterButton({
 
   const isAllSelected = types.length === filterList.length
   const isNoneSelected = types.length === 0
+  const search = new URLSearchParams(useLocation().search)
 
   return (
     <Popover
@@ -41,9 +42,12 @@ export function MultiFilterButton({
             <Link
               key="all"
               to={() => {
-                return isNoneSelected || !isAllSelected
-                  ? filterList[0].to
-                  : `${filterList[0].to}?${new URLSearchParams({ [filterName]: '' }).toString()}`
+                const newSearch = new URLSearchParams(search)
+                newSearch.delete(filterName)
+                if (!isNoneSelected && isAllSelected) {
+                  newSearch.append(filterName, '')
+                }
+                return `${filterList[0].to}?${newSearch.toString()}`
               }}
             >
               {types.length > 0 ? (
@@ -57,13 +61,18 @@ export function MultiFilterButton({
             <Link
               key={f.key}
               to={() => {
-                let subTypes = types.map(t => t)
-                if (subTypes.includes(f.value)) {
-                  subTypes = subTypes.filter(t => t !== f.value)
+                const newSearch = new URLSearchParams(search)
+                newSearch.delete(filterName)
+
+                const subTypes = new Set(types)
+                if (subTypes.has(f.value)) {
+                  subTypes.delete(f.value)
                 } else {
-                  subTypes.push(f.value)
+                  subTypes.add(f.value)
                 }
-                return `${f.to}?${new URLSearchParams({ [filterName]: subTypes.join(',') }).toString()}`
+
+                newSearch.append(filterName, Array.from(subTypes).join(','))
+                return `${f.to}?${newSearch.toString()}`
               }}
               data-is-active={types.includes(f.value)}
             >
