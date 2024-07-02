@@ -184,7 +184,7 @@ export function TokensCard({
           </span>
           <span className={styles.sortOption}>
             {t('xudt.title.tags')}
-            <MultiFilterButton filterName="tags" key="" filteredList={filterList} />
+            <MultiFilterButton filterName="tags" key="" filterList={filterList} />
           </span>
         </FilterSortContainerOnMobile>
       </Card>
@@ -254,7 +254,7 @@ const TokenTable: FC<{
       title: (
         <>
           {t('xudt.title.tags')}
-          <MultiFilterButton filterName="tags" key="" filteredList={filterList} />
+          <MultiFilterButton filterName="tags" key="" filterList={filterList} />
         </>
       ),
       className: styles.colTags,

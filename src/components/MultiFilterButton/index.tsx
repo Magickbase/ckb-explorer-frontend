@@ -9,23 +9,23 @@ import { useSearchParams } from '../../hooks'
 import styles from './styles.module.scss'
 
 export function MultiFilterButton({
-  filteredList,
+  filterList,
   isMobile,
   filterName,
 }: {
   filterName: string
-  filteredList: { key: string; value: string; to: string; title: string | JSX.Element }[]
+  filterList: { key: string; value: string; to: string; title: string | JSX.Element }[]
   isMobile?: boolean
 }) {
   const { t } = useTranslation()
   const params = useSearchParams(filterName)
   const filter = params[filterName]
-  let types = filteredList.map(f => f.value)
+  let types = filterList.map(f => f.value)
   if (filter !== undefined) {
     types = filter.split(',').filter(t => t !== '')
   }
 
-  const isAllSelected = types.length === filteredList.length
+  const isAllSelected = types.length === filterList.length
   const isNoneSelected = types.length === 0
 
   return (
@@ -42,8 +42,8 @@ export function MultiFilterButton({
               key="all"
               to={() => {
                 return isNoneSelected || !isAllSelected
-                  ? filteredList[0].to
-                  : `${filteredList[0].to}?${new URLSearchParams({ [filterName]: '' }).toString()}`
+                  ? filterList[0].to
+                  : `${filterList[0].to}?${new URLSearchParams({ [filterName]: '' }).toString()}`
               }}
             >
               {types.length > 0 ? (
@@ -53,7 +53,7 @@ export function MultiFilterButton({
               )}
             </Link>
           </div>
-          {filteredList.map(f => (
+          {filterList.map(f => (
             <Link
               key={f.key}
               to={() => {
