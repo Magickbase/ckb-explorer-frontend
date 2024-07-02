@@ -96,13 +96,13 @@ const getFilterList = (t: TFunction): Record<'key' | 'title' | 'value' | 'to', s
     },
     {
       key: 'leap_out',
-      value: 'out',
+      value: 'leapoutBTC',
       title: t('address.leap_out'),
       to: '',
     },
     {
       key: 'leap_with_in_btc',
-      value: 'equal',
+      value: 'withinBTC',
       title: t('address.leap_with_in_btc'),
       to: '',
     },
