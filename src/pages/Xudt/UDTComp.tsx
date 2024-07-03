@@ -110,7 +110,7 @@ export const UDTOverviewCard = ({
   )
 
   const ckbHolderAmount = holderAllocation?.lockHashes.reduce((acc, cur) => acc + +cur.holderCount, 0) ?? 0
-  const holderCount = holderAllocation ? ckbHolderAmount + +(holderAllocation?.btcHoldersCount ?? 0) : 0
+  const holderCount = holderAllocation ? ckbHolderAmount + +(holderAllocation?.btcHolderCount ?? 0) : 0
 
   const items: CardCellInfo<'left' | 'right'>[] = [
     {
@@ -204,7 +204,7 @@ export const UDTOverviewCard = ({
           <SimpleModal isShow={showHolderAmountModal} setIsShow={setShowHolderAmountModal}>
             <HolderAllocation
               ckbHolderAmount={localeNumberString(ckbHolderAmount)}
-              btcHolderAmount={holderAllocation.btcHoldersCount}
+              btcHolderAmount={holderAllocation.btcHolderCount}
               lockHoderAmount={holderAllocation.lockHashes}
               onClose={() => setShowHolderAmountModal(false)}
             />

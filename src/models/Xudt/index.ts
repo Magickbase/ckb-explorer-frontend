@@ -1,7 +1,7 @@
 import { Script } from '../Script'
 
 export interface XUDTHolderAllocation {
-  btcHoldersCount: string
+  btcHolderCount: string
   lockHashes: {
     name: string
     holderCount: string
