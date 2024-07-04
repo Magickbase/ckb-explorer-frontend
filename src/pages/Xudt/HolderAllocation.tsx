@@ -47,6 +47,16 @@ const HolderAllocation = ({
                 </tr>
               </thead>
               <tbody>
+                {parseInt(btcHolderAmount, 10) > 0 && (
+                  <tr>
+                    <td>
+                      <div>BTC</div>
+                    </td>
+                    <td>
+                      <div>{localeNumberString(btcHolderAmount)}</div>
+                    </td>
+                  </tr>
+                )}
                 {lockHoderAmount
                   .sort((a, b) => +b.holderCount - +a.holderCount)
                   .map(amount => (
