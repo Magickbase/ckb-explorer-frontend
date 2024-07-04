@@ -14,7 +14,7 @@ import type { NFTCollection } from '../../services/ExplorerService/fetcher'
 import { useNFTCollectionsSortParam } from './util'
 import { parseSimpleDate } from '../../utils/date'
 import MultiFilterButton from '../../components/MultiFilterButton'
-import XUDTTag from '../../components/XUDTTag'
+import NFTTag from '../../components/NFTTag'
 import { Card } from '../../components/Card'
 import { FilterSortContainerOnMobile } from '../../components/FilterSortContainer'
 
@@ -49,37 +49,37 @@ const filterList = [
   {
     key: 'invalid',
     value: 'invalid',
-    title: <XUDTTag tagName="invalid" />,
+    title: <NFTTag tagName="invalid" />,
     to: '/nft-collections',
   },
   {
     key: 'suspicious',
     value: 'suspicious',
-    title: <XUDTTag tagName="suspicious" />,
+    title: <NFTTag tagName="suspicious" />,
     to: '/nft-collections',
   },
   {
     key: 'out-of-length-range',
     value: 'out-of-length-range',
-    title: <XUDTTag tagName="out-of-length-range" />,
+    title: <NFTTag tagName="out-of-length-range" />,
     to: '/nft-collections',
   },
   {
     key: 'duplicate',
     value: 'duplicate',
-    title: <XUDTTag tagName="duplicate" />,
+    title: <NFTTag tagName="duplicate" />,
     to: '/nft-collections',
   },
   {
     key: 'layer-1-asset',
     value: 'layer-1-asset',
-    title: <XUDTTag tagName="layer-1-asset" />,
+    title: <NFTTag tagName="layer-1-asset" />,
     to: '/nft-collections',
   },
   {
     key: 'layer-2-asset',
     value: 'layer-2-asset',
-    title: <XUDTTag tagName="layer-2-asset" />,
+    title: <NFTTag tagName="layer-2-asset" />,
     to: '/nft-collections',
   },
 ]
@@ -297,7 +297,7 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: NFTCollection[]
                 <td>
                   <div className={styles.tags}>
                     {item.tags.map(tag => (
-                      <XUDTTag tagName={tag} />
+                      <NFTTag tagName={tag} />
                     ))}
                   </div>
                 </td>
@@ -448,7 +448,7 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
                 ) : null}
                 <dl className={styles.tokenInfo} style={{ flexDirection: 'row' }}>
                   {item.tags.map(tag => (
-                    <XUDTTag tagName={tag} />
+                    <NFTTag tagName={tag} />
                   ))}
                 </dl>
               </Card>
