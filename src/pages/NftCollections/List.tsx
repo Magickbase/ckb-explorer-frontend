@@ -49,37 +49,37 @@ const filterList = [
   {
     key: 'invalid',
     value: 'invalid',
-    title: <NFTTag tagName="invalid" />,
+    title: <NFTTag key="invalid" tagName="invalid" />,
     to: '/nft-collections',
   },
   {
     key: 'suspicious',
     value: 'suspicious',
-    title: <NFTTag tagName="suspicious" />,
+    title: <NFTTag key="suspicious" tagName="suspicious" />,
     to: '/nft-collections',
   },
   {
     key: 'out-of-length-range',
     value: 'out-of-length-range',
-    title: <NFTTag tagName="out-of-length-range" />,
+    title: <NFTTag key="out-of-length-range" tagName="out-of-length-range" />,
     to: '/nft-collections',
   },
   {
     key: 'duplicate',
     value: 'duplicate',
-    title: <NFTTag tagName="duplicate" />,
+    title: <NFTTag key="duplicate" tagName="duplicate" />,
     to: '/nft-collections',
   },
   {
     key: 'layer-1-asset',
     value: 'layer-1-asset',
-    title: <NFTTag tagName="layer-1-asset" />,
+    title: <NFTTag key="layer-1-asset" tagName="layer-1-asset" />,
     to: '/nft-collections',
   },
   {
     key: 'layer-2-asset',
     value: 'layer-2-asset',
-    title: <NFTTag tagName="layer-2-asset" />,
+    title: <NFTTag key="layer-2-asset" tagName="layer-2-asset" />,
     to: '/nft-collections',
   },
 ]
@@ -297,7 +297,7 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: NFTCollection[]
                 <td>
                   <div className={styles.tags}>
                     {item.tags.map(tag => (
-                      <NFTTag tagName={tag} />
+                      <NFTTag key={`${item.id}${item.tags}`} tagName={tag} />
                     ))}
                   </div>
                 </td>
