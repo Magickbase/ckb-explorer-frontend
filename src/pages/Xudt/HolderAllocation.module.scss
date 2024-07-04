@@ -7,7 +7,6 @@
   width: 497px;
   border-radius: 4px;
   display: flex;
-  justify-content: space-between;
 
   @media (max-width: $mobileBreakPoint) {
     width: 90%;
@@ -29,6 +28,7 @@
     flex-direction: column;
     align-items: center;
     gap: 24px;
+    min-width: 397px;
 
     @media (max-width: $mobileBreakPoint) {
       align-items: flex-start;
