@@ -27,7 +27,6 @@ export const FooterPanel = styled.div`
       margin-right: auto;
 
       &:hover {
-        text-decoration: underline;
         color: ${props => props.theme.primary};
       }
     }
