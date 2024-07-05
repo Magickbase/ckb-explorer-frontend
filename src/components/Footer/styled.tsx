@@ -12,6 +12,8 @@ export const FooterPanel = styled.div`
   }
 
   .footerCopyright {
+    border-top: 1px solid #333;
+    padding-top: 16px;
     display: flex;
     flex-direction: row;
     margin-bottom: 16px;
@@ -19,8 +21,15 @@ export const FooterPanel = styled.div`
     color: #acacac;
 
     .power {
-      color: #fff;
+      display: flex;
+      align-items: center;
+      color: #999;
       margin-right: auto;
+
+      &:hover {
+        text-decoration: underline;
+        color: ${props => props.theme.primary};
+      }
     }
 
     @media (max-width: ${variables.mobileBreakPoint}) {
@@ -37,7 +46,7 @@ export const FooterPanel = styled.div`
 export const FooterMenuPanel = styled.div`
   overflow: hidden;
   margin-top: 44px;
-  margin-bottom: 52px;
+  margin-bottom: 32px;
   display: flex;
   flex-direction: row;
   justify-content: center;

@@ -8,6 +8,7 @@ import { ReactComponent as RedditIcon } from './footer_reddit.svg'
 import { ReactComponent as YoutubeIcon } from './footer_youtube.svg'
 import { ReactComponent as ForumIcon } from './footer_forum.svg'
 import { ReactComponent as Discord } from './footer_discord.svg'
+import { ReactComponent as Open } from './open.svg'
 import { getCurrentYear } from '../../utils/date'
 import { FooterMenuPanel, FooterItemPanel, FooterImageItemPanel, FooterPanel } from './styled'
 import styles from './index.module.scss'
@@ -161,7 +162,7 @@ export default memo(() => {
       <div style={{ width: '100%' }}>
         <div className="footerCopyright container">
           <a className="power" href="https://www.magickbase.com" target="_blank" rel="noreferrer">
-            Powered by MagicKBase
+            Powered by Magickbase <Open width={16} />
           </a>
           <span>{`Copyright © ${getCurrentYear()} Nervos Foundation. `}</span>
           <span>All Rights Reserved.</span>
