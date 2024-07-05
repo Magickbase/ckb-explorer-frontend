@@ -151,29 +151,3 @@ export const AddressUDTAssetsPanel = styled.div`
     border-top: 1px solid #f5f5f5;
   }
 `
-
-export const CardFooterPanel = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 50px;
-  background: white;
-  flex-direction: row;
-  justify-content: center;
-  border-radius: 0 0 6px 6px;
-  box-shadow: 0 2px 6px 0 rgb(0 0 0 / 12%);
-`
-
-export const CardFooterButton = styled.div`
-  height: 30px;
-  line-height: 30px;
-  padding: 0 8px;
-  border-radius: 6px;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  background: rgb(245 245 245);
-  letter-spacing: 1px;
-  color: rgb(0 0 0);
-  pointer-events: auto;
-`

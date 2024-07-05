@@ -19,8 +19,6 @@ import {
   AddressLockScriptPanel,
   AddressTransactionsPanel,
   AddressUDTAssetsPanel,
-  CardFooterPanel,
-  CardFooterButton,
 } from './styled'
 import Capacity from '../../components/Capacity'
 import CKBTokenIcon from './ckb_token_icon.png'
@@ -552,13 +550,16 @@ export const NodeAddressTransactions = ({ address }: { address: string }) => {
       </AddressTransactionsPanel>
 
       {data?.pages.length !== 0 && (
-        <CardFooterPanel style={{ marginTop: 4 }}>
+        <div className={styles.cardFooterPanel} style={{ marginTop: 4 }}>
           {hasNextPage ? (
-            <CardFooterButton onClick={() => fetchNextPage()}>{t('pagination.load_more')}</CardFooterButton>
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+            <div className={styles.cardFooterButton} onClick={() => fetchNextPage()}>
+              {t('pagination.load_more')}
+            </div>
           ) : (
             <div>{t('pagination.no_more_data')}</div>
           )}
-        </CardFooterPanel>
+        </div>
       )}
     </>
   )

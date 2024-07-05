@@ -44,6 +44,9 @@ export const useTransactions = ({
         txs: txs.map(tx => tx.transaction as Transaction),
       }
     },
-    getNextPageParam: options => options.lastCursor,
+    getNextPageParam: options => {
+      if (options.txs.length < pageSize) return undefined
+      return options.lastCursor
+    },
   })
 }
