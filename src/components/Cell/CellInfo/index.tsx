@@ -505,7 +505,6 @@ export default ({ cell, onClose }: CellInfoProps) => {
               tab={
                 <>
                   <TransactionCellDetailTitle>{t('transaction.rgbpp')}</TransactionCellDetailTitle>
-                  <HelpTip title={t('glossary.capacity_usage')} placement="bottom" containerRef={ref} />
                 </>
               }
               key={CellInfo.RGBPP}
