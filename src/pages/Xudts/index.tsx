@@ -325,12 +325,12 @@ const Xudts = () => {
   const sortParam = useSortParam<SortField>(undefined, 'transactions.desc')
   const { sort } = sortParam
 
-  const query = useQuery(['xudts', currentPage, _pageSize, sort, tags], async () => {
+  const query = useQuery(['xudts', currentPage, _pageSize, sort, tags, 'true'], async () => {
     const {
       data: tokens,
       total,
       pageSize,
-    } = await explorerService.api.fetchXudts(currentPage, _pageSize, sort ?? undefined, tags)
+    } = await explorerService.api.fetchXudts(currentPage, _pageSize, sort ?? undefined, tags, 'true')
     if (tokens.length === 0) {
       throw new Error('Tokens empty')
     }
