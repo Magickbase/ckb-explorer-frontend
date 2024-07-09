@@ -22,7 +22,7 @@ export function MultiFilterButton({
   const filter = params[filterName]
   let types = filterList.map(f => f.value)
   if (filter !== undefined) {
-    types = filter.split(',').filter(t => t !== '')
+    types = filter.split(',').filter(t => !!t)
   }
 
   const isAllSelected = types.length === filterList.length
