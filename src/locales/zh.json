@@ -797,9 +797,9 @@
         "verified-on": "Platform 平台认证",
         "supply-limited": "有限供应资产",
         "supply-unlimited": "无限供应资产",
-        "rgbpp-compatible": "RGB++兼容",
-        "category": "类别"
-      }
+        "rgbpp-compatible": "RGB++兼容"
+      },
+      "category": "类别"
     },
     "nft": {
       "nft_collection": "NFT 藏品",

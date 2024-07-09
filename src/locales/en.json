@@ -796,9 +796,9 @@
         "verified-on": "Verified On Platform",
         "supply-limited": "Supply Limited",
         "supply-unlimited": "Supply Unlimited",
-        "rgbpp-compatible": "RGB++ Compatible",
-        "category": "Category"
-      }
+        "rgbpp-compatible": "RGB++ Compatible"
+      },
+      "category": "Category"
     },
     "nft": {
       "nft_collection": "NFT Collection",
