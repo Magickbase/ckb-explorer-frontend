@@ -928,7 +928,7 @@ export const apiFetcher = {
       .then(res => toCamelcase<string>(res.data))
   },
 
-  fetchNFTCollections: (page: string, sort?: string, type?: string, tags?: string) =>
+  fetchNFTCollections: (page: string, sort?: string, type?: string, tags?: string, union?: string) =>
     requesterV2
       .get<{
         data: NFTCollection[]
@@ -945,6 +945,7 @@ export const apiFetcher = {
           page,
           sort,
           type,
+          union: union ?? 'false',
         },
       })
       .then(res => res.data),

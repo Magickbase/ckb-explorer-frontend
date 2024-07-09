@@ -28,8 +28,8 @@ const NftCollections = () => {
 
   const isValidFilter = isTxFilterType(type) && type !== 'all'
 
-  const { isLoading, data } = useQuery(['nft-collections', page, sort, type, tags], () =>
-    explorerService.api.fetchNFTCollections(page, sort, isValidFilter ? type : undefined, tags),
+  const { isLoading, data } = useQuery(['nft-collections', page, sort, type, tags, 'true'], () =>
+    explorerService.api.fetchNFTCollections(page, sort, isValidFilter ? type : undefined, tags, 'true'),
   )
 
   const list = data?.data ?? []
