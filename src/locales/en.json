@@ -796,7 +796,8 @@
         "verified-on": "Verified On Platform",
         "supply-limited": "Supply Limited",
         "supply-unlimited": "Supply Unlimited",
-        "rgbpp-compatible": "RGB++ Compatible"
+        "rgbpp-compatible": "RGB++ Compatible",
+        "unnamed": "Unnamed"
       },
       "category": "Category"
     },
