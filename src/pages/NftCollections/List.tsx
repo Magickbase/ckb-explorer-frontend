@@ -348,7 +348,7 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
   return (
     <>
       <Card className={styles.filterSortCard} shadow={false}>
-        <FilterSortContainerOnMobile>
+        <FilterSortContainerOnMobile key="nft-collections-sort">
           <TypeFilter />
           <SimpleSortHeader sortField="transactions" fieldI18n={t('nft.transactions')} />
           <HolderMinterSort />

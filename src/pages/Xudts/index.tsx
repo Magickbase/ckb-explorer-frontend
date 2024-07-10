@@ -133,7 +133,7 @@ export function TokensCard({
   return (
     <>
       <Card className={styles.filterSortCard} shadow={false}>
-        <FilterSortContainerOnMobile>
+        <FilterSortContainerOnMobile key="xudts-sort">
           <span className={styles.sortOption}>
             {t('xudt.transactions')}
             <SortButton field="transactions" sortParam={sortParam} />
