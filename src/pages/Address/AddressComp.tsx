@@ -543,7 +543,16 @@ export const NodeAddressTransactions = ({ address }: { address: string }) => {
       </Card>
 
       <AddressTransactionsPanel>
-        {data?.pages.map(page => page.txs.map(tx => <NodeTransactionItem transaction={tx} key={tx.hash!} />))}
+        {data?.pages.map(page =>
+          page.txs.map(tx => (
+            <NodeTransactionItem
+              transaction={tx.transaction}
+              key={tx.transaction.hash!}
+              highlightAddress={address}
+              blockHashOrNumber={tx.txStatus.blockHash ?? undefined}
+            />
+          )),
+        )}
         {!isLoading && data?.pages.length === 0 ? (
           <div className={styles.noRecords}>{t(`transaction.no_records`)}</div>
         ) : null}

@@ -41,7 +41,10 @@ export const useTransactions = ({
 
       return {
         lastCursor,
-        txs: txs.map(tx => tx.transaction as Transaction),
+        txs: txs.map(tx => ({
+          transaction: tx.transaction as Transaction,
+          txStatus: tx.txStatus,
+        })),
       }
     },
     getNextPageParam: options => {
