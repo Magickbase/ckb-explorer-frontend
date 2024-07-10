@@ -8,7 +8,7 @@ import { Link } from '../../Link'
 import { TransactionCellPanel, TransactionCellCapacityPanel } from './styled'
 import { NodeCellCapacityAmount } from './NodeCellCapacityAmount'
 import CurrentAddressIcon from '../../../assets/current_address.svg'
-import { encodeNewAddress } from '../../../utils/address'
+import { encodeNewAddress, compareAddress } from '../../../utils/address'
 import styles from './index.module.scss'
 import { useBoolean } from '../../../hooks'
 import CopyTooltipText from '../../Text/CopyTooltipText'
@@ -68,7 +68,7 @@ const NodeTransactionItemCell = ({
     { enabled: cell.outPoint && ioType && ioType === IOType.Output },
   )
 
-  const highLight = highlightAddress !== address
+  const highLight = !highlightAddress || !compareAddress(highlightAddress, address)
 
   return (
     <TransactionCellPanel highLight={highLight}>
