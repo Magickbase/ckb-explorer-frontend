@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next'
 import { FC, ReactNode, useState } from 'react'
 import { ColumnGroupType, ColumnType } from 'antd/lib/table'
 import dayjs from 'dayjs'
+import classNames from 'classnames'
 import type { XUDT } from '../../models/Xudt'
 import { Link } from '../../components/Link'
 import Content from '../../components/Content'
 import Pagination from '../../components/Pagination'
 import SortButton from '../../components/SortButton'
 import MultiFilterButton from '../../components/MultiFilterButton'
-import { TokensPanel, TokensContentEmpty, TokensLoadingPanel } from './styled'
 import { localeNumberString } from '../../utils/number'
 import Loading from '../../components/Loading'
 import SmallLoading from '../../components/Loading/SmallLoading'
@@ -147,6 +147,7 @@ const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
 export function TokensCard({
   query,
   sortParam,
+  isEmpty,
 }: {
   query: UseQueryResult<
     {
@@ -157,6 +158,7 @@ export function TokensCard({
     unknown
   >
   sortParam?: ReturnType<typeof useSortParam<SortField>>
+  isEmpty: boolean
 }) {
   const { t } = useTranslation()
 
@@ -183,23 +185,27 @@ export function TokensCard({
         </FilterSortContainerOnMobile>
       </Card>
 
-      <QueryResult
-        query={query}
-        errorRender={() => <TokensContentEmpty>{t('xudt.tokens_empty')}</TokensContentEmpty>}
-        loadingRender={() => (
-          <TokensLoadingPanel>
-            <SmallLoading />
-          </TokensLoadingPanel>
-        )}
-      >
-        {data => (
-          <div>
-            {data?.tokens.map(token => (
-              <TokenInfo key={token.typeHash} token={token} />
-            ))}
-          </div>
-        )}
-      </QueryResult>
+      {isEmpty ? (
+        <div className={styles.tokensContentEmpty}>{t('xudt.tokens_empty')}</div>
+      ) : (
+        <QueryResult
+          query={query}
+          errorRender={() => <div className={styles.tokensContentEmpty}>{t('xudt.tokens_empty')}</div>}
+          loadingRender={() => (
+            <div className={styles.tokensLoadingPanel}>
+              <SmallLoading />
+            </div>
+          )}
+        >
+          {data => (
+            <div>
+              {data?.tokens.map(token => (
+                <TokenInfo key={token.typeHash} token={token} />
+              ))}
+            </div>
+          )}
+        </QueryResult>
+      )}
     </>
   )
 }
@@ -340,8 +346,8 @@ const Xudts = () => {
 
   return (
     <Content>
-      <TokensPanel className="container">
-        <div className="tokensTitlePanel">
+      <div className={classNames(styles.tokensPanel, 'container')}>
+        <div className={styles.tokensTitlePanel}>
           <span>{t('xudt.xudts')}</span>
 
           <button
@@ -354,7 +360,7 @@ const Xudts = () => {
         </div>
 
         <div className={styles.cards}>
-          <TokensCard query={query} sortParam={sortParam} />
+          <TokensCard query={query} sortParam={sortParam} isEmpty={tags === ''} />
         </div>
         <div className={styles.table}>
           <TokenTable query={query} sortParam={sortParam} isEmpty={tags === ''} />
@@ -366,7 +372,7 @@ const Xudts = () => {
           totalPages={totalPages}
           onChange={setPage}
         />
-      </TokensPanel>
+      </div>
       {isSubmitTokenInfoModalOpen ? (
         <SubmitTokenInfo tagFilters={['xudt']} onClose={() => setIsSubmitTokenInfoModalOpen(false)} />
       ) : null}
