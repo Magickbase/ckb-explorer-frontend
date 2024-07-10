@@ -344,6 +344,8 @@ const Xudts = () => {
   const pageSize = query.data?.pageSize ?? _pageSize
   const totalPages = Math.ceil(total / pageSize)
 
+  const isEmpty = tags === ''
+
   return (
     <Content>
       <div className={classNames(styles.tokensPanel, 'container')}>
@@ -360,16 +362,16 @@ const Xudts = () => {
         </div>
 
         <div className={styles.cards}>
-          <TokensCard query={query} sortParam={sortParam} isEmpty={tags === ''} />
+          <TokensCard query={query} sortParam={sortParam} isEmpty={isEmpty} />
         </div>
         <div className={styles.table}>
-          <TokenTable query={query} sortParam={sortParam} isEmpty={tags === ''} />
+          <TokenTable query={query} sortParam={sortParam} isEmpty={isEmpty} />
         </div>
 
         <Pagination
           className={styles.pagination}
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={isEmpty ? 0 : totalPages}
           onChange={setPage}
         />
       </div>
