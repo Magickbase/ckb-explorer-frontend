@@ -37,7 +37,7 @@ const NodeTransactionItem = ({
   )
 
   const { data: blockHeader } = useQuery(
-    ['node', 'hedaer', blockHashOrNumber],
+    ['node', 'header', blockHashOrNumber],
     () => {
       if (!blockHashOrNumber) return null
 
