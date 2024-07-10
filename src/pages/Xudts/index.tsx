@@ -88,12 +88,6 @@ const filterList = [
     title: <XUDTTag tagName="rgbpp-compatible" />,
     to: '/xudts',
   },
-  {
-    key: 'category',
-    value: 'category',
-    title: <XUDTTag tagName="category" />,
-    to: '/xudts',
-  },
 ]
 
 const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
