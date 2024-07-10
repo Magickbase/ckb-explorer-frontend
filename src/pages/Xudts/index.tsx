@@ -65,9 +65,9 @@ const filterList = [
     to: '/xudts',
   },
   {
-    key: 'verified-on',
-    value: 'verified-on',
-    title: <XUDTTag tagName="verified-on" />,
+    key: 'unnamed',
+    value: 'unnamed',
+    title: <XUDTTag tagName="unnamed" />,
     to: '/xudts',
   },
   {
@@ -86,12 +86,6 @@ const filterList = [
     key: 'rgbpp-compatible',
     value: 'rgbpp-compatible',
     title: <XUDTTag tagName="rgbpp-compatible" />,
-    to: '/xudts',
-  },
-  {
-    key: 'unnamed',
-    value: 'unnamed',
-    title: <XUDTTag tagName="unnamed" />,
     to: '/xudts',
   },
 ]
