@@ -29,6 +29,7 @@ export function MultiFilterButton({
   const isNoneSelected = types.length === 0
   const search = new URLSearchParams(useLocation().search)
   search.delete(filterName)
+  search.delete('page')
 
   return (
     <Popover
