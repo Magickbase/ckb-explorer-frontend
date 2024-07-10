@@ -535,7 +535,12 @@ export default ({ cell: entryCell, onClose }: CellInfoProps) => {
 
       <div className={styles.transactionDetailPanel}>
         {isFetched ? (
-          <div className={styles.transactionDetailContent}>
+          <div
+            className={classNames(
+              styles.transactionDetailContent,
+              isUTXOData(content) ? styles.utxoContent : undefined,
+            )}
+          >
             <CellInfoValueView content={content} state={selectedInfo} modalRef={ref.current} onViewCell={onViewCell} />
           </div>
         ) : (
