@@ -995,6 +995,8 @@
     "node": {
       "alert": "Currently on the node-connect mode. The explorer data will be fetched from the node, so some features/data cannot be supported. You can <switcher>click here</switcher> to switch",
       "done": "Done",
+      "add_node": "Add Node",
+      "modify_node": "Modify Node",
       "node_connect_mode": "Node Connect Mode",
       "node_connect_tooltip": "When the node-connection mode is enabled, the data will be fetched from the node directly, so some features/data will not be supported."
     }
