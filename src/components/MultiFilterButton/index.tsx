@@ -45,9 +45,14 @@ export function MultiFilterButton({
               key="all"
               to={() => {
                 const newSearch = new URLSearchParams(search)
-                if (!isNoneSelected && isAllSelected) {
+                if (isNoneSelected) {
+                  newSearch.append(filterName, filterList.map(f => f.value).join(','))
+                }
+
+                if (isAllSelected) {
                   newSearch.append(filterName, '')
                 }
+
                 return `${filterList[0].to}?${newSearch.toString()}`
               }}
             >
@@ -82,7 +87,13 @@ export function MultiFilterButton({
         </div>
       }
     >
-      <FilterIcon className={styles.filter} />
+      <FilterIcon
+        className={styles.filter}
+        // if the filter is the empty string, display highlight
+        // if the filter is the string list, display highlight
+        // if the filter is undefined, not display highlight
+        data-changed={filter !== undefined}
+      />
     </Popover>
   )
 }
