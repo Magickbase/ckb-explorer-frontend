@@ -147,7 +147,6 @@ const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
 export function TokensCard({
   query,
   sortParam,
-  isEmpty,
 }: {
   query: UseQueryResult<
     {
@@ -158,7 +157,6 @@ export function TokensCard({
     unknown
   >
   sortParam?: ReturnType<typeof useSortParam<SortField>>
-  isEmpty: boolean
 }) {
   const { t } = useTranslation()
 
@@ -185,27 +183,23 @@ export function TokensCard({
         </FilterSortContainerOnMobile>
       </Card>
 
-      {isEmpty ? (
-        <div className={styles.tokensContentEmpty}>{t('xudt.tokens_empty')}</div>
-      ) : (
-        <QueryResult
-          query={query}
-          errorRender={() => <div className={styles.tokensContentEmpty}>{t('xudt.tokens_empty')}</div>}
-          loadingRender={() => (
-            <div className={styles.tokensLoadingPanel}>
-              <SmallLoading />
-            </div>
-          )}
-        >
-          {data => (
-            <div>
-              {data?.tokens.map(token => (
-                <TokenInfo key={token.typeHash} token={token} />
-              ))}
-            </div>
-          )}
-        </QueryResult>
-      )}
+      <QueryResult
+        query={query}
+        errorRender={() => <div className={styles.tokensContentEmpty}>{t('xudt.tokens_empty')}</div>}
+        loadingRender={() => (
+          <div className={styles.tokensLoadingPanel}>
+            <SmallLoading />
+          </div>
+        )}
+      >
+        {data => (
+          <div>
+            {data?.tokens.map(token => (
+              <TokenInfo key={token.typeHash} token={token} />
+            ))}
+          </div>
+        )}
+      </QueryResult>
     </>
   )
 }
@@ -220,8 +214,7 @@ const TokenTable: FC<{
     unknown
   >
   sortParam?: ReturnType<typeof useSortParam<SortField>>
-  isEmpty: boolean
-}> = ({ query, sortParam, isEmpty }) => {
+}> = ({ query, sortParam }) => {
   const { t } = useTranslation()
 
   const nullableColumns: (ColumnGroupType<XUDT> | ColumnType<XUDT> | false | undefined)[] = [
@@ -304,7 +297,7 @@ const TokenTable: FC<{
     <Table
       className={styles.tokensTable}
       columns={columns}
-      dataSource={isEmpty ? [] : query.data?.tokens ?? []}
+      dataSource={query.data?.tokens ?? []}
       pagination={false}
       loading={
         query.isLoading
@@ -344,8 +337,6 @@ const Xudts = () => {
   const pageSize = query.data?.pageSize ?? _pageSize
   const totalPages = Math.ceil(total / pageSize)
 
-  const isEmpty = tags === ''
-
   return (
     <Content>
       <div className={classNames(styles.tokensPanel, 'container')}>
@@ -362,16 +353,16 @@ const Xudts = () => {
         </div>
 
         <div className={styles.cards}>
-          <TokensCard query={query} sortParam={sortParam} isEmpty={isEmpty} />
+          <TokensCard query={query} sortParam={sortParam} />
         </div>
         <div className={styles.table}>
-          <TokenTable query={query} sortParam={sortParam} isEmpty={isEmpty} />
+          <TokenTable query={query} sortParam={sortParam} />
         </div>
 
         <Pagination
           className={styles.pagination}
           currentPage={currentPage}
-          totalPages={isEmpty ? 0 : totalPages}
+          totalPages={totalPages}
           onChange={setPage}
         />
       </div>
