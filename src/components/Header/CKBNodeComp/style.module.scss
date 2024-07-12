@@ -159,3 +159,15 @@
     color: rgb(136 136 136);
   }
 }
+
+.nodeAction {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}

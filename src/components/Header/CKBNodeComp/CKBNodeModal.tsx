@@ -7,9 +7,21 @@ import { Switch } from '../../ui/Switch'
 import CloseIcon from '../../../assets/modal_close.png'
 import { ReactComponent as EditIcon } from './edit.svg'
 import { ReactComponent as DeleteIcon } from './delete.svg'
-
+import { useSetToast } from '../../Toast'
 import BackIcon from './back.png'
 import styles from './style.module.scss'
+
+function isValidHttpUrl(str: string) {
+  let url
+
+  try {
+    url = new URL(str)
+  } catch (_) {
+    return false
+  }
+
+  return url.protocol === 'http:' || url.protocol === 'https:'
+}
 
 const NodeEditForm: FC<
   PropsWithChildren<{
@@ -17,8 +29,8 @@ const NodeEditForm: FC<
     onSubmit: (data: { alias: string; url: string }) => void
   }>
 > = ({ children, initialData, onSubmit }) => {
-  const [alias, setAlias] = useState(initialData?.alias ?? '')
-  const [url, setUrl] = useState(initialData?.url ?? '')
+  const { t } = useTranslation()
+  const setToast = useSetToast()
 
   return (
     <form
@@ -26,17 +38,35 @@ const NodeEditForm: FC<
       onSubmit={e => {
         e.preventDefault()
         e.stopPropagation()
+        const alias = e.currentTarget.alias.value
+        const url = e.currentTarget.url.value
+
+        if (typeof alias !== 'string') {
+          setToast({ message: t('node.alias_required'), type: 'danger' })
+          return
+        }
+
+        if (typeof url !== 'string') {
+          setToast({ message: t('node.url_required'), type: 'danger' })
+          return
+        }
+
+        if (!isValidHttpUrl(url)) {
+          setToast({ message: t('node.url_invalid'), type: 'danger' })
+          return
+        }
+
         onSubmit({ alias, url })
       }}
     >
       <div>
-        <label>Alias</label>
-        <input value={alias} onChange={e => setAlias(e.target.value)} />
+        <label htmlFor="alias">{t('node.alias')}</label>
+        <input name="alias" type="text" defaultValue={initialData?.alias} />
       </div>
 
       <div>
-        <label>RPC URL</label>
-        <input value={url} onChange={e => setUrl(e.target.value)} />
+        <label htmlFor="url">{t('node.rpc_url')}</label>
+        <input name="url" type="text" defaultValue={initialData?.url} />
       </div>
 
       {children}
@@ -50,6 +80,7 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
   const { isActivated, setIsActivated, nodeService, nodes, addNode, removeNode, switchNode, editNode } = useCKBNode()
   const [panel, setPanel] = useState<'main' | 'add' | 'edit'>('main')
   const [editIndex, setEditIndex] = useState(0)
+  const setToast = useSetToast()
 
   const NodeEditPanel = () => (
     <div className={styles.contentWrapper}>
@@ -67,7 +98,12 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
       <NodeEditForm
         initialData={nodes[editIndex]}
         onSubmit={data => {
-          editNode(editIndex, data)
+          const success = editNode(editIndex, data)
+          if (!success) {
+            setToast({ message: t('node.node_existed'), type: 'danger' })
+            return
+          }
+
           setPanel('main')
         }}
       >
@@ -102,12 +138,19 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
         {nodes.map((n, index) => (
           <div className={styles.node} key={n.url}>
             <div className={styles.nodeTitle}>
-              <input onClick={() => switchNode(n.url)} type="checkbox" checked={nodeService.nodeEndpoint === n.url} />
+              <input
+                onClick={() =>
+                  switchNode(n.url).catch((err: Error) => setToast({ message: err.message, type: 'danger' }))
+                }
+                type="checkbox"
+                checked={nodeService.nodeEndpoint === n.url}
+              />
               <div className={styles.nodeAlias}>{n.alias}</div>
               {index !== 0 && (
                 <>
-                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
-                  <span
+                  <button
+                    className={styles.nodeAction}
+                    type="button"
                     onClick={() => {
                       setPanel('edit')
                       setEditIndex(index)
@@ -115,11 +158,10 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
                     style={{ marginLeft: 'auto' }}
                   >
                     <EditIcon width={16} />
-                  </span>
-                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
-                  <span onClick={() => removeNode(n.url)}>
+                  </button>
+                  <button className={styles.nodeAction} type="button" onClick={() => removeNode(n.url)}>
                     <DeleteIcon width={16} />
-                  </span>
+                  </button>
                 </>
               )}
             </div>
@@ -149,7 +191,12 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
 
       <NodeEditForm
         onSubmit={data => {
-          addNode({ alias: data.alias, url: data.url })
+          const success = addNode({ alias: data.alias, url: data.url })
+          if (!success) {
+            setToast({ message: t('node.node_existed'), type: 'danger' })
+            return
+          }
+
           setPanel('main')
         }}
       >
