@@ -11,6 +11,7 @@ import { TransactionLeapDirection } from '../../../../components/RGBPP/types'
 import styles from './styles.module.scss'
 import { getBtcChainIdentify } from '../../../../services/BTCIdentifier'
 import { IS_MAINNET } from '../../../../constants/common'
+import { HelpTip } from '../../../../components/HelpTip'
 
 export type Transaction = {
   ckbTxId: string
@@ -63,7 +64,14 @@ const Item = ({ item }: { item: Transaction }) => {
         {dayjs(item.time).fromNow()}
       </td>
       <td className={styles.type} title={t('rgbpp.transaction.type')}>
-        {item.type === TransactionLeapDirection.NONE ? '/' : t(`address.leap_${item.type}`)}
+        {item.type === TransactionLeapDirection.NONE ? (
+          <>
+            <span>{t('rgbpp.transaction.direction.other')}</span>
+            <HelpTip title={t('rgbpp.transaction.direction.description.other')} />
+          </>
+        ) : (
+          t(`address.leap_${item.type}`)
+        )}
       </td>
       <td className={styles.cellChange} title={t('rgbpp.transaction.rgbpp_cell_change')}>
         {`${item.cellChange > 0 ? '+' : ''}${item.cellChange}`}{' '}
