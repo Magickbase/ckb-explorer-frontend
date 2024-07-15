@@ -20,7 +20,7 @@ export function MultiFilterButton({
   const { t } = useTranslation()
   const params = useSearchParams(filterName)
   const filter = params[filterName]
-  const types = filter ? filter.split(',').filter(t => !!t) : []
+  const types = filter?.split(',').filter(t => !!t) ?? []
 
   const isAllSelected = types.length === filterList.length
   const isNoneSelected = types.length === 0
