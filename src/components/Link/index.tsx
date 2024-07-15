@@ -59,8 +59,6 @@ export const BTCExplorerLink = forwardRef<HTMLAnchorElement, BTCExplorerLinkProp
     enabled: !IS_MAINNET && !!btcTxId,
   })
 
-  // if (!IS_MAINNET && btcTxId && !identity) return `${config.BITCOIN_EXPLORER}${path}/${btcTxId}`
-
   return (
     <Link
       lng={lng ?? (locale as 'en' | 'zh')}
