@@ -79,40 +79,56 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
   const ref = useRef<HTMLDivElement>(null)
   const { isActivated, setIsActivated, nodeService, nodes, addNode, removeNode, switchNode, editNode } = useCKBNode()
   const [panel, setPanel] = useState<'main' | 'add' | 'edit'>('main')
-  const [editIndex, setEditIndex] = useState(0)
+  const [editKey, setEditKey] = useState<string | undefined>(undefined)
   const setToast = useSetToast()
 
-  const NodeEditPanel = () => (
-    <div className={styles.contentWrapper}>
-      <div className={styles.modalTitle}>
-        <button type="button" onClick={() => setPanel('main')} className={styles.closeBtn}>
-          <img src={BackIcon} alt="back icon" />
-        </button>
+  const NodeEditPanel = () => {
+    const initialValue = nodes.get(editKey ?? '')
+    const initialData = initialValue
+      ? {
+          alias: initialValue,
+          url: editKey!,
+        }
+      : undefined
 
-        <p>{t('node.modify_node')}</p>
-        <button type="button" onClick={onClose} className={styles.closeBtn}>
-          <img src={CloseIcon} alt="close icon" />
-        </button>
+    return (
+      <div className={styles.contentWrapper}>
+        <div className={styles.modalTitle}>
+          <button type="button" onClick={() => setPanel('main')} className={styles.closeBtn}>
+            <img src={BackIcon} alt="back icon" />
+          </button>
+
+          <p>{t('node.modify_node')}</p>
+          <button type="button" onClick={onClose} className={styles.closeBtn}>
+            <img src={CloseIcon} alt="close icon" />
+          </button>
+        </div>
+
+        <NodeEditForm
+          initialData={initialData}
+          onSubmit={data => {
+            if (!editKey) {
+              addNode(data)
+              setPanel('main')
+              return
+            }
+
+            const success = editNode(editKey, data)
+            if (!success) {
+              setToast({ message: t('node.node_existed'), type: 'danger' })
+              return
+            }
+
+            setPanel('main')
+          }}
+        >
+          <button type="submit" className={styles.btn}>
+            {t('node.modify_node')}
+          </button>
+        </NodeEditForm>
       </div>
-
-      <NodeEditForm
-        initialData={nodes[editIndex]}
-        onSubmit={data => {
-          const success = editNode(editIndex, data)
-          if (!success) {
-            setToast({ message: t('node.node_existed'), type: 'danger' })
-            return
-          }
-
-          setPanel('main')
-        }}
-      >
-        <button type="submit" className={styles.btn}>
-          {t('node.modify_node')}
-        </button>
-      </NodeEditForm>
-    </div>
-  )
+    )
+  }
 
   const NodeMainPanel = () => (
     <div className={styles.contentWrapper}>
@@ -135,17 +151,17 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
       </div>
 
       <div className={styles.nodeList}>
-        {nodes.map((n, index) => (
-          <div className={styles.node} key={n.url}>
+        {[...nodes.entries()].map(([url, alias], index) => (
+          <div className={styles.node} key={url}>
             <div className={styles.nodeTitle}>
               <input
                 onClick={() =>
-                  switchNode(n.url).catch((err: Error) => setToast({ message: err.message, type: 'danger' }))
+                  switchNode(url).catch((err: Error) => setToast({ message: err.message, type: 'danger' }))
                 }
                 type="checkbox"
-                checked={nodeService.nodeEndpoint === n.url}
+                checked={nodeService.nodeEndpoint === url}
               />
-              <div className={styles.nodeAlias}>{n.alias}</div>
+              <div className={styles.nodeAlias}>{alias}</div>
               {index !== 0 && (
                 <>
                   <button
@@ -153,19 +169,19 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
                     type="button"
                     onClick={() => {
                       setPanel('edit')
-                      setEditIndex(index)
+                      setEditKey(url)
                     }}
                     style={{ marginLeft: 'auto' }}
                   >
                     <EditIcon width={16} />
                   </button>
-                  <button className={styles.nodeAction} type="button" onClick={() => removeNode(n.url)}>
+                  <button className={styles.nodeAction} type="button" onClick={() => removeNode(url)}>
                     <DeleteIcon width={16} />
                   </button>
                 </>
               )}
             </div>
-            <div className={styles.nodeSubtitle}>({n.url})</div>
+            <div className={styles.nodeSubtitle}>({url})</div>
           </div>
         ))}
       </div>

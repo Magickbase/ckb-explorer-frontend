@@ -5,18 +5,18 @@ import { NodeService } from '../services/NodeService'
 
 const NODE_CONNECT_MODE_KEY = 'node_connect_mode'
 const NODE_CONNECTED_ENDPOINT = 'node_connected_endpoint'
-const NODE_ENDPOINTS = 'node_endpoints'
+const NODE_ENDPOINTS = 'node_endpoint_record'
 
-const loadEndpoints = (): CKBNode[] => {
+const loadEndpoints = (): Record<string, string> => {
   const item = localStorage.getItem(NODE_ENDPOINTS)
   try {
-    return item ? JSON.parse(item) : []
+    return item ? JSON.parse(item) : {}
   } catch {
-    return []
+    return {}
   }
 }
 
-const saveEndpoints = (nodes: CKBNode[]) => {
+const saveEndpoints = (nodes: Record<string, string>) => {
   localStorage.setItem(NODE_ENDPOINTS, JSON.stringify(nodes))
 }
 
@@ -26,12 +26,12 @@ export interface CKBNode {
 }
 
 export interface ICKBNodeContext {
-  nodes: CKBNode[]
+  nodes: Map<string, string>
   nodeService: NodeService
   isActivated: boolean
   addNode: (node: CKBNode) => boolean
   removeNode: (url: string) => void
-  editNode: (index: number, node: CKBNode) => boolean
+  editNode: (key: string, node: CKBNode) => boolean
   switchNode: (url: string) => Promise<void>
   setIsActivated: (isActivated: boolean) => void
 }
@@ -54,40 +54,56 @@ export const CKBNodeProvider = ({ children, defaultEndpoint }: PropsWithChildren
   const { t } = useTranslation()
   const connectedEndpoint = localStorage.getItem(NODE_CONNECTED_ENDPOINT) ?? defaultEndpoint
   const [nodeService, setNodeService] = useState(new NodeService(connectedEndpoint))
-  const [nodes, setNodes] = useState<CKBNode[]>(loadEndpoints())
+  const [nodes, setNodes] = useState<Map<string, string>>(new Map(Object.entries(loadEndpoints())))
   const [isActivated, _setIsActivated] = useState(localStorage.getItem(NODE_CONNECT_MODE_KEY) === 'true')
+
+  // eslint-disable-next-line no-console
+  console.log('loadEndpoints', loadEndpoints())
+
+  // eslint-disable-next-line no-console
+  console.log('nodes', nodes)
 
   const setIsActivated = (value: boolean) => {
     localStorage.setItem(NODE_CONNECT_MODE_KEY, value.toString())
     _setIsActivated(value)
   }
 
-  const saveNodes = (nodes: CKBNode[]) => {
-    setNodes(nodes)
-    saveEndpoints(nodes)
-  }
-
   const addNode = (node: CKBNode) => {
-    const existed = nodes.some(n => n.url === node.url)
-    if (existed) return false
+    if (nodes.has(node.url)) return false
+    if ([...nodes.values()].some(alias => alias === node.alias)) return false
 
-    saveNodes([...nodes, node])
+    setNodes(pre => {
+      const temp = new Map(pre)
+      temp.set(node.url, node.alias)
+      saveEndpoints(Object.fromEntries(temp.entries()))
+      return temp
+    })
+
     return true
   }
 
-  const removeNode = (url: string) => {
-    saveNodes(nodes.filter(node => node.url !== url))
+  const removeNode = (key: string) => {
+    setNodes(pre => {
+      const temp = new Map(pre)
+      temp.delete(key)
+      saveEndpoints(Object.fromEntries(temp.entries()))
+      return temp
+    })
   }
 
-  const editNode = (index: number, node: CKBNode) => {
-    const newNodes = [...nodes]
-    if (!newNodes[index - 1]) return false
+  const editNode = (key: string, node: CKBNode) => {
+    if (!nodes.has(key)) return false
+    if (key !== node.url && nodes.has(node.url)) return false
+    if (nodes.get(key) !== node.alias && [...nodes.values()].some(alias => alias === node.alias)) return false
 
-    const existed = newNodes.some((n, i) => n.url === node.url && i !== index - 1)
-    if (existed) return false
+    setNodes(pre => {
+      const temp = new Map(pre)
+      temp.delete(key)
+      temp.set(node.url, node.alias)
+      saveEndpoints(Object.fromEntries(temp.entries()))
+      return temp
+    })
 
-    newNodes[index - 1] = node
-    saveNodes(newNodes)
     return true
   }
 
@@ -108,13 +124,7 @@ export const CKBNodeProvider = ({ children, defaultEndpoint }: PropsWithChildren
   return (
     <CKBNodeContext.Provider
       value={{
-        nodes: [
-          {
-            alias: t('node.default_node'),
-            url: defaultEndpoint,
-          },
-          ...nodes,
-        ],
+        nodes: new Map([[defaultEndpoint, t('node.default_node')], ...nodes.entries()]),
         addNode,
         removeNode,
         editNode,
