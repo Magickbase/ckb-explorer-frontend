@@ -6,6 +6,7 @@ import CloseIcon from '../../assets/modal_close.png'
 import SimpleButton from '../../components/SimpleButton'
 import { matchScript } from '../../utils/util'
 import EllipsisMiddle from '../../components/EllipsisMiddle'
+import { Link } from '../../components/Link'
 
 const HolderAllocation = ({
   ckbHolderAmount,
@@ -19,6 +20,7 @@ const HolderAllocation = ({
     name: string
     holderCount: string
     codeHash: string
+    hashType: string
   }[]
   onClose: MouseEventHandler<HTMLDivElement>
 }) => {
@@ -62,7 +64,13 @@ const HolderAllocation = ({
                   .map(amount => (
                     <tr>
                       <td>
-                        <EllipsisMiddle>{matchScript(amount.codeHash)?.tag ?? amount.codeHash}</EllipsisMiddle>
+                        {matchScript(amount.codeHash) ? (
+                          <EllipsisMiddle>{matchScript(amount.codeHash)?.tag ?? amount.codeHash}</EllipsisMiddle>
+                        ) : (
+                          <Link className={styles.scriptLink} to={`/script/${amount.codeHash}/${amount.hashType}`}>
+                            <EllipsisMiddle>{matchScript(amount.codeHash)?.tag ?? amount.codeHash}</EllipsisMiddle>
+                          </Link>
+                        )}
                       </td>
                       <td>
                         <div>{localeNumberString(amount.holderCount)}</div>
