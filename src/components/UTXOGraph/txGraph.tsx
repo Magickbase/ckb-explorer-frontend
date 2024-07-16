@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import cytoscape, { type ElementDefinition, type GridLayoutOptions, type NodeSingular } from 'cytoscape'
+import cytoscape, { Position, type ElementDefinition, type GridLayoutOptions, type NodeSingular } from 'cytoscape'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Cell } from '../../models/Cell'
 import styles from './styles.module.scss'
@@ -69,6 +69,19 @@ function getLayoutConfig({
             row: 0,
             col: 0,
           }
+      }
+    },
+    transform(node: NodeSingular, position: Position) {
+      const { type, index, id } = node?.data()
+      let transformYDistance = 0
+      if (type === 'input' || id === INPUT_MORE_ID) {
+        transformYDistance = ((iLen - 1) / 2.0 - index) * 80
+      } else if (type === 'output' || id === OUTPUT_MORE_ID) {
+        transformYDistance = ((oLen - 1) / 2.0 - index) * 80
+      }
+      return {
+        x: position.x,
+        y: position.y + transformYDistance,
       }
     },
   }
