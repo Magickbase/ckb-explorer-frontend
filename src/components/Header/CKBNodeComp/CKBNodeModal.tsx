@@ -1,4 +1,5 @@
 import { FC, PropsWithChildren, useRef, useState } from 'react'
+import { Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { useCKBNode } from '../../../hooks/useCKBNode'
 import CommonModal from '../../CommonModal'
@@ -161,7 +162,11 @@ export const CKBNodeModal = ({ onClose }: { onClose: () => void }) => {
                 type="checkbox"
                 checked={nodeService.nodeEndpoint === url}
               />
-              <div className={styles.nodeAlias}>{alias}</div>
+              <div className={styles.nodeAlias}>
+                <Tooltip placement="topLeft" title={alias}>
+                  {alias}
+                </Tooltip>
+              </div>
               {index !== 0 && (
                 <>
                   <button
