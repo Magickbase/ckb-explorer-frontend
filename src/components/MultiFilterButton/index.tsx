@@ -20,10 +20,7 @@ export function MultiFilterButton({
   const { t } = useTranslation()
   const params = useSearchParams(filterName)
   const filter = params[filterName]
-  let types = filterList.map(f => f.value)
-  if (filter !== undefined) {
-    types = filter.split(',').filter(t => !!t)
-  }
+  const types = filter?.split(',').filter(t => !!t) ?? []
 
   const isAllSelected = types.length === filterList.length
   const isNoneSelected = types.length === 0
@@ -49,10 +46,6 @@ export function MultiFilterButton({
                   newSearch.append(filterName, filterList.map(f => f.value).join(','))
                 }
 
-                if (isAllSelected) {
-                  newSearch.append(filterName, '')
-                }
-
                 return `${filterList[0].to}?${newSearch.toString()}`
               }}
             >
@@ -75,7 +68,11 @@ export function MultiFilterButton({
                 }
 
                 const newSearch = new URLSearchParams(search)
-                newSearch.append(filterName, Array.from(subTypes).join(','))
+                if (subTypes.size === 0) {
+                  newSearch.delete(filterName)
+                } else {
+                  newSearch.append(filterName, Array.from(subTypes).join(','))
+                }
                 return `${f.to}?${newSearch.toString()}`
               }}
               data-is-active={types.includes(f.value)}

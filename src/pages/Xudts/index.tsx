@@ -28,30 +28,13 @@ import XUDTTokenIcon from '../../assets/sudt_token.png'
 type SortField = 'transactions' | 'addresses_count' | 'created_time' | 'mint_status'
 
 const filterList = [
-  {
-    key: 'invalid',
-    value: 'invalid',
-    title: <XUDTTag tagName="invalid" />,
-    to: '/xudts',
-  },
-  {
-    key: 'suspicious',
-    value: 'suspicious',
-    title: <XUDTTag tagName="suspicious" />,
-    to: '/xudts',
-  },
-  {
-    key: 'out-of-length-range',
-    value: 'out-of-length-range',
-    title: <XUDTTag tagName="out-of-length-range" />,
-    to: '/xudts',
-  },
-  {
-    key: 'duplicate',
-    value: 'duplicate',
-    title: <XUDTTag tagName="duplicate" />,
-    to: '/xudts',
-  },
+  // TODO: maybe removed in the future, hold on
+  // {
+  //   key: 'out-of-length-range',
+  //   value: 'out-of-length-range',
+  //   title: <XUDTTag tagName="out-of-length-range" />,
+  //   to: '/xudts',
+  // },
   {
     key: 'layer-1-asset',
     value: 'layer-1-asset',
@@ -65,27 +48,9 @@ const filterList = [
     to: '/xudts',
   },
   {
-    key: 'unnamed',
-    value: 'unnamed',
-    title: <XUDTTag tagName="unnamed" />,
-    to: '/xudts',
-  },
-  {
     key: 'supply-limited',
     value: 'supply-limited',
     title: <XUDTTag tagName="supply-limited" />,
-    to: '/xudts',
-  },
-  {
-    key: 'supply-unlimited',
-    value: 'supply-unlimited',
-    title: <XUDTTag tagName="supply-unlimited" />,
-    to: '/xudts',
-  },
-  {
-    key: 'rgbpp-compatible',
-    value: 'rgbpp-compatible',
-    title: <XUDTTag tagName="rgbpp-compatible" />,
     to: '/xudts',
   },
 ]
@@ -335,7 +300,12 @@ const Xudts = () => {
       throw new Error('Tokens empty')
     }
     return {
-      tokens,
+      tokens: tokens.map(token => ({
+        ...token,
+        // FIXME: data should be updated in the backend
+        // issue: https://github.com/Magickbase/ckb-explorer-public-issues/issues/754
+        xudtTags: token.xudtTags?.filter(tag => tag !== 'rgbpp-compatible'),
+      })),
       total,
       pageSize,
     }
