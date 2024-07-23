@@ -37,7 +37,7 @@ const Item = ({ item }: { item: Transaction }) => {
 
   return (
     <tr key={item.ckbTxId}>
-      <td className={styles.hash} title={t('rgbpp.transaction.ckb_txid')}>
+      <td className={styles.hash} title={t('rgbpp.transaction.ckb_tx')}>
         <div className={styles.transactionHash}>
           <AddressText
             disableTooltip
@@ -63,12 +63,12 @@ const Item = ({ item }: { item: Transaction }) => {
       <td className={styles.time} title={t('rgbpp.transaction.time')}>
         {dayjs(item.time).fromNow()}
       </td>
-      <td className={styles.type} title={t('rgbpp.transaction.type')}>
+      <td title={t('rgbpp.transaction.type')}>
         {item.type === TransactionLeapDirection.NONE ? (
-          <>
+          <div className={styles.type}>
             <span>{t('rgbpp.transaction.direction.other')}</span>
             <HelpTip title={t('rgbpp.transaction.direction.description.other')} />
-          </>
+          </div>
         ) : (
           t(`address.leap_${item.type}`)
         )}
