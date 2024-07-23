@@ -65,9 +65,9 @@ const filterList = [
     to: '/nft-collections',
   },
   {
-    key: 'rgbpp-compatible',
-    value: 'rgbpp-compatible',
-    title: <NFTTag key="rgbpp-compatible" tagName="rgbpp-compatible" />,
+    key: 'rgb++',
+    value: 'rgb++',
+    title: <NFTTag key="rgb++" tagName="rgb++" />,
     to: '/nft-collections',
   },
   {

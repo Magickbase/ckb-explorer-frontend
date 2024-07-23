@@ -308,7 +308,7 @@ const Xudts = () => {
         ...token,
         // FIXME: data should be updated in the backend
         // issue: https://github.com/Magickbase/ckb-explorer-public-issues/issues/754
-        xudtTags: token.xudtTags?.filter(tag => tag !== 'rgbpp-compatible'),
+        xudtTags: token.xudtTags?.filter(tag => tag !== 'rgb++'),
       })),
       total,
       pageSize,
