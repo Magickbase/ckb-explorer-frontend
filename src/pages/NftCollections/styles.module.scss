@@ -70,6 +70,12 @@
   }
 }
 
+.colTags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
