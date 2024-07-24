@@ -153,6 +153,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       break
     }
     case 'did_cell':
+    case 'dob':
     case 'spore_cell': {
       icon = <SporeCellIcon />
       assetName = 'DOB'
@@ -163,7 +164,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
         attribute = cell.data
       }
       detailInfo = cell.data
-      assetLink = `/nft-collections/${cell.typeHash}`
+      assetLink = `/nft-collections/${cell.extraInfo.collection.typeHash}`
       break
     }
     case 'spore_cluster': {
@@ -176,7 +177,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
         attribute = cell.data
       }
       detailInfo = cell.data
-      assetLink = `/nft-collections/${cell.typeHash}`
+      assetLink = `/nft-collections/${cell.extraInfo.collection.typeHash}`
       break
     }
     case 'nrc_721': {
@@ -190,7 +191,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       } else {
         attribute = cell.extraInfo.amount
       }
-      assetLink = `/nft-collections/${cell.typeHash}`
+      assetLink = `/nft-collections/${cell.extraInfo.collection.typeHash}`
       break
     }
     case 'm_nft': {
@@ -198,7 +199,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       assetTypeText = 'NFT'
       assetName = cell.extraInfo.className
       attribute = cell.extraInfo.tokenId ? `#${parseInt(cell.extraInfo.tokenId, 16)}` : '/'
-      assetLink = `/nft-collections/${cell.typeHash}`
+      assetLink = `/nft-collections/${cell.extraInfo.collection.typeHash}`
       break
     }
     default: {
