@@ -17,6 +17,7 @@ import MultiFilterButton from '../../components/MultiFilterButton'
 import NFTTag from '../../components/NFTTag'
 import { Card } from '../../components/Card'
 import { FilterSortContainerOnMobile } from '../../components/FilterSortContainer'
+import AddressText from '../../components/AddressText'
 
 const primaryColor = getPrimaryColor()
 function useFilterList(): Record<'title' | 'value', string>[] {
@@ -319,14 +320,15 @@ export const ListOnDesktop: React.FC<{ isLoading: boolean; list: NFTCollection[]
                   <div>
                     {item.creator ? (
                       <Tooltip title={item.creator}>
-                        <Link
-                          to={`/address/${item.creator}`}
-                          className="monospace"
-                          style={{
-                            color: primaryColor,
-                            fontWeight: 700,
+                        <AddressText
+                          style={{ marginLeft: 'auto' }}
+                          disableTooltip
+                          linkProps={{
+                            to: `/address/${item.creator}`,
                           }}
-                        >{`${item.creator.slice(0, 8)}...${item.creator.slice(-8)}`}</Link>
+                        >
+                          {item.creator}
+                        </AddressText>
                       </Tooltip>
                     ) : (
                       '-'

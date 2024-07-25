@@ -92,10 +92,12 @@
   overflow: hidden;
 
   table {
-    position: relative;
+    table-layout: fixed;
     width: 100%;
+    background: #fff;
     margin-bottom: 4px;
     color: #333;
+    text-overflow: ellipsis;
   }
 
   thead {
@@ -113,27 +115,31 @@
     }
   }
 
-  tbody {
-    tr {
-      background: #fff;
-
-      &:not(:last-child) {
-        border-bottom: 1px solid var(--table-separator-color);
-      }
-    }
-
-    td {
-      line-height: 64px;
-      font-size: 14px;
-    }
-  }
-
   th,
   td {
+    height: 4rem;
+    padding: 0 8px;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 400;
     text-align: left;
-    padding: 0 24px;
+    max-width: 100%;
+    line-height: 19px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
-    // max-width: 0.25vw;
+    &:first-child {
+      padding-left: 2em;
+    }
+
+    &:last-child {
+      text-align: right;
+      padding-right: 2em;
+    }
+
+    &.noRecords:last-child {
+      text-align: center;
+    }
   }
 
   .name {
