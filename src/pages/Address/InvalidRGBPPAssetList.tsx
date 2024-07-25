@@ -176,6 +176,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
     isGenesisOutput: false,
     generatedTxHash: '',
     status: 'live',
+    consumedTxHash: '',
   } as CellBasicInfo
 
   return {
