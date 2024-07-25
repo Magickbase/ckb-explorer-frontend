@@ -164,7 +164,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
         attribute = cell.data
       }
       detailInfo = cell.data
-      if (cell.extraInfo.collection.typeHash) {
+      if (cell.extraInfo.collection?.typeHash) {
         assetLink = `/nft-collections/${cell.extraInfo.collection.typeHash}`
       }
       break
@@ -179,7 +179,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
         attribute = cell.data
       }
       detailInfo = cell.data
-      if (cell.extraInfo.collection.typeHash) {
+      if (cell.extraInfo.collection?.typeHash) {
         assetLink = `/nft-collections/${cell.extraInfo.collection.typeHash}`
       }
       break
@@ -195,7 +195,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       } else {
         attribute = cell.extraInfo.amount
       }
-      if (cell.extraInfo.collection.typeHash) {
+      if (cell.extraInfo.collection?.typeHash) {
         assetLink = `/nft-collections/${cell.extraInfo.collection.typeHash}`
       }
       break
@@ -205,7 +205,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       assetTypeText = 'NFT'
       assetName = cell.extraInfo.className
       attribute = cell.extraInfo.tokenId ? `#${parseInt(cell.extraInfo.tokenId, 16)}` : '/'
-      if (cell.extraInfo.collection.typeHash) {
+      if (cell.extraInfo.collection?.typeHash) {
         assetLink = `/nft-collections/${cell.extraInfo.collection.typeHash}`
       }
       break
