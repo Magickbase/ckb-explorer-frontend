@@ -115,7 +115,9 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
         ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
         : 'Unknown UDT amount'
       detailInfo = cell.extraInfo.amount
-      assetLink = `/sudt/${cell.typeHash}`
+      if (cell.extraInfo.published) {
+        assetLink = `/sudt/${cell.typeHash}`
+      }
       break
     }
     case 'xudt_compatible': {
@@ -126,7 +128,9 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
           ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
           : 'Unknown xUDT amount'
       detailInfo = cell.extraInfo?.amount
-      assetLink = `/xudt/${cell.typeHash}`
+      if (cell.extraInfo.published) {
+        assetLink = `/xudt/${cell.typeHash}`
+      }
       break
     }
     case 'xudt': {
@@ -138,7 +142,9 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
           ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
           : 'Unknown xUDT amount'
       detailInfo = cell.extraInfo?.amount
-      assetLink = `/xudt/${cell.typeHash}`
+      if (cell.extraInfo.published) {
+        assetLink = `/xudt/${cell.typeHash}`
+      }
       break
     }
     case 'omiga_inscription': {
