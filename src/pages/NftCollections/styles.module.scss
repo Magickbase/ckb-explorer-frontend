@@ -133,11 +133,10 @@
     }
 
     &:last-child {
-      text-align: right;
       padding-right: 2em;
     }
 
-    &.noRecords:last-child {
+    &.noRecord:last-child {
       text-align: center;
     }
   }
