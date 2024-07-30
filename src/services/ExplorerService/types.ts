@@ -114,8 +114,9 @@ export namespace ChartItem {
     balance: string
   }
 
-  export interface CkbHodlWave {
+  export interface CkbHodlWaveHolderCount {
     ckbHodlWave: CkbHodlWaveDetail
+    holderCount: string
     createdAtUnixtimestamp: string
   }
 
@@ -386,6 +387,9 @@ export interface LiveCell {
   typeScript: Script
   lockScript: Script
   extraInfo: {
+    collection: {
+      typeHash: string
+    }
     symbol: string
     amount: string
     decimal: string

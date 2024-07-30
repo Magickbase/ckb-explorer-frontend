@@ -257,7 +257,7 @@ export const scripts = new Map<string, ScriptAttributes>([
     {
       name: 'BTC Time Lock',
       description: 'A lock require n confirmations of Bitcoin transaction to unlock the cell.',
-      doc: 'https://github.com/ckb-cell/RGBPlusPlus-design/blob/main/docs/locscript-design-prd-cn.md#btc_time_lock',
+      doc: 'https://github.com/ckb-cell/RGBPlusPlus-design/blob/main/docs/lockscript-design-prd-en.md#btc_time_lock',
     },
   ],
   [
@@ -267,6 +267,14 @@ export const scripts = new Map<string, ScriptAttributes>([
       description: 'The Nostr lock script is designed for interoperability with Nostr.',
       doc: 'https://github.com/cryptape/nostr-binding/blob/main/docs/lightpaper.md',
       code: 'https://github.com/cryptape/nostr-binding/',
+    },
+  ],
+  [
+    'Single Use Lock',
+    {
+      name: 'Single Use Lock',
+      description: 'A lock script that can only be used once.',
+      code: 'https://github.com/ckb-ecofund/ckb-proxy-locks',
     },
   ],
 ])
