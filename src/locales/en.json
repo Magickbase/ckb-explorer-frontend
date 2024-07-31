@@ -913,7 +913,7 @@
       "csv_export": "CSV Export",
       "download_data": "Download Data",
       "holders_by_block": "Holders by Block",
-      "holders_alloction": "Holders Alloction",
+      "holders_allocation": "Holders Allocation",
       "holders_by_block_title": "Holders by Block CSV download",
       "holders_by_block_des": "You can download the record of the amount of xUDT held by addresses in a specific block number on this page.",
       "select_export_data": "Select export data",

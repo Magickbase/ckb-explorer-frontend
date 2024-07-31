@@ -87,7 +87,7 @@ const XudtExport = () => {
       <div className={classNames('container', styles.containerPanel)}>
         <div className={styles.title}>
           <span>{t('export_transactions.download_data')}</span>
-          <span>({t('export_transactions.holders_alloction')})</span>
+          <span>({t('export_transactions.holders_allocation')})</span>
         </div>
         <div className={styles.description}>
           <div>{t('export_transactions.description_str')}</div>
