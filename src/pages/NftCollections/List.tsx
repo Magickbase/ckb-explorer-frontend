@@ -14,7 +14,7 @@ import type { NFTCollection } from '../../services/ExplorerService/fetcher'
 import { useNFTCollectionsSortParam } from './util'
 import { parseSimpleDate } from '../../utils/date'
 import MultiFilterButton from '../../components/MultiFilterButton'
-import NFTTag from '../../components/NFTTag'
+import NFTTag, { whiteList } from '../../components/NFTTag'
 import { Card } from '../../components/Card'
 import { FilterSortContainerOnMobile } from '../../components/FilterSortContainer'
 import AddressText from '../../components/AddressText'
@@ -89,7 +89,7 @@ const filterList = [
     title: <NFTTag key="layer-2-asset" tagName="layer-2-asset" />,
     to: '/nft-collections',
   },
-]
+].filter(f => whiteList.includes(f.key))
 
 export const isTxFilterType = (s?: string): boolean => {
   return s ? ['all', 'm_nft', 'nrc721', 'cota', 'spore'].includes(s) : false

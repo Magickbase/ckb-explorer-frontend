@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 import styles from './styles.module.scss'
 
+export const whiteList = ['invalid', 'suspicious', 'out-of-length-range', 'rgb++', 'layer-1-asset', 'layer-2-asset']
+
 const NFTTag = ({ tagName, to }: { tagName: string; to?: string }) => {
   const { t } = useTranslation()
   const { push } = useHistory()
@@ -30,7 +32,7 @@ const NFTTag = ({ tagName, to }: { tagName: string; to?: string }) => {
     push(`${to ?? window.location.pathname}?${search}`)
   }
 
-  return (
+  return whiteList.includes(tagName) ? (
     <button
       type="button"
       className={classNames(styles.container, styles.normal)}
@@ -39,7 +41,7 @@ const NFTTag = ({ tagName, to }: { tagName: string; to?: string }) => {
     >
       {content}
     </button>
-  )
+  ) : null
 }
 
 export default NFTTag
