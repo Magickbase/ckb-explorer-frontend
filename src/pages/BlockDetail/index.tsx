@@ -79,7 +79,7 @@ export default () => {
   const queryBlockTransactions = useQuery(
     ['block-transactions', blockHash, currentPage, pageSizeParam, filter],
     async () => {
-      assert(blockHash !== '')
+      assert(!!blockHash)
       try {
         const { transactions, total, pageSize } = await explorerService.api.fetchTransactionsByBlockHash(blockHash, {
           page: currentPage,
