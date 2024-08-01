@@ -38,27 +38,29 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps<unknown>>((({ lng, t
 
 export type BTCExplorerLinkProps<S> =
   | (Omit<RouterLinkProps<S>, 'to'> & {
-      id: string
+      id?: string
+      address?: string
       path: string
       lng: SupportedLng
       anchor?: string
     })
   | {
-      id: string
+      id?: string
+      address?: string
       path: string
       lng?: SupportedLng
       anchor?: string
     }
 
 export const BTCExplorerLink = forwardRef<HTMLAnchorElement, BTCExplorerLinkProps<unknown>>(((
-  { id, lng, path, anchor, ...props },
+  { id, address, lng, path, anchor, ...props },
   ref,
 ) => {
   const { locale } = useParams<{ locale?: string }>()
   const { data: identity } = useQuery({
-    queryKey: ['btc-testnet-identity', id],
-    queryFn: () => (id ? getBtcChainIdentify(id) : null),
-    enabled: !IS_MAINNET && !!id && path === '/tx',
+    queryKey: ['btc-testnet-identity', id, address],
+    queryFn: () => getBtcChainIdentify({ txid: id, address }),
+    enabled: !IS_MAINNET,
   })
 
   return (
@@ -66,7 +68,9 @@ export const BTCExplorerLink = forwardRef<HTMLAnchorElement, BTCExplorerLinkProp
       lng={lng ?? (locale as 'en' | 'zh')}
       ref={ref}
       {...props}
-      to={`${config.BITCOIN_EXPLORER}${IS_MAINNET ? '' : `/${identity}`}${path}/${id}${anchor ? `#${anchor}` : ''}`}
+      to={`${config.BITCOIN_EXPLORER}${IS_MAINNET ? '' : `/${identity}`}${path}/${id ?? address}${
+        anchor ? `#${anchor}` : ''
+      }`}
     />
   )
 }) as <S>(props: BTCExplorerLinkProps<S>, ref: ForwardedRef<HTMLAnchorElement>) => JSX.Element)
