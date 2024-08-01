@@ -60,7 +60,7 @@ const BtcTransaction: FC<{
             const boundIndex = boundCellIndex[key]
             return (
               <div key={key} className={styles.input}>
-                <BTCExplorerLink address={input.prevout.scriptPubKey.address} path="/address">
+                <BTCExplorerLink address={input.prevout.scriptPubKey.address} id={tx.txid} path="/address">
                   <AddressText className="monospace">{input.prevout.scriptPubKey.address}</AddressText>
                 </BTCExplorerLink>
                 <div className={`${styles.btcAttr} monospace`}>
@@ -102,7 +102,7 @@ const BtcTransaction: FC<{
             return (
               <div key={key} className={styles.output}>
                 {output.scriptPubKey.address ? (
-                  <BTCExplorerLink address={output.scriptPubKey.address} path="/address">
+                  <BTCExplorerLink address={output.scriptPubKey.address} id={tx.txid} path="/address">
                     <AddressText className="monospace">{output.scriptPubKey.address}</AddressText>
                   </BTCExplorerLink>
                 ) : (

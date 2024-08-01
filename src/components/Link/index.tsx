@@ -59,8 +59,8 @@ export const BTCExplorerLink = forwardRef<HTMLAnchorElement, BTCExplorerLinkProp
   const { locale } = useParams<{ locale?: string }>()
   const { data: identity } = useQuery({
     queryKey: ['btc-testnet-identity', id, address],
-    queryFn: () => getBtcChainIdentify({ txid: id, address }),
-    enabled: !IS_MAINNET,
+    queryFn: () => getBtcChainIdentify(id!),
+    enabled: !IS_MAINNET && !!id,
   })
 
   return (
@@ -68,7 +68,7 @@ export const BTCExplorerLink = forwardRef<HTMLAnchorElement, BTCExplorerLinkProp
       lng={lng ?? (locale as 'en' | 'zh')}
       ref={ref}
       {...props}
-      to={`${config.BITCOIN_EXPLORER}${IS_MAINNET ? '' : `/${identity}`}${path}/${id ?? address}${
+      to={`${config.BITCOIN_EXPLORER}${IS_MAINNET ? '' : `/${identity ?? 'testnet'}`}${path}/${address ?? id}${
         anchor ? `#${anchor}` : ''
       }`}
     />
