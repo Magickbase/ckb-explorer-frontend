@@ -49,43 +49,43 @@ function useFilterList(): Record<'title' | 'value', string>[] {
 const filterList = [
   {
     key: 'invalid',
-    value: 'invalid',
+    value: 'Invalid',
     title: <NFTTag key="invalid" tagName="invalid" />,
     to: '/nft-collections',
   },
   {
     key: 'suspicious',
-    value: 'suspicious',
+    value: 'Suspicious',
     title: <NFTTag key="suspicious" tagName="suspicious" />,
     to: '/nft-collections',
   },
   {
     key: 'out-of-length-range',
-    value: 'out-of-length-range',
+    value: 'Out Of Length Range',
     title: <NFTTag key="out-of-length-range" tagName="out-of-length-range" />,
     to: '/nft-collections',
   },
   {
     key: 'rgb++',
-    value: 'rgb++',
+    value: 'RGB++',
     title: <NFTTag key="rgb++" tagName="rgb++" />,
     to: '/nft-collections',
   },
   {
     key: 'duplicate',
-    value: 'duplicate',
+    value: 'Duplicate',
     title: <NFTTag key="duplicate" tagName="duplicate" />,
     to: '/nft-collections',
   },
   {
     key: 'layer-1-asset',
-    value: 'layer-1-asset',
+    value: 'Layer 1 Asset',
     title: <NFTTag key="layer-1-asset" tagName="layer-1-asset" />,
     to: '/nft-collections',
   },
   {
     key: 'layer-2-asset',
-    value: 'layer-2-asset',
+    value: 'Layer 2 Asset',
     title: <NFTTag key="layer-2-asset" tagName="layer-2-asset" />,
     to: '/nft-collections',
   },
@@ -367,7 +367,7 @@ export const ListOnMobile: React.FC<{ isLoading: boolean; list: NFTCollection[] 
           <SimpleSortHeader sortField="transactions" fieldI18n={t('nft.transactions')} />
           <HolderMinterSort />
           <SimpleSortHeader sortField="timestamp" fieldI18n={t('nft.created_time')} />
-          <div>
+          <div style={{ display: 'flex', flexWrap: 'nowrap', maxWidth: '100%' }}>
             {t('xudt.title.tags')}
             <MultiFilterButton filterName="tags" key="" filterList={filterList} />
           </div>

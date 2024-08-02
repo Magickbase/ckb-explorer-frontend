@@ -39,19 +39,19 @@ const filterList = [
   // },
   {
     key: 'layer-1-asset',
-    value: 'layer-1-asset',
+    value: 'Layer 1 Asset',
     title: <XUDTTag tagName="layer-1-asset" />,
     to: '/xudts',
   },
   {
     key: 'layer-2-asset',
-    value: 'layer-2-asset',
+    value: 'Layer 2 Asset',
     title: <XUDTTag tagName="layer-2-asset" />,
     to: '/xudts',
   },
   {
     key: 'supply-limited',
-    value: 'supply-limited',
+    value: 'Supply Limited',
     title: <XUDTTag tagName="supply-limited" />,
     to: '/xudts',
   },
@@ -134,20 +134,20 @@ export function TokensCard({
       <Card className={styles.filterSortCard} shadow={false}>
         <FilterSortContainerOnMobile key="xudts-sort">
           <span className={styles.sortOption}>
-            {t('xudt.transactions')}
-            <SortButton field="transactions" sortParam={sortParam} />
+            {t('xudt.title.tags')}
+            <MultiFilterButton filterName="tags" key="" filterList={filterList} />
           </span>
           <span className={styles.sortOption}>
-            {t('xudt.unique_addresses')}
-            <SortButton field="addresses_count" sortParam={sortParam} />
+            {t('xudt.transactions')}
+            <SortButton field="transactions" sortParam={sortParam} />
           </span>
           <span className={styles.sortOption}>
             {t('xudt.created_time')}
             <SortButton field="created_time" sortParam={sortParam} />
           </span>
           <span className={styles.sortOption}>
-            {t('xudt.title.tags')}
-            <MultiFilterButton filterName="tags" key="" filterList={filterList} />
+            {t('xudt.unique_addresses')}
+            <SortButton field="addresses_count" sortParam={sortParam} />
           </span>
         </FilterSortContainerOnMobile>
       </Card>
@@ -247,7 +247,7 @@ const TokenTable: FC<{
     {
       title: (
         <>
-          {t('xudt.unique_addresses')}
+          <span>{t('xudt.unique_addresses')}</span>
           <SortButton field="addresses_count" sortParam={sortParam} />
         </>
       ),
