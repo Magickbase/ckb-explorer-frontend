@@ -914,7 +914,7 @@
       "csv_export": "CSV导出",
       "download_data": "下载数据",
       "holders_by_block": "Holders by Block",
-      "holders_allocation": "Holders 导出",
+      "holders_allocation": "Holders 配置",
       "holders_by_block_title": "Holders by Block CSV download",
       "holders_by_block_des": "您可以在本页下载特定区块编号地址持有的 xUDT 数量记录",
       "select_export_data": "数据聚合方式",

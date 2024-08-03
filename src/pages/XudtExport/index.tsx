@@ -102,7 +102,7 @@ const XudtExport = () => {
                 <RadioGroup
                   className={classNames(styles.radioGroup, styles.inputContent)}
                   onValueChange={value => updateSearchParams(params => ({ ...params, mergeWithOwner: value }), true)}
-                  value={mergeWithOwner}
+                  value={mergeWithOwner ?? 'false'}
                 >
                   <div className={styles.radioItem} key="by_owner">
                     <RadioGroupItem value="true" id="by_owner" />
