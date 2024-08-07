@@ -77,6 +77,8 @@ dt {
   display: flex;
   align-items: center;
   color: var(--primary-color);
+  font-size: 15px;
+  font-weight: 500;
 
   &:hover {
     color: var(--primary-color);
