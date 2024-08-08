@@ -40,19 +40,19 @@ const getfilterList = (t: TFunction) => [
   // },
   {
     key: 'layer-1-asset',
-    value: t('layer-1-asset'),
+    value: t('xudt.tags.layer-1-asset'),
     title: <XUDTTag tagName="layer-1-asset" />,
     to: '/xudts',
   },
   {
     key: 'layer-2-asset',
-    value: t('layer-2-asset'),
+    value: t('xudt.tags.layer-2-asset'),
     title: <XUDTTag tagName="layer-2-asset" />,
     to: '/xudts',
   },
   {
     key: 'supply-limited',
-    value: t('supply-simited'),
+    value: t('xudt.tags.supply-limited'),
     title: <XUDTTag tagName="supply-limited" />,
     to: '/xudts',
   },
