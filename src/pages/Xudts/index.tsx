@@ -5,6 +5,7 @@ import { FC, ReactNode, useState } from 'react'
 import { ColumnGroupType, ColumnType } from 'antd/lib/table'
 import dayjs from 'dayjs'
 import classNames from 'classnames'
+import { TFunction } from 'i18next'
 import type { XUDT } from '../../models/Xudt'
 import { Link } from '../../components/Link'
 import Content from '../../components/Content'
@@ -29,7 +30,7 @@ import { scripts } from '../ScriptList'
 
 type SortField = 'transactions' | 'addresses_count' | 'created_time' | 'mint_status'
 
-const filterList = [
+const getfilterList = (t: TFunction) => [
   // TODO: maybe removed in the future, hold on
   // {
   //   key: 'out-of-length-range',
@@ -39,19 +40,19 @@ const filterList = [
   // },
   {
     key: 'layer-1-asset',
-    value: 'Layer 1 Asset',
+    value: t('layer-1-asset'),
     title: <XUDTTag tagName="layer-1-asset" />,
     to: '/xudts',
   },
   {
     key: 'layer-2-asset',
-    value: 'Layer 2 Asset',
+    value: t('layer-2-asset'),
     title: <XUDTTag tagName="layer-2-asset" />,
     to: '/xudts',
   },
   {
     key: 'supply-limited',
-    value: 'Supply Limited',
+    value: t('supply-simited'),
     title: <XUDTTag tagName="supply-limited" />,
     to: '/xudts',
   },
@@ -135,7 +136,7 @@ export function TokensCard({
         <FilterSortContainerOnMobile key="xudts-sort">
           <span className={styles.sortOption}>
             {t('xudt.title.tags')}
-            <MultiFilterButton filterName="tags" key="" filterList={filterList} />
+            <MultiFilterButton filterName="tags" key="" filterList={getfilterList(t)} />
           </span>
           <span className={styles.sortOption}>
             {t('xudt.transactions')}
@@ -222,7 +223,7 @@ const TokenTable: FC<{
       title: (
         <>
           {t('xudt.title.tags')}
-          <MultiFilterButton filterName="tags" key="" filterList={filterList} />
+          <MultiFilterButton filterName="tags" key="" filterList={getfilterList(t)} />
         </>
       ),
       className: styles.colTags,
