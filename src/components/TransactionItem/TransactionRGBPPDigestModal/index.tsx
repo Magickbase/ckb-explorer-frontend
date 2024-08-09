@@ -6,7 +6,7 @@ import CloseIcon from '../../../assets/modal_close.png'
 import { TransactionRGBPPDigestContent } from './TransactionRGBPPDigestContent'
 import { explorerService } from '../../../services/ExplorerService'
 import { TransactionLeapDirection } from '../../RGBPP/types'
-import Loading from '../../AwesomeLoadings/Spinner'
+import SmallSpinner from '../../AwesomeLoadings/SmallSpinner'
 
 const TransactionRGBPPDigestModal = ({ hash, onClickClose }: { onClickClose: Function; hash: string }) => {
   const { t } = useTranslation()
@@ -30,7 +30,7 @@ const TransactionRGBPPDigestModal = ({ hash, onClickClose }: { onClickClose: Fun
     <div className={styles.container}>
       {isLoading ? (
         <div style={{ margin: 'auto', width: '100%', display: 'flex' }}>
-          <Loading />
+          <SmallSpinner />
         </div>
       ) : (
         <>
