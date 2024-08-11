@@ -1,11 +1,12 @@
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
+import { Popover } from 'antd'
 import styles from './styles.module.scss'
 
 const HIDDEN_TAGS = ['duplicate', 'suspicious', 'utility', 'supply-unlimited', 'out-of-length-range']
 
-const XUDTTag = ({ tagName, to }: { tagName: string; to?: string }) => {
+const XUDTTag = ({ tagName, to, tooltip = false }: { tagName: string; to?: string; tooltip?: boolean }) => {
   const { t } = useTranslation()
   const { push } = useHistory()
 
@@ -40,6 +41,24 @@ const XUDTTag = ({ tagName, to }: { tagName: string; to?: string }) => {
       search.set('tags', [...tags, tag].join(','))
     }
     push(`${to ?? window.location.pathname}?${search}`)
+  }
+
+  if (tooltip) {
+    return (
+      <Popover
+        overlayClassName={styles.tagPopover}
+        content={
+          <>
+            <div>{t(`xudt.tags_description.${tag}`)}</div>
+            <a href={`${to}?tags=${tag}`}>{t('xudt.tags_description.view_more')}</a>
+          </>
+        }
+      >
+        <button type="button" className={classNames(styles.container, styles.normal)} data-type={tagName}>
+          {content}
+        </button>
+      </Popover>
+    )
   }
 
   return (
