@@ -823,7 +823,8 @@
         "verified-on": "This tag marks an asset that has been verified by Cell Studio.",
         "supply-limited": "This tag marks an asset that has a limited supply, with a maximum quantity limit.",
         "supply-unlimited": "This tag marks an asset that has an unlimited supply, with no maximum quantity limit.",
-        "view_more": "View more items"
+        "view_more": "View more items",
+        "unnamed": "This tag marks an asset whose name field is empty."
       },
       "category": "Category"
     },
