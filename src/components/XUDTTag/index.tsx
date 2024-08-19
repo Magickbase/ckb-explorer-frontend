@@ -7,7 +7,7 @@ import styles from './styles.module.scss'
 const HIDDEN_TAGS = ['duplicate', 'suspicious', 'utility', 'supply-unlimited', 'out-of-length-range']
 
 const XUDTTag = ({ tagName, to, tooltip = false }: { tagName: string; to?: string; tooltip?: boolean }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { push } = useHistory()
 
   // FIXME: the tag should be updated in the backend
@@ -40,7 +40,7 @@ const XUDTTag = ({ tagName, to, tooltip = false }: { tagName: string; to?: strin
     } else {
       search.set('tags', [...tags, tag].join(','))
     }
-    push(`${to ?? window.location.pathname}?${search}`)
+    push(`${`/${i18n.language}${to ?? window.location.pathname}`}?${search}`)
   }
 
   if (tooltip) {
@@ -50,7 +50,7 @@ const XUDTTag = ({ tagName, to, tooltip = false }: { tagName: string; to?: strin
         content={
           <>
             <div>{t(`xudt.tags_description.${tag}`)}</div>
-            <a href={`${to}?tags=${tag}`}>{t('xudt.tags_description.view_more')}</a>
+            <a href={`/${i18n.language}${to}?tags=${tag}`}>{t('xudt.tags_description.view_more')}</a>
           </>
         }
       >
