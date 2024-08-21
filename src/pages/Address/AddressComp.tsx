@@ -287,20 +287,24 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                 key={AssetInfo.INSCRIPTION}
               >
                 <div className={styles.assetCardList}>
-                  {inscriptions.map(inscription => {
-                    switch (inscription.udtType) {
-                      case 'omiga_inscription':
-                        return (
-                          <AddressOmigaInscriptionComp
-                            account={inscription}
-                            key={`${inscription.symbol + inscription.udtType + inscription.udtAmount}`}
-                          />
-                        )
+                  <div className={styles.inscriptions}>
+                    <ul>
+                      {inscriptions.map(inscription => {
+                        switch (inscription.udtType) {
+                          case 'omiga_inscription':
+                            return (
+                              <AddressOmigaInscriptionComp
+                                account={inscription}
+                                key={`${inscription.symbol + inscription.udtType + inscription.udtAmount}`}
+                              />
+                            )
 
-                      default:
-                        return null
-                    }
-                  })}
+                          default:
+                            return null
+                        }
+                      })}
+                    </ul>
+                  </div>
                 </div>
               </AddressAssetsTabPane>
             ) : null}
