@@ -293,10 +293,12 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                         switch (inscription.udtType) {
                           case 'omiga_inscription':
                             return (
-                              <AddressOmigaInscriptionComp
-                                account={inscription}
-                                key={`${inscription.symbol + inscription.udtType + inscription.udtAmount}`}
-                              />
+                              <li>
+                                <AddressOmigaInscriptionComp
+                                  account={inscription}
+                                  key={`${inscription.symbol + inscription.udtType + inscription.udtAmount}`}
+                                />
+                              </li>
                             )
 
                           default:
