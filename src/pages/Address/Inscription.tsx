@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import styles from './inscription.module.scss'
+import { Link } from '../../components/Link'
 
 const Inscription = ({
   href,
@@ -8,12 +9,12 @@ const Inscription = ({
   content,
 }: {
   content: Record<string, string>
-  href?: string
+  href: string
   mintingStatus?: string
   udtLabel: string
 }) => {
   return (
-    <a href={href} className={styles.container}>
+    <Link to={href} className={styles.container}>
       <h5>
         <span className="monospace">{udtLabel}</span>
         <span className="monospace">{mintingStatus}</span>
@@ -28,7 +29,7 @@ const Inscription = ({
         ))}
         {'}'}
       </div>
-    </a>
+    </Link>
   )
 }
 
