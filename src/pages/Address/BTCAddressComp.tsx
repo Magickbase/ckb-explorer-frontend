@@ -26,7 +26,7 @@ export const BTCAddressOverviewCard: FC<{ address: Address }> = ({ address }) =>
   const { boundLiveCellsCount, unboundLiveCellsCount } = data || { boundLiveCellsCount: 0, unboundLiveCellsCount: 0 }
 
   let { data: udtAccounts } = useQuery(['bitcoin address udt accounts', address], async () => {
-    const data = await explorerService.api.fetchBitcoinAddressesUDTAccounts(address.bitcoinAddressHash || '')
+    const data = await explorerService.api.fetchUDTAccountsByBtcAddress(address.bitcoinAddressHash || '')
     return data.udtAccounts
   })
   udtAccounts = udtAccounts || []

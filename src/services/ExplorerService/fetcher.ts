@@ -254,7 +254,7 @@ export const apiFetcher = {
   fetchBitcoinAddresses: (address: string) =>
     requesterV2.get(`bitcoin_addresses/${address}`).then(res => toCamelcase<BitcoinAddresses>(res.data)),
 
-  fetchBitcoinAddressesUDTAccounts: (address: string) =>
+  fetchUDTAccountsByBtcAddress: (address: string) =>
     requesterV2
       .get(`bitcoin_addresses/${address}/udt_accounts`)
       .then(res => toCamelcase<{ udtAccounts: UDTAccount[] }>(res.data.data)),
