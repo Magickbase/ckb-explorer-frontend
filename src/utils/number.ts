@@ -6,7 +6,13 @@ export function isNumeric(str: string) {
 }
 
 export function isBlockNumber(str: string) {
-  return !Number.isNaN(str) && !Number.isNaN(parseFloat(str)) && parseFloat(str) !== 0
+  if (str.length >= 64) return false
+
+  if (!Number.isNaN(str) && !Number.isNaN(parseFloat(str)) && parseFloat(str) !== 0) {
+    return true
+  }
+
+  return !Number.isNaN(str) && !Number.isNaN(parseInt(str, 16)) && parseInt(str, 16) !== 0
 }
 
 export const localeNumberString = (value: BigNumber | string | number): string => {
