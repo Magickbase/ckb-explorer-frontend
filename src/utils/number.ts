@@ -5,8 +5,10 @@ export function isNumeric(str: string) {
   return !Number.isNaN(str) && !Number.isNaN(parseFloat(str))
 }
 
+const BLOCK_HASH_LENGTH = 64
+
 export function isBlockNumber(str: string) {
-  if (str.length >= 64) return false
+  if (str.length >= BLOCK_HASH_LENGTH) return false
 
   if (!Number.isNaN(str) && !Number.isNaN(parseFloat(str)) && parseFloat(str) !== 0) {
     return true
