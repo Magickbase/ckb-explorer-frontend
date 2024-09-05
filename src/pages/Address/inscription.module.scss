@@ -24,13 +24,24 @@
   }
 
   .content {
+    height: 90px;
+    overflow-y: scroll;
     padding: 8px;
     background-color: #000;
     width: 100%;
     color: #fff;
+    text-wrap: nowrap;
 
     .jsonValue {
-      margin-left: 2em;
+      .value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-grow: 1;
+      }
+
+      padding-left: 2em;
+      width: 100%;
+      overflow: hidden;
       max-width: 100%;
       display: flex;
     }

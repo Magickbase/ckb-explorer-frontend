@@ -24,7 +24,7 @@ const Inscription = ({
         {Object.entries(content).map(([key, value]) => (
           <div className={classNames('monospace', styles.jsonValue)}>
             <div className={classNames('monospace', styles.title)}>{key}:</div>
-            <div className="monospace">{value}</div>
+            <div className={classNames('monospace', styles.value)}>{value}</div>
           </div>
         ))}
         {'}'}
