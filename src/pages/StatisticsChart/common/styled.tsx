@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import variables from '../../../styles/variables.module.scss'
 
 export const ChartDetailPanel = styled.div`
   margin-bottom: 30px;
@@ -13,11 +14,11 @@ export const ChartDetailTitle = styled.div`
   justify-content: center;
   align-items: center;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin-top: 20px;
   }
 
-  .chart__detail__title__panel {
+  .chartDetailTitlePanel {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -29,7 +30,7 @@ export const ChartDetailTitle = styled.div`
       font-size: 24px;
       margin-left: 100px;
 
-      @media (max-width: 750px) {
+      @media (max-width: ${variables.mobileBreakPoint}) {
         font-size: 16px;
         margin-left: 0;
       }
@@ -42,7 +43,7 @@ export const ChartDetailTitle = styled.div`
     }
   }
 
-  .chart__detail__title__download {
+  .chartDetailTitleDownload {
     width: 100px;
     padding: 5px 0;
     border-radius: 2px;
@@ -52,7 +53,7 @@ export const ChartDetailTitle = styled.div`
     color: #666;
     margin-right: 3.6%;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       display: none;
     }
   }

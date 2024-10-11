@@ -1,39 +1,51 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
-import { DATA_ZOOM_CONFIG, parseNumericAbbr } from '../../../utils/chart'
-import { parseDateNoTime } from '../../../utils/date'
+import dayjs from 'dayjs'
+import { SupportedLng, useCurrentLanguage } from '../../../utils/i18n'
+import {
+  DATA_ZOOM_CONFIG,
+  assertIsArray,
+  assertSerialsDataIsStringArrayOf3,
+  assertSerialsItem,
+  parseNumericAbbr,
+} from '../../../utils/chart'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import { isMainnet } from '../../../utils/chain'
 import { tooltipWidth, tooltipColor, SeriesItem, SmartChartPage } from '../common'
-import { ChartCachedKeys } from '../../../constants/cache'
-import { fetchStatisticNewDaoDeposit } from '../../../service/http/fetcher'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
-const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 140 : 120)
+const widthSpan = (value: string, language: SupportedLng) => tooltipWidth(value, language === 'en' ? 140 : 120)
 
-const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: [string, string, string] }): string => {
-  if (seriesName === i18n.t('statistic.new_dao_deposit')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.new_dao_deposit'))} ${parseNumericAbbr(
-      data[1],
-      2,
-    )}</div>`
+const useTooltip = () => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
+
+  return ({ seriesName, data, color }: SeriesItem & { data: [string, string, string] }): string => {
+    if (seriesName === t('statistic.new_dao_deposit')) {
+      return `<div>${tooltipColor(color)}${widthSpan(
+        t('statistic.new_dao_deposit'),
+        currentLanguage,
+      )} ${parseNumericAbbr(data[1], 2)}</div>`
+    }
+    if (seriesName === t('statistic.new_dao_depositor')) {
+      return `<div>${tooltipColor(color)}${widthSpan(
+        t('statistic.new_dao_depositor'),
+        currentLanguage,
+      )} ${parseNumericAbbr(data[2], 2, true)}</div>`
+    }
+    return ''
   }
-  if (seriesName === i18n.t('statistic.new_dao_depositor')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.new_dao_depositor'))} ${parseNumericAbbr(
-      data[2],
-      2,
-      true,
-    )}</div>`
-  }
-  return ''
 }
 
-const getOption = (
-  statisticNewDaoDeposits: State.StatisticNewDaoDeposit[],
-  chartColor: State.App['chartColor'],
+const useOption = (
+  statisticNewDaoDeposits: ChartItem.NewDaoDeposit[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -48,17 +60,20 @@ const getOption = (
     bottom: '5%',
     containLabel: true,
   }
+  const parseTooltip = useTooltip()
   return {
     color: chartColor.colors,
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const list = dataList as (SeriesItem & { data: [string, string, string] })[]
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
-              list[0].data[0]
+          formatter: dataList => {
+            assertIsArray(dataList)
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'), currentLanguage)} ${
+              dataList[0].data[0]
             }</div>`
-            list.forEach(data => {
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              assertSerialsDataIsStringArrayOf3(data)
               result += parseTooltip(data)
             })
             return result
@@ -67,21 +82,22 @@ const getOption = (
       : undefined,
     grid: isThumbnail ? gridThumbnail : grid,
     legend: {
+      icon: 'roundRect',
       data: isThumbnail
         ? []
         : [
             {
-              name: i18n.t('statistic.new_dao_deposit'),
+              name: t('statistic.new_dao_deposit'),
             },
             {
-              name: i18n.t('statistic.new_dao_depositor'),
+              name: t('statistic.new_dao_depositor'),
             },
           ],
     },
     dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
     xAxis: [
       {
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.date'),
+        name: isMobile || isThumbnail ? '' : t('statistic.date'),
         nameLocation: 'middle',
         nameGap: 30,
         type: 'category',
@@ -91,7 +107,7 @@ const getOption = (
     yAxis: [
       {
         position: 'left',
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.new_dao_deposit'),
+        name: isMobile || isThumbnail ? '' : t('statistic.new_dao_deposit'),
         nameTextStyle: {
           align: 'left',
         },
@@ -108,12 +124,13 @@ const getOption = (
       },
       {
         position: 'right',
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.new_dao_depositor'),
+        name: isMobile || isThumbnail ? '' : t('statistic.new_dao_depositor'),
         nameTextStyle: {
           align: 'right',
         },
         type: 'value',
         scale: true,
+        splitLine: { show: false },
         axisLine: {
           lineStyle: {
             color: chartColor.colors[1],
@@ -126,7 +143,7 @@ const getOption = (
     ],
     series: [
       {
-        name: i18n.t('statistic.new_dao_deposit'),
+        name: t('statistic.new_dao_deposit'),
         type: 'line',
         yAxisIndex: 0,
         areaStyle: {
@@ -140,7 +157,7 @@ const getOption = (
         },
       },
       {
-        name: i18n.t('statistic.new_dao_depositor'),
+        name: t('statistic.new_dao_depositor'),
         type: 'line',
         yAxisIndex: 1,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -153,16 +170,16 @@ const getOption = (
     ],
     dataset: {
       source: statisticNewDaoDeposits.map(data => [
-        parseDateNoTime(data.createdAtUnixtimestamp),
+        dayjs(+data.createdAtUnixtimestamp * 1000).format('YYYY/MM/DD'),
         new BigNumber(shannonToCkb(data.dailyDaoDeposit)).toFixed(0),
-        new BigNumber(data.dailyDaoDepositorsCount).toNumber(),
+        new BigNumber(data.dailyDaoDepositorsCount).toNumber().toString(),
       ]),
       dimensions: ['timestamp', 'deposit', 'depositor'],
     },
   }
 }
 
-const toCSV = (statisticNewDaoDeposits: State.StatisticNewDaoDeposit[]) =>
+const toCSV = (statisticNewDaoDeposits: ChartItem.NewDaoDeposit[]) =>
   statisticNewDaoDeposits
     ? statisticNewDaoDeposits.map(data => [
         data.createdAtUnixtimestamp,
@@ -178,11 +195,10 @@ export const NewDaoDepositChart = ({ isThumbnail = false }: { isThumbnail?: bool
       title={t('statistic.new_dao_deposit_depositor')}
       note={isMainnet() ? `${t('common.note')}1MB = 1,000,000 CKBytes` : undefined}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticNewDaoDeposit}
-      getEChartOption={getOption}
+      fetchData={explorerService.api.fetchStatisticNewDaoDeposit}
+      getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.DailyDeposit}
-      cacheMode="date"
+      queryKey="fetchStatisticNewDaoDeposit"
     />
   )
 }

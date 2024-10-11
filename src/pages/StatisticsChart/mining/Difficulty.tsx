@@ -1,19 +1,22 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
-import { DATA_ZOOM_CONFIG, handleAxis } from '../../../utils/chart'
-import { parseDateNoTime } from '../../../utils/date'
+import dayjs from 'dayjs'
+import { DATA_ZOOM_CONFIG, assertIsArray, handleAxis } from '../../../utils/chart'
 import { handleDifficulty } from '../../../utils/number'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
-import { ChartCachedKeys } from '../../../constants/cache'
-import { fetchStatisticDifficulty } from '../../../service/http/fetcher'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
-const getOption = (
-  statisticDifficulties: State.StatisticDifficulty[],
-  chartColor: State.App['chartColor'],
+const useOption = (
+  statisticDifficulties: ChartItem.Difficulty[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -33,13 +36,12 @@ const getOption = (
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 70 : 35)
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
-              dataList[0].data[0]
-            }</div>`
+          formatter: dataList => {
+            assertIsArray(dataList)
+            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 70 : 35)
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'))} ${dataList[0].data[0]}</div>`
             result += `<div>${tooltipColor(chartColor.colors[0])}\
-          ${widthSpan(i18n.t('block.difficulty'))} ${handleDifficulty(dataList[0].data[1])}</div>`
+          ${widthSpan(t('block.difficulty'))} ${handleDifficulty(dataList[0].data[1])}</div>`
             return result
           },
         }
@@ -48,7 +50,7 @@ const getOption = (
     dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
     xAxis: [
       {
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.date'),
+        name: isMobile || isThumbnail ? '' : t('statistic.date'),
         nameLocation: 'middle',
         nameGap: 30,
         type: 'category',
@@ -58,7 +60,7 @@ const getOption = (
     yAxis: [
       {
         position: 'left',
-        name: isMobile || isThumbnail ? '' : i18n.t('block.difficulty'),
+        name: isMobile || isThumbnail ? '' : t('block.difficulty'),
         type: 'value',
         scale: true,
         axisLine: {
@@ -73,7 +75,7 @@ const getOption = (
     ],
     series: [
       {
-        name: i18n.t('block.difficulty'),
+        name: t('block.difficulty'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -86,7 +88,7 @@ const getOption = (
     ],
     dataset: {
       source: statisticDifficulties.map(data => [
-        parseDateNoTime(data.createdAtUnixtimestamp),
+        dayjs(+data.createdAtUnixtimestamp * 1000).format('YYYY/MM/DD'),
         new BigNumber(data.avgDifficulty).toNumber(),
       ]),
       dimensions: ['timestamp', 'value'],
@@ -94,7 +96,7 @@ const getOption = (
   }
 }
 
-const toCSV = (statisticDifficulties: State.StatisticDifficulty[]) =>
+const toCSV = (statisticDifficulties: ChartItem.Difficulty[]) =>
   statisticDifficulties ? statisticDifficulties.map(data => [data.createdAtUnixtimestamp, data.avgDifficulty]) : []
 
 export const DifficultyChart = ({ isThumbnail = false }: { isThumbnail?: boolean }) => {
@@ -103,11 +105,10 @@ export const DifficultyChart = ({ isThumbnail = false }: { isThumbnail?: boolean
     <SmartChartPage
       title={t('block.difficulty')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticDifficulty}
-      getEChartOption={getOption}
+      fetchData={explorerService.api.fetchStatisticDifficulty}
+      getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.Difficulty}
-      cacheMode="date"
+      queryKey="fetchStatisticDifficulty"
     />
   )
 }

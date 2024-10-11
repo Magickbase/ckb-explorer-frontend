@@ -1,4 +1,6 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
+import variables from '../../../styles/variables.module.scss'
 
 export const TransactionCellPanel = styled.div`
   width: 100%;
@@ -15,23 +17,23 @@ export const TransactionCellContentPanel = styled.div`
   color: #000;
   text-align: center;
 
-  .transaction__cell__address {
+  .transactionCellAddress {
     display: flex;
     flex: 0.4;
     min-width: 0;
   }
 
-  .transaction__cell_detail {
+  .transactionCellDetail {
     flex: ${(props: { isCellbase: boolean }) => (props.isCellbase ? '0.6' : '0.22')};
   }
 
-  .transaction__cell_capacity {
+  .transactionCellCapacity {
     flex: 0.3;
     display: ${(props: { isCellbase: boolean }) => (props.isCellbase ? 'none' : 'flex')};
     justify-content: flex-end;
   }
 
-  .transaction__detail__cell_info {
+  .transactionDetailCellInfo {
     flex: 0.08;
     font-size: 12px;
     display: ${(props: { isCellbase: boolean }) => (props.isCellbase ? 'none' : 'flex')};
@@ -48,22 +50,22 @@ export const TransactionCellContentPanel = styled.div`
   }
 `
 export const TransactionCellInfoPanel = styled.div`
-  .transaction__cell__info__content {
+  .transactionCellInfoContent {
     color: rgb(0 0 0 / 60%);
     cursor: pointer;
     width: 45px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       width: auto;
     }
 
-    .transaction__cell__info__separate {
+    .transactionCellInfoSeparate {
       background: rgb(0 0 0 / 60%);
       width: 45px;
       height: 1px;
       transform: ${() => `scaleY(${Math.ceil((1.0 / window.devicePixelRatio) * 10.0) / 10.0})`};
 
-      @media (max-width: 750px) {
+      @media (max-width: ${variables.mobileBreakPoint}) {
         width: auto;
       }
     }
@@ -71,7 +73,7 @@ export const TransactionCellInfoPanel = styled.div`
     &:hover {
       color: ${props => props.theme.primary};
 
-      .transaction__cell__info__separate {
+      .transactionCellInfoSeparate {
         background: ${props => props.theme.primary};
       }
     }
@@ -83,7 +85,7 @@ export const TransactionCellAddressPanel = styled.div`
   display: flex;
   flex-direction: row;
 
-  .transaction__cell_index {
+  .transactionCellIndex {
     margin-right: 3px;
     color: #666;
 
@@ -91,17 +93,16 @@ export const TransactionCellAddressPanel = styled.div`
       width: 70px;
       text-align: start;
 
-      @media (max-width: 1440px) {
+      @media (max-width: ${variables.xxlBreakPoint}) {
         width: 50px;
       }
     }
   }
 `
 
-export const TransactionCellHashPanel = styled.div`
-  color: ${({ highLight = false, theme }: { highLight?: boolean; theme: any }) =>
-    highLight ? `${theme.primary}` : '#000000'};
-  text-align: ${({ highLight = false }: { highLight?: boolean }) => (highLight ? 'left' : 'center')};
+export const TransactionCellHashPanel = styled.div<{ highLight?: boolean }>`
+  color: ${({ highLight = false, theme }) => (highLight ? `${theme.primary}` : '#000000')};
+  text-align: ${({ highLight = false }) => (highLight ? 'left' : 'center')};
   flex: 1;
   min-width: 0;
   display: flex;
@@ -109,7 +110,7 @@ export const TransactionCellHashPanel = styled.div`
   align-items: center;
   font-size: 16px;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     text-align: left;
 
     > a {
@@ -117,7 +118,7 @@ export const TransactionCellHashPanel = styled.div`
     }
   }
 
-  @media (min-width: 750px) {
+  @media (min-width: ${variables.mobileBreakPoint}) {
     font-weight: 500;
   }
 
@@ -125,15 +126,15 @@ export const TransactionCellHashPanel = styled.div`
     margin: 0 3px;
   }
 
-  .transaction__cell_address_link {
+  .transactionCellAddressLink {
     max-width: 70%;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       max-width: unset;
     }
   }
 
-  .transaction__cell_address_no_link {
+  .transactionCellAddressNoLink {
     color: #000;
   }
 `
@@ -146,7 +147,7 @@ export const TransactionCellDetailPanel = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  .transaction__cell__detail__panel {
+  .transactionCellDetailPanel {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -168,14 +169,22 @@ export const TransactionCellNftInfo = styled.div`
   white-space: pre-line;
 `
 
+export const TransactionCellCardSeparate = styled.div`
+  width: 100%;
+  height: 1px;
+  background: #ccc;
+  margin: 8px 0;
+  transform: ${() => `scaleY(${Math.ceil((1.0 / window.devicePixelRatio) * 10.0) / 10.0})`};
+`
+
 export const TransactionCellDetailModal = styled.div`
   background-color: #fff;
-  margin: 15% auto;
+  margin: 15% auto 0;
   padding: 20px 40px;
   border: 1px solid #888;
   width: 75%;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     width: 90%;
     margin-top: 40%;
     padding: 10px;
@@ -183,14 +192,6 @@ export const TransactionCellDetailModal = styled.div`
 `
 
 export const TransactionCellCardPanel = styled.div`
-  .transaction__cell__card__separate {
-    width: 100%;
-    height: 1px;
-    background: #ccc;
-    margin: 8px 0;
-    transform: ${() => `scaleY(${Math.ceil((1.0 / window.devicePixelRatio) * 10.0) / 10.0})`};
-  }
-
   > div:nth-child(2) {
     margin-bottom: 15px;
   }
@@ -206,7 +207,7 @@ export const TransactionCellCardContent = styled.div`
   justify-content: space-between;
   padding: 0 10px;
 
-  .transaction__cell__card__title {
+  .transactionCellCardTitle {
     flex: 1;
     min-width: 0;
     font-size: 16px;
@@ -214,7 +215,7 @@ export const TransactionCellCardContent = styled.div`
     margin-top: 3px;
   }
 
-  .transaction__cell__card__value {
+  .transactionCellCardValue {
     display: flex;
     font-size: 16px;
     color: #000;
@@ -228,3 +229,16 @@ export const TransactionCellCardContent = styled.div`
     color: ${props => props.theme.primary};
   }
 `
+
+export const TransactionCellMobileItem = ({
+  title,
+  value = null,
+}: {
+  title: string | ReactNode
+  value?: ReactNode
+}) => (
+  <TransactionCellCardContent>
+    <div className="transactionCellCardTitle">{title}</div>
+    <div className="transactionCellCardValue">{value}</div>
+  </TransactionCellCardContent>
+)

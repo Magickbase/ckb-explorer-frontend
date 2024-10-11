@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { FC, HTMLAttributes } from 'react'
 import styled from 'styled-components'
 import styles from './index.module.scss'
+import variables from '../../styles/variables.module.scss'
 
 export const HomeHeaderItemPanel = styled.div`
   display: flex;
@@ -9,90 +10,82 @@ export const HomeHeaderItemPanel = styled.div`
   background-color: white;
   flex: 1;
 
-  .blockchain__item__content {
+  .blockchainItemContent {
     display: flex;
     flex-direction: column;
     width: 100%;
     margin: 0 30px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       margin: 0 20px;
     }
 
-    .blockchain__item__name {
+    .blockchainItemName {
       color: #555;
       font-size: 14px;
 
-      @media (max-width: 750px) {
+      @media (max-width: ${variables.mobileBreakPoint}) {
         font-size: 12px;
       }
     }
 
-    .blockchain__item__value {
+    .blockchainItemValue {
       color: #000;
       font-weight: 600;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
 
-      .blockchain__item__left__value {
+      .blockchainItemLeftValue {
         font-size: 20px;
 
-        @media (max-width: 750px) {
+        @media (max-width: ${variables.mobileBreakPoint}) {
           font-size: 16px;
         }
       }
 
-      .blockchain__item__right__value {
+      .blockchainItemRightValue {
         font-size: 14px;
 
-        @media (max-width: 750px) {
+        @media (max-width: ${variables.mobileBreakPoint}) {
           font-size: 12px;
         }
       }
     }
-
-    .blockchain__item__separate {
-      margin: 10px 0 20px;
-      height: 1px;
-      background: #eaeaea;
-      width: 100%;
-      transform: ${() => `scaleY(${Math.ceil((1.0 / window.devicePixelRatio) * 10.0) / 10.0})`};
-    }
   }
 
-  .blockchain__item__between_separate {
+  .blockchainItemBetweenSeparate {
     height: 90%;
     background: #eaeaea;
     width: 1px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       display: none;
     }
   }
 `
 
 export const HomeStatisticItemPanel = styled.div`
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     flex: 1;
     margin-left: ${(props: { isFirst?: boolean }) => (props.isFirst ? '0px' : '40px')};
   }
 
-  .home__statistic__item__name {
+  .homeStatisticItemName {
     font-size: 14px;
     color: #fff;
 
-    @media (max-width: 1200px) {
+    @media (max-width: ${variables.extraLargeBreakPoint}) {
       font-size: 12px;
     }
   }
 
-  .home__statistic__item__value {
+  .homeStatisticItemValue {
     font-size: ${(props: { isFirst?: boolean }) => (props.isFirst ? '26px' : '20px')};
     color: #fff;
     font-weight: bold;
 
-    @media (max-width: 1200px) {
+    @media (max-width: ${variables.extraLargeBreakPoint}) {
       font-size: 18px;
     }
   }
@@ -102,7 +95,7 @@ export const HomeTablePanel = styled.div`
   display: flex;
   flex-direction: row;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     flex-direction: column;
   }
 `
@@ -118,7 +111,7 @@ export const BlockPanel = styled.div`
   border-radius: 6px;
   box-shadow: 0 2px 6px 0 rgb(77 77 77 / 20%);
 
-  .block__card__separate {
+  .blockCardSeparate {
     background: #eaeaea;
     width: auto;
     margin: 0 16px;
@@ -137,7 +130,7 @@ export const TransactionPanel = styled.div`
   border-radius: 6px;
   box-shadow: 0 2px 6px 0 rgb(77 77 77 / 20%);
 
-  .transaction__card__separate {
+  .transactionCardSeparate {
     background: #eaeaea;
     width: auto;
     margin: 0 16px;
@@ -162,7 +155,7 @@ export const ContentTitle = styled.div`
     margin: 0 auto;
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     font-size: 30px;
     color: #141414;
     font-weight: bold;
@@ -184,17 +177,12 @@ export const ContentTable = styled.div`
   width: 100%;
   z-index: 2;
 
-  .block__green__background {
+  .blockGreenBackground {
     margin-left: -20px;
     height: 61px;
     width: calc(100% + 40px);
     background-color: ${props => props.theme.primary};
     z-index: 1;
-  }
-
-  .block__panel {
-    margin-top: -41px;
-    z-index: 2;
   }
 `
 
@@ -224,7 +212,7 @@ export const TableHeaderPanel = styled.div`
 export const TableMorePanel: FC<HTMLAttributes<HTMLDivElement>> = props => {
   const { children, className, ...rest } = props
   return (
-    <div className={classNames(styles.TableMorePanel, className)} {...rest}>
+    <div className={classNames(styles.tableMorePanel, className)} {...rest}>
       {children}
     </div>
   )
@@ -249,7 +237,7 @@ export const BlockRewardContainer = styled.div`
   align-items: flex-end;
   justify-content: center;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     align-items: flex-end;
     justify-content: flex-start;
   }

@@ -5,16 +5,8 @@ export const HeaderBlockchainPanel = styled.div`
   align-items: center;
   height: 100%;
   margin-top: 1px;
-  margin-right: 60px;
+  margin-right: 49px;
   padding: 10px 0;
-
-  @media (max-width: 1920px) {
-    margin-right: 40px;
-  }
-
-  @media (max-width: 1440px) {
-    margin-right: 24px;
-  }
 
   @media (max-width: 750px) {
     margin-right: 0;
@@ -22,18 +14,18 @@ export const HeaderBlockchainPanel = styled.div`
 
   color: ${props => props.theme.secondary};
 
-  .header__blockchain__flag {
+  .headerBlockchainFlag {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .header__blockchain__content_panel {
+  .headerBlockchainContentPanel {
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    .header__blockchain__content {
+    .headerBlockchainContent {
       height: 14px;
       font-size: 14px;
       cursor: pointer;
@@ -47,7 +39,7 @@ export const HeaderBlockchainPanel = styled.div`
     }
   }
 
-  .header__blockchain__node__version {
+  .headerBlockchainNodeVersion {
     font-size: 8px;
     margin-top: 2px;
     cursor: pointer;
@@ -55,38 +47,38 @@ export const HeaderBlockchainPanel = styled.div`
   }
 `
 
-export const MobileSubMenuPanel = styled.div`
+export const MobileSubMenuPanel = styled.div<{ showSubMenu: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   margin: 22px 56px 0;
 
-  .mobile__menus__main__item {
+  .mobileMenusMainItem {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
   }
 
-  .mobile__menus__main__item__content {
-    color: ${(props: { showSubMenu: boolean; theme: any }) => (props.showSubMenu ? props.theme.primary : 'white')};
+  .mobileMenusMainItemContent {
+    color: ${props => (props.showSubMenu ? props.theme.primary : 'white')};
   }
 
-  .mobile__menus__main__item__content__highlight {
+  .mobileMenusMainItemContentHighlight {
     color: ${props => props.theme.primary};
   }
 
-  .mobile__menus__main__item__icon {
+  .mobileMenusMainItemIcon {
     width: 7.9px;
     height: 4.8px;
   }
 
-  .blockchain__mobile__node__version {
+  .blockchainMobileNodeVersion {
     font-size: 8px;
     color: ${props => props.theme.primary};
   }
 
-  .mobile__menus__sub__item {
+  .mobileMenusSubItem {
     width: 300px;
     padding: 12px 24px 8px;
     font-size: 12px;
@@ -103,18 +95,18 @@ export const MobileSubMenuPanel = styled.div`
     color: white;
   }
 
-  .mobile__menus__sub__icon {
+  .mobileMenusSubIcon {
     width: 20px;
     height: 20px;
   }
 
-  .mobile__menus__sub__title {
+  .mobileMenusSubTitle {
     font-size: 12px;
     margin-left: 8px;
     margin-right: 16px;
   }
 
-  .mobile__menus__sub__tag {
+  .mobileMenusSubTag {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -126,7 +118,7 @@ export const MobileSubMenuPanel = styled.div`
     }
   }
 
-  .mobile__menus__sub__memo {
+  .mobileMenusSubMemo {
     font-size: 12px;
     color: #888;
     width: 100%;

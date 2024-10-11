@@ -1,18 +1,28 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
-import { parseDateNoTime } from '../../../utils/date'
+import dayjs from 'dayjs'
+import { useCurrentLanguage } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
-import { DATA_ZOOM_CONFIG, parseNumericAbbr } from '../../../utils/chart'
+import {
+  DATA_ZOOM_CONFIG,
+  assertIsArray,
+  assertSerialsDataIsStringArrayOf4,
+  assertSerialsItem,
+  parseNumericAbbr,
+} from '../../../utils/chart'
 import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
-import { ChartCachedKeys } from '../../../constants/cache'
-import { fetchStatisticLiquidity } from '../../../service/http/fetcher'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
-const getOption = (
-  statisticLiquidity: State.StatisticLiquidity[],
-  chartColor: State.App['chartColor'],
+const useOption = (
+  statisticLiquidity: ChartItem.Liquidity[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
+
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -28,44 +38,45 @@ const getOption = (
     containLabel: true,
   }
 
-  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 140 : 120)
+  const widthSpan = (value: string, language: string) => tooltipWidth(value, language === 'en' ? 140 : 120)
 
-  const parseTooltip = ({
-    seriesName,
-    data,
-    color,
-  }: SeriesItem & { data: [string, string, string, string] }): string => {
-    if (seriesName === i18n.t('statistic.circulating_supply')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.circulating_supply'))} ${parseNumericAbbr(
-        data[3],
-        2,
-      )}</div>`
+  const useTooltip = () => {
+    return ({ seriesName, data, color }: SeriesItem & { data: [string, string, string, string] }): string => {
+      if (seriesName === t('statistic.circulating_supply')) {
+        return `<div>${tooltipColor(color)}${widthSpan(
+          t('statistic.circulating_supply'),
+          currentLanguage,
+        )} ${parseNumericAbbr(data[3], 2)}</div>`
+      }
+      if (seriesName === t('statistic.dao_deposit')) {
+        return `<div>${tooltipColor(color)}${widthSpan(t('statistic.dao_deposit'), currentLanguage)} ${parseNumericAbbr(
+          data[2],
+          2,
+        )}</div>`
+      }
+      if (seriesName === t('statistic.tradable')) {
+        return `<div>${tooltipColor(color)}${widthSpan(t('statistic.tradable'), currentLanguage)} ${parseNumericAbbr(
+          data[1],
+          2,
+        )}</div>`
+      }
+      return ''
     }
-    if (seriesName === i18n.t('statistic.dao_deposit')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.dao_deposit'))} ${parseNumericAbbr(
-        data[2],
-        2,
-      )}</div>`
-    }
-    if (seriesName === i18n.t('statistic.tradable')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.tradable'))} ${parseNumericAbbr(
-        data[1],
-        2,
-      )}</div>`
-    }
-    return ''
   }
+  const parseTooltip = useTooltip()
   return {
     color: chartColor.liquidityColors,
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const list = dataList as Array<SeriesItem & { data: [string, string, string, string] }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
-              list[0].data[0]
+          formatter: dataList => {
+            assertIsArray(dataList)
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'), currentLanguage)} ${
+              dataList[0].data[0]
             }</div>`
-            list.forEach(data => {
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              assertSerialsDataIsStringArrayOf4(data)
               result += parseTooltip(data)
             })
             return result
@@ -73,17 +84,18 @@ const getOption = (
         }
       : undefined,
     legend: {
+      icon: 'roundRect',
       data: isThumbnail
         ? []
         : [
             {
-              name: i18n.t('statistic.circulating_supply'),
+              name: t('statistic.circulating_supply'),
             },
             {
-              name: i18n.t('statistic.dao_deposit'),
+              name: t('statistic.dao_deposit'),
             },
             {
-              name: i18n.t('statistic.tradable'),
+              name: t('statistic.tradable'),
             },
           ],
     },
@@ -91,7 +103,7 @@ const getOption = (
     dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
     xAxis: [
       {
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.date'),
+        name: isMobile || isThumbnail ? '' : t('statistic.date'),
         nameLocation: 'middle',
         nameGap: 30,
         type: 'category',
@@ -114,7 +126,7 @@ const getOption = (
     ],
     series: [
       {
-        name: i18n.t('statistic.tradable'),
+        name: t('statistic.tradable'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -129,7 +141,7 @@ const getOption = (
         },
       },
       {
-        name: i18n.t('statistic.dao_deposit'),
+        name: t('statistic.dao_deposit'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -144,7 +156,7 @@ const getOption = (
         },
       },
       {
-        name: i18n.t('statistic.circulating_supply'),
+        name: t('statistic.circulating_supply'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -157,7 +169,7 @@ const getOption = (
     ],
     dataset: {
       source: statisticLiquidity.map(data => [
-        parseDateNoTime(data.createdAtUnixtimestamp),
+        dayjs(+data.createdAtUnixtimestamp * 1000).format('YYYY/MM/DD'),
         shannonToCkb(data.liquidity),
         shannonToCkb(data.daoDeposit),
         shannonToCkb(data.circulatingSupply),
@@ -167,7 +179,7 @@ const getOption = (
   }
 }
 
-const toCSV = (statisticLiquidity: State.StatisticLiquidity[]) =>
+const toCSV = (statisticLiquidity: ChartItem.Liquidity[]) =>
   statisticLiquidity
     ? statisticLiquidity.map(data => [
         data.createdAtUnixtimestamp,
@@ -183,11 +195,10 @@ export const LiquidityChart = ({ isThumbnail = false }: { isThumbnail?: boolean 
     <SmartChartPage
       title={t('statistic.liquidity')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticLiquidity}
-      getEChartOption={getOption}
+      fetchData={explorerService.api.fetchStatisticLiquidity}
+      getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.Liquidity}
-      cacheMode="date"
+      queryKey="fetchStatisticLiquidity"
     />
   )
 }

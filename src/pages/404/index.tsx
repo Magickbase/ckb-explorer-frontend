@@ -1,8 +1,8 @@
-import PC404mage from '../../assets/pc_404.png'
-import Mobile404Image from '../../assets/mobile_404.png'
-import PCBlue404Image from '../../assets/blue_pc_404.png'
-import MobileBlue404Image from '../../assets/blue_mobile_404.png'
-import { useIsMobile } from '../../utils/hook'
+import PC404mage from './pc_404.png'
+import Mobile404Image from './mobile_404.png'
+import PCBlue404Image from './blue_pc_404.png'
+import MobileBlue404Image from './blue_mobile_404.png'
+import { useIsMobile } from '../../hooks'
 import { isMainnet } from '../../utils/chain'
 import styles from './index.module.scss'
 

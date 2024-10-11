@@ -5,10 +5,13 @@ import { createTextWidthMeasurer } from '../../utils/string'
 
 const EllipsisMiddle: FC<
   HTMLAttributes<HTMLDivElement> & {
+    /** This item will be used as text when text is empty. */
     children?: string
+    /** When this item is not empty, ignore the value of `children`. */
     text?: string
-    // Any key that represents the use of a different font
-    fontKey?: string | number | boolean
+    // TODO: Perhaps there are certain methods to automatically check the current font and optimize the fontKey accordingly.
+    /** Any key that represents the use of a different font. */
+    fontKey?: unknown
     minStartLen?: number
     minEndLen?: number
     onTruncateStateChange?: (isTruncated: boolean) => void

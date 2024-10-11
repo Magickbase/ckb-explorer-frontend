@@ -1,33 +1,56 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
-import { DATA_ZOOM_CONFIG, handleAxis } from '../../../utils/chart'
-import { parseDateNoTime } from '../../../utils/date'
+import dayjs from 'dayjs'
+import { SupportedLng, useCurrentLanguage } from '../../../utils/i18n'
+import {
+  DATA_ZOOM_CONFIG,
+  assertIsArray,
+  assertSerialsDataIsStringArrayOf4,
+  assertSerialsItem,
+  handleAxis,
+} from '../../../utils/chart'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
-import { ChartCachedKeys } from '../../../constants/cache'
-import { fetchStatisticCellCount } from '../../../service/http/fetcher'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
-const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 125 : 80)
+const widthSpan = (value: string, currentLanguage: SupportedLng) =>
+  tooltipWidth(value, currentLanguage === 'en' ? 125 : 80)
 
-const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: [string, string, string, string] }): string => {
-  if (seriesName === i18n.t('statistic.dead_cell')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.dead_cell'))} ${handleAxis(data[2], 2)}</div>`
+const useTooltip = () => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
+  return ({ seriesName, data, color }: SeriesItem & { data: [string, string, string, string] }): string => {
+    if (seriesName === t('statistic.dead_cell')) {
+      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.dead_cell'), currentLanguage)} ${handleAxis(
+        data[2],
+        2,
+      )}</div>`
+    }
+    if (seriesName === t('statistic.all_cells')) {
+      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.all_cells'), currentLanguage)} ${handleAxis(
+        data[1],
+        2,
+      )}</div>`
+    }
+    if (seriesName === t('statistic.live_cell')) {
+      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.live_cell'), currentLanguage)} ${handleAxis(
+        data[3],
+        2,
+      )}</div>`
+    }
+    return ''
   }
-  if (seriesName === i18n.t('statistic.all_cells')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.all_cells'))} ${handleAxis(data[1], 2)}</div>`
-  }
-  if (seriesName === i18n.t('statistic.live_cell')) {
-    return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.live_cell'))} ${handleAxis(data[3], 2)}</div>`
-  }
-  return ''
 }
 
-const getOption = (
-  statisticCellCounts: State.StatisticCellCount[],
-  chartColor: State.App['chartColor'],
+const useOption = (
+  statisticCellCounts: ChartItem.CellCount[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
+
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -42,17 +65,21 @@ const getOption = (
     bottom: '5%',
     containLabel: true,
   }
+  const parseTooltip = useTooltip()
+  const colors = chartColor.cellCount
   return {
-    color: chartColor.colors,
+    color: colors,
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const list = dataList as Array<SeriesItem & { data: [string, string, string, string] }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
-              list[0].data[0]
+          formatter: dataList => {
+            assertIsArray(dataList)
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'), currentLanguage)} ${
+              dataList[0].data[0]
             }</div>`
-            list.forEach(data => {
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              assertSerialsDataIsStringArrayOf4(data)
               result += parseTooltip(data)
             })
             return result
@@ -60,25 +87,31 @@ const getOption = (
         }
       : undefined,
     legend: {
+      icon: 'roundRect',
       data: isThumbnail
         ? []
         : [
             {
-              name: i18n.t('statistic.all_cells'),
+              name: t('statistic.all_cells'),
             },
             {
-              name: i18n.t('statistic.live_cell'),
+              name: t('statistic.live_cell'),
             },
             {
-              name: i18n.t('statistic.dead_cell'),
+              name: t('statistic.dead_cell'),
             },
           ],
+      selected: {
+        [t('statistic.all_cells')]: false,
+        [t('statistic.live_cell')]: true,
+        [t('statistic.dead_cell')]: false,
+      },
     },
     grid: isThumbnail ? gridThumbnail : grid,
     dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
     xAxis: [
       {
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.date'),
+        name: isMobile || isThumbnail ? '' : t('statistic.date'),
         nameLocation: 'middle',
         nameGap: 30,
         type: 'category',
@@ -92,7 +125,7 @@ const getOption = (
         scale: true,
         axisLine: {
           lineStyle: {
-            color: chartColor.colors[0],
+            color: colors[0],
           },
         },
         axisLabel: {
@@ -102,44 +135,44 @@ const getOption = (
     ],
     series: [
       {
-        name: i18n.t('statistic.all_cells'),
+        name: t('statistic.all_cells'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
         areaStyle: {
-          color: chartColor.colors[0],
+          color: colors[0],
         },
         lineStyle: {
           width: 4,
         },
       },
       {
-        name: i18n.t('statistic.dead_cell'),
+        name: t('statistic.dead_cell'),
         type: 'line',
         stack: 'sum',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
         symbolSize: 3,
         areaStyle: {
-          color: chartColor.colors[1],
+          color: colors[1],
         },
       },
       {
-        name: i18n.t('statistic.live_cell'),
+        name: t('statistic.live_cell'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
         stack: 'sum',
         symbolSize: 3,
         areaStyle: {
-          color: chartColor.colors[2],
+          color: colors[2],
         },
       },
     ],
     dataset: {
       source: statisticCellCounts.map(data => [
-        parseDateNoTime(data.createdAtUnixtimestamp),
+        dayjs(+data.createdAtUnixtimestamp * 1000).format('YYYY/MM/DD'),
         new BigNumber(data.allCellsCount).toFixed(0),
         new BigNumber(data.deadCellsCount).toFixed(0),
         new BigNumber(data.liveCellsCount).toFixed(0),
@@ -149,7 +182,7 @@ const getOption = (
   }
 }
 
-const toCSV = (statisticCellCounts: State.StatisticCellCount[]) =>
+const toCSV = (statisticCellCounts: ChartItem.CellCount[]) =>
   statisticCellCounts
     ? statisticCellCounts.map(data => [
         data.createdAtUnixtimestamp,
@@ -165,11 +198,10 @@ export const CellCountChart = ({ isThumbnail = false }: { isThumbnail?: boolean 
     <SmartChartPage
       title={t('statistic.cell_count')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticCellCount}
-      getEChartOption={getOption}
+      fetchData={explorerService.api.fetchStatisticCellCount}
+      getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.CellCount}
-      cacheMode="date"
+      queryKey="fetchStatisticCellCount"
     />
   )
 }

@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import variables from '../../styles/variables.module.scss'
 
 export const FooterPanel = styled.div`
   background-color: #000;
@@ -6,23 +7,33 @@ export const FooterPanel = styled.div`
   flex-direction: column;
   align-items: center;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     align-items: flex-start;
   }
 
-  .footer__copyright {
-    height: 15px;
-    font-size: 12px;
-    color: #acacac;
-    margin-bottom: 28px;
+  .footerCopyright {
+    border-top: 1px solid #333;
+    padding-top: 16px;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: #acacac;
 
-    @media (max-width: 750px) {
-      margin-left: 30px;
+    .power {
+      display: flex;
+      align-items: center;
+      color: #999;
+      margin-right: auto;
+
+      &:hover {
+        color: ${props => props.theme.primary};
+      }
+    }
+
+    @media (max-width: ${variables.mobileBreakPoint}) {
+      margin: 0 0 20px 20px;
       flex-direction: column;
-      justify-content: center;
     }
   }
 
@@ -33,84 +44,55 @@ export const FooterPanel = styled.div`
 
 export const FooterMenuPanel = styled.div`
   overflow: hidden;
-  margin: 38px auto 34px;
+  margin-top: 44px;
+  margin-bottom: 32px;
   display: flex;
   flex-direction: row;
   justify-content: center;
+  gap: 280px;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.xxlBreakPoint}) {
+    gap: 200px;
+  }
+
+  @media (max-width: ${variables.largeBreakPoint}) {
+    gap: 100px;
+  }
+
+  @media (max-width: ${variables.mobileBreakPoint}) {
     flex-direction: column;
     align-items: flex-start;
-    margin-left: 30px;
+    gap: 50px;
+    margin: 32px 20px;
   }
 
-  .footer__foundation {
+  .footerFoundation {
     display: flex;
     flex-direction: column;
   }
 
-  .footer__developer {
+  .footerDeveloper {
     display: flex;
     flex-direction: column;
-    margin-left: 280px;
+  }
 
-    @media (max-width: 1980px) {
-      margin-left: 178px;
-    }
+  .footerCommunity {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    gap: 20px 32px;
 
-    @media (max-width: 1440px) {
-      margin-left: 138px;
-    }
-
-    @media (max-width: 1200px) {
-      margin-left: 78px;
-    }
-
-    @media (max-width: 750px) {
-      margin-left: 0;
-      margin-top: 30px;
+    @media (max-width: ${variables.mobileBreakPoint}) {
+      grid-template-columns: repeat(4, max-content);
+      gap: 32px;
     }
   }
 
-  .footer__community {
-    display: flex;
-    flex-direction: column;
-    margin-left: 280px;
-
-    @media (max-width: 1980px) {
-      margin-left: 178px;
-    }
-
-    @media (max-width: 1440px) {
-      margin-left: 138px;
-    }
-
-    @media (max-width: 1200px) {
-      margin-left: 78px;
-    }
-
-    @media (max-width: 750px) {
-      margin-left: 0;
-      margin-top: 30px;
-    }
-
-    > div {
-      display: flex;
-      flex-direction: row;
-
-      @media (max-width: 750px) {
-        flex-wrap: wrap;
-        margin-right: 100px;
-      }
-    }
-  }
-
-  .footer__title {
+  .footerTitle {
     font-size: 28px;
     font-weight: bold;
     color: #fff;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       font-size: 26px;
     }
   }
@@ -124,12 +106,11 @@ export const FooterItemPanel = styled.a`
 `
 
 export const FooterImageItemPanel = styled.a`
-  width: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 12px;
+  gap: 8px;
   color: #acacac;
 
   > svg {
@@ -138,15 +119,14 @@ export const FooterImageItemPanel = styled.a`
   }
 
   > span {
-    height: 15px;
     font-size: 12px;
-    margin-top: 5px;
   }
 
   &:hover {
     color: ${props => props.theme.primary};
 
     & > svg {
+      /* stylelint-disable-next-line selector-class-pattern */
       .app-icon {
         fill: ${props => props.theme.primary};
       }

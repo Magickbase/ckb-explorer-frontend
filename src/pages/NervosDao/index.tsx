@@ -1,62 +1,46 @@
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import Content from '../../components/Content'
 import { DaoContentPanel, DaoTabBarPanel } from './styled'
 import DaoTransactions from './DaoTransactions'
-import Filter from '../../components/Search/Filter'
+import Filter from '../../components/Filter'
 import DepositorRank from './DepositorRank'
-import { usePaginationParamsInPage, useSearchParams } from '../../utils/hook'
+import { usePaginationParamsInPage, useSearchParams } from '../../hooks'
 import DaoOverview from './DaoOverview'
+import DaoBanner from './DaoBanner'
 import SimpleButton from '../../components/SimpleButton'
-import {
-  fetchNervosDao,
-  fetchNervosDaoDepositors,
-  fetchNervosDaoTransactionsByFilter,
-} from '../../service/http/fetcher'
 import { QueryResult } from '../../components/QueryResult'
 import { defaultNervosDaoInfo } from './state'
+import { explorerService } from '../../services/ExplorerService'
 
 export const NervosDao = () => {
   const { push } = useHistory()
-  const [t] = useTranslation()
+  const [t, { language }] = useTranslation()
 
   const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
   const params = useSearchParams('tab', 'filter')
-  const tab = params.tab as 'transactions' | 'depositors'
-  const daoTab = tab || 'transactions'
+  const tab = (params.tab as 'transactions' | 'depositors') || 'transactions'
 
-  const queryNervosDao = useQuery(['nervos-dao'], async () => {
-    const wrapper = await fetchNervosDao()
-    const nervosDao = wrapper.attributes
-    return nervosDao
-  })
+  const queryNervosDao = useQuery(['nervos-dao'], () => explorerService.api.fetchNervosDao())
 
   const queryNervosDaoTransactions = useQuery(
     ['nervos-dao-transactions', currentPage, _pageSize, params.filter],
     async () => {
-      const { data, meta } = await fetchNervosDaoTransactionsByFilter({
+      const { transactions, total, pageSize } = await explorerService.api.fetchNervosDaoTransactionsByFilter({
         filter: params.filter,
         page: currentPage,
         size: _pageSize,
       })
 
-      const transactions = data.map(wrapper => wrapper.attributes)
-      return {
-        transactions,
-        total: meta?.total ?? transactions.length,
-        pageSize: meta?.pageSize,
-      }
+      return { transactions, total, pageSize }
     },
     { enabled: !params.tab || params.tab === 'transactions' },
   )
 
   const queryNervosDaoDepositors = useQuery(
     ['nervos-dao-depositors'],
-    async () => {
-      const { data } = await fetchNervosDaoDepositors()
-      return { depositors: data.map(wrapper => wrapper.attributes) }
-    },
+    () => explorerService.api.fetchNervosDaoDepositors(),
     {
       enabled: params.tab === 'depositors',
     },
@@ -67,18 +51,19 @@ export const NervosDao = () => {
   return (
     <Content>
       <DaoContentPanel className="container">
+        <DaoBanner estimatedApc={queryNervosDao.data?.estimatedApc ?? defaultNervosDaoInfo.estimatedApc} />
         <DaoOverview nervosDao={queryNervosDao.data ?? defaultNervosDaoInfo} />
-        <DaoTabBarPanel containSearchBar={daoTab === 'transactions'}>
-          <div className="nervos_dao_tab_bar">
+        <DaoTabBarPanel>
+          <div className="nervosDaoTabBar">
             <SimpleButton
-              className={daoTab === 'transactions' ? 'tab_bar_selected' : 'tab_bar_normal'}
-              onClick={() => push('/nervosdao?tab=transactions')}
+              className={tab === 'transactions' ? 'tabBarSelected' : 'tabBarNormal'}
+              onClick={() => push(`/${language}/nervosdao?tab=transactions`)}
             >
               {t('nervos_dao.dao_tab_transactions')}
             </SimpleButton>
             <SimpleButton
-              className={daoTab === 'depositors' ? 'tab_bar_selected' : 'tab_bar_normal'}
-              onClick={() => push('/nervosdao?tab=depositors')}
+              className={tab === 'depositors' ? 'tabBarSelected' : 'tabBarNormal'}
+              onClick={() => push(`/${language}/nervosdao?tab=depositors`)}
             >
               {t('nervos_dao.dao_tab_depositors')}
             </SimpleButton>
@@ -87,32 +72,31 @@ export const NervosDao = () => {
           <Filter
             defaultValue={params.filter}
             showReset={!!params.filter}
-            placeholder={daoTab === 'depositors' ? t('search.addr') : `${t('search.tx')} / ${t('search.addr')}`}
+            placeholder={tab === 'depositors' ? t('search.addr') : `${t('search.tx')} / ${t('search.addr')}`}
             onFilter={filter => {
-              push(`/nervosdao?${new URLSearchParams({ filter, tab })}`)
+              push(`/${language}/nervosdao?${new URLSearchParams({ filter, tab })}`)
             }}
             onReset={() => {
-              push(`/nervosdao?${new URLSearchParams({ tab })}`)
+              push(`/${language}/nervosdao?${new URLSearchParams({ tab })}`)
             }}
           />
         </DaoTabBarPanel>
-
-        {daoTab === 'transactions' ? (
+        {tab === 'transactions' ? (
           <QueryResult query={queryNervosDaoTransactions} delayLoading>
             {data => (
               <DaoTransactions
                 currentPage={currentPage}
                 pageSize={pageSize}
-                transactions={data.transactions}
-                total={data.total}
+                transactions={data?.transactions ?? []}
+                total={data?.total ?? 0}
                 onPageChange={setPage}
-                filterNoResult={!!params.filter && data.total === 0}
+                filterNoResult={!!params.filter && data?.total === 0}
               />
             )}
           </QueryResult>
         ) : (
           <QueryResult query={queryNervosDaoDepositors} delayLoading>
-            {data => <DepositorRank depositors={data.depositors} filter={params.filter} />}
+            {data => <DepositorRank depositors={data ?? []} filter={params.filter} />}
           </QueryResult>
         )}
       </DaoContentPanel>

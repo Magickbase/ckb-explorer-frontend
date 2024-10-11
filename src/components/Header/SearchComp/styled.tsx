@@ -3,31 +3,29 @@ import styled from 'styled-components'
 export const HeaderSearchPanel = styled.div`
   display: flex;
   align-items: center;
-  margin-right: 40px;
+  margin-right: 20px;
   height: 38px;
   width: 440px;
 
-  @media (max-width: 750px) {
-    padding: 40px 15px;
+  @media (max-width: 1200px) {
     height: 38px;
-    width: 100%;
   }
 
   @media (max-width: 1600px) {
-    width: 360px;
     margin-right: 16px;
   }
 
-  @media (max-width: 1480px) {
-    width: 320px;
-    margin-right: 16px;
+  @media (max-width: 1023px) {
+    margin: 40px 56px;
+    align-items: flex-start;
+    flex-direction: column;
+    width: auto;
   }
 `
 
 export const HeaderSearchBarPanel = styled.div`
   display: flex;
   align-items: center;
-  margin-right: 20px;
 
   > img {
     width: 18px;

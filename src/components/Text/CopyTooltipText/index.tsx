@@ -1,24 +1,20 @@
-import i18n from '../../../utils/i18n'
-import { copyElementValue } from '../../../utils/util'
-import { AppActions } from '../../../contexts/actions'
-import { useDispatch } from '../../../contexts/providers'
+import { useTranslation } from 'react-i18next'
 import SimpleButton from '../../SimpleButton'
+import { useSetToast } from '../../Toast'
 
 export default ({ content }: { content: string }) => {
-  const dispatch = useDispatch()
+  const setToast = useSetToast()
+  const { t } = useTranslation()
+
   return (
     <SimpleButton
       id={`copy__content__${content}`}
-      onClick={(event: any) => {
+      onClick={event => {
         event.stopPropagation()
-        copyElementValue(document.getElementById(`copy__content__${content}`))
-        dispatch({
-          type: AppActions.ShowToastMessage,
-          payload: {
-            message: i18n.t('common.copied'),
-          },
-        })
         event.preventDefault()
+        navigator.clipboard.writeText(content).then(() => {
+          setToast({ message: t('common.copied') })
+        })
       }}
     >
       {content}
