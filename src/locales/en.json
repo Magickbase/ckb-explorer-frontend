@@ -1109,7 +1109,8 @@
           "first_seen": "First Seen",
           "node_id": "Node ID",
           "chain_hash": "Chain Hash",
-          "addresses": "Addresses"
+          "addresses": "Addresses",
+          "total_capacity": "Capacity"
         }
       }
     }
