@@ -1,9 +1,10 @@
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import { Link } from '../../../components/Link'
+import variables from '../../../styles/variables.module.scss'
 
 export const HomeChartLink = styled(Link)`
-  div {
-    cursor: pointer !important;
+  canvas {
+    cursor: pointer;
   }
 `
 
@@ -13,11 +14,11 @@ export const ChartLoadingPanel = styled.div`
   align-items: center;
   justify-content: center;
 
-  .chart__no__data {
+  .chartNoData {
     width: 105px;
     height: auto;
 
-    @media (max-width: 1200px) {
+    @media (max-width: ${variables.extraLargeBreakPoint}) {
       width: 90px;
     }
   }

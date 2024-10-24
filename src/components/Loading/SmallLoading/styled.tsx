@@ -1,10 +1,11 @@
 import styled from 'styled-components'
+import variables from '../../../styles/variables.module.scss'
 
 export const SmallLoadingPanel = styled.div`
   margin: 15px 0;
   text-align: center;
 
-  .loading__white {
+  .loadingWhite {
     opacity: 0.8;
   }
 
@@ -13,7 +14,7 @@ export const SmallLoadingPanel = styled.div`
     height: 39px;
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin: 8px 0;
 
     > img {

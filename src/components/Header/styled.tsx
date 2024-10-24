@@ -1,17 +1,15 @@
 /* eslint-disable no-nested-ternary */
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import { Link } from '../Link'
 import SimpleButton from '../SimpleButton'
+
+const MARGIN_PER_ITEM_JUSTIFY = (56 - 8) / (1440 - 1024)
 
 export const HeaderPanel = styled.div`
   width: 100%;
   min-height: var(--navbar-height);
   background-color: #040607;
-  position: fixed;
-  position: -webkit-fixed;
   overflow: visible;
-  top: ${(props: { isNotTop?: boolean }) => (props.isNotTop ? '48px' : '0')};
-  z-index: 10;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -23,12 +21,10 @@ export const HeaderPanel = styled.div`
 
   @media (max-width: 1200px) {
     padding: 0 45px;
-    top: ${(props: { isNotTop?: boolean }) => (props.isNotTop ? 'var(--navbar-height)' : '0')};
   }
 
   @media (max-width: 780px) {
     padding: 0 18px;
-    top: ${(props: { isNotTop?: boolean; isEn: boolean }) => (props.isNotTop ? (props.isEn ? '120px' : '100px') : '0')};
   }
 `
 
@@ -36,6 +32,11 @@ export const HeaderLogoPanel = styled(Link)`
   display: flex;
   align-items: center;
   margin-top: 2px;
+  margin-right: 56px;
+
+  @media (max-width: 1044px) and (min-width: 1024px) {
+    margin-right: calc(56px - ((1440px - 100vw) * ${MARGIN_PER_ITEM_JUSTIFY}));
+  }
 
   > img {
     width: 114px;
@@ -53,9 +54,9 @@ export const HeaderMobileMenuPanel = styled(SimpleButton)`
     height: 18px;
   }
 
-  .menu__icon__first,
-  .menu__icon__second,
-  .menu__icon__third {
+  .menuIconFirst,
+  .menuIconSecond,
+  .menuIconThird {
     width: 18px;
     height: 2px;
     background-color: white;
@@ -63,15 +64,15 @@ export const HeaderMobileMenuPanel = styled(SimpleButton)`
     transition: 0.4s;
   }
 
-  .close .menu__icon__first {
+  .close .menuIconFirst {
     transform: rotate(-45deg) translate(-4px, 5px);
   }
 
-  .close .menu__icon__second {
+  .close .menuIconSecond {
     opacity: 0;
   }
 
-  .close .menu__icon__third {
+  .close .menuIconThird {
     transform: rotate(45deg) translate(-4px, -6px);
   }
 `

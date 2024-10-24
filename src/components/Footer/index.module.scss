@@ -1,0 +1,15 @@
+.tokenFormBtn {
+  font-size: 18px;
+  color: #acacac;
+  height: 23px;
+  margin: 8px 0;
+  user-select: none;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  text-align: left;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}

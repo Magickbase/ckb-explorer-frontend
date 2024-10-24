@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import variables from '../../../styles/variables.module.scss'
 
 export const CellbasePanel = styled.div`
   display: flex;
@@ -8,12 +9,12 @@ export const CellbasePanel = styled.div`
   width: 100%;
   margin-top: ${(props: { isDetail?: boolean }) => (props.isDetail ? '0px' : '16px')};
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin-top: 10px;
     height: 16px;
   }
 
-  .cellbase__content {
+  .cellbaseContent {
     color: #000;
   }
 
@@ -26,7 +27,7 @@ export const CellbasePanel = styled.div`
     color: ${props => props.theme.primary};
   }
 
-  .cellbase__help {
+  .cellbaseHelp {
     margin-left: 10px;
     transform: translateY(2px);
 
@@ -35,7 +36,7 @@ export const CellbasePanel = styled.div`
     }
   }
 
-  .cellbase__help__icon {
+  .cellbaseHelpIcon {
     width: 16px;
     height: 16px;
     margin: 2px 8px 0;

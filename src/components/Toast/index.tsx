@@ -1,12 +1,19 @@
-import { useState, useEffect, useReducer } from 'react'
-import { useTimeoutWithUnmount } from '../../utils/hook'
-import { useAppState } from '../../contexts/providers'
+import { useState, useEffect, useReducer, useCallback } from 'react'
+import { useTimeoutWithUnmount } from '../../hooks'
 import { ToastItemPanel, ToastPanel } from './styled'
+import { createGlobalState, useGlobalState } from '../../utils/state'
 
-const getColor = (type: 'success' | 'warning' | 'danger') => {
+interface ToastMessage {
+  message: string
+  type: 'success' | 'warning' | 'danger'
+  duration?: number
+  id: number
+}
+
+const getColor = (type: ToastMessage['type']) => {
   switch (type) {
     case 'success':
-      return '#3cc68a'
+      return 'var(--primary-color)'
     case 'warning':
       return '#ffae42'
     case 'danger':
@@ -16,11 +23,11 @@ const getColor = (type: 'success' | 'warning' | 'danger') => {
   }
 }
 
-const ANIMATION_DISAPPEAR_TIME = 2000
+const ANIMATION_DISAPPEAR_TIME = 1500
 const MAX_FRAME: number = (ANIMATION_DISAPPEAR_TIME / 1000) * 40 // suppose fps = 40
-const DEFAULT_TOAST_DURATION = 3000
+const DEFAULT_TOAST_DURATION = 2000
 
-const ToastItem = ({ data, willLeave }: { data: State.ToastMessage; willLeave: Function }) => {
+const ToastItem = ({ data, willLeave }: { data: ToastMessage; willLeave: Function }) => {
   const [opacity, setOpacity] = useState(1)
   let animationId: number = 0
   useTimeoutWithUnmount(
@@ -54,17 +61,29 @@ const ToastItem = ({ data, willLeave }: { data: State.ToastMessage; willLeave: F
         background: getColor(data.type),
       }}
     >
-      <div className="toast__text">{data.message}</div>
+      <div className="toastText">{data.message}</div>
     </ToastItemPanel>
   )
 }
 
-const initialState = {
-  toasts: [] as State.ToastMessage[],
+interface State {
+  toasts: ToastMessage[]
+  toast: string
+}
+
+interface Action {
+  type: 'ADD' | 'REMOVE'
+  payload: {
+    toast: ToastMessage
+  }
+}
+
+const initialState: State = {
+  toasts: [],
   toast: '',
 }
 
-const reducer = (state: any, action: any) => {
+const reducer = (state: State, action: Action) => {
   switch (action.type) {
     case 'ADD':
       return {
@@ -74,17 +93,32 @@ const reducer = (state: any, action: any) => {
     case 'REMOVE':
       return {
         ...state,
-        toasts: state.toasts.filter((toast: State.ToastMessage) => toast.id !== action.payload.toast.id),
+        toasts: state.toasts.filter((toast: ToastMessage) => toast.id !== action.payload.toast.id),
       }
     default:
       return state
   }
 }
 
+const globalToast = createGlobalState<ToastMessage | null>(null)
+
+export function useSetToast() {
+  const [, setToast] = useGlobalState(globalToast)
+
+  return useCallback(
+    (data: Pick<ToastMessage, 'message' | 'duration'> & Partial<Pick<ToastMessage, 'type'>>) =>
+      setToast({
+        id: new Date().getTime(),
+        message: data.message,
+        type: data.type ?? 'success',
+        duration: data.duration,
+      }),
+    [setToast],
+  )
+}
+
 export default () => {
-  const {
-    app: { toast },
-  } = useAppState()
+  const [toast] = useGlobalState(globalToast)
   const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
@@ -101,7 +135,7 @@ export default () => {
   return state.toasts.length === 0 ? null : (
     <ToastPanel className="toast">
       {state.toasts &&
-        state.toasts.map((item: State.ToastMessage) => (
+        state.toasts.map((item: ToastMessage) => (
           <ToastItem
             willLeave={() => {
               dispatch({

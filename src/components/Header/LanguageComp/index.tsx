@@ -1,70 +1,39 @@
-import { useState, useLayoutEffect, memo } from 'react'
-import { useIsMobile } from '../../../utils/hook'
-import { useAppState, useDispatch } from '../../../contexts/providers'
-import i18n, { currentLanguage, changeLanguage } from '../../../utils/i18n'
+import { useState, useLayoutEffect, FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { HeaderLanguagePanel, MobileSubMenuPanel } from './styled'
 import SimpleButton from '../../SimpleButton'
 import WhiteDropdownIcon from '../../../assets/white_dropdown.png'
-import WhiteDropUpIcon from '../../../assets/white_drop_up.png'
+import WhiteDropUpIcon from './white_drop_up.png'
 import BlueDropUpIcon from '../../../assets/blue_drop_up.png'
 import GreenDropUpIcon from '../../../assets/green_drop_up.png'
 import { isMainnet } from '../../../utils/chain'
-import LanDropdown, { languageText } from '../../Dropdown/Language'
-
-import { AppDispatch } from '../../../contexts/reducer'
-import { ComponentActions, AppActions } from '../../../contexts/actions'
+import LanDropdown from '../../Dropdown/Language'
+import { SupportedLngs, useCurrentLanguage, useLanguageText } from '../../../utils/i18n'
+import { Link } from '../../Link'
 
 const getDropdownIcon = (showDropdown: boolean) => {
   if (!showDropdown) return WhiteDropdownIcon
   return isMainnet() ? GreenDropUpIcon : BlueDropUpIcon
 }
 
-const languageAction = (dispatch: AppDispatch) => {
-  changeLanguage(currentLanguage() === 'en' ? 'zh' : 'en')
-  dispatch({
-    type: AppActions.UpdateAppLanguage,
-    payload: {
-      language: currentLanguage() === 'en' ? 'zh' : 'en',
-    },
-  })
-  dispatch({
-    type: ComponentActions.UpdateHeaderMobileMenuVisible,
-    payload: {
-      mobileMenuVisible: false,
-    },
-  })
-}
-
-const hideMobileMenu = (dispatch: AppDispatch) => {
-  dispatch({
-    type: ComponentActions.UpdateHeaderMobileMenuVisible,
-    payload: {
-      mobileMenuVisible: false,
-    },
-  })
-}
-
-const LanguageDropdown = () => {
-  const {
-    app: { language },
-  } = useAppState()
-
+export const LanguageDropdown = () => {
   const [showLanguage, setShowLanguage] = useState(false)
   const [languageLeft, setLanguageLeft] = useState(0)
   const [languageTop, setLanguageTop] = useState(0)
+  const currentLanguage = useCurrentLanguage()
 
   useLayoutEffect(() => {
-    if (showLanguage && language) {
+    if (showLanguage) {
       const languageDropdownComp = document.getElementById('header__language__panel')
       if (languageDropdownComp) {
         const languageDropdownReact = languageDropdownComp.getBoundingClientRect()
         if (languageDropdownReact) {
-          setLanguageLeft(languageDropdownReact.left + (currentLanguage() === 'en' ? -15 : 3))
+          setLanguageLeft(languageDropdownReact.left + (currentLanguage === 'en' ? -15 : 3))
           setLanguageTop(languageDropdownReact.bottom - 3)
         }
       }
     }
-  }, [showLanguage, language])
+  }, [showLanguage, currentLanguage])
 
   return (
     <HeaderLanguagePanel
@@ -75,13 +44,13 @@ const LanguageDropdown = () => {
       }}
     >
       <SimpleButton
-        className="header__language__flag"
+        className="headerLanguageFlag"
         onMouseOver={() => {
           setShowLanguage(true)
         }}
       >
-        <div className="header__language__content_panel">
-          <div className="header__language__content">{languageText(currentLanguage())}</div>
+        <div className="headerLanguageContentPanel">
+          <div className="headerLanguageContent">{useLanguageText()}</div>
           <img src={getDropdownIcon(showLanguage)} alt="dropdown icon" />
         </div>
       </SimpleButton>
@@ -90,49 +59,33 @@ const LanguageDropdown = () => {
   )
 }
 
-const LanguageMenu = () => {
-  const dispatch = useDispatch()
+export const LanguageMenu: FC<{ hideMobileMenu: () => void }> = ({ hideMobileMenu }) => {
+  const { t } = useTranslation()
   const [showSubMenu, setShowSubMenu] = useState(false)
+  const currentLanguageText = useLanguageText()
 
   return (
     <MobileSubMenuPanel showSubMenu={false}>
       <SimpleButton
-        className="mobile__menus__main__item"
+        className="mobileMenusMainItem"
         onClick={() => {
           setShowSubMenu(!showSubMenu)
         }}
       >
-        <div className="mobile__menus__main__item__content">
-          {currentLanguage() === 'en' ? i18n.t('navbar.language_en') : i18n.t('navbar.language_zh')}
-        </div>
+        <div className="mobileMenusMainItemContent">{currentLanguageText}</div>
         <img
-          className="mobile__menus__main__item__icon"
+          className="mobileMenusMainItemIcon"
           alt="mobile language icon"
           src={showSubMenu ? WhiteDropUpIcon : WhiteDropdownIcon}
         />
       </SimpleButton>
-      {showSubMenu && (
-        <>
-          <SimpleButton
-            className="mobile__menus__sub__item"
-            onClick={() => {
-              hideMobileMenu(dispatch)
-            }}
-          >
-            {currentLanguage() === 'en' ? i18n.t('navbar.language_en') : i18n.t('navbar.language_zh')}
-          </SimpleButton>
-          <SimpleButton
-            className="mobile__menus__sub__item"
-            onClick={() => {
-              languageAction(dispatch)
-            }}
-          >
-            {currentLanguage() === 'en' ? i18n.t('navbar.language_zh') : i18n.t('navbar.language_en')}
-          </SimpleButton>
-        </>
-      )}
+      {showSubMenu &&
+        SupportedLngs.map(lng => (
+          // eslint-disable-next-line jsx-a11y/anchor-is-valid
+          <Link key={lng} className="mobileMenusSubItem" lng={lng} onClick={hideMobileMenu}>
+            {t(`navbar.language_${lng}`)}
+          </Link>
+        ))}
     </MobileSubMenuPanel>
   )
 }
-
-export default memo(() => (useIsMobile() ? <LanguageMenu /> : <LanguageDropdown />))

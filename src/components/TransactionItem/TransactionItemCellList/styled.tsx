@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import variables from '../../../styles/variables.module.scss'
 
 export default styled.div`
   display: flex;
@@ -6,13 +7,13 @@ export default styled.div`
   align-items: space-between;
   width: 100%;
 
-  .transaction_item__view_all {
+  .transactionItemViewAll {
     font-size: 16px;
     color: ${props => props.theme.primary};
     margin-top: 20px;
     height: 20px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       font-size: 14px;
       margin-top: 15px;
       height: 16px;

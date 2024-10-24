@@ -1,21 +1,22 @@
-import { memo, useMemo } from 'react'
+import { ReactNode, memo, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ReactComponent as TwitterIcon } from '../../assets/footer_twitter.svg'
-import { ReactComponent as MediumIcon } from '../../assets/footer_medium.svg'
-import { ReactComponent as TelegramIcon } from '../../assets/footer_telegram.svg'
-import { ReactComponent as RedditIcon } from '../../assets/footer_reddit.svg'
-import { ReactComponent as YoutubeIcon } from '../../assets/footer_youtube.svg'
-import { ReactComponent as ForumIcon } from '../../assets/footer_forum.svg'
-import { ReactComponent as Discord } from '../../assets/footer_discord.svg'
+import { SubmitTokenInfo } from '../SubmitTokenInfo'
+import { ReactComponent as XIcon } from './footer_X.svg'
+import { ReactComponent as MediumIcon } from './footer_medium.svg'
+import { ReactComponent as TelegramIcon } from './footer_telegram.svg'
+import { ReactComponent as RedditIcon } from './footer_reddit.svg'
+import { ReactComponent as YoutubeIcon } from './footer_youtube.svg'
+import { ReactComponent as ForumIcon } from './footer_forum.svg'
+import { ReactComponent as Discord } from './footer_discord.svg'
+import { ReactComponent as Open } from './open.svg'
 import { getCurrentYear } from '../../utils/date'
 import { FooterMenuPanel, FooterItemPanel, FooterImageItemPanel, FooterPanel } from './styled'
-import { useIsMobile } from '../../utils/hook'
-import { udtSubmitEmail } from '../../utils/util'
+import styles from './index.module.scss'
 
 interface FooterLinkItem {
   label?: string
   url?: string
-  icon?: any
+  icon?: ReactNode
 }
 
 interface FooterLink {
@@ -34,18 +35,19 @@ const FooterItem = ({ item }: { item: FooterLinkItem }) => {
 
 const FooterImageItem = ({ item }: { item: FooterLinkItem }) => {
   const { label, url, icon: IconComponent } = item
+
   return (
     <FooterImageItemPanel key={label} href={url} rel="noopener noreferrer" target="_blank">
-      <IconComponent />
+      {IconComponent}
       <span>{label}</span>
     </FooterImageItemPanel>
   )
 }
 
 export default memo(() => {
-  const isMobile = useIsMobile()
   const [t] = useTranslation()
-  const Footers: FooterLink[] = useMemo(
+  const [isTokenFormDisplayed, setIsTokenFormDisplayed] = useState<boolean>(false)
+  const Footers = useMemo<FooterLink[]>(
     () => [
       {
         name: t('footer.nervos_foundation'),
@@ -76,8 +78,8 @@ export default memo(() => {
             url: 'https://faucet.nervos.org/',
           },
           {
-            label: t('udt.submit_token_info'),
-            url: udtSubmitEmail(),
+            label: t('footer.api-doc'),
+            url: 'https://ckb-explorer.readme.io/reference/transaction',
           },
         ],
       },
@@ -86,37 +88,37 @@ export default memo(() => {
         items: [
           {
             label: t('footer.discord'),
-            icon: Discord,
+            icon: <Discord />,
             url: 'https://discord.com/invite/FKh8Zzvwqa',
           },
           {
-            label: t('footer.twitter'),
-            icon: TwitterIcon,
-            url: 'https://twitter.com/nervosnetwork',
+            label: t('footer.X'),
+            icon: <XIcon />,
+            url: 'https://x.com/nervosnetwork',
           },
           {
             label: t('footer.blog'),
-            icon: MediumIcon,
+            icon: <MediumIcon />,
             url: 'https://medium.com/nervosnetwork',
           },
           {
             label: t('footer.telegram'),
-            icon: TelegramIcon,
+            icon: <TelegramIcon />,
             url: 'https://t.me/nervosnetwork',
           },
           {
             label: t('footer.reddit'),
-            icon: RedditIcon,
+            icon: <RedditIcon />,
             url: 'https://www.reddit.com/r/NervosNetwork/',
           },
           {
             label: t('footer.youtube'),
-            icon: YoutubeIcon,
+            icon: <YoutubeIcon />,
             url: 'https://www.youtube.com/channel/UCONuJGdMzUY0Y6jrPBOzH7A',
           },
           {
             label: t('footer.forum'),
-            icon: ForumIcon,
+            icon: <ForumIcon />,
             url: 'https://talk.nervos.org/',
           },
         ],
@@ -124,55 +126,49 @@ export default memo(() => {
     ],
     [t],
   )
+
+  const onSubmitToken = () => {
+    setIsTokenFormDisplayed(true)
+  }
+
   return (
     <FooterPanel>
-      <FooterMenuPanel>
-        <div className="footer__foundation">
-          <div className="footer__title">{Footers[0].name}</div>
-          {Footers[0].items.map((item: any) => (
-            <FooterItem item={item} key={item.label} />
-          ))}
-        </div>
-        <div className="footer__developer">
-          <div className="footer__title">{Footers[1].name}</div>
-          {Footers[1].items
-            .filter(item => item.label !== undefined)
-            .map((item: any) => (
+      <div style={{ width: '100%' }}>
+        <FooterMenuPanel className="container">
+          <div className="footerFoundation">
+            <div className="footerTitle">{Footers[0].name}</div>
+            {Footers[0].items.map(item => (
               <FooterItem item={item} key={item.label} />
             ))}
-        </div>
-        <div className="footer__community">
-          {isMobile ? (
-            <div>
-              {Footers[2].items.map((item: any) => (
-                <FooterImageItem item={item} key={item.label} />
+          </div>
+          <div className="footerDeveloper">
+            <div className="footerTitle">{Footers[1].name}</div>
+            {Footers[1].items
+              .filter(item => item.label !== undefined)
+              .map(item => (
+                <FooterItem item={item} key={item.label} />
               ))}
-            </div>
-          ) : (
-            <>
-              <div>
-                {Footers[2].items.slice(0, 3).map((item: any) => (
-                  <FooterImageItem item={item} key={item.label} />
-                ))}
-              </div>
-              <div>
-                {Footers[2].items.slice(3, 6).map((item: any) => (
-                  <FooterImageItem item={item} key={item.label} />
-                ))}
-              </div>
-              <div>
-                {Footers[2].items.slice(6).map((item: any) => (
-                  <FooterImageItem item={item} key={item.label} />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </FooterMenuPanel>
-      <div className="footer__copyright">
-        <span>{`Copyright © ${getCurrentYear()} Nervos Foundation. `}</span>
-        <span>All Rights Reserved.</span>
+            <button type="button" onClick={onSubmitToken} className={styles.tokenFormBtn}>
+              {t('udt.submit_token_info')}
+            </button>
+          </div>
+          <div className="footerCommunity" style={{ marginLeft: 'auto' }}>
+            {Footers[2].items.map(item => (
+              <FooterImageItem item={item} key={item.label} />
+            ))}
+          </div>
+        </FooterMenuPanel>
       </div>
+      <div style={{ width: '100%', whiteSpace: 'pre' }}>
+        <div className="footerCopyright container">
+          <a className="power" href="https://www.magickbase.com" target="_blank" rel="noreferrer">
+            Powered by Magickbase <Open width={16} />
+          </a>
+          <span>{`Copyright © ${getCurrentYear()} Nervos Foundation. `}</span>
+          <span>All Rights Reserved.</span>
+        </div>
+      </div>
+      {isTokenFormDisplayed ? <SubmitTokenInfo onClose={() => setIsTokenFormDisplayed(false)} /> : null}
     </FooterPanel>
   )
 })

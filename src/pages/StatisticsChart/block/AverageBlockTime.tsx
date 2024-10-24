@@ -1,18 +1,21 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
-import { parseDateNoTime, parseSimpleDate, parseSimpleDateNoSecond } from '../../../utils/date'
+import dayjs from 'dayjs'
+import { parseSimpleDate, parseSimpleDateNoSecond } from '../../../utils/date'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
 import { localeNumberString } from '../../../utils/number'
-import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
-import { fetchStatisticAverageBlockTimes } from '../../../service/http/fetcher'
-import { ChartCachedKeys } from '../../../constants/cache'
+import { DATA_ZOOM_CONFIG, assertIsArray, assertSerialsItem } from '../../../utils/chart'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
-const getOption = (
-  statisticAverageBlockTimes: State.StatisticAverageBlockTime[],
-  chartColor: State.App['chartColor'],
+const useOption = (
+  statisticAverageBlockTimes: ChartItem.AverageBlockTime[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
   const gridThumbnail = {
     left: '3%',
     right: '3%',
@@ -28,41 +31,37 @@ const getOption = (
     containLabel: true,
   }
 
-  const maxAndMinAxis = (statisticAverageBlockTimes: State.StatisticAverageBlockTime[]) => {
-    const array = statisticAverageBlockTimes.flatMap(data => parseFloat(data.avgBlockTimeDaily))
-    return {
-      max: Math.ceil(Math.max(...array) / 1000),
-      min: Math.floor(Math.min(...array) / 1000),
-    }
-  }
+  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 180 : 100)
 
-  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 180 : 100)
-
-  const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: string }): string => {
-    if (seriesName === i18n.t('statistic.daily_moving_average')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.daily_moving_average'))} ${localeNumberString(
+  const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data?: string[] }): string => {
+    if (seriesName === t('statistic.daily_moving_average') && data?.[1]) {
+      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.daily_moving_average'))} ${localeNumberString(
         data[1],
       )}</div>`
     }
-    if (seriesName === i18n.t('statistic.weekly_moving_average')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.weekly_moving_average'))} ${localeNumberString(
+    if (seriesName === t('statistic.weekly_moving_average') && data?.[2]) {
+      return `<div>${tooltipColor(color)}${widthSpan(t('statistic.weekly_moving_average'))} ${localeNumberString(
         data[2],
       )}</div>`
     }
     return ''
   }
+
   return {
     color: chartColor.colors,
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const list = dataList as Array<SeriesItem & { data: string }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(
-              i18n.t('statistic.date'),
-            )} ${parseSimpleDateNoSecond(new Date(list[0].data[0]), '/', false)}</div>`
-            list.forEach(data => {
-              result += parseTooltip(data)
+          formatter: dataList => {
+            assertIsArray(dataList)
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'))} ${parseSimpleDateNoSecond(
+              new Date(dataList[0].data[0]),
+              '/',
+              false,
+            )}</div>`
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              result += parseTooltip({ ...data })
             })
             return result
           },
@@ -70,21 +69,23 @@ const getOption = (
       : undefined,
     legend: !isThumbnail
       ? {
+          icon: 'roundRect',
           data: [
             {
-              name: i18n.t('statistic.daily_moving_average'),
+              name: t('statistic.daily_moving_average'),
             },
             {
-              name: i18n.t('statistic.weekly_moving_average'),
+              name: t('statistic.weekly_moving_average'),
             },
           ],
         }
       : undefined,
     grid: isThumbnail ? gridThumbnail : grid,
-    dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
+    /* Selection starts from 1% because the average block time is extremely high on launch */
+    dataZoom: DATA_ZOOM_CONFIG.map(zoom => ({ ...zoom, show: !isThumbnail, start: 1 })),
     xAxis: [
       {
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.date'),
+        name: isMobile || isThumbnail ? '' : t('statistic.date'),
         nameLocation: 'middle',
         nameGap: 30,
         type: 'category', // TODO: use type: time
@@ -93,21 +94,19 @@ const getOption = (
           show: false,
         },
         axisLabel: {
-          formatter: (value: string) => parseDateNoTime(new Date(value)),
+          formatter: (value: string) => dayjs(value).format('YYYY/MM/DD'),
         },
       },
     ],
     yAxis: [
       {
         position: 'left',
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.daily_moving_average'),
+        name: isMobile || isThumbnail ? '' : t('statistic.daily_moving_average'),
         type: 'value',
         scale: true,
         nameTextStyle: {
           align: 'left',
         },
-        max: () => maxAndMinAxis(statisticAverageBlockTimes).max,
-        min: () => maxAndMinAxis(statisticAverageBlockTimes).min,
         axisLine: {
           lineStyle: {
             color: chartColor.colors[0],
@@ -119,14 +118,13 @@ const getOption = (
       },
       {
         position: 'right',
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.weekly_moving_average'),
+        splitLine: { show: false },
+        name: isMobile || isThumbnail ? '' : t('statistic.weekly_moving_average'),
         type: 'value',
         scale: true,
         nameTextStyle: {
           align: 'right',
         },
-        max: () => maxAndMinAxis(statisticAverageBlockTimes).max,
-        min: () => maxAndMinAxis(statisticAverageBlockTimes).min,
         axisLine: {
           lineStyle: {
             color: chartColor.colors[1],
@@ -139,7 +137,7 @@ const getOption = (
     ],
     series: [
       {
-        name: i18n.t('statistic.daily_moving_average'),
+        name: t('statistic.daily_moving_average'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -150,7 +148,7 @@ const getOption = (
         },
       },
       {
-        name: i18n.t('statistic.weekly_moving_average'),
+        name: t('statistic.weekly_moving_average'),
         type: 'line',
         yAxisIndex: 1,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -172,7 +170,7 @@ const getOption = (
   }
 }
 
-const toCSV = (statisticAverageBlockTimes: State.StatisticAverageBlockTime[]) =>
+const toCSV = (statisticAverageBlockTimes: ChartItem.AverageBlockTime[]) =>
   statisticAverageBlockTimes
     ? statisticAverageBlockTimes.map(data => [data.timestamp, data.avgBlockTimeDaily, data.avgBlockTimeWeekly])
     : []
@@ -184,11 +182,10 @@ export const AverageBlockTimeChart = ({ isThumbnail = false }: { isThumbnail?: b
       title={t('statistic.average_block_time')}
       description={t('statistic.average_block_time_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticAverageBlockTimes}
-      getEChartOption={getOption}
+      fetchData={explorerService.api.fetchStatisticAverageBlockTimes}
+      getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.AverageBlockTime}
-      cacheMode="date"
+      queryKey="fetchStatisticAverageBlockTimes"
     />
   )
 }

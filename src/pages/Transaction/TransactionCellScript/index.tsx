@@ -1,46 +1,73 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import { useEffect, useState, ReactNode } from 'react'
+import type { Cell } from '@ckb-lumos/base'
+import { useState, ReactNode, useRef, FC } from 'react'
 import BigNumber from 'bignumber.js'
-import { fetchCellData, fetchScript } from '../../../service/http/fetcher'
-import { CellState } from '../../../constants/common'
-import { hexToUtf8 } from '../../../utils/string'
+import { useTranslation } from 'react-i18next'
+import { scriptToHash } from '@nervosnetwork/ckb-sdk-utils'
+import type { ContractHashTag } from '../../../constants/scripts'
 import {
-  TransactionDetailCopyButton,
   TransactionDetailContainer,
   TransactionDetailPanel,
-  TransactionDetailLock,
-  TransactionDetailType,
   TransactionCellDetailPanel,
-  TransactionDetailData,
-  TransactionDetailCapacityUsage,
-  TransactionCellScriptContentPanel,
-  TransactionDetailScriptButton,
+  TransactionCellInfoValuePanel,
+  TransactionCellDetailTab,
+  TransactionCellDetailPane,
+  TransactionCellDetailTitle,
 } from './styled'
-import i18n from '../../../utils/i18n'
-import { AppDispatch } from '../../../contexts/reducer'
-import { AppActions } from '../../../contexts/actions'
-import SmallLoading from '../../../components/Loading/SmallLoading'
-import { useDispatch } from '../../../contexts/providers'
-import CloseIcon from '../../../assets/modal_close.png'
-import { getContractHashTag } from '../../../utils/util'
+import CloseIcon from './modal_close.png'
+import { getBtcTimeLockInfo, getBtcUtxo, getContractHashTag } from '../../../utils/util'
 import { localeNumberString } from '../../../utils/number'
+import { cellOccupied } from '../../../utils/cell'
+import { isTypeIdScript, TYPE_ID_TAG } from '../../../utils/typeid'
 import HashTag from '../../../components/HashTag'
 import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
-import { ReactComponent as OuterLinkIcon } from '../../../assets/outer_link_icon.svg'
+import { ReactComponent as OuterLinkIcon } from './outer_link_icon.svg'
+import { ReactComponent as ScriptHashIcon } from './script_hash_icon.svg'
+import { HelpTip } from '../../../components/HelpTip'
+import { useSetToast } from '../../../components/Toast'
+import { Script } from '../../../models/Script'
+import { ReactComponent as CompassIcon } from './compass.svg'
+import styles from './styles.module.scss'
+import { BTCExplorerLink } from '../../../components/Link'
 
-const initScriptContent = {
-  lock: 'null',
-  type: 'null',
+enum CellInfo {
+  LOCK = 1,
+  TYPE = 2,
+  DATA = 3,
+  CAPACITY = 4,
+}
+
+type CapacityUsage = Record<'declared' | 'occupied', string | null>
+
+interface CellData {
+  data: string
+}
+
+type CellInfoValue = Script | CellData | CapacityUsage | null | undefined
+
+function isScript(content: CellInfoValue): content is Script {
+  return content != null && 'codeHash' in content
+}
+
+function isCapacityUsage(content: CellInfoValue): content is CapacityUsage {
+  return content != null && 'declared' in content
+}
+
+function isCellData(content: CellInfoValue): content is CellData {
+  return content != null && 'data' in content
+}
+
+const initCellInfoValue = {
+  lock: null,
+  type: null,
   data: {
     data: '0x',
   },
 }
 
-type CapacityUsage = Record<'declared' | 'occupied', string | null>
-
-const updateJsonFormat = (content: State.Script | State.Data | CapacityUsage | null): string => {
-  if (content !== null && (content as State.Script).args !== undefined) {
-    const { codeHash, args, hashType } = content as State.Script
+const getContentJSONWithSnakeCase = (content: CellInfoValue): string => {
+  if (isScript(content)) {
+    const { codeHash, args, hashType } = content
     return JSON.stringify(
       {
         code_hash: codeHash,
@@ -54,272 +81,269 @@ const updateJsonFormat = (content: State.Script | State.Data | CapacityUsage | n
   return JSON.stringify(content, null, 4)
 }
 
-const handleFetchCellInfo = async (
-  cell: State.Cell,
-  state: CellState,
-  setScriptFetchStatus: (val: boolean) => void,
-  setContent: Function,
-  dispatch: AppDispatch,
-) => {
-  setScriptFetchStatus(false)
-
-  const fetchLock = async () => {
-    if (cell.id) {
-      const wrapper: Response.Wrapper<State.Script> | null = await fetchScript('lock_scripts', `${cell.id}`)
-      return wrapper ? wrapper.attributes : initScriptContent.lock
-    }
-    return initScriptContent.lock
-  }
-
-  const fetchType = async () => {
-    if (cell.id) {
-      const wrapper: Response.Wrapper<State.Script> | null = await fetchScript('type_scripts', `${cell.id}`)
-      return wrapper ? wrapper.attributes : initScriptContent.type
-    }
-    return initScriptContent.type
-  }
-
-  const fetchData = async () => {
-    if (cell.id) {
-      return fetchCellData(`${cell.id}`)
-        .then((wrapper: Response.Wrapper<State.Data> | null) => {
-          const dataValue: State.Data = wrapper ? wrapper.attributes : initScriptContent.data
-          if (wrapper && cell.isGenesisOutput) {
-            dataValue.data = hexToUtf8(wrapper.attributes.data)
-          }
-          return dataValue || initScriptContent.data
-        })
-        .catch(error => {
-          if (error.response && error.response.data && error.response.data[0]) {
-            const err = error.response.data[0]
-            if (err.status === 400 && err.code === 1022) {
-              dispatch({
-                type: AppActions.ShowToastMessage,
-                payload: {
-                  message: i18n.t('toast.data_too_large'),
-                  type: 'warning',
-                },
-              })
-              return null
-            }
-          }
-          return null
-        })
-    }
-    const dataValue: State.Data = initScriptContent.data
-    return dataValue
-  }
-
-  switch (state) {
-    case CellState.LOCK:
-      fetchLock().then(lock => {
-        setScriptFetchStatus(true)
-        setContent(lock)
-      })
-      break
-    case CellState.TYPE:
-      fetchType().then(type => {
-        setScriptFetchStatus(true)
-        setContent(type)
-      })
-      break
-    case CellState.DATA:
-      fetchData().then(data => {
-        setScriptFetchStatus(true)
-        setContent(data)
-      })
-      break
-    case CellState.CAPACITY:
-      setContent(null)
-
-      Promise.all([fetchLock(), fetchType(), fetchData()]).then(([lock, type, data]) => {
-        setScriptFetchStatus(true)
-        const declared = new BigNumber(cell.capacity)
-
-        if (!data) {
-          setContent({
-            declared: `${localeNumberString(declared.dividedBy(10 ** 8))} CKBytes`,
-            occupied: null,
-          })
-          return
-        }
-
-        const CAPACITY_SIZE = 8
-        const occupied = ([lock, type] as Array<any>)
-          .filter(s => s !== 'null')
-          .map(
-            script => Math.ceil(script.codeHash.slice(2).length / 2) + Math.ceil(script.args.slice(2).length / 2) + 1,
-          )
-          .reduce((acc, cur) => acc.plus(cur), new BigNumber(0))
-          .plus(CAPACITY_SIZE)
-          .plus(Math.ceil(data.data.slice(2).length / 2))
-
-        setContent({
-          declared: `${localeNumberString(declared.dividedBy(10 ** 8))} CKBytes`,
-          occupied: `${localeNumberString(occupied)} CKBytes`,
-        })
-      })
-
-      break
-    default:
-      break
-  }
-}
-
-const ScriptContentItem = ({ title = '', value = '' }: { title?: string; value?: ReactNode | string }) => (
+const JSONKeyValueView = ({ title = '', value = '' }: { title?: string; value?: ReactNode | string }) => (
   <div>
     <div>{title}</div>
     <div className="monospace">{value}</div>
   </div>
 )
 
-const ScriptContent = ({
-  content,
-  state,
-}: {
-  content: State.Script | State.Data | CapacityUsage | undefined
-  state: CellState
-}) => {
-  const hashTag = getContractHashTag(content as State.Script)
-  const data = content as State.Data
-  const script = content as State.Script
+const RGBPP: FC<{ btcUtxo: Partial<Record<'txid' | 'index', string>> }> = ({ btcUtxo }) => {
+  return (
+    <JSONKeyValueView
+      value={
+        <BTCExplorerLink
+          className={styles.action}
+          id={btcUtxo.txid}
+          anchor={`vout=${parseInt(btcUtxo.index!, 16)}`}
+          path="/tx"
+        >
+          BTC UTXO
+          <CompassIcon />
+        </BTCExplorerLink>
+      }
+    />
+  )
+}
 
-  if (state === CellState.CAPACITY) {
-    const capacities = content as CapacityUsage
+const BTCTimeLock: FC<{
+  btcTimeLockInfo: {
+    txid: string | undefined
+    after: number
+  }
+}> = ({ btcTimeLockInfo }) => {
+  return (
+    <JSONKeyValueView
+      value={
+        <BTCExplorerLink className={styles.action} id={btcTimeLockInfo.txid} path="/tx">
+          {`${btcTimeLockInfo.after} confirmations after BTC Tx`}
+          <CompassIcon />
+        </BTCExplorerLink>
+      }
+    />
+  )
+}
 
+const CellInfoValueRender = ({ content }: { content: CellInfoValue }) => {
+  const { t } = useTranslation()
+
+  if (isScript(content)) {
+    let hashTag: Pick<ContractHashTag, 'tag' | 'category'> | undefined
+    if (isTypeIdScript(content)) {
+      hashTag = { tag: TYPE_ID_TAG }
+    } else {
+      hashTag = getContractHashTag(content)
+    }
+
+    const btcUtxo = getBtcUtxo(content)
+    const btcTimeLockInfo = !btcUtxo ? getBtcTimeLockInfo(content) : null
     return (
       <>
-        {Object.keys(capacities).map(key => {
-          const v = capacities[key as keyof CapacityUsage]
+        <JSONKeyValueView title={`"${t('transaction.script_code_hash')}": `} value={content.codeHash} />
+        {hashTag && (
+          <JSONKeyValueView
+            value={
+              <div>
+                <HashTag content={hashTag.tag} category={hashTag.category} />
+              </div>
+            }
+          />
+        )}
+        <JSONKeyValueView title={`"${t('transaction.script_hash_type')}": `} value={content.hashType} />
+        <JSONKeyValueView title={`"${t('transaction.script_args')}": `} value={content.args} />
+        {btcUtxo ? <RGBPP btcUtxo={btcUtxo} /> : null}
+        {btcTimeLockInfo ? <BTCTimeLock btcTimeLockInfo={btcTimeLockInfo} /> : null}
+      </>
+    )
+  }
 
-          if (!v) return null
-          const field = i18n.t(`transaction.${key}_capacity`)
-          return <ScriptContentItem key={key} title={`"${field}": `} value={v || ''} />
+  if (isCapacityUsage(content)) {
+    return (
+      <>
+        {Object.entries(content).map(([key, value]) => {
+          const field = t(`transaction.${key}_capacity`)
+          return <JSONKeyValueView key={key} title={`"${field}": `} value={value ?? ''} />
         })}
       </>
     )
   }
-  if (state === CellState.DATA) {
+
+  if (isCellData(content)) {
     return (
-      <ScriptContentItem
-        title={data.data ? `"${i18n.t('transaction.script_data')}": ` : ''}
-        value={data.data ? `"${data.data}"` : JSON.stringify(initScriptContent.data, null, 4)}
+      <JSONKeyValueView
+        title={content.data ? `"${t('transaction.script_data')}": ` : ''}
+        value={content.data ? `"${content.data}"` : JSON.stringify(initCellInfoValue.data, null, 4)}
       />
     )
   }
-  if (!script.args) {
-    return <ScriptContentItem title={JSON.stringify(initScriptContent.lock, null, 4)} />
-  }
-  return (
-    <>
-      <ScriptContentItem title={`"${i18n.t('transaction.script_code_hash')}": `} value={script.codeHash} />
-      {hashTag && (
-        <ScriptContentItem
-          value={
-            <div>
-              <HashTag content={hashTag.tag} category={hashTag.category} />
-            </div>
-          }
-        />
-      )}
-      <ScriptContentItem title={`"${i18n.t('transaction.script_hash_type')}": `} value={script.hashType} />
-      <ScriptContentItem title={`"${i18n.t('transaction.script_args')}": `} value={(content as State.Script).args} />
-    </>
-  )
+
+  return <JSONKeyValueView title="null" />
 }
 
-const ScriptContentJson = ({
-  content,
-  state,
-}: {
-  content: State.Script | State.Data | CapacityUsage | undefined
-  state: CellState
-}) => (
-  <TransactionCellScriptContentPanel isData={state === CellState.DATA}>
+const CellInfoValueJSONView = ({ content, state }: { content: CellInfoValue; state: CellInfo }) => (
+  <TransactionCellInfoValuePanel data-is-decodable="true" isData={state === CellInfo.DATA}>
     <span>{'{'}</span>
-    <ScriptContent content={content} state={state} />
+    <CellInfoValueRender content={content} />
     <span>{'}'}</span>
-  </TransactionCellScriptContentPanel>
+  </TransactionCellInfoValuePanel>
 )
 
-export default ({ cell, onClose }: { cell: State.Cell; onClose: Function }) => {
-  const dispatch = useDispatch()
-  const [scriptFetched, setScriptFetched] = useState(false)
-  const [content, setContent] = useState(null as State.Script | State.Data | CapacityUsage | null)
-  const [state, setState] = useState(CellState.LOCK as CellState)
+export const CellInfoModal = ({ cell, onClose }: { cell: Cell; onClose: Function }) => {
+  const setToast = useSetToast()
+  const { t } = useTranslation()
+  const [selectedInfo, setSelectedInfo] = useState<CellInfo>(CellInfo.LOCK)
 
-  const changeType = (newState: CellState) => {
-    setState(state !== newState ? newState : state)
+  const content = ((): CellInfoValue => {
+    if (selectedInfo === CellInfo.LOCK) {
+      return cell.cellOutput.lock
+    }
+
+    if (selectedInfo === CellInfo.TYPE) {
+      return cell.cellOutput.type
+    }
+
+    if (selectedInfo === CellInfo.DATA) {
+      return {
+        data: cell.data,
+      }
+    }
+
+    if (selectedInfo === CellInfo.CAPACITY) {
+      const declared = new BigNumber(cell.cellOutput.capacity)
+      const occupied = new BigNumber(cellOccupied(cell))
+
+      return {
+        declared: `${localeNumberString(declared.dividedBy(10 ** 8))} CKBytes`,
+        occupied: `${localeNumberString(occupied.dividedBy(10 ** 8))} CKBytes`,
+      }
+    }
+
+    return null
+  })()
+
+  const ref = useRef<HTMLDivElement>(null)
+
+  const changeType = (newState: CellInfo) => {
+    setSelectedInfo(selectedInfo !== newState ? newState : selectedInfo)
   }
 
-  useEffect(() => {
-    handleFetchCellInfo(cell, state, setScriptFetched, setContent, dispatch)
-  }, [cell, state, dispatch])
+  const onCopy = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    const { role } = e.currentTarget.dataset
 
-  const onClickCopy = () => {
-    navigator.clipboard.writeText(updateJsonFormat(content)).then(
-      () => {
-        dispatch({
-          type: AppActions.ShowToastMessage,
-          payload: {
-            message: i18n.t('common.copied'),
-          },
-        })
-      },
+    let v = ''
+
+    switch (role) {
+      case 'copy-script': {
+        v = getContentJSONWithSnakeCase(content)
+        break
+      }
+      case 'copy-script-hash': {
+        if (isScript(content)) {
+          v = scriptToHash(content as CKBComponents.Script)
+        }
+        break
+      }
+      default: {
+        // ignore
+      }
+    }
+    if (!v) return
+
+    navigator.clipboard.writeText(v).then(
+      () => setToast({ message: t('common.copied') }),
       error => {
         console.error(error)
       },
     )
   }
 
+  const isContentAScript = isScript(content)
+  const isContentATypeIdScript = isContentAScript && isTypeIdScript(content as Script)
+
   return (
-    <TransactionDetailContainer>
+    <TransactionDetailContainer ref={ref}>
       <TransactionCellDetailPanel>
-        <TransactionDetailLock selected={state === CellState.LOCK} onClick={() => changeType(CellState.LOCK)}>
-          {i18n.t('transaction.lock_script')}
-        </TransactionDetailLock>
-        <TransactionDetailType selected={state === CellState.TYPE} onClick={() => changeType(CellState.TYPE)}>
-          {i18n.t('transaction.type_script')}
-        </TransactionDetailType>
-        <TransactionDetailData selected={state === CellState.DATA} onClick={() => changeType(CellState.DATA)}>
-          {i18n.t('transaction.data')}
-        </TransactionDetailData>
-        <TransactionDetailCapacityUsage
-          selected={state === CellState.CAPACITY}
-          onClick={() => changeType(CellState.CAPACITY)}
+        <TransactionCellDetailTab
+          tabBarExtraContent={
+            <div className="transactionDetailModalClose">
+              <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
+            </div>
+          }
+          tabBarStyle={{ fontSize: '10px' }}
+          onTabClick={key => {
+            const state = parseInt(key, 10)
+            if (state && !Number.isNaN(state)) {
+              changeType(state)
+            }
+          }}
         >
-          {i18n.t('transaction.capacity_usage')}
-        </TransactionDetailCapacityUsage>
-        <div className="transaction__detail__modal__close">
-          <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
-        </div>
+          <TransactionCellDetailPane
+            tab={
+              <>
+                <TransactionCellDetailTitle>{t('transaction.lock_script')}</TransactionCellDetailTitle>
+                <HelpTip title={t('glossary.lock_script')} placement="bottom" containerRef={ref} />
+              </>
+            }
+            key={CellInfo.LOCK}
+          />
+          <TransactionCellDetailPane
+            tab={
+              <>
+                <TransactionCellDetailTitle>{t('transaction.type_script')}</TransactionCellDetailTitle>
+                <HelpTip title={t('glossary.type_script')} placement="bottom" containerRef={ref} />
+              </>
+            }
+            key={CellInfo.TYPE}
+          />
+          <TransactionCellDetailPane
+            tab={<TransactionCellDetailTitle>{t('transaction.data')}</TransactionCellDetailTitle>}
+            key={CellInfo.DATA}
+          />
+          <TransactionCellDetailPane
+            tab={
+              <>
+                <TransactionCellDetailTitle>{t('transaction.capacity_usage')}</TransactionCellDetailTitle>
+                <HelpTip title={t('glossary.capacity_usage')} placement="bottom" containerRef={ref} />
+              </>
+            }
+            key={CellInfo.CAPACITY}
+          />
+        </TransactionCellDetailTab>
       </TransactionCellDetailPanel>
 
-      <div className="transaction__detail__separate" />
-
       <TransactionDetailPanel>
-        {content && scriptFetched ? (
-          <div className="transaction__detail_content">
-            <ScriptContentJson content={content} state={state} />
-          </div>
-        ) : (
-          <div className="transaction__detail_loading">{!scriptFetched ? <SmallLoading /> : null}</div>
-        )}
-        {!content && scriptFetched ? null : (
-          <div className="transaction__detail_copy">
-            <TransactionDetailCopyButton onClick={onClickCopy}>
-              <div>{i18n.t('common.copy')}</div>
+        <div className="transactionDetailContent">
+          <CellInfoValueJSONView content={content} state={selectedInfo} />
+        </div>
+        {!content ? null : (
+          <div className={styles.scriptActions}>
+            <button data-role="copy-script" className={styles.button} type="button" onClick={onCopy}>
+              <div>{t('common.copy')}</div>
               <CopyIcon />
-            </TransactionDetailCopyButton>
-            {(state === CellState.LOCK || state === CellState.TYPE) &&
-            content &&
-            typeof content === 'object' &&
-            'codeHash' in content &&
-            'hashType' in content ? (
-              <TransactionDetailScriptButton href={`/script/${content.codeHash}/${content.hashType}`} target="_blank">
-                <div>{i18n.t('scripts.script')}</div>
+            </button>
+
+            {isContentAScript ? (
+              <button data-role="copy-script-hash" className={styles.button} type="button" onClick={onCopy}>
+                <div>Script Hash</div>
+                <ScriptHashIcon />
+              </button>
+            ) : null}
+
+            {isContentAScript ? (
+              <a
+                data-role="script-info"
+                className={styles.button}
+                href={
+                  isContentATypeIdScript
+                    ? `/script/${scriptToHash(content as CKBComponents.Script)}/type`
+                    : `/script/${content.codeHash}/${content.hashType}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div>{isContentATypeIdScript ? t('scripts.deployed_script') : `${t('scripts.script')} Info`}</div>
                 <OuterLinkIcon />
-              </TransactionDetailScriptButton>
+              </a>
             ) : null}
           </div>
         )}

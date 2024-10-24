@@ -1,0 +1,62 @@
+@import '../../../styles/variables.module';
+
+.transactionOverviewCard:not(
+    [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.']
+  ) {
+  padding-bottom: 40px;
+
+  .exportTxAction {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (width <= $mobileBreakPoint) {
+    padding-bottom: 16px;
+  }
+}
+
+.witnessInTransactionInfo {
+  word-break: break-all;
+}
+
+.toggles {
+  display: flex;
+  gap: 12px;
+
+  .expandArrow {
+    margin-left: 4px;
+    transform: translateY(-2px) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    box-shadow: 1px 1px 1px 0 var(--primary-color);
+
+    &[data-expanded='true'] {
+      transform: translateY(5px) rotate(225deg);
+    }
+  }
+
+  .paramsToggle {
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+  }
+}
+
+.rgbPlus {
+  color: #333;
+  display: flex;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+  width: 65px;
+  height: 35px;
+  background: linear-gradient(90.24deg, #ffd176 0.23%, #ffdb81 6.7%, #84ffcb 99.82%);
+  vertical-align: middle;
+}
