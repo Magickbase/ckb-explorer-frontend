@@ -1190,6 +1190,107 @@ export const apiFetcher = {
       },
     }),
   getBtcTxList,
+
+  // ==================
+  // Fiber
+  // ==================
+  getFiberPeerList: (page = 1, pageSize = 10) => {
+    return requesterV2
+      .get(
+        `/fiber/peers?${new URLSearchParams({
+          page: page.toString(),
+          page_size: pageSize.toString(),
+        })}`,
+      )
+      .then(res =>
+        toCamelcase<
+          Response.Response<{
+            fiberPeers: Fiber.Peer.ItemInList[]
+            meta: {
+              total: number
+              pageSize: number
+            }
+          }>
+        >(res.data),
+      )
+  },
+
+  getFiberPeerDetail: (id: string) => {
+    return requesterV2
+      .get(`/fiber/peers/${id}`)
+      .then(res => toCamelcase<Response.Response<Fiber.Peer.Detail>>(res.data))
+  },
+
+  getFiberChannel: (id: string) => {
+    return requesterV2
+      .get(`/fiber/channels/${id}`)
+      .then(res => toCamelcase<Response.Response<Fiber.Channel.Detail>>(res.data))
+  },
+
+  addFiberPeer: (params: { rpc: string; id: string; name?: string }) => {
+    return requesterV2
+      .post(`/fiber/peers`, {
+        name: params.name,
+        rpc_listening_addr: params.rpc,
+        peer_id: params.id,
+      })
+      .catch(e => {
+        if (Array.isArray(e.response?.data)) {
+          const res = e.response.data[0]
+          if (res) {
+            throw new Error(res.title)
+          }
+        }
+        throw e
+      })
+  },
+
+  getGraphNodes: (page = 1, pageSize = 10) => {
+    return requesterV2
+      .get(
+        `/fiber/graph_nodes?${new URLSearchParams({
+          page: page.toString(),
+          page_size: pageSize.toString(),
+        })}`,
+      )
+      .then(res =>
+        toCamelcase<
+          Response.Response<{
+            fiberGraphNodes: Fiber.Graph.Node[]
+            meta: {
+              total: number
+              pageSize: number
+            }
+          }>
+        >(res.data),
+      )
+  },
+
+  getGraphNodeDetail: (id: string) => {
+    return requesterV2
+      .get(`/fiber/graph_nodes/${id}`)
+      .then(res => toCamelcase<Response.Response<Fiber.Graph.NodeDetail>>(res.data))
+  },
+  getGraphChannels: (page = 1, pageSize = 10) => {
+    return requesterV2
+      .get(
+        `/fiber/graph_channels?${new URLSearchParams({
+          page: page.toString(),
+          page_size: pageSize.toString(),
+        })}`,
+      )
+      .then(res =>
+        toCamelcase<
+          Response.Response<{
+            fiberGraphChannels: Fiber.Graph.Channel[]
+            meta: {
+              total: number
+              pageSize: number
+            }
+          }>
+        >(res.data),
+      )
+  },
 }
 
 // ====================
@@ -1380,4 +1481,91 @@ export interface RGBTransaction {
   leapDirection: string
   rgbCellChanges: number
   rgbTxid: string
+}
+
+export namespace Fiber {
+  export namespace Peer {
+    interface Base {
+      peerId: string
+      rpcListeningAddr: string[]
+      firstChannelOpenedAt: null // TODO
+      lastChannelUpdatedAt: null // TODO
+    }
+    export interface ItemInList extends Base {
+      name: string
+      channelsCount: number
+      totalLocalBalance: string // shannon amount
+    }
+
+    export interface Detail extends Base {
+      fiberChannels: {
+        peerId: string
+        channelId: string
+        stateName: string // TODO: should be enum
+        stateFlags: [] // TODO
+      }[]
+    }
+  }
+  export namespace Channel {
+    export interface Peer {
+      name?: string
+      peerId: string
+      rpcListeningAddr: string[]
+    }
+    export interface Detail {
+      channelId: string
+      stateName: string // TODO should be name
+      stateFlags: [] // TODO
+      shutdownAt: null // TODO
+      createdAt: string // utc time
+      updatedAt: string // utc time
+      localBalance: string // shannon
+      offeredTlcBalance: string // shannon
+      receivedTlcBalance: string // shannon
+      remoteBalance: string // shannon
+      localPeer: Peer
+      remotePeer: Peer
+    }
+  }
+
+  export namespace Graph {
+    interface UdtConfigInfo {
+      args: string
+      codeHash: string
+      hashType: HashType
+      decimal?: number
+      fullName?: string
+      iconFile?: string
+      symbol?: string
+      autoAcceptAmount: string
+    }
+
+    export interface Node {
+      alias: string
+      nodeId: string
+      addresses: string[]
+      timestamp: string
+      chainHash: string
+      autoAcceptMinCkbFundingAmount: string
+      udtCfgInfos: UdtConfigInfo[]
+      totalCapacity: string
+      connectedNodeIds: string[]
+    }
+
+    export interface Channel {
+      channelOutpoint: string
+      node1: string
+      node2: string
+      chainHash: string
+      fundingTxBlockNumber: string
+      fundingTxIndex: string // number
+      lastUpdatedTimestamp: string
+      node1ToNode2FeeRate: string
+      node2ToNode1FeeRate: string
+      capacity: string
+    }
+    export interface NodeDetail extends Node {
+      fiberGraphChannels: Channel[]
+    }
+  }
 }
