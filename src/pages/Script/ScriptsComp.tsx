@@ -23,6 +23,8 @@ import { useSetToast } from '../../components/Toast'
 import { CellBasicInfo, transformToCellBasicInfo, transformToTransaction } from '../../utils/transformer'
 import { usePrevious } from '../../hooks'
 import CellModal from '../../components/Cell/CellModal'
+import { Switch } from '../../components/ui/Switch'
+import { HelpTip } from '../../components/HelpTip'
 
 export const ScriptTransactions = ({ page, size }: { page: number; size: number }) => {
   const {
@@ -33,6 +35,7 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
   const { codeHash, hashType } = useParams<{ codeHash: string; hashType: string }>()
 
   const [transactionsEmpty, setTransactionsEmpty] = useState(false)
+  const [restrict, setRestrict] = useState(false)
   const previousTransactionEmpty = usePrevious(transactionsEmpty)
 
   const {
@@ -42,8 +45,14 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
     },
     isLoading,
     error,
-  } = useQuery(['scripts_ckb_transactions', codeHash, hashType, page, size], async () => {
-    const { transactions, total } = await explorerService.api.fetchScriptCKBTransactions(codeHash, hashType, page, size)
+  } = useQuery(['scripts_ckb_transactions', codeHash, hashType, restrict, page, size], async () => {
+    const { transactions, total } = await explorerService.api.fetchScriptCKBTransactions(
+      codeHash,
+      hashType,
+      restrict,
+      page,
+      size,
+    )
 
     if (!transactions.length) {
       setTransactionsEmpty(true)
@@ -59,6 +68,12 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
 
   const onChange = (page: number) => {
     history.push(`/${language}/script/${codeHash}/${hashType}?page=${page}&size=${size}`)
+  }
+
+  const isChecked = restrict === true
+  const switchRestrictMode = (checked: boolean) => {
+    setRestrict(checked)
+    history.push(`/${language}/script/${codeHash}/${hashType}`)
   }
 
   const status = (() => {
@@ -82,6 +97,16 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
           })}
         </div>
       )}
+      <div>
+        <label htmlFor="script-restrict-mode">{t('scripts.restrict_mode')}</label>
+        <HelpTip title={t('scripts.restrict_tooltip')} />
+        <Switch
+          id="script-restrict-mode"
+          style={{ marginLeft: 'auto' }}
+          checked={isChecked}
+          onCheckedChange={checked => switchRestrictMode(checked)}
+        />
+      </div>
       <div className={styles.scriptTransactionsPanel}>
         {ckbTransactions.length > 0 ? (
           ckbTransactions.map(tr => (
