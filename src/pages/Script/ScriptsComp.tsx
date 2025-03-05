@@ -66,14 +66,16 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
   const { total, ckbTransactions } = data
   const totalPages = Math.ceil(total / size)
 
+  const isChecked = restrict === true
   const onChange = (page: number) => {
-    history.push(`/${language}/script/${codeHash}/${hashType}?page=${page}&size=${size}`)
+    history.push(
+      `/${language}/script/${codeHash}/${hashType}?page=${page}&size=${size}&restrict=${isChecked.toString()}`,
+    )
   }
 
-  const isChecked = restrict === true
   const switchRestrictMode = (checked: boolean) => {
     setRestrict(checked)
-    history.push(`/${language}/script/${codeHash}/${hashType}`)
+    history.push(`/${language}/script/${codeHash}/${hashType}?restrict=${checked.toString()}`)
   }
 
   const status = (() => {
