@@ -11,6 +11,7 @@ import { explorerService } from '../../services/ExplorerService'
 import { TransactionCellInfoPanel } from '../Transaction/TransactionCell/styled'
 import SimpleButton from '../../components/SimpleButton'
 import SimpleModal from '../../components/Modal'
+import { localeNumberString } from '../../utils/number'
 import { shannonToCkb } from '../../utils/util'
 import Capacity from '../../components/Capacity'
 import styles from './styles.module.scss'
@@ -26,7 +27,7 @@ import CellModal from '../../components/Cell/CellModal'
 import { Switch } from '../../components/ui/Switch'
 import { HelpTip } from '../../components/HelpTip'
 
-export const ScriptTransactions = ({ page, size }: { page: number; size: number }) => {
+export const ScriptTransactions = ({ page, size, count }: { page: number; size: number; count: number }) => {
   const {
     t,
     i18n: { language },
@@ -92,23 +93,28 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
 
   return (
     <>
-      {total >= 5000 && (
+      {count >= 5000 && (
         <div className={styles.notice}>
           {t('transaction.range_notice', {
             count: 5000,
           })}
         </div>
       )}
-      <div>
-        <label htmlFor="script-restrict-mode">{t('scripts.restrict_mode')}</label>
+      <div className={styles.scriptTransactionsConfigPanel}>
+        <span className={styles.countInfo}>Total {localeNumberString(count)} Transactions</span>
+
+        <label style={{ marginLeft: 'auto' }} htmlFor="script-restrict-mode">
+          {t('scripts.restrict_mode')}
+        </label>
         <HelpTip title={t('scripts.restrict_tooltip')} />
         <Switch
           id="script-restrict-mode"
-          style={{ marginLeft: 'auto' }}
+          style={{ marginLeft: '4px' }}
           checked={isChecked}
           onCheckedChange={checked => switchRestrictMode(checked)}
         />
       </div>
+
       <div className={styles.scriptTransactionsPanel}>
         {ckbTransactions.length > 0 ? (
           ckbTransactions.map(tr => (
