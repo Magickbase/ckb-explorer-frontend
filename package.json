@@ -28,7 +28,7 @@
     "@spore-sdk/core": "0.2.0-beta.8",
     "@tanstack/react-query": "4.0.5",
     "@types/cytoscape": "^3.21.2",
-    "antd": "4.24.5",
+    "antd": "5.24.4",
     "axios": "1.7.4",
     "bech32": "2.0.0",
     "bignumber.js": "9.1.2",
