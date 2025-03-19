@@ -69,9 +69,12 @@ export const ScriptTransactions = ({ page, size, count }: { page: number; size: 
 
   const isChecked = restrict === true
   const onChange = (page: number) => {
-    history.push(
-      `/${language}/script/${codeHash}/${hashType}?page=${page}&size=${size}&restrict=${isChecked.toString()}`,
-    )
+    const search = new URLSearchParams(window.location.search)
+    search.set('page', page.toString()) // we can also use { ...search, page, search }
+    search.set('size', size.toString())
+    search.set('restrict', isChecked.toString())
+    const url = `/${language}/script/${codeHash}/${hashType}?${search}`
+    history.push(url)
   }
 
   const switchRestrictMode = (checked: boolean) => {
