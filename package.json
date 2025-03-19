@@ -105,7 +105,7 @@
     "eslint-plugin-react": "7.31.11",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-storybook": "^0.6.15",
-    "eslint-plugin-unused-imports": "^3.0.0",
+    "eslint-plugin-unused-imports": "^4.0.0",
     "husky": "^8.0.0",
     "jest-styled-components": "^7.0.5",
     "mockdate": "^3.0.0",
