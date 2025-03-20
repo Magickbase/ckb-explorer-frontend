@@ -1,50 +1,42 @@
 import { useState, ReactNode, FC } from 'react'
 import { Tooltip } from 'antd'
-import { Link } from 'react-router-dom'
-import { CellType } from '../../../constants/common'
-import i18n from '../../../utils/i18n'
-import { localeNumberString, parseUDTAmount } from '../../../utils/number'
+import { useTranslation } from 'react-i18next'
+import { Link } from '../../../components/Link'
+import { IOType } from '../../../constants/common'
+import { parseUDTAmount } from '../../../utils/number'
 import { parseSimpleDate } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
 import { shannonToCkb, shannonToCkbDecimal, parseSince } from '../../../utils/util'
-import {
-  TransactionCellContentPanel,
-  TransactionCellDetailPanel,
-  TransactionCellHashPanel,
-  TransactionCellPanel,
-  TransactionCellDetailModal,
-  TransactionCellCardPanel,
-  TransactionCellAddressPanel,
-  TransactionCellInfoPanel,
-  TransactionCellCardContent,
-  TransactionCellNftInfo,
-} from './styled'
+import { UDT_CELL_TYPES } from '../../../utils/cell'
 import TransactionCellArrow from '../../../components/Transaction/TransactionCellArrow'
-import DecimalCapacity from '../../../components/DecimalCapacity'
+import Capacity from '../../../components/Capacity'
 import NervosDAODepositIcon from '../../../assets/nervos_dao_cell.png'
 import NervosDAOWithdrawingIcon from '../../../assets/nervos_dao_withdrawing.png'
 import UDTTokenIcon from '../../../assets/udt_token.png'
-import NFTIssuerIcon from '../../../assets/m_nft_issuer.svg'
-import NFTClassIcon from '../../../assets/m_nft_class.svg'
-import NFTTokenIcon from '../../../assets/m_nft.svg'
-import CoTACellIcon from '../../../assets/cota_cell.svg'
-import CoTARegCellIcon from '../../../assets/cota_reg_cell.svg'
-import SporeCellIcon from '../../../assets/spore.svg'
-import { ReactComponent as LockTimeIcon } from '../../../assets/clock.svg'
+import NFTIssuerIcon from './m_nft_issuer.svg'
+import NFTClassIcon from './m_nft_class.svg'
+import NFTTokenIcon from './m_nft.svg'
+import CoTACellIcon from './cota_cell.svg'
+import CoTARegCellIcon from './cota_reg_cell.svg'
+import SporeCellIcon from './spore.svg'
+import { ReactComponent as LockTimeIcon } from './clock.svg'
 import { ReactComponent as BitAccountIcon } from '../../../assets/bit_account.svg'
-import TransactionCellScript from '../TransactionCellScript'
 import SimpleModal from '../../../components/Modal'
 import SimpleButton from '../../../components/SimpleButton'
 import TransactionReward from '../TransactionReward'
 import Cellbase from '../../../components/Transaction/Cellbase'
 import CopyTooltipText from '../../../components/Text/CopyTooltipText'
-import { useDeprecatedAddr, useIsMobile, useNewAddr } from '../../../utils/hook'
-import { useDASAccount } from '../../../contexts/providers/dasQuery'
+import { useDeprecatedAddr, useIsMobile, useNewAddr } from '../../../hooks'
+import { useDASAccount } from '../../../hooks/useDASAccount'
 import styles from './styles.module.scss'
 import AddressText from '../../../components/AddressText'
+import { Cell, UDTInfo } from '../../../models/Cell'
+import CellModal from '../../../components/Cell/CellModal'
+import { CellBasicInfo } from '../../../utils/transformer'
 
-const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBase }) => {
+export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBase }) => {
   const alias = useDASAccount(address)
+  const { t } = useTranslation()
 
   if (alias && address) {
     return (
@@ -54,7 +46,7 @@ const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBas
         </Tooltip>
 
         <Tooltip placement="top" title={<CopyTooltipText content={address} />}>
-          <Link to={`/address/${address}`} className="monospace TransactionItemCell_text__RoMn0">
+          <Link to={`/address/${address}`} className="monospace">
             {alias}
           </Link>
         </Tooltip>
@@ -66,7 +58,7 @@ const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBas
     return (
       <AddressText
         linkProps={{
-          className: 'transaction__cell_address_link',
+          className: styles.transactionCellAddressLink,
           to: `/address/${address}`,
         }}
       >
@@ -75,26 +67,27 @@ const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBas
     )
   }
   return (
-    <span className="transaction__cell_address_no_link">
-      {isCellBase ? 'Cellbase' : i18n.t('address.unable_decode_address')}
+    <span className={styles.transactionCellAddressNoLink}>
+      {isCellBase ? 'Cellbase' : t('address.unable_decode_address')}
     </span>
   )
 }
 
 const TransactionCellIndexAddress = ({
   cell,
-  cellType,
+  ioType,
   index,
   isAddrNew,
 }: {
-  cell: State.Cell
-  cellType: CellType
+  cell: Cell
+  ioType: IOType
   index: number
   isAddrNew: boolean
 }) => {
+  const { t } = useTranslation()
   const deprecatedAddr = useDeprecatedAddr(cell.addressHash)!
   const newAddr = useNewAddr(cell.addressHash)
-  const address = !isAddrNew ? deprecatedAddr : newAddr
+  const address = isAddrNew ? newAddr : deprecatedAddr
 
   let since
   try {
@@ -112,37 +105,38 @@ const TransactionCellIndexAddress = ({
     // ignore
   }
   return (
-    <TransactionCellAddressPanel>
-      <div className="transaction__cell_index">
+    <div className={styles.transactionCellAddressPanel}>
+      <div className={styles.transactionCellIndex}>
         <div>{`#${index}`}</div>
       </div>
-      <TransactionCellHashPanel highLight={cell.addressHash !== null}>
-        {!cell.fromCellbase && cellType === CellType.Input && (
+      <div className={styles.transactionCellHashPanel} data-is-highlight={cell.addressHash !== null}>
+        {!cell.fromCellbase && ioType === IOType.Input && (
           <span>
-            <TransactionCellArrow cell={cell} cellType={cellType} />
+            <TransactionCellArrow cell={cell} ioType={ioType} />
           </span>
         )}
-        <Addr address={address} isCellBase={cell.fromCellbase} />
-        {cellType === CellType.Output && <TransactionCellArrow cell={cell} cellType={cellType} />}
+        <Addr address={cell.rgbInfo?.address ?? address} isCellBase={cell.fromCellbase} />
+        {ioType === IOType.Output && <TransactionCellArrow cell={cell} ioType={ioType} />}
         {since ? (
           <Tooltip
             placement="top"
-            title={i18n.t(`transaction.since.${since.base}.${since.type}`, {
+            title={t(`transaction.since.${since.base}.${since.type}`, {
               since: since.value,
             })}
           >
             <LockTimeIcon className={styles.locktime} />
           </Tooltip>
         ) : null}
-      </TransactionCellHashPanel>
-    </TransactionCellAddressPanel>
+      </div>
+    </div>
   )
 }
 
-const parseNftInfo = (cell: State.Cell) => {
+const useParseNftInfo = (cell: Cell) => {
+  const { t } = useTranslation()
   if (cell.cellType === 'nrc_721_token') {
     const nftInfo = cell.extraInfo
-    return <TransactionCellNftInfo>{`${nftInfo.symbol} #${nftInfo.amount}`}</TransactionCellNftInfo>
+    return <div className={styles.transactionCellNftInfo}>{`${nftInfo.symbol} #${nftInfo.amount}`}</div>
   }
 
   if (cell.cellType === 'm_nft_issuer') {
@@ -150,84 +144,107 @@ const parseNftInfo = (cell: State.Cell) => {
     if (nftInfo.issuerName) {
       return sliceNftName(nftInfo.issuerName)
     }
-    return i18n.t('transaction.unknown_nft')
+    return t('transaction.unknown_nft')
   }
 
   if (cell.cellType === 'm_nft_class') {
     const nftInfo = cell.extraInfo
-    const className = nftInfo.className ? sliceNftName(nftInfo.className) : i18n.t('transaction.unknown_nft')
-    const limit = nftInfo.total === '0' ? i18n.t('transaction.nft_unlimited') : i18n.t('transaction.nft_limited')
+    const className = nftInfo.className ? sliceNftName(nftInfo.className) : t('transaction.unknown_nft')
+    const limit = nftInfo.total === '0' ? t('transaction.nft_unlimited') : t('transaction.nft_limited')
     const total = nftInfo.total === '0' ? '' : nftInfo.total
-    return <TransactionCellNftInfo>{`${className}\n${limit} ${total}`}</TransactionCellNftInfo>
+    return <div className={styles.transactionCellNftInfo}>{`${className}\n${limit} ${total}`}</div>
   }
 
   if (cell.cellType === 'm_nft_token') {
     const nftInfo = cell.extraInfo
-    const className = nftInfo.className ? sliceNftName(nftInfo.className) : i18n.t('transaction.unknown_nft')
+    const className = nftInfo.className ? sliceNftName(nftInfo.className) : t('transaction.unknown_nft')
     const total = nftInfo.total === '0' ? '' : ` / ${nftInfo.total}`
-    return <TransactionCellNftInfo>{`${className}\n#${parseInt(nftInfo.tokenId, 16)}${total}`}</TransactionCellNftInfo>
+    return (
+      <div className={styles.transactionCellNftInfo}>{`${className}\n#${parseInt(nftInfo.tokenId, 16)}${total}`}</div>
+    )
   }
 }
 
-const TransactionCellDetail = ({ cell }: { cell: State.Cell }) => {
-  let detailTitle = i18n.t('transaction.ckb_capacity')
+export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
+  const { t } = useTranslation()
+  let detailTitle = t('transaction.ckb_capacity')
   let detailIcon
   let tooltip: string | ReactNode = ''
+  const nftInfo = useParseNftInfo(cell)
   switch (cell.cellType) {
     case 'nervos_dao_deposit':
-      detailTitle = i18n.t('transaction.nervos_dao_deposit')
+      detailTitle = t('transaction.nervos_dao_deposit')
       detailIcon = NervosDAODepositIcon
       break
     case 'nervos_dao_withdrawing':
-      detailTitle = i18n.t('transaction.nervos_dao_withdraw')
+      detailTitle = t('transaction.nervos_dao_withdraw')
       detailIcon = NervosDAOWithdrawingIcon
       break
     case 'udt':
-      detailTitle = i18n.t('transaction.udt_cell')
+      detailTitle = t('transaction.udt_cell')
       detailIcon = UDTTokenIcon
       tooltip = `Capacity: ${shannonToCkbDecimal(cell.capacity, 8)} CKB`
       break
     case 'm_nft_issuer':
-      detailTitle = i18n.t('transaction.m_nft_issuer')
+      detailTitle = t('transaction.m_nft_issuer')
       detailIcon = NFTIssuerIcon
-      tooltip = parseNftInfo(cell)
+      tooltip = nftInfo
       break
     case 'm_nft_class':
-      detailTitle = i18n.t('transaction.m_nft_class')
+      detailTitle = t('transaction.m_nft_class')
       detailIcon = NFTClassIcon
-      tooltip = parseNftInfo(cell)
+      tooltip = nftInfo
       break
     case 'm_nft_token':
-      detailTitle = i18n.t('transaction.m_nft_token')
+      detailTitle = t('transaction.m_nft_token')
       detailIcon = NFTTokenIcon
-      tooltip = parseNftInfo(cell)
+      tooltip = nftInfo
       break
     case 'nrc_721_token':
-      detailTitle = i18n.t('transaction.nrc_721_token')
+      detailTitle = t('transaction.nrc_721_token')
       detailIcon = NFTTokenIcon
-      tooltip = parseNftInfo(cell)
+      tooltip = nftInfo
       break
     case 'cota_registry': {
-      detailTitle = i18n.t('transaction.cota_registry')
+      detailTitle = t('transaction.cota_registry')
       detailIcon = CoTARegCellIcon
       tooltip = detailTitle
       break
     }
     case 'cota_regular': {
-      detailTitle = i18n.t('transaction.cota')
+      detailTitle = t('transaction.cota')
       detailIcon = CoTACellIcon
       tooltip = detailTitle
       break
     }
     case 'spore_cluster': {
-      detailTitle = i18n.t('transaction.spore_cluster')
+      detailTitle = t('nft.dob')
       detailIcon = SporeCellIcon
+      tooltip = t('transaction.spore_cluster')
+      break
+    }
+    case 'did_cell':
+    case 'spore_cell': {
+      detailTitle = t('nft.dob')
+      detailIcon = SporeCellIcon
+      tooltip = t('transaction.spore')
+      break
+    }
+    case 'omiga_inscription': {
+      detailTitle = 'xUDT'
+      detailIcon = UDTTokenIcon
       tooltip = detailTitle
       break
     }
-    case 'spore_cell': {
-      detailTitle = i18n.t('transaction.spore')
-      detailIcon = SporeCellIcon
+    case 'xudt_compatible': {
+      detailTitle = 'xUDT-compatible'
+      detailIcon = UDTTokenIcon
+      tooltip = detailTitle
+      break
+    }
+    case 'xudt': {
+      detailTitle = 'xUDT'
+      detailIcon = UDTTokenIcon
       tooltip = detailTitle
       break
     }
@@ -235,96 +252,119 @@ const TransactionCellDetail = ({ cell }: { cell: State.Cell }) => {
       break
   }
   return (
-    <TransactionCellDetailPanel isWithdraw={cell.cellType === 'nervos_dao_withdrawing'}>
-      <div className="transaction__cell__detail__panel">
-        {tooltip ? (
-          <Tooltip placement="top" title={tooltip}>
-            <img src={detailIcon} alt="cell detail" />
-          </Tooltip>
-        ) : (
-          detailIcon && <img src={detailIcon} alt="cell detail" />
-        )}
-        <div>{detailTitle}</div>
-      </div>
-    </TransactionCellDetailPanel>
+    <div className={styles.transactionCellDetailPanel} data-is-withdraw={cell.cellType === 'nervos_dao_withdrawing'}>
+      {tooltip ? (
+        <Tooltip placement="top" title={tooltip}>
+          <img src={detailIcon} alt="cell detail" />
+        </Tooltip>
+      ) : (
+        detailIcon && <img src={detailIcon} alt="cell detail" />
+      )}
+      <div>{detailTitle}</div>
+    </div>
   )
 }
 
-const TransactionCellInfo = ({ cell, children }: { cell: State.Cell; children: string | ReactNode }) => {
+export const TransactionCellInfo = ({
+  cell,
+  children,
+  isDefaultStyle = true,
+}: {
+  cell: CellBasicInfo
+  children: string | ReactNode
+  isDefaultStyle?: boolean
+}) => {
   const [showModal, setShowModal] = useState(false)
   return (
-    <TransactionCellInfoPanel>
+    <div className={styles.transactionCellInfoPanel}>
       <SimpleButton
-        className="transaction__cell__info__content"
+        className={isDefaultStyle ? styles.transactionCellInfoContent : ''}
         onClick={() => {
           setShowModal(true)
         }}
       >
         <div>{children}</div>
-        <div className="transaction__cell__info__separate" />
+        <div className={styles.transactionCellInfoSeparate} />
       </SimpleButton>
+
       <SimpleModal isShow={showModal} setIsShow={setShowModal}>
-        <TransactionCellDetailModal>
-          <TransactionCellScript cell={cell} onClose={() => setShowModal(false)} />
-        </TransactionCellDetailModal>
+        <CellModal cell={cell} onClose={() => setShowModal(false)} />
       </SimpleModal>
-    </TransactionCellInfoPanel>
+    </div>
   )
 }
 
-const TransactionCellCapacityAmount = ({ cell }: { cell: State.Cell }) => {
-  if (cell.cellType === 'udt') {
-    const udtInfo = cell.extraInfo
-    if (udtInfo.published) {
-      return <span>{`${parseUDTAmount(udtInfo.amount, udtInfo.decimal)} ${udtInfo.uan || udtInfo.symbol}`}</span>
+const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
+  const { t } = useTranslation()
+  const isUDTCell = UDT_CELL_TYPES.findIndex(type => type === cell.cellType) !== -1
+  if (isUDTCell) {
+    const udtInfo = cell.extraInfo as UDTInfo
+    const { amount } = udtInfo
+
+    if (udtInfo.decimal && udtInfo.symbol) {
+      return <span>{`${parseUDTAmount(amount, udtInfo.decimal)} ${udtInfo.symbol}`}</span>
     }
-    return <span>{`${i18n.t('udt.unknown_token')} #${udtInfo.typeHash.substring(udtInfo.typeHash.length - 4)}`}</span>
+
+    return (
+      <span>{`${t('udt.unknown_token')} #${udtInfo.typeHash?.substring(udtInfo.typeHash.length - 4) ?? '?'}`}</span>
+    )
   }
-  return <DecimalCapacity value={localeNumberString(shannonToCkb(cell.capacity))} />
+
+  return <Capacity capacity={shannonToCkb(cell.capacity)} layout="responsive" />
 }
 
 const TransactionCellMobileItem = ({ title, value = null }: { title: string | ReactNode; value?: ReactNode }) => (
-  <TransactionCellCardContent>
-    <div className="transaction__cell__card__title">{title}</div>
-    <div className="transaction__cell__card__value">{value}</div>
-  </TransactionCellCardContent>
+  <div className={styles.transactionCellCardContent}>
+    <div className={styles.transactionCellCardTitle}>{title}</div>
+    <div className={styles.transactionCellCardValue}>{value}</div>
+  </div>
 )
 
 export default ({
   cell,
-  cellType,
+  ioType,
   index,
   txHash,
   showReward,
   isAddrNew,
 }: {
-  cell: State.Cell
-  cellType: CellType
+  cell: Cell
+  ioType: IOType
   index: number
   txHash?: string
   showReward?: boolean
   isAddrNew: boolean
 }) => {
   const isMobile = useIsMobile()
+  const { t } = useTranslation()
+
+  const cellbaseReward = (() => {
+    if (!showReward) {
+      return null
+    }
+
+    return <TransactionReward reward={cell} />
+  })()
+
   if (isMobile) {
     return (
-      <TransactionCellCardPanel>
-        <div className="transaction__cell__card__separate" />
+      <div className={styles.transactionCellCardPanel}>
+        <div className={styles.transactionCellCardSeparate} />
         <TransactionCellMobileItem
           title={
-            cell.fromCellbase && cellType === CellType.Input ? (
-              <Cellbase cell={cell} cellType={cellType} isDetail />
+            cell.fromCellbase && ioType === IOType.Input ? (
+              <Cellbase cell={cell} isDetail />
             ) : (
-              <TransactionCellIndexAddress cell={cell} cellType={cellType} index={index} isAddrNew={isAddrNew} />
+              <TransactionCellIndexAddress cell={cell} ioType={ioType} index={index} isAddrNew={isAddrNew} />
             )
           }
         />
-        {cell.fromCellbase && cellType === CellType.Input ? (
-          <TransactionReward showReward={showReward} cell={cell} />
+        {cell.fromCellbase && showReward && ioType === IOType.Input ? (
+          cellbaseReward
         ) : (
           <>
             <TransactionCellMobileItem
-              title={i18n.t('transaction.detail')}
+              title={t('transaction.detail')}
               value={
                 <TransactionCellInfo cell={cell}>
                   {!cell.fromCellbase && <TransactionCellDetail cell={cell} />}
@@ -332,42 +372,38 @@ export default ({
               }
             />
             <TransactionCellMobileItem
-              title={i18n.t('transaction.capacity')}
+              title={t('transaction.capacity')}
               value={<TransactionCellCapacityAmount cell={cell} />}
             />
           </>
         )}
-      </TransactionCellCardPanel>
+      </div>
     )
   }
 
   return (
-    <TransactionCellPanel id={cellType === CellType.Output ? `output_${index}_${txHash}` : ''}>
-      <TransactionCellContentPanel isCellbase={cell.fromCellbase}>
-        <div className="transaction__cell__address">
-          {cell.fromCellbase && cellType === CellType.Input ? (
-            <Cellbase cell={cell} cellType={cellType} isDetail />
+    <div className={styles.transactionCellPanel} id={ioType === IOType.Output ? `output_${index}_${txHash}` : ''}>
+      <div className={styles.transactionCellContentPanel} data-is-cell-base={cell.fromCellbase ?? false}>
+        <div className={styles.transactionCellAddress}>
+          {cell.fromCellbase && ioType === IOType.Input ? (
+            <Cellbase cell={cell} isDetail />
           ) : (
-            <TransactionCellIndexAddress cell={cell} cellType={cellType} index={index} isAddrNew={isAddrNew} />
+            <TransactionCellIndexAddress cell={cell} ioType={ioType} index={index} isAddrNew={isAddrNew} />
           )}
         </div>
 
-        <div className="transaction__cell_detail">
-          {cell.fromCellbase && cellType === CellType.Input ? (
-            <TransactionReward showReward={showReward} cell={cell} />
-          ) : (
-            <TransactionCellDetail cell={cell} />
-          )}
+        <div className={styles.transactionCellDetail}>
+          {cell.fromCellbase && ioType === IOType.Input ? cellbaseReward : <TransactionCellDetail cell={cell} />}
         </div>
 
-        <div className="transaction__cell_capacity">
+        <div className={styles.transactionCellCapacity}>
           <TransactionCellCapacityAmount cell={cell} />
         </div>
 
-        <div className="transaction__detail__cell_info">
+        <div className={styles.transactionDetailCellInfo}>
           <TransactionCellInfo cell={cell}>Cell Info</TransactionCellInfo>
         </div>
-      </TransactionCellContentPanel>
-    </TransactionCellPanel>
+      </div>
+    </div>
   )
 }

@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Link } from '../../Link'
 
 export const MobileMenuItem = styled.div`
   display: flex;
@@ -7,7 +8,7 @@ export const MobileMenuItem = styled.div`
   margin: 0 56px;
 `
 
-export const MobileMenuLink = styled.a`
+export const MobileMenuOuterLink = styled.a`
   color: white;
   display: flex;
   align-items: center;
@@ -15,51 +16,41 @@ export const MobileMenuLink = styled.a`
   font-weight: regular;
   margin-top: 22px;
   height: 21px;
+  gap: 8px;
 
   &:hover {
     font-weight: medium;
     color: ${props => props.theme.primary};
+
+    svg {
+      filter: drop-shadow(0 0 4px var(--primary-color));
+      mix-blend-mode: difference;
+    }
   }
 `
+
+export const MobileMenuInnerLink = styled(Link)`
+  color: white;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: regular;
+  margin-top: 22px;
+  height: 21px;
+  gap: 8px;
+
+  &:hover {
+    font-weight: medium;
+    color: ${props => props.theme.primary};
+
+    svg {
+      filter: drop-shadow(0 0 4px var(--primary-color));
+      mix-blend-mode: difference;
+    }
+  }
+`
+
 export const HeaderMenuPanel = styled.div`
   display: flex;
   align-items: center;
-
-  .header__menus__item {
-    color: white;
-    display: flex;
-    align-items: center;
-    padding-left: 60px;
-    font-size: 14px;
-    font-weight: regular;
-
-    @media (max-width: 1920px) {
-      padding-left: 40px;
-    }
-
-    @media (max-width: 1440px) {
-      padding-left: 24px;
-    }
-
-    @media (max-width: 960px) {
-      padding-left: 16px;
-    }
-
-    @media (max-width: 900px) {
-      padding-left: 10px;
-    }
-
-    @media (max-width: 840px) {
-      padding-left: 4px;
-    }
-
-    @media (max-width: 750px) {
-      padding-left: 0;
-    }
-
-    &:hover {
-      font-weight: medium;
-      color: ${props => props.theme.primary};
-    }
-  }
 `

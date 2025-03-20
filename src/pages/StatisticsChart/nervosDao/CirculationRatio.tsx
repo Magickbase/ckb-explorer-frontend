@@ -1,17 +1,19 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
-import { parseDateNoTime } from '../../../utils/date'
+import dayjs from 'dayjs'
+import { useCurrentLanguage } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
-import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
-import { ChartCachedKeys } from '../../../constants/cache'
-import { fetchStatisticCirculationRatio } from '../../../service/http/fetcher'
+import { DATA_ZOOM_CONFIG, assertIsArray } from '../../../utils/chart'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
-const getOption = (
-  statisticCirculationRatios: State.StatisticCirculationRatio[],
-  chartColor: State.App['chartColor'],
+const useOption = (
+  statisticCirculationRatios: ChartItem.CirculationRatio[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -31,15 +33,14 @@ const getOption = (
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 185 : 165)
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
-              dataList[0].data[0]
-            }</div>`
+          formatter: dataList => {
+            assertIsArray(dataList)
+            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 185 : 165)
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'))} ${dataList[0].data[0]}</div>`
             if (dataList[0].data) {
-              result += `<div>${tooltipColor(chartColor.colors[0])}${widthSpan(
-                i18n.t('statistic.circulation_ratio'),
-              )} ${dataList[0].data[1]}%</div>`
+              result += `<div>${tooltipColor(chartColor.colors[0])}${widthSpan(t('statistic.circulation_ratio'))} ${
+                dataList[0].data[1]
+              }%</div>`
             }
             return result
           },
@@ -49,7 +50,7 @@ const getOption = (
     dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
     xAxis: [
       {
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.date'),
+        name: isMobile || isThumbnail ? '' : t('statistic.date'),
         nameLocation: 'middle',
         nameGap: 30,
         type: 'category',
@@ -59,7 +60,7 @@ const getOption = (
     yAxis: [
       {
         position: 'left',
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.circulation_ratio'),
+        name: isMobile || isThumbnail ? '' : t('statistic.circulation_ratio'),
         nameTextStyle: {
           align: 'left',
         },
@@ -77,7 +78,7 @@ const getOption = (
     ],
     series: [
       {
-        name: i18n.t('statistic.circulation_ratio'),
+        name: t('statistic.circulation_ratio'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -86,14 +87,14 @@ const getOption = (
     ],
     dataset: {
       source: statisticCirculationRatios.map(data => [
-        parseDateNoTime(data.createdAtUnixtimestamp),
+        dayjs(+data.createdAtUnixtimestamp * 1000).format('YYYY/MM/DD'),
         (+data.circulationRatio * 100).toFixed(2),
       ]),
     },
   }
 }
 
-const toCSV = (statisticCirculationRatios: State.StatisticCirculationRatio[]) =>
+const toCSV = (statisticCirculationRatios: ChartItem.CirculationRatio[]) =>
   statisticCirculationRatios
     ? statisticCirculationRatios.map(data => [data.createdAtUnixtimestamp, data.circulationRatio])
     : []
@@ -105,11 +106,10 @@ export const CirculationRatioChart = ({ isThumbnail = false }: { isThumbnail?: b
       title={t('statistic.circulation_ratio')}
       description={t('statistic.deposit_to_circulation_ratio_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticCirculationRatio}
-      getEChartOption={getOption}
+      fetchData={explorerService.api.fetchStatisticCirculationRatio}
+      getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.DepositCirculationRatio}
-      cacheMode="date"
+      queryKey="fetchStatisticCirculationRatio"
     />
   )
 }

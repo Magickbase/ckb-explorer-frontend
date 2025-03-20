@@ -1,16 +1,19 @@
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
+import { useCurrentLanguage } from '../../../utils/i18n'
 import { tooltipColor, tooltipWidth, SeriesItem, SmartChartPage } from '../common'
-import { DATA_ZOOM_CONFIG } from '../../../utils/chart'
-import { ChartCachedKeys } from '../../../constants/cache'
-import { fetchStatisticInflationRate } from '../../../service/http/fetcher'
+import { DATA_ZOOM_CONFIG, assertSerialsDataIsString, assertIsArray, assertSerialsItem } from '../../../utils/chart'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { ChartColorConfig } from '../../../constants/common'
 
-const getOption = (
-  statisticInflationRates: State.StatisticInflationRate[],
-  chartColor: State.App['chartColor'],
+const useOption = (
+  statisticInflationRates: ChartItem.InflationRate[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -26,29 +29,34 @@ const getOption = (
     containLabel: true,
   }
 
-  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 220 : 80)
+  const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 220 : 80)
 
-  const parseTooltip = ({ seriesName, data, color }: SeriesItem & { data: string }): string => {
-    if (seriesName === i18n.t('statistic.nominal_inflation_rate')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.nominal_inflation_rate'))} ${data}%</div>`
+  const useTooltip = () => {
+    return ({ seriesName, data, color }: SeriesItem & { data: string }): string => {
+      if (seriesName === t('statistic.nominal_inflation_rate')) {
+        return `<div>${tooltipColor(color)}${widthSpan(t('statistic.nominal_inflation_rate'))} ${data}%</div>`
+      }
+      if (seriesName === t('statistic.nominal_apc')) {
+        return `<div>${tooltipColor(color)}${widthSpan(t('statistic.nominal_apc'))} ${data}%</div>`
+      }
+      if (seriesName === t('statistic.real_inflation_rate')) {
+        return `<div>${tooltipColor(color)}${widthSpan(t('statistic.real_inflation_rate'))} ${data}%</div>`
+      }
+      return ''
     }
-    if (seriesName === i18n.t('statistic.nominal_apc')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.nominal_apc'))} ${data}%</div>`
-    }
-    if (seriesName === i18n.t('statistic.real_inflation_rate')) {
-      return `<div>${tooltipColor(color)}${widthSpan(i18n.t('statistic.real_inflation_rate'))} ${data}%</div>`
-    }
-    return ''
   }
+  const parseTooltip = useTooltip()
   return {
     color: chartColor.moreColors,
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const list = dataList as Array<SeriesItem & { data: string }>
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.year'))} ${list[0].name}</div>`
-            list.forEach(data => {
+          formatter: dataList => {
+            assertIsArray(dataList)
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.year'))} ${dataList[0].name}</div>`
+            dataList.forEach(data => {
+              assertSerialsItem(data)
+              assertSerialsDataIsString(data)
               result += parseTooltip(data)
             })
             return result
@@ -56,17 +64,18 @@ const getOption = (
         }
       : undefined,
     legend: {
+      icon: 'roundRect',
       data: isThumbnail
         ? []
         : [
             {
-              name: i18n.t('statistic.real_inflation_rate'),
+              name: t('statistic.real_inflation_rate'),
             },
             {
-              name: i18n.t('statistic.nominal_apc'),
+              name: t('statistic.nominal_apc'),
             },
             {
-              name: i18n.t('statistic.nominal_inflation_rate'),
+              name: t('statistic.nominal_inflation_rate'),
             },
           ],
     },
@@ -74,7 +83,7 @@ const getOption = (
     dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
     xAxis: [
       {
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.year'),
+        name: isMobile || isThumbnail ? '' : t('statistic.year'),
         nameLocation: 'middle',
         nameGap: 30,
         type: 'category',
@@ -102,7 +111,7 @@ const getOption = (
     ],
     series: [
       {
-        name: i18n.t('statistic.nominal_inflation_rate'),
+        name: t('statistic.nominal_inflation_rate'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -113,7 +122,7 @@ const getOption = (
         data: statisticInflationRates.map(data => Number(data.nominalInflationRate).toFixed(4)),
       },
       {
-        name: i18n.t('statistic.nominal_apc'),
+        name: t('statistic.nominal_apc'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -124,7 +133,7 @@ const getOption = (
         data: statisticInflationRates.map(data => Number(data.nominalApc).toFixed(4)),
       },
       {
-        name: i18n.t('statistic.real_inflation_rate'),
+        name: t('statistic.real_inflation_rate'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -139,25 +148,7 @@ const getOption = (
   }
 }
 
-const fetchStatisticInflationRates = async () => {
-  const {
-    attributes: { nominalApc, nominalInflationRate, realInflationRate },
-  } = await fetchStatisticInflationRate()
-  const statisticInflationRates = []
-  for (let i = 0; i < nominalApc.length; i++) {
-    if (i % 6 === 0 || i === nominalApc.length - 1) {
-      statisticInflationRates.push({
-        year: i % 6 === 0 ? Math.floor(i / 6) * 0.5 : 50,
-        nominalApc: nominalApc[i],
-        nominalInflationRate: nominalInflationRate[i],
-        realInflationRate: realInflationRate[i],
-      })
-    }
-  }
-  return statisticInflationRates
-}
-
-const toCSV = (statisticInflationRates: State.StatisticInflationRate[]) =>
+const toCSV = (statisticInflationRates: ChartItem.InflationRate[]) =>
   statisticInflationRates
     ? statisticInflationRates.map(data => [
         data.year,
@@ -174,11 +165,10 @@ export const InflationRateChart = ({ isThumbnail = false }: { isThumbnail?: bool
       title={t('statistic.inflation_rate')}
       description={t('statistic.inflation_rate_description')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticInflationRates}
-      getEChartOption={getOption}
+      fetchData={explorerService.api.fetchStatisticInflationRate}
+      getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.InflationRate}
-      cacheMode="forever"
+      queryKey="fetchStatisticInflationRate"
     />
   )
 }

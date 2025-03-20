@@ -1,6 +1,6 @@
 import { memo, ReactNode } from 'react'
 import { Col, Row } from 'antd'
-import i18n from '../../utils/i18n'
+import { useTranslation } from 'react-i18next'
 import { TableTitleRowItem, TableContentRowItem, HighlightLink, TableMinerContentPanel } from './styled'
 import AddressText from '../AddressText'
 
@@ -10,7 +10,15 @@ export const TableTitleItem = ({ width, title }: { width: string; title: string 
   </TableTitleRowItem>
 )
 
-export const TableContentItem = ({ width, content, to }: { width: string; content: string | ReactNode; to?: any }) => {
+export const TableContentItem = ({
+  width,
+  content,
+  to,
+}: {
+  width: string
+  content: string | ReactNode
+  to?: string
+}) => {
   const highLight = to !== undefined
   return (
     <TableContentRowItem width={width}>
@@ -31,15 +39,16 @@ export const TableMinerContentItem = memo(
     textCenter?: boolean
     fontSize?: string
   }) => {
+    const { t } = useTranslation()
     return (
       <TableMinerContentPanel width={width} fontSize={fontSize}>
         {content ? (
           <Row justify={textCenter ? 'center' : 'start'}>
             <Col span={20} xl={16}>
               <AddressText
-                className="table__miner__text"
+                className="tableMinerText"
                 linkProps={{
-                  className: 'table__miner__content',
+                  className: 'tableMinerContent',
                   to: `/address/${content}`,
                 }}
               >
@@ -48,7 +57,7 @@ export const TableMinerContentItem = memo(
             </Col>
           </Row>
         ) : (
-          <div className="table__miner__text__disable">{i18n.t('address.unable_decode_address')}</div>
+          <div className="tableMinerTextDisable">{t('address.unable_decode_address')}</div>
         )}
       </TableMinerContentPanel>
     )

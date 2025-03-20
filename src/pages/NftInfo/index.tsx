@@ -1,176 +1,152 @@
-import type { AxiosResponse } from 'axios'
-import { Link, useParams, useHistory } from 'react-router-dom'
-import { useQuery } from 'react-query'
+import { useParams, useHistory } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { Tooltip } from 'antd'
-import { Base64 } from 'js-base64'
-import { hexToBytes } from '@nervosnetwork/ckb-sdk-utils'
-import i18n from '../../utils/i18n'
-import NftItemTransfers, { TransferListRes } from '../../components/NftItemTransfers'
+import { useTranslation } from 'react-i18next'
+import { Link } from '../../components/Link'
+import NftItemTransfers from './NftItemTransfers'
 import Pagination from '../../components/Pagination'
-import { ReactComponent as Cover } from '../../assets/nft_cover.svg'
-import { v2AxiosIns } from '../../service/http/fetcher'
+import { explorerService } from '../../services/ExplorerService'
 import { getPrimaryColor } from '../../constants/common'
 import styles from './styles.module.scss'
-import { patchMibaoImg, handleNftImgError } from '../../utils/util'
-import { parseSporeCellData } from '../../utils/spore'
-import { useSearchParams } from '../../utils/hook'
+import { useSearchParams } from '../../hooks'
+import DobTraits from '../../components/DobTraits'
+import { DEPRECATED_DOB_COLLECTION } from '../../constants/marks'
+import Annotation from '../../components/Annotation'
+import Cover from './Cover'
+import { ReactComponent as NameMissing } from './NameMissing.svg'
+import { formatNftDisplayId } from '../../utils/util'
 
 const primaryColor = getPrimaryColor()
+const UNIQUE_ITEM_LABEL = 'Unique Item'
 
 const NftInfo = () => {
   const { id, collection } = useParams<Record<'collection' | 'id', string>>()
   const history = useHistory()
-  const { page = '1' } = useSearchParams('page')
-  const { data } = useQuery<
-    AxiosResponse<{
-      id: number
-      collection_id: number
-      token_id: string
-      name: string | null
-      icon_url: string | null
-      owner: string | null
-      metadata_url: string | null
-      standard: string | null
-      cell: {
-        status: string
-        tx_hash: string
-        cell_index: number
-        data: string | null
-      } | null
-      collection: {
-        id: number
-        standard: string
-        name: string
-        creator: string
-        icon_url: string
-      }
-    }>
-  >(['nft-item-info', collection, id], () => v2AxiosIns(`nft/collections/${collection}/items/${id}`))
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation()
 
-  const { isLoading: isTransferListLoading, data: transferListRes } = useQuery<AxiosResponse<TransferListRes>>(
+  const { page = '1' } = useSearchParams('page')
+
+  const { data } = useQuery(['nft-item-info', collection, id], () =>
+    explorerService.api.fetchNFTCollectionItem(collection, id),
+  )
+
+  const { isLoading: isTransferListLoading, data: transferListRes } = useQuery(
     ['nft-item-transfer-list', collection, id, page],
-    () =>
-      v2AxiosIns(`/nft/transfers`, {
-        params: {
-          page,
-          collection_id: collection,
-          token_id: id,
-        },
-      }),
+    () => explorerService.api.fetchNFTCollectionTransferList(collection, page, id),
   )
 
   const handlePageChange = (pageNo: number) => {
     if (pageNo === +page) {
       return
     }
-    history.push(`/nft-info/${collection}/${id}?page=${pageNo}`)
+    history.push(`/${language}/nft-info/${collection}/${id}?page=${pageNo}`)
   }
-  const coverUrl = data?.data.icon_url || data?.data.collection.icon_url
 
-  const renderCover = () => {
-    const cell = data?.data.cell
-    const standard = data?.data.standard
-
-    if (standard === 'spore' && cell && cell.data) {
-      const sporeData = parseSporeCellData(cell.data)
-      if (sporeData.contentType.slice(0, 5) === 'image') {
-        const base64data = Base64.fromUint8Array(hexToBytes(`0x${sporeData.content}`))
-
-        return (
-          <img
-            src={`data:${sporeData.contentType};base64,${base64data}`}
-            alt="cover"
-            loading="lazy"
-            className={styles.cover}
-          />
-        )
-      }
-    }
-
-    if (coverUrl) {
-      return (
-        <img
-          src={`${patchMibaoImg(coverUrl)}?size=medium&tid=${data?.data.token_id}`}
-          alt="cover"
-          loading="lazy"
-          className={styles.cover}
-          onError={handleNftImgError}
-        />
-      )
-    }
-
-    return <Cover className={styles.cover} />
-  }
+  const annotation = DEPRECATED_DOB_COLLECTION.find(item => item.id === collection)
 
   return (
     <div className={styles.container}>
       <div className={styles.overview}>
-        {renderCover()}
+        <Cover item={data ?? null} />
         <div className={styles.info}>
-          <div className={styles.name}>{data ? `${data.data.collection.name} #${data.data.token_id}` : '-'}</div>
+          <div className={styles.name}>
+            {data
+              ? `${data.collection.name ?? UNIQUE_ITEM_LABEL} ${
+                  data.standard === 'spore' ? '' : '#'
+                }${formatNftDisplayId(data.token_id, data.standard)}`
+              : '-'}
+          </div>
           <div className={styles.items}>
-            <dl>
-              <dt>{i18n.t('nft.owner')}</dt>
-              <dd>
-                {data?.data.owner ? (
+            <div className={styles.item}>
+              <div>{t('nft.owner')}</div>
+              <div>
+                {data?.owner ? (
                   <Link
-                    to={`/address/${data.data.owner}`}
+                    to={`/address/${data.owner}`}
                     style={{
                       fontWeight: 700,
                       color: primaryColor,
                     }}
                   >
-                    <Tooltip title={data.data.owner}>
-                      <span className="monospace">{`${data.data.owner.slice(0, 12)}...${data.data.owner.slice(
-                        -12,
-                      )}`}</span>
+                    <Tooltip title={data.owner}>
+                      <span className="monospace">{`${data.owner.slice(0, 12)}...${data.owner.slice(-12)}`}</span>
                     </Tooltip>
                   </Link>
                 ) : (
                   '-'
                 )}
-              </dd>
-            </dl>
-            <dl>
-              <dt>{i18n.t('nft.minter_address')}</dt>
-              <dd>
-                {data?.data.collection.creator ? (
+              </div>
+            </div>
+            <div className={styles.item}>
+              <div>{t('nft.minter_address')}</div>
+              <div>
+                {data?.collection.creator ? (
                   <Link
-                    to={`/address/${data.data.collection.creator}`}
+                    to={`/address/${data.collection.creator}`}
                     style={{
                       fontWeight: 700,
                       color: primaryColor,
                     }}
                   >
-                    <Tooltip title={data.data.collection.creator}>
-                      <span className="monospace">{`${data.data.collection.creator.slice(
+                    <Tooltip title={data.collection.creator}>
+                      <span className="monospace">{`${data.collection.creator.slice(
                         0,
                         12,
-                      )}...${data.data.collection.creator.slice(-12)}`}</span>
+                      )}...${data.collection.creator.slice(-12)}`}</span>
                     </Tooltip>
                   </Link>
                 ) : (
                   '-'
                 )}
-              </dd>
-            </dl>
-            <dl>
-              <dt>Token ID</dt>
-              <dd>{`#${data?.data.token_id}`}</dd>
-            </dl>
-            <dl>
-              <dt>{i18n.t('nft.standard')}</dt>
-              <dd>{data ? i18n.t(`nft.${data.data.collection.standard}`) : '-'}</dd>
-            </dl>
+              </div>
+            </div>
+            <div className={styles.item}>
+              <div>Collection</div>
+              <div>
+                <Link to={`/nft-collections/${collection}`} className={styles.collection}>
+                  {data?.collection.name ?? <NameMissing />}
+                </Link>
+              </div>
+            </div>
+            <div className={styles.item}>
+              <div>Token ID</div>
+              <div>{`${data?.standard === 'spore' ? '' : '#'}${formatNftDisplayId(
+                data?.token_id ?? '',
+                data?.standard ?? null,
+              )}`}</div>
+            </div>
+            <div className={styles.item}>
+              <div>{t('nft.standard')}</div>
+              <div>
+                {data ? t(`nft.${data.collection.standard === 'spore' ? 'dob' : data.collection.standard}`) : '-'}
+              </div>
+            </div>
+            {data?.dob ? (
+              <div className={styles.item}>
+                <div>{t('nft.traits')}</div>
+                <DobTraits dob={data.dob} />
+              </div>
+            ) : null}
+            {annotation ? (
+              <div className={styles.item}>
+                <div>{t(`common.extra`)}</div>
+                <div className={styles.extra}>
+                  <Annotation content={annotation.reason} />
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
       <div>
-        <div className={styles.tab}>{i18n.t(`nft.activity`)}</div>
-        <NftItemTransfers list={transferListRes?.data.data ?? []} isLoading={isTransferListLoading} />
+        <div className={styles.tab}>{t(`nft.activity`)}</div>
+        <NftItemTransfers list={transferListRes?.data ?? []} isLoading={isTransferListLoading} />
         <Pagination
-          currentPage={transferListRes?.data.pagination.page ?? 1}
-          totalPages={transferListRes?.data.pagination.last ?? 1}
+          currentPage={transferListRes?.pagination.page ?? 1}
+          totalPages={transferListRes?.pagination.last ?? 1}
           onChange={handlePageChange}
         />
       </div>

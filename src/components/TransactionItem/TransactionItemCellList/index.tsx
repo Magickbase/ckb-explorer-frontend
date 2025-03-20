@@ -1,7 +1,9 @@
 import { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { Link } from '../../Link'
 import TransactionCellListPanel from './styled'
-import i18n from '../../../utils/i18n'
+import { Cell } from '../../../models/Cell'
+import { Transaction } from '../../../models/Transaction'
 
 const MAX_CELL_SHOW_SIZE = 10
 
@@ -10,16 +12,19 @@ export default ({
   transaction,
   render,
 }: {
-  cells: State.Cell[]
-  transaction: State.Transaction
-  render: (cell: State.Cell) => ReactNode
-}) => (
-  <TransactionCellListPanel>
-    {cells && cells.map((cell, index) => index < MAX_CELL_SHOW_SIZE && render(cell))}
-    {cells && cells.length >= MAX_CELL_SHOW_SIZE && (
-      <div className="transaction_item__view_all">
-        <Link to={`/transaction/${transaction.transactionHash}`}>{i18n.t('common.view_all')}</Link>
-      </div>
-    )}
-  </TransactionCellListPanel>
-)
+  cells: Cell[]
+  transaction: Transaction
+  render: (cell: Cell) => ReactNode
+}) => {
+  const { t } = useTranslation()
+  return (
+    <TransactionCellListPanel>
+      {cells && cells.map((cell, index) => index < MAX_CELL_SHOW_SIZE && render(cell))}
+      {cells && cells.length >= MAX_CELL_SHOW_SIZE && (
+        <div className="transactionItemViewAll">
+          <Link to={`/transaction/${transaction.transactionHash}`}>{t('common.view_all')}</Link>
+        </div>
+      )}
+    </TransactionCellListPanel>
+  )
+}

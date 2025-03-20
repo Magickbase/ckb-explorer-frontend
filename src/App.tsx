@@ -1,13 +1,16 @@
 import { useMemo } from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { ThemeProvider } from 'styled-components'
-import 'antd/dist/antd.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { DefaultTheme, ThemeProvider } from 'styled-components'
 import Routers from './routes'
 import Toast from './components/Toast'
-import withProviders, { useAppState } from './contexts/providers'
-import useInitApp from './contexts/providers/hook'
 import { isMainnet } from './utils/chain'
-import { DASQueryContextProvider } from './contexts/providers/dasQuery'
+import { DASQueryContextProvider } from './hooks/useDASAccount'
+import { CKBNodeProvider } from './hooks/useCKBNode'
+import { getPrimaryColor, getSecondaryColor } from './constants/common'
+import Decoder from './components/Decoder'
+import config from './config'
+
+const { BACKUP_NODES: backupNodes } = config
 
 const appStyle = {
   width: '100vw',
@@ -15,31 +18,44 @@ const appStyle = {
   maxWidth: '100%',
 }
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+      initialDataUpdatedAt: 0,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchIntervalInBackground: false,
+    },
+  },
+})
 
-const App = withProviders(() => {
-  useInitApp()
-  const { app } = useAppState()
-  const theme = useMemo(
+const App = () => {
+  const theme = useMemo<DefaultTheme>(
     () => ({
-      primary: app.primaryColor,
-      secondary: app.secondaryColor,
+      primary: getPrimaryColor(),
+      secondary: getSecondaryColor(),
     }),
-    [app.primaryColor, app.secondaryColor],
+    [],
   )
 
   return (
-    <ThemeProvider theme={theme}>
-      <div style={appStyle} data-net={isMainnet() ? 'mainnet' : 'testnet'}>
-        <QueryClientProvider client={queryClient}>
-          <DASQueryContextProvider>
-            <Routers />
-            <Toast />
-          </DASQueryContextProvider>
-        </QueryClientProvider>
-      </div>
-    </ThemeProvider>
+    <>
+      <ThemeProvider theme={theme}>
+        <div style={appStyle} data-net={isMainnet() ? 'mainnet' : 'testnet'}>
+          <QueryClientProvider client={queryClient}>
+            <CKBNodeProvider defaultEndpoint={backupNodes[0]}>
+              <DASQueryContextProvider>
+                <Routers />
+                <Toast />
+              </DASQueryContextProvider>
+            </CKBNodeProvider>
+          </QueryClientProvider>
+        </div>
+      </ThemeProvider>
+      <Decoder />
+    </>
   )
-})
+}
 
 export default App

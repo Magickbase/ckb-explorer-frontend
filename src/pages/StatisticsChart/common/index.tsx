@@ -10,41 +10,45 @@ import 'echarts/lib/component/legend'
 import 'echarts/lib/component/markLine'
 import 'echarts/lib/component/dataZoom'
 import 'echarts/lib/component/brush'
+import 'echarts/lib/component/visualMap'
 import echarts from 'echarts/lib/echarts'
-import { Tooltip } from 'antd'
 import { EChartOption, ECharts } from 'echarts'
+import { useTranslation } from 'react-i18next'
+import { useQuery } from '@tanstack/react-query'
 import { LoadingPanel, ChartNoDataPanel, ChartDetailTitle, ChartDetailPanel, ChartNotePanel } from './styled'
 import Loading from '../../../components/Loading'
-import ChartNoDataImage from '../../../assets/chart_no_data.png'
-import ChartNoDataAggronImage from '../../../assets/chart_no_data_aggron.png'
-import HelpIcon from '../../../assets/qa_help.png'
+import ChartNoDataImage from './chart_no_data.png'
+import ChartNoDataAggronImage from './chart_no_data_aggron.png'
 import { isMainnet } from '../../../utils/chain'
 import SmallLoading from '../../../components/Loading/SmallLoading'
-import i18n from '../../../utils/i18n'
 import Content from '../../../components/Content'
-import { useChartQueryWithCache, useIsMobile, usePrevious, useWindowResize } from '../../../utils/hook'
-import { useAppState } from '../../../contexts/providers'
+import { useIsMobile, usePrevious, useWindowResize } from '../../../hooks'
 import { isDeepEqual } from '../../../utils/util'
+import { HelpTip } from '../../../components/HelpTip'
+import { ChartColor, ChartColorConfig } from '../../../constants/common'
 
 const LoadingComp = ({ isThumbnail }: { isThumbnail?: boolean }) => (isThumbnail ? <SmallLoading /> : <Loading show />)
 
-const ChartLoading = ({ show, isThumbnail = false }: { show: boolean; isThumbnail?: boolean }) => (
-  <LoadingPanel isThumbnail={isThumbnail}>
-    {show ? (
-      <LoadingComp isThumbnail={isThumbnail} />
-    ) : (
-      <ChartNoDataPanel isThumbnail={isThumbnail}>
-        <img alt="no data" src={isMainnet() ? ChartNoDataImage : ChartNoDataAggronImage} />
-        <span>{i18n.t('statistic.no_data')}</span>
-      </ChartNoDataPanel>
-    )}
-  </LoadingPanel>
-)
+const ChartLoading = ({ show, isThumbnail = false }: { show: boolean; isThumbnail?: boolean }) => {
+  const { t } = useTranslation()
+  return (
+    <LoadingPanel isThumbnail={isThumbnail}>
+      {show ? (
+        <LoadingComp isThumbnail={isThumbnail} />
+      ) : (
+        <ChartNoDataPanel isThumbnail={isThumbnail}>
+          <img alt="no data" src={isMainnet() ? ChartNoDataImage : ChartNoDataAggronImage} />
+          <span>{t('statistic.no_data')}</span>
+        </ChartNoDataPanel>
+      )}
+    </LoadingPanel>
+  )
+}
 
 const ReactChartCore = ({
   option,
   isThumbnail,
-  clickEvent,
+  onClick,
   notMerge = false,
   lazyUpdate = false,
   style,
@@ -52,7 +56,7 @@ const ReactChartCore = ({
 }: {
   option: EChartOption
   isThumbnail?: boolean
-  clickEvent?: any
+  onClick?: (param: echarts.CallbackDataParams) => void
   notMerge?: boolean
   lazyUpdate?: boolean
   style?: CSSProperties
@@ -61,7 +65,7 @@ const ReactChartCore = ({
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstanceRef = useRef<ECharts | null>(null)
   const prevOption = usePrevious(option)
-  const prevClickEvent = usePrevious(clickEvent)
+  const prevClickEvent = usePrevious(onClick)
 
   useEffect(() => {
     let chartInstance: ECharts | null = null
@@ -78,8 +82,8 @@ const ReactChartCore = ({
         if (!isDeepEqual(prevOption, option, ['formatter'])) {
           chartInstance.setOption(option, { notMerge, lazyUpdate })
         }
-        if (clickEvent && typeof clickEvent === 'function' && clickEvent !== prevClickEvent) {
-          chartInstance.on('click', clickEvent)
+        if (onClick && typeof onClick === 'function' && onClick !== prevClickEvent) {
+          chartInstance.on('click', onClick)
         }
       } catch (error) {
         console.error('error', error)
@@ -88,7 +92,7 @@ const ReactChartCore = ({
         }
       }
     }
-  }, [clickEvent, lazyUpdate, notMerge, option, prevClickEvent, prevOption])
+  }, [onClick, lazyUpdate, notMerge, option, prevClickEvent, prevOption])
 
   useWindowResize(() => {
     if (chartInstanceRef.current) {
@@ -99,7 +103,7 @@ const ReactChartCore = ({
   return <div style={{ height: isThumbnail ? '200px' : '70vh', ...style }} className={className} ref={chartRef} />
 }
 
-const dataToCsv = (data: any[] | undefined) => {
+const dataToCsv = (data?: (string | number)[][]) => {
   if (!data || data.length === 0) {
     return undefined
   }
@@ -116,41 +120,50 @@ const ChartPage = ({
   children,
   description,
   data,
+  style,
 }: {
+  style?: CSSProperties
   title: string
   children: ReactNode
   description?: string
   data?: (string | number)[][]
 }) => {
   const csv = dataToCsv(data)
+  const { t } = useTranslation()
   const fileName = (title.indexOf(' (') > 0 ? title.substring(0, title.indexOf(' (')) : title)
     .replace(/&/g, '')
     .toLowerCase()
     .replace(/\s+/g, '-')
   return (
     <Content>
-      <ChartDetailTitle className="container">
-        <div className="chart__detail__title__panel">
+      <ChartDetailTitle
+        className="container"
+        // TODO: refactor
+        style={{ borderTopLeftRadius: style?.borderRadius, borderTopRightRadius: style?.borderRadius }}
+      >
+        <div className="chartDetailTitlePanel">
           <span>{title}</span>
-          {description && (
-            <Tooltip placement="bottom" title={description}>
-              <img src={HelpIcon} alt="chart help" />
-            </Tooltip>
-          )}
+          {description && <HelpTip placement="bottom" title={description} iconProps={{ alt: 'chart help' }} />}
         </div>
         {csv && (
           <a
-            className="chart__detail__title__download"
+            className="chartDetailTitleDownload"
             rel="noopener noreferrer"
             href={`data:text/csv;charset=utf-8,${encodeURI(csv)}`}
             target="_blank"
             download={`${fileName}.csv`}
           >
-            {i18n.t('statistic.download_data')}
+            {t('statistic.download_data')}
           </a>
         )}
       </ChartDetailTitle>
-      <ChartDetailPanel className="container">{children}</ChartDetailPanel>
+      <ChartDetailPanel
+        className="container"
+        // TODO: refactor
+        style={{ borderBottomLeftRadius: style?.borderRadius, borderBottomRightRadius: style?.borderRadius }}
+      >
+        {children}
+      </ChartDetailPanel>
     </Content>
   )
 }
@@ -161,17 +174,17 @@ export interface SmartChartPageProps<T> {
   note?: string
   isThumbnail?: boolean
   chartProps?: Partial<ComponentProps<typeof ReactChartCore>>
-  fetchData: () => Promise<T[] | Response.Response<Response.Wrapper<T>[]>>
+  fetchData: () => Promise<T[]>
   onFetched?: (dataList: T[]) => void
   getEChartOption: (
     dataList: T[],
-    chartColor: State.App['chartColor'],
+    chartColor: ChartColorConfig,
     isMobile: boolean,
-    isThumbnail: boolean,
+    isThumbnail?: boolean,
   ) => echarts.EChartOption
-  toCSV: (dataList: T[]) => (string | number)[][]
-  cacheKey?: string
-  cacheMode?: 'forever' | 'date' | 'epoch'
+  toCSV?: (dataList: T[]) => (string | number)[][]
+  queryKey?: string
+  style?: CSSProperties
 }
 
 export function SmartChartPage<T>({
@@ -184,13 +197,12 @@ export function SmartChartPage<T>({
   onFetched,
   getEChartOption,
   toCSV,
-  cacheKey,
-  cacheMode = 'forever',
+  queryKey,
+  style,
 }: SmartChartPageProps<T>): ReactElement {
   const isMobile = useIsMobile()
-  const { app } = useAppState()
 
-  const query = useChartQueryWithCache(fetchData, cacheKey, cacheMode)
+  const query = useQuery(['SmartChartPage', queryKey], () => fetchData(), { refetchOnWindowFocus: false })
   const dataList = useMemo(() => query.data ?? [], [query.data])
   useEffect(() => {
     if (onFetched && query.data) {
@@ -198,21 +210,18 @@ export function SmartChartPage<T>({
     }
   }, [onFetched, query.data])
 
-  const option = useMemo(
-    () => getEChartOption(dataList, app.chartColor, isMobile, isThumbnail),
-    [app.chartColor, dataList, getEChartOption, isMobile, isThumbnail],
-  )
+  const option = getEChartOption(dataList, ChartColor, isMobile, isThumbnail)
 
   const content = query.isLoading ? (
     <ChartLoading show isThumbnail={isThumbnail} />
   ) : (
-    <ReactChartCore option={option} isThumbnail={isThumbnail} {...chartProps} />
+    <ReactChartCore option={option} isThumbnail={isThumbnail} {...chartProps} style={style} />
   )
 
   return isThumbnail ? (
     content
   ) : (
-    <ChartPage title={title} description={description} data={toCSV(dataList)}>
+    <ChartPage title={title} description={description} data={toCSV?.(dataList)} style={style}>
       {content}
       {note != null && <ChartNotePanel>{note}</ChartNotePanel>}
     </ChartPage>

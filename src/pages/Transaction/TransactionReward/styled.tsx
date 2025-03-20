@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import variables from '../../../styles/variables.module.scss'
 
 export const RewardItemPenal = styled.div`
   display: flex;
@@ -8,16 +9,16 @@ export const RewardItemPenal = styled.div`
   margin-bottom: 15px;
   color: #000;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin: 5px 10px;
     justify-content: space-between;
   }
 
-  .reward__name {
+  .rewardName {
     font-weight: 500;
   }
 
-  .reward__capacity {
+  .rewardCapacity {
     margin-left: 15px;
 
     > span {
@@ -27,16 +28,16 @@ export const RewardItemPenal = styled.div`
 `
 
 export const RewardPenal = styled.div`
-  @media (min-width: 750px) {
+  @media (min-width: ${variables.mobileBreakPoint}) {
     margin-bottom: -20px;
   }
 
-  .transaction__reward__title {
+  .transactionRewardTitle {
     margin-left: 10px;
     margin-top: 12px;
     color: #666;
 
-    @media (min-width: 750px) {
+    @media (min-width: ${variables.mobileBreakPoint}) {
       display: none;
     }
   }

@@ -1,15 +1,22 @@
-import { useEffect, useRef, Suspense, lazy, Component } from 'react'
-import { BrowserRouter as Router, Route, Redirect, Switch, useLocation } from 'react-router-dom'
-import { createBrowserHistory } from 'history'
+import React, { Suspense, lazy, Component, FC } from 'react'
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+  RouteProps,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Page from '../components/Page'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import Sheet from '../components/Sheet'
-import { useDispatch, useAppState } from '../contexts/providers'
-import { ComponentActions } from '../contexts/actions'
-import { useIsMobile } from '../utils/hook'
 import { isChainTypeError } from '../utils/chain'
-import Alert from '../components/Alert'
+import { SupportedLngs } from '../utils/i18n'
+import { useSyncEffect } from '../hooks'
+import RGBPPTransactionList from '../pages/RGBPP/TransactionList'
+import { IS_MAINNET } from '../constants/common'
 
 const Home = lazy(() => import('../pages/Home'))
 const Block = lazy(() => import('../pages/BlockDetail'))
@@ -18,16 +25,22 @@ const Transaction = lazy(() => import('../pages/Transaction'))
 const TransactionList = lazy(() => import('../pages/TransactionList'))
 const Address = lazy(() => import('../pages/Address'))
 const ScriptPage = lazy(() => import('../pages/Script'))
-const SimpleUDT = lazy(() => import('../pages/SimpleUDT'))
+const UDT = lazy(() => import('../pages/UDT'))
 const NftCollections = lazy(() => import('../pages/NftCollections'))
 const NftCollectionInfo = lazy(() => import('../pages/NftCollectionInfo'))
 const NftInfo = lazy(() => import('../pages/NftInfo'))
 const NervosDao = lazy(() => import('../pages/NervosDao'))
+const DaoTransactionExport = lazy(() => import('../pages/NervosDao/DaoTransactionExport'))
+const DaoDepositorsExport = lazy(() => import('../pages/NervosDao/DaoDepositorsExport'))
 const NotFoundPage = lazy(() => import('../pages/404'))
 const ErrorPage = lazy(() => import('../pages/Error'))
 const SearchFail = lazy(() => import('../pages/SearchFail'))
 const StatisticsChart = lazy(() => import('../pages/StatisticsChart'))
 const Tokens = lazy(() => import('../pages/Tokens'))
+const Xudts = lazy(() => import('../pages/Xudts'))
+const Xudt = lazy(() => import('../pages/Xudt'))
+const XudtExport = lazy(() => import('../pages/XudtExport'))
+const Halving = lazy(() => import('../pages/Halving'))
 const DifficultyHashRateChart = lazy(() => import('../pages/StatisticsChart/mining/DifficultyHashRate'))
 const DifficultyUncleRateEpochChart = lazy(() => import('../pages/StatisticsChart/mining/DifficultyUncleRateEpoch'))
 const DifficultyChart = lazy(() => import('../pages/StatisticsChart/mining/Difficulty'))
@@ -35,9 +48,17 @@ const HashRateChart = lazy(() => import('../pages/StatisticsChart/mining/HashRat
 const UncleRateChart = lazy(() => import('../pages/StatisticsChart/mining/UncleRate'))
 const MinerAddressDistributionChart = lazy(() => import('../pages/StatisticsChart/mining/MinerAddressDistribution'))
 const MinerVersionDistributionChart = lazy(() => import('../pages/StatisticsChart/mining/MinerVersionDistribution'))
+const NodeCountryDistributionChart = lazy(() => import('../pages/StatisticsChart/mining/NodeCountryDistribution'))
+const NodeGeoDistributionChart = lazy(() => import('../pages/StatisticsChart/mining/NodeGeoDistribution'))
 const TransactionCountChart = lazy(() => import('../pages/StatisticsChart/activities/TransactionCount'))
 const AddressCountChart = lazy(() => import('../pages/StatisticsChart/activities/AddressCount'))
 const CellCountChart = lazy(() => import('../pages/StatisticsChart/activities/CellCount'))
+const ContractResourceDistributedChart = lazy(
+  () => import('../pages/StatisticsChart/activities/ContractResourceDistributed'),
+)
+const ActiveAddressesChart = lazy(() => import('../pages/StatisticsChart/activities/ActiveAddressesChart'))
+const KnowledgeSizeChart = lazy(() => import('../pages/StatisticsChart/activities/KnowledgeSize'))
+const CkbHodlWaveChart = lazy(() => import('../pages/StatisticsChart/activities/CkbHodlWave'))
 const AddressBalanceRankChart = lazy(() => import('../pages/StatisticsChart/activities/AddressBalanceRank'))
 const BalanceDistributionChart = lazy(() => import('../pages/StatisticsChart/activities/BalanceDistribution'))
 const TxFeeHistoryChart = lazy(() => import('../pages/StatisticsChart/activities/TxFeeHistory'))
@@ -57,325 +78,329 @@ const LiquidityChart = lazy(() => import('../pages/StatisticsChart/monetary/Liqu
 const ScriptList = lazy(() => import('../pages/ScriptList'))
 const FeeRateTracker = lazy(() => import('../pages/FeeRateTracker'))
 const ExportTransactions = lazy(() => import('../pages/ExportTransactions'))
+const AddressConversion = lazy(() => import('../pages/Tools/AddressConversion'))
+const Hasher = lazy(() => import('../pages/Tools/Hasher'))
+const BroadcastTx = lazy(() => import('../pages/Tools/BroadcastTx'))
+const CamelCase = lazy(() => import('../pages/Tools/CamelCase'))
+const MoleculeParser = lazy(() => import('../pages/Tools/MoleculeParser'))
+const HardFork = lazy(() => import('../pages/HardFork'))
+// ======
+const FiberGraph = lazy(() => import('../pages/Fiber/Graph'))
+const FiberPeerList = lazy(() => import('../pages/Fiber/PeerList'))
+const FiberPeer = lazy(() => import('../pages/Fiber/Peer'))
+const FiberChannel = lazy(() => import('../pages/Fiber/Channel'))
+const FiberGraphNodeList = lazy(() => import('../pages/Fiber/GraphNodeList'))
+const FiberGraphNode = lazy(() => import('../pages/Fiber/GraphNode'))
+const FiberGraphChannelList = lazy(() => import('../pages/Fiber/GraphChannelList'))
+// ======
 
-const Containers: CustomRouter.Route[] = [
+const routes: RouteProps[] = [
   {
-    name: 'Home',
     path: '/',
-    exact: true,
-    comp: Home,
+    component: Home,
   },
   {
-    name: 'BlockList',
+    path: '/halving',
+    component: Halving,
+  },
+  {
     path: '/block/list',
-    exact: true,
-    comp: BlockList,
+    component: BlockList,
   },
   {
-    name: 'Address',
     path: '/address/:address',
-    exact: true,
-    comp: Address,
+    render: routeProps => {
+      const { pathname } = routeProps.location
+      if (isChainTypeError(pathname.substring(pathname.lastIndexOf('/') + 1))) {
+        return <SearchFail {...routeProps} address={pathname.substring(pathname.lastIndexOf('/') + 1)} />
+      }
+      return <Address />
+    },
   },
   {
-    name: 'Script',
     path: '/script/:codeHash/:hashType/:tab?',
-    exact: true,
-    comp: ScriptPage,
+    component: ScriptPage,
   },
   {
-    name: 'Block',
     path: '/block/:param',
-    exact: true,
-    comp: Block,
+    component: Block,
   },
   {
-    name: 'TransactionList',
     path: '/transaction/list',
-    exact: true,
-    comp: TransactionList,
+    component: TransactionList,
   },
   {
-    name: 'Transaction',
     path: '/transaction/:hash',
-    exact: true,
-    comp: Transaction,
+    component: Transaction,
   },
   {
-    name: 'SimpleUDT',
+    path: '/xudt/:hash',
+    component: Xudt,
+  },
+  {
     path: '/sudt/:hash',
-    exact: true,
-    comp: SimpleUDT,
+    component: UDT,
   },
   {
-    name: 'NftCollections',
+    path: '/inscription/:hash',
+    render: routeProps => {
+      return <UDT {...routeProps} isInscription />
+    },
+  },
+  {
     path: '/nft-collections',
-    exact: true,
-    comp: NftCollections,
+    component: NftCollections,
   },
   {
-    name: 'NftCollectionInfo',
     path: '/nft-collections/:id',
-    exact: true,
-    comp: NftCollectionInfo,
+    component: NftCollectionInfo,
   },
   {
-    name: 'NftInfo',
     path: '/nft-info/:collection/:id',
-    exact: true,
-    comp: NftInfo,
+    component: NftInfo,
   },
   {
-    name: 'NervosDao',
     path: '/nervosdao',
-    exact: true,
-    comp: NervosDao,
+    component: NervosDao,
   },
   {
-    name: 'Tokens',
+    path: '/nervosdao/transaction/export',
+    component: DaoTransactionExport,
+  },
+  {
+    path: '/nervosdao/depositor/export',
+    component: DaoDepositorsExport,
+  },
+  {
+    path: '/xudts',
+    component: Xudts,
+  },
+  {
     path: '/tokens',
-    exact: true,
-    comp: Tokens,
+    component: Tokens,
   },
   {
-    name: 'Charts',
+    path: '/inscriptions',
+    render: routeProps => {
+      return <Tokens {...routeProps} isInscription />
+    },
+  },
+  {
     path: '/charts',
-    exact: true,
-    comp: StatisticsChart,
+    component: StatisticsChart,
   },
   {
-    name: 'DifficultyHashRateChart',
     path: '/charts/difficulty-hash-rate',
-    exact: true,
-    comp: DifficultyHashRateChart,
+    component: DifficultyHashRateChart,
   },
   {
-    name: 'DifficultyUncleRateEpochChart',
     path: '/charts/epoch-time-length',
-    exact: true,
-    comp: DifficultyUncleRateEpochChart,
+    component: DifficultyUncleRateEpochChart,
   },
   {
-    name: 'DifficultyChart',
     path: '/charts/difficulty',
-    exact: true,
-    comp: DifficultyChart,
+    component: DifficultyChart,
   },
   {
-    name: 'HashRateChart',
     path: '/charts/hash-rate',
-    exact: true,
-    comp: HashRateChart,
+    component: HashRateChart,
   },
   {
-    name: 'UncleRateChart',
     path: '/charts/uncle-rate',
-    exact: true,
-    comp: UncleRateChart,
+    component: UncleRateChart,
   },
   {
-    name: 'MinerAddressDistributionChart',
     path: '/charts/miner-address-distribution',
-    exact: true,
-    comp: MinerAddressDistributionChart,
+    component: MinerAddressDistributionChart,
   },
   {
-    name: 'MinerVersionDistributionChart',
     path: '/charts/miner-version-distribution',
-    exact: true,
-    comp: MinerVersionDistributionChart,
+    component: MinerVersionDistributionChart,
   },
   {
-    name: 'TransactionCountChart',
+    path: '/charts/node-country-distribution',
+    component: NodeCountryDistributionChart,
+  },
+  {
+    path: '/charts/node-geo-distribution',
+    component: NodeGeoDistributionChart,
+  },
+  {
     path: '/charts/transaction-count',
-    exact: true,
-    comp: TransactionCountChart,
+    component: TransactionCountChart,
   },
   {
-    name: 'AddressCountChart',
     path: '/charts/address-count',
-    exact: true,
-    comp: AddressCountChart,
+    component: AddressCountChart,
   },
   {
-    name: 'TotalDaoDepositChart',
     path: '/charts/total-dao-deposit',
-    exact: true,
-    comp: TotalDaoDepositChart,
+    component: TotalDaoDepositChart,
   },
   {
-    name: 'NewDaoDepositChart',
     path: '/charts/new-dao-deposit',
-    exact: true,
-    comp: NewDaoDepositChart,
+    component: NewDaoDepositChart,
   },
   {
-    name: 'CirculationRatioChart',
     path: '/charts/circulation-ratio',
-    exact: true,
-    comp: CirculationRatioChart,
+    component: CirculationRatioChart,
   },
   {
-    name: 'CellCountChart',
     path: '/charts/cell-count',
-    exact: true,
-    comp: CellCountChart,
+    component: CellCountChart,
   },
   {
-    name: 'AddressBalanceRankChart',
+    path: '/charts/ckb-hodl-wave',
+    component: CkbHodlWaveChart,
+  },
+  {
     path: '/charts/address-balance-rank',
-    exact: true,
-    comp: AddressBalanceRankChart,
+    component: AddressBalanceRankChart,
   },
   {
-    name: 'BalanceDistributionChart',
     path: '/charts/balance-distribution',
-    exact: true,
-    comp: BalanceDistributionChart,
+    component: BalanceDistributionChart,
   },
   {
-    name: 'TxFeeHistoryChart',
     path: '/charts/tx-fee-history',
-    exact: true,
-    comp: TxFeeHistoryChart,
+    component: TxFeeHistoryChart,
   },
   {
-    name: 'BlockTimeDistributionChart',
+    path: '/charts/contract-resource-distributed',
+    component: ContractResourceDistributedChart,
+  },
+  {
+    path: '/charts/active-addresses',
+    component: ActiveAddressesChart,
+  },
+  {
+    path: '/charts/knowledge-size',
+    component: KnowledgeSizeChart,
+  },
+
+  {
     path: '/charts/block-time-distribution',
-    exact: true,
-    comp: BlockTimeDistributionChart,
+    component: BlockTimeDistributionChart,
   },
   {
-    name: 'AverageBlockTimeChart',
     path: '/charts/average-block-time',
-    exact: true,
-    comp: AverageBlockTimeChart,
+    component: AverageBlockTimeChart,
   },
   {
-    name: 'EpochTimeDistributionChart',
     path: '/charts/epoch-time-distribution',
-    exact: true,
-    comp: EpochTimeDistributionChart,
+    component: EpochTimeDistributionChart,
   },
   {
-    name: 'TotalSupplyChart',
     path: '/charts/total-supply',
-    exact: true,
-    comp: TotalSupplyChart,
+    component: TotalSupplyChart,
   },
   {
-    name: 'AnnualPercentageCompensationChart',
     path: '/charts/nominal-apc',
-    exact: true,
-    comp: AnnualPercentageCompensationChart,
+    component: AnnualPercentageCompensationChart,
   },
   {
-    name: 'SecondaryIssuanceChart',
     path: '/charts/secondary-issuance',
-    exact: true,
-    comp: SecondaryIssuanceChart,
+    component: SecondaryIssuanceChart,
   },
   {
-    name: 'InflationRateChart',
     path: '/charts/inflation-rate',
-    exact: true,
-    comp: InflationRateChart,
+    component: InflationRateChart,
   },
   {
-    name: 'LiquidityChart',
     path: '/charts/liquidity',
-    exact: true,
-    comp: LiquidityChart,
+    component: LiquidityChart,
   },
   {
-    name: 'SearchFail',
     path: '/search/fail',
-    exact: true,
-    comp: SearchFail,
+    component: SearchFail,
   },
   {
-    name: 'ScriptList',
     path: '/scripts',
-    exact: true,
-    comp: ScriptList,
+    component: ScriptList,
   },
   {
-    name: 'FeeRateTracker',
     path: '/fee-rate-tracker',
-    exact: true,
-    comp: FeeRateTracker,
+    component: FeeRateTracker,
   },
   {
-    name: '404',
     path: '/404',
-    exact: true,
-    comp: NotFoundPage,
+    component: NotFoundPage,
   },
   {
-    name: 'Error',
     path: '/error',
-    exact: true,
-    comp: ErrorPage,
+    component: ErrorPage,
   },
   {
-    name: 'ExportTransactions',
+    path: '/export-xudt-holders',
+    component: XudtExport,
+  },
+  {
     path: '/export-transactions',
-    exact: true,
-    comp: ExportTransactions,
+    component: ExportTransactions,
+  },
+  {
+    path: '/rgbpp/transaction/list',
+    component: RGBPPTransactionList,
+  },
+  {
+    path: '/tools/address-conversion',
+    component: AddressConversion,
+  },
+  {
+    path: '/tools/hasher',
+    component: Hasher,
+  },
+  {
+    path: '/tools/broadcast-tx',
+    component: BroadcastTx,
+  },
+  {
+    path: '/tools/snake-case-and-camel-case',
+    component: CamelCase,
+  },
+  {
+    path: '/tools/molecule-parser',
+    component: MoleculeParser,
+  },
+  { path: '/fiber/graph', component: FiberGraph },
+  {
+    path: '/fiber/peers',
+    component: FiberPeerList,
+  },
+  {
+    path: '/fiber/peers/:id',
+    component: FiberPeer,
+  },
+  {
+    path: '/fiber/channels/:id',
+    component: FiberChannel,
+  },
+  {
+    path: '/fiber/graph/nodes',
+    component: FiberGraphNodeList,
+  },
+  {
+    path: '/fiber/graph/node/:id',
+    component: FiberGraphNode,
+  },
+  {
+    path: '/fiber/graph/channels',
+    component: FiberGraphChannelList,
   },
 ]
-
-const useRouter = (callback: Function) => {
-  const history = createBrowserHistory()
-  useEffect(() => {
-    let currentUrl = `${history.location.pathname}${history.location.search}`
-    const listen = history.listen((location: any) => {
-      if (currentUrl !== `${location.pathname}${location.search}`) {
-        callback()
-      }
-      currentUrl = `${location.pathname}${location.search}`
-    })
-    return () => {
-      listen()
-    }
-  }, [callback, history])
-}
-
-const useRouterLocation = (callback: () => void) => {
-  const history = createBrowserHistory()
-  const savedCallback = useRef(() => {})
-  useEffect(() => {
-    savedCallback.current = callback
+if (IS_MAINNET) {
+  routes.push({
+    path: '/hardfork',
+    component: HardFork,
   })
-  useEffect(() => {
-    const currentCallback = () => {
-      savedCallback.current()
-    }
-    const listen = history.listen(() => {
-      currentCallback()
-    })
-    return () => {
-      listen()
-    }
-  }, [history])
-}
-
-const RouterComp = ({ container, routeProps }: { container: CustomRouter.Route; routeProps: any }) => {
-  const { pathname = '' } = useLocation()
-  if (container.name === 'Address' && isChainTypeError(pathname.substring(pathname.lastIndexOf('/') + 1))) {
-    return <SearchFail {...routeProps} address={pathname.substring(pathname.lastIndexOf('/') + 1)} />
-  }
-  return <container.comp {...routeProps} />
 }
 
 type PageErrorBoundaryState = {
   error?: Error | null
-  info: {
-    componentStack?: string
-  }
+  info: React.ErrorInfo
 }
 
-type PageErrorBoundaryProps = {}
+type PageErrorBoundaryProps = React.PropsWithChildren<{}>
 
 class PageErrorBoundary extends Component<PageErrorBoundaryProps, PageErrorBoundaryState> {
   constructor(props: PageErrorBoundaryProps) {
@@ -416,53 +441,42 @@ class PageErrorBoundary extends Component<PageErrorBoundaryProps, PageErrorBound
   }
 }
 
-export default () => {
-  const isMobile = useIsMobile()
-  const dispatch = useDispatch()
-  const { components } = useAppState()
-  const { mobileMenuVisible } = components
+const ComponentInContextProvided: FC = () => {
+  const [, i18n] = useTranslation()
+  const { path } = useRouteMatch()
+  // TODO: The default value here could be automatically detected from the browser.
+  const { locale = 'en' } = useParams<{ locale?: string }>()
 
-  useRouter(() => {
-    window.scrollTo(0, 0)
-  })
-
-  useRouterLocation(() => {
-    if (mobileMenuVisible) {
-      dispatch({
-        type: ComponentActions.UpdateHeaderMobileMenuVisible,
-        payload: {
-          mobileMenuVisible: false,
-        },
-      })
-    }
-  })
+  useSyncEffect(() => i18n.init({ lng: locale }), [i18n, locale])
 
   return (
+    <Page>
+      <Header />
+      <Suspense fallback={<span />}>
+        <PageErrorBoundary>
+          <Switch>
+            {routes.map((route, idx) => (
+              // `routes` is immutable, so using idx as the key has no impact.
+              // eslint-disable-next-line react/no-array-index-key
+              <Route key={idx} exact {...route} path={`${path}${route.path}`} />
+            ))}
+            <Redirect from="*" to={`${locale != null ? `/${locale}` : ''}/404`} />
+          </Switch>
+        </PageErrorBoundary>
+        <Footer />
+      </Suspense>
+    </Page>
+  )
+}
+
+export default () => {
+  return (
     <Router>
-      <Route
-        render={(props: any) => (
-          <Page>
-            <Alert />
-            <Header />
-            <Sheet />
-            <Suspense fallback={<span />}>
-              <PageErrorBoundary>
-                <Switch location={props.location}>
-                  {Containers.map(container => (
-                    <Route
-                      {...container}
-                      key={container.name}
-                      render={routeProps => <RouterComp container={container} routeProps={routeProps} />}
-                    />
-                  ))}
-                  <Redirect from="*" to="/404" />
-                </Switch>
-              </PageErrorBoundary>
-              {!(isMobile && mobileMenuVisible) && <Footer />}
-            </Suspense>
-          </Page>
-        )}
-      />
+      <Switch>
+        <Route path={`/:locale(${SupportedLngs.join('|')})?`}>
+          <ComponentInContextProvided />
+        </Route>
+      </Switch>
     </Router>
   )
 }

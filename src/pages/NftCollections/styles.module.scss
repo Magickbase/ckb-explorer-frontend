@@ -1,5 +1,85 @@
+@import '../../styles/variables.module';
+
 .container {
   margin: 40px 120px 60px;
+
+  .tableList {
+    display: block;
+  }
+
+  .cardList {
+    display: none;
+  }
+}
+
+.tags {
+  flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  margin-left: 8px;
+}
+
+.tokensCard {
+  margin-top: 10px;
+  padding: 16px;
+  font-size: 14px;
+  box-shadow: 0 4px 4px 0 rgb(16 16 16 / 5%);
+  color: #333;
+
+  .tokenInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &:first-child {
+      margin-top: 16px;
+    }
+
+    &:last-child {
+      margin-bottom: 16px;
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #f5f5f5;
+      padding-bottom: 16px;
+    }
+
+    &:not(:first-child) {
+      margin-top: 16px;
+    }
+
+    .title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--666666, #666);
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+
+      & + dd {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    .value {
+      color: var(--333333, #333);
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+}
+
+.colTags {
+  max-width: 100%;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .header {
@@ -7,6 +87,7 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 20px;
+
   h5 {
     font-size: 24px;
     font-weight: bold;
@@ -21,65 +102,52 @@
   overflow: hidden;
 
   table {
-    background: #fff;
-    position: relative;
+    table-layout: fixed;
     width: 100%;
+    background: #fff;
     margin-bottom: 4px;
-    .typeFilter,
-    .holderMinted {
-      justify-content: end;
-    }
+    color: #333;
+    text-overflow: ellipsis;
   }
 
   thead {
-    position: relative;
-    font-size: 14px;
-    font-weight: 700;
+    tr {
+      background: #fff;
+      border-bottom: 4px solid var(--table-separator-color);
+    }
+
     th {
-      vertical-align: middle;
-      padding-top: 12px;
-      padding-bottom: 12px;
+      line-height: 56px;
+      font-size: 16px;
+      font-weight: 400;
       text-transform: capitalize;
       white-space: nowrap;
-    }
-    &:after {
-      position: absolute;
-      left: -15px;
-      top: 44px;
-      width: calc(100% + 30px);
-      height: 4px;
-      content: '';
-      display: block;
-      background-color: #ededed;
-    }
-  }
-
-  tbody {
-    td {
-      padding-top: 15px;
-      padding-bottom: 15px;
-      font-size: 14px;
-    }
-
-    tr:not(:last-child) {
-      border-bottom: 1px solid var(--table-separator-color);
     }
   }
 
   th,
   td {
+    height: 4rem;
+    padding: 0 8px;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 400;
     text-align: left;
-    padding-left: 25px;
-    padding-right: 25px;
-    max-width: 0.25vw;
+    max-width: 100%;
+    line-height: 19px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
-    &:not(:first-of-type) {
-      text-align: right;
+    &:first-child {
+      padding-left: 2em;
     }
-    &:first-child,
+
     &:last-child {
-      padding-left: 25px;
-      padding-right: 25px;
+      padding-right: 2em;
+    }
+
+    &.noRecord:last-child {
+      text-align: center;
     }
   }
 
@@ -109,32 +177,37 @@
   }
 
   .noRecord {
+    background-color: #fff;
     text-align: center;
   }
 
   .typeFilter {
     display: flex;
     align-items: center;
+
     svg {
       cursor: pointer;
     }
+
     &[data-is-active='true'] {
-      svg path {
-        fill: var(--primary-color);
+      .filter {
+        color: var(--primary-color);
       }
     }
   }
 
   .activeIcon {
     color: var(--primary-color);
+
     svg {
       path {
         fill: var(--primary-color);
       }
     }
   }
+
   .filter {
-    height: 1rem;
+    color: #999;
   }
 }
 
@@ -142,25 +215,34 @@
   display: flex;
   flex-direction: column;
   width: 200px;
+
   a {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     color: var(--primary-color);
-    padding: 10px 0px 10px 10px;
-    margin-right: 8px;
+    padding: 10px 0 10px 10px;
     border-radius: 8px;
+
     &:hover {
       background: var(--primary-hover-bg-color);
       color: var(--primary-color);
       cursor: pointer;
     }
+
+    &[data-is-active='true'] {
+      pointer-events: none;
+    }
+
     &[data-is-active='false'] {
       color: #000;
+
       svg {
         display: none;
       }
     }
   }
+
   svg path {
     fill: var(--primary-color);
   }
@@ -168,19 +250,30 @@
 
 .antPopover {
   :global {
+    /* stylelint-disable-next-line selector-class-pattern */
     .ant-popover-inner {
       border-radius: 8px;
-      box-shadow: 0px 2px 10px 0px #eeeeee;
+      box-shadow: 0 2px 10px 0 #eee;
+    }
+
+    /* stylelint-disable-next-line selector-class-pattern */
+    .ant-popover-inner-content {
+      padding: 14px 24px 14px 16px;
     }
   }
 }
 
 .transactionsHeader {
   > span {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
     &.sortActive {
       color: var(--primary-color);
     }
   }
+
   svg {
     cursor: pointer;
   }
@@ -189,103 +282,65 @@
 .holderMinted {
   display: flex;
   align-items: center;
-  cursor: pointer;
+
   .sortActive {
+    color: var(--primary-color);
+  }
+
+  .divider {
+    margin: 0 4px;
+  }
+
+  & > div {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+}
+
+.filterSortCard:not(
+    [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.']
+  ) {
+  padding: 16px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  color: var(--primary-color);
+
+  &:hover {
     color: var(--primary-color);
   }
 }
 
-div[data-role='mobile-list'] {
-  display: none;
-  font-size: 0.875rem;
-
-  .listHeader {
-    display: flex;
-    height: 3rem;
-    background: #fff;
-    & > div {
-      white-space: nowrap;
-      flex: 1;
-    }
-    padding: 0 1rem;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-
-  dl {
-    margin-left: 36px;
-    margin-bottom: 10px;
-    display: flex;
-    dt {
-      flex: 1;
-      min-width: 105px;
-    }
-    dd {
-      flex: 1;
-      margin: 0;
-    }
-  }
-
-  .listHeader + div {
-    position: relative;
-    &:before {
-      position: absolute;
-      left: -15px;
-      top: -10px;
-      width: calc(100% + 30px);
-      height: 10px;
-      content: '';
-      display: block;
-      background-color: #ededed;
-    }
-  }
-  .listItem {
-    border-bottom: 1px solid #f0f0f0;
-    padding: 1rem 1rem 0;
-    background: #fff;
-    dt::after {
-      content: ':';
-    }
-    dd {
-      a {
-        font-weight: 500 !important;
-      }
-    }
-  }
-  .holderMinted {
-    padding-left: 36px;
-  }
-  .loading {
-    text-align: center;
+.nftTooltip {
+  a {
+    color: var(--primary-color);
   }
 }
 
-@media screen and (max-width: 1200px) {
+@media (width <= $extraLargeBreakPoint) {
   .container {
     margin: 40px 45px 60px;
   }
 }
 
-@media screen and (max-width: 1000px) {
+@media (width <= $largeBreakPoint) {
   .container {
-    margin: 40px 8px 60px;
-    table[data-role='desktop-list'] {
+    margin: 20px 16px 60px;
+
+    .tableList {
       display: none;
     }
-    div[data-role='mobile-list'] {
+
+    .cardList {
       display: block;
     }
   }
-  .antPopover {
-    :global {
-      .ant-popover-inner-content {
-        padding: 14px 15px 14px 12px !important;
-      }
-    }
-  }
 }
-@media screen and (max-width: 350px) {
+
+@media (width <= 350px) {
   div[data-role='mobile-list'] {
     font-size: 0.8rem;
   }

@@ -1,194 +1,267 @@
-import { useState, useRef, useEffect, useMemo, FC, memo } from 'react'
+import {
+  useState,
+  useEffect,
+  FC,
+  memo,
+  useMemo,
+  useCallback,
+  ChangeEventHandler,
+  KeyboardEventHandler,
+  ComponentPropsWithoutRef,
+} from 'react'
 import { useHistory } from 'react-router'
-import { AxiosError } from 'axios'
 import { useTranslation } from 'react-i18next'
-import { SearchImage, SearchInputPanel, SearchPanel, SearchButton, SearchContainer } from './styled'
-import { fetchSearchResult } from '../../service/http/fetcher'
-import SearchLogo from '../../assets/search_black.png'
-import ClearLogo from '../../assets/clear.png'
+import debounce from 'lodash.debounce'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import classNames from 'classnames'
+import { SearchPanel, SearchButton } from './styled'
+import { explorerService, Response, SearchResultType, type AggregateSearchResult } from '../../services/ExplorerService'
+import { getReverseAddresses } from '../../services/DidService'
+import { ethToCKb as DidEthToCkb } from '../../utils/did'
 import { addPrefixForHash, containSpecialChar } from '../../utils/string'
-import i18n from '../../utils/i18n'
 import { HttpErrorCode, SearchFailType } from '../../constants/common'
-import { AppDispatch } from '../../contexts/reducer'
-import { ComponentActions } from '../../contexts/actions'
-import { useDispatch } from '../../contexts/providers'
-import { useIsMobile } from '../../utils/hook'
+import { useForkedState, useIsMobile } from '../../hooks'
 import { isChainTypeError } from '../../utils/chain'
+import { isAxiosError } from '../../utils/error'
+import styles from './index.module.scss'
+import { getURLByAggregateSearchResult } from './utils'
+import { AggregateSearchResults } from './AggregateSearchResults'
+import { ReactComponent as SearchIcon } from './search.svg'
+import { ReactComponent as SpinnerIcon } from './spinner.svg'
+import { ReactComponent as ClearIcon } from './clear.svg'
+import SimpleButton from '../SimpleButton'
+import { isValidBTCAddress } from '../../utils/bitcoin'
 
-enum SearchResultType {
-  Block = 'block',
-  Transaction = 'ckb_transaction',
-  Address = 'address',
-  LockHash = 'lock_hash',
-  UDT = 'udt',
-}
+const ALLOW_SEARCH_TYPES = [
+  SearchResultType.Address,
+  SearchResultType.Block,
+  SearchResultType.BtcTx,
+  SearchResultType.LockHash,
+  SearchResultType.LockScript,
+  SearchResultType.Transaction,
+  SearchResultType.TypeScript,
+  SearchResultType.TokenCollection,
+  SearchResultType.TokenItem,
+  SearchResultType.UDT,
+  SearchResultType.DID,
+  SearchResultType.BtcAddress,
+  SearchResultType.FiberGraphNode,
+]
 
-const clearSearchInput = (inputElement: any) => {
-  const input: HTMLInputElement = inputElement.current
-  if (input) {
-    input.value = ''
-    input.blur()
-  }
-}
+async function fetchAggregateSearchResult(searchValue: string): Promise<AggregateSearchResult[]> {
+  let results = await explorerService.api
+    .fetchAggregateSearchResult(addPrefixForHash(searchValue))
+    .then(res => res.data)
+    .catch(() => [] as AggregateSearchResult[])
 
-const setSearchLoading = (inputElement: any) => {
-  const input: HTMLInputElement = inputElement.current
-  input.value = i18n.t('search.loading')
-}
-
-const setSearchContent = (inputElement: any, content: string) => {
-  const input: HTMLInputElement = inputElement.current
-  if (input) {
-    input.value = content
-  }
-}
-
-const hideMobileMenu = (dispatch: AppDispatch) => {
-  dispatch({
-    type: ComponentActions.UpdateHeaderMobileMenuVisible,
-    payload: {
-      mobileMenuVisible: false,
-    },
-  })
-}
-
-const handleSearchResult = (
-  searchValue: string,
-  inputElement: any,
-  dispatch: AppDispatch,
-  setSearchValue: Function,
-  history: ReturnType<typeof useHistory>,
-  isMobile: boolean,
-) => {
-  if (isMobile) hideMobileMenu(dispatch)
-  const query = searchValue.trim().replace(',', '') // remove front and end blank and ','
-  if (!query || containSpecialChar(query)) {
-    history.push(`/search/fail?q=${query}`)
-    return
-  }
-  if (isChainTypeError(query)) {
-    history.push(`/search/fail?type=${SearchFailType.CHAIN_ERROR}&q=${query}`)
-    return
+  if (/\w*\.bit$/.test(searchValue)) {
+    // search .bit name
+    const list = await getReverseAddresses(searchValue)
+    const ETH_COIN_TYPE = '60'
+    const ethAddr = list?.find(item => item.key_info.coin_type === ETH_COIN_TYPE)
+    if (ethAddr) {
+      const ckbAddr = DidEthToCkb(ethAddr.key_info.key)
+      results = [
+        ...results,
+        {
+          id: Math.random(),
+          type: SearchResultType.DID,
+          attributes: {
+            did: searchValue,
+            address: ckbAddr,
+          },
+        },
+      ]
+    }
   }
 
-  setSearchLoading(inputElement)
-  fetchSearchResult(addPrefixForHash(query))
-    .then((response: any) => {
-      const { data } = response
-      if (!response || !data.type) {
-        history.push(`/search/fail?q=${query}`)
-        return
-      }
-      clearSearchInput(inputElement)
-      setSearchValue('')
-      if (data.type === SearchResultType.Block) {
-        history.push(`/block/${(data as Response.Wrapper<State.Block>).attributes.blockHash}`)
-      } else if (data.type === SearchResultType.Transaction) {
-        history.push(`/transaction/${(data as Response.Wrapper<State.Transaction>).attributes.transactionHash}`)
-      } else if (data.type === SearchResultType.Address) {
-        history.push(`/address/${(data as Response.Wrapper<State.Address>).attributes.addressHash}`)
-      } else if (data.type === SearchResultType.LockHash) {
-        history.push(`/address/${(data as Response.Wrapper<State.Address>).attributes.lockHash}`)
-      } else if (data.type === SearchResultType.UDT) {
-        history.push(`/sudt/${query}`)
-      }
-    })
-    .catch((error: AxiosError) => {
-      setSearchContent(inputElement, query)
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.status === 404 &&
-        (error.response.data as Response.Error[]).find(
-          (errorData: Response.Error) => errorData.code === HttpErrorCode.NOT_FOUND_ADDRESS,
-        )
-      ) {
-        clearSearchInput(inputElement)
-        history.push(`/address/${query}`)
-      } else {
-        history.push(`/search/fail?q=${query}`)
-      }
-    })
+  return results
 }
 
 const Search: FC<{
   content?: string
   hasButton?: boolean
   onEditEnd?: () => void
-}> = memo(({ content, hasButton, onEditEnd }) => {
-  const isMobile = useIsMobile()
-  const dispatch = useDispatch()
+  onClear?: () => void
+}> = memo(({ content, hasButton, onEditEnd: handleEditEnd, onClear: handleClear }) => {
   const history = useHistory()
-  const [t] = useTranslation()
-  const SearchPlaceholder = useMemo(() => t('navbar.search_placeholder'), [t])
-  const [searchValue, setSearchValue] = useState(content || '')
-  const [placeholder, setPlaceholder] = useState(SearchPlaceholder)
-  const inputElement = useRef<HTMLInputElement>(null)
+  const queryClient = useQueryClient()
+  const { t } = useTranslation()
+  const isMobile = useIsMobile()
 
-  // update input placeholder when language change
-  useEffect(() => {
-    setPlaceholder(SearchPlaceholder)
-  }, [SearchPlaceholder])
+  const [keyword, _setKeyword] = useState(content || '')
+  const searchValue = keyword.trim()
+
+  const {
+    refetch: refetchAggregateSearch,
+    data: _aggregateSearchResults,
+    isFetching,
+    // TODO: Previously, for some reasons, 'searchValue' was not added to the 'search' key here.
+    // However, no problems were found in the tests after refactoring, so it has been added back for now.
+    // If problems occur later, you can confirm here again. If no problems are found after a period of time, this comment can be removed.
+  } = useQuery(['aggregateSearch', searchValue], () => fetchAggregateSearchResult(searchValue), {
+    enabled: false,
+  })
+
+  const aggregateSearchResults = _aggregateSearchResults?.filter(item => ALLOW_SEARCH_TYPES.includes(item.type))
+
+  const handleSearch = () => {
+    if (aggregateSearchResults && aggregateSearchResults.length > 0) {
+      const url = getURLByAggregateSearchResult(aggregateSearchResults[0])
+      history.push(url ?? `/search/fail?q=${searchValue}`)
+      handleEditEnd?.()
+      return
+    }
+
+    if (searchValue) {
+      getURLBySearchValue(searchValue).then(url => {
+        history.push(url ?? `/search/fail?q=${searchValue}`)
+        handleEditEnd?.()
+      })
+    }
+  }
+
+  const debouncedSearchByName = useMemo(
+    () => debounce(refetchAggregateSearch, 1500, { trailing: true }),
+    [refetchAggregateSearch],
+  )
+
+  const resetSearchByName = useCallback(() => {
+    debouncedSearchByName.cancel()
+    queryClient.resetQueries(['aggregateSearch', searchValue])
+  }, [debouncedSearchByName, queryClient, searchValue])
 
   useEffect(() => {
-    if (inputElement.current && !isMobile) {
-      const input = inputElement.current as HTMLInputElement
-      input.focus()
+    if (searchValue) {
+      debouncedSearchByName()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [searchValue])
 
-  const clearSearchAction = (isClear?: boolean) => {
-    if (isClear) {
-      setSearchValue('')
-      clearSearchInput(inputElement)
-      onEditEnd?.()
-    }
+  const onClear = useCallback(() => {
+    resetSearchByName()
+    handleClear?.()
+  }, [resetSearchByName, handleClear])
+
+  const setKeyword = (value: string) => {
+    if (value === '') onClear()
+    _setKeyword(value)
   }
 
-  const inputChangeAction = (event: any) => {
-    setSearchValue(event.target.value)
-    if (!event.target.value) onEditEnd?.()
-  }
+  return (
+    <SearchPanel moreHeight={hasButton} hasButton={hasButton}>
+      {isFetching ? (
+        <SpinnerIcon className={classNames(styles.preIcon, styles.spinner)} />
+      ) : (
+        <SearchIcon className={styles.preIcon} />
+      )}
 
-  const searchKeyAction = (event: any) => {
-    if (event.keyCode === 13) {
-      handleSearchResult(searchValue, inputElement, dispatch, setSearchValue, history, isMobile)
-      onEditEnd?.()
-    }
-  }
+      <SearchInput
+        autoFocus={!isMobile}
+        loading={isFetching}
+        value={keyword}
+        onChange={event => setKeyword(event.target.value)}
+        onEnter={handleSearch}
+        placeholder={t('navbar.search_placeholder')}
+      />
 
-  const ImageIcon = ({ isClear }: { isClear?: boolean }) => (
-    <SearchImage isClear={isClear} onClick={() => clearSearchAction(isClear)}>
-      <img src={isClear ? ClearLogo : SearchLogo} alt="search logo" />
-    </SearchImage>
+      {searchValue && (
+        <SimpleButton className={styles.clear} title="clear" onClick={() => setKeyword('')}>
+          <ClearIcon />
+        </SimpleButton>
+      )}
+      {hasButton && <SearchButton onClick={handleSearch}>{t('search.search')}</SearchButton>}
+
+      {(isFetching || aggregateSearchResults) && (
+        <AggregateSearchResults keyword={keyword} results={aggregateSearchResults ?? []} loading={isFetching} />
+      )}
+    </SearchPanel>
+  )
+})
+
+const SearchInput: FC<
+  ComponentPropsWithoutRef<'input'> & {
+    onEnter?: () => void
+    loading?: boolean
+  }
+> = ({ loading, onEnter, value: propsValue, onChange: propsOnChange, onKeyUp: propsOnKeyUp, ...elprops }) => {
+  const [value, setValue] = useForkedState(propsValue)
+
+  const onChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+    event => {
+      if (loading) {
+        return
+      }
+      setValue(event.target.value)
+      propsOnChange?.(event)
+    },
+    [propsOnChange, setValue, loading],
+  )
+
+  const onKeyUp: KeyboardEventHandler<HTMLInputElement> = useCallback(
+    event => {
+      const isEnter = event.keyCode === 13
+      if (isEnter) {
+        onEnter?.()
+      }
+      propsOnKeyUp?.(event)
+    },
+    [onEnter, propsOnKeyUp],
   )
 
   return (
-    <SearchContainer>
-      <SearchPanel moreHeight={hasButton} hasButton={hasButton}>
-        <ImageIcon />
-        <SearchInputPanel
-          ref={inputElement}
-          placeholder={placeholder}
-          defaultValue={searchValue || ''}
-          onChange={(event: any) => inputChangeAction(event)}
-          onKeyUp={(event: any) => searchKeyAction(event)}
-        />
-        {searchValue && <ImageIcon isClear />}
-      </SearchPanel>
-      {hasButton && (
-        <SearchButton
-          onClick={() => {
-            handleSearchResult(searchValue, inputElement, dispatch, setSearchValue, history, isMobile)
-            onEditEnd?.()
-          }}
-        >
-          {i18n.t('search.search')}
-        </SearchButton>
-      )}
-    </SearchContainer>
+    <input
+      enterKeyHint="search"
+      className={styles.searchInputPanel}
+      value={value}
+      onChange={onChange}
+      onKeyUp={onKeyUp}
+      {...elprops}
+    />
   )
-})
+}
+
+const getURLBySearchValue = async (searchValue: string) => {
+  // check whether is btc address
+  if (isValidBTCAddress(searchValue)) {
+    return `/address/${searchValue}`
+  }
+  if (/\w*\.bit$/.test(searchValue)) {
+    // search .bit name
+    const list = await getReverseAddresses(searchValue)
+    const ETH_COIN_TYPE = '60'
+    const ethAddr = list?.find(item => item.key_info.coin_type === ETH_COIN_TYPE)
+    if (ethAddr) {
+      const ckbAddr = DidEthToCkb(ethAddr.key_info.key)
+      return `/address/${ckbAddr}`
+    }
+  }
+  // TODO: Is this replace needed?
+  const query = addPrefixForHash(searchValue).replace(',', '')
+  if (!query || containSpecialChar(query)) {
+    return `/search/fail?q=${query}`
+  }
+  if (isChainTypeError(query)) {
+    return `/search/fail?type=${SearchFailType.CHAIN_ERROR}&q=${query}`
+  }
+
+  try {
+    const data = await fetchAggregateSearchResult(addPrefixForHash(query))
+    return getURLByAggregateSearchResult(data[0])
+  } catch (error) {
+    if (
+      isAxiosError(error) &&
+      error.response?.data &&
+      error.response.status === 404 &&
+      (error.response.data as Response.Error[]).find(
+        (errorData: Response.Error) => errorData.code === HttpErrorCode.NOT_FOUND_ADDRESS,
+      )
+    ) {
+      return `/address/${query}`
+    }
+
+    return `/search/fail?q=${query}`
+  }
+}
 
 export default Search

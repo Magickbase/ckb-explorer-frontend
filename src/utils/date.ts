@@ -1,15 +1,17 @@
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import utc from 'dayjs/plugin/utc'
 import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/en'
 import BigNumber from 'bignumber.js'
 import weekday from 'dayjs/plugin/weekday'
 import localeData from 'dayjs/plugin/localeData'
-import i18n from './i18n'
+import { useTranslation } from 'react-i18next'
 
 dayjs.extend(relativeTime)
 dayjs.extend(updateLocale)
+dayjs.extend(utc)
 
 dayjs.extend(weekday)
 dayjs.extend(localeData)
@@ -49,21 +51,18 @@ export const parseTimeNoSecond = (millisecond: number | string) => {
   return `${hour} h ${minute} m`
 }
 
-export const parseDateNoTime = (timestamp: number | string | Date, noYear = false, connector = '/') => {
-  const date = timestamp instanceof Date ? timestamp : new Date(Number(timestamp) * 1000)
-  const year = noYear ? '' : `${date.getFullYear()}${connector}`
-  return `${year}${formatData(date.getMonth() + 1)}${connector}${formatData(date.getDate())}`
-}
-
-export const parseDate = (timestamp: number | string, now = new Date().getTime()) => {
-  const diff = (now - Number(timestamp)) / 1000
-  if (diff < 60) {
-    return `${Math.floor(diff)}${i18n.t('common.second_ago')}`
+export const useParseDate = () => {
+  const { t } = useTranslation()
+  return (timestamp: number | string, now = new Date().getTime()) => {
+    const diff = (now - Number(timestamp)) / 1000
+    if (diff < 60) {
+      return `${Math.floor(diff)}${t('common.second_ago')}`
+    }
+    if (diff < 3600) {
+      return `${Math.floor(diff / 60)}${t('common.minute')} ${Math.floor(diff % 60)}${t('common.second_ago')}`
+    }
+    return parseSimpleDate(timestamp)
   }
-  if (diff < 3600) {
-    return `${Math.floor(diff / 60)}${i18n.t('common.minute')} ${Math.floor(diff % 60)}${i18n.t('common.second_ago')}`
-  }
-  return parseSimpleDate(timestamp)
 }
 
 export const getCurrentYear = () => new Date().getFullYear()
@@ -94,11 +93,4 @@ export const parseHourFromMinute = (minutes: number | string) => {
 export const parseHourFromMillisecond = (millisecond: string) => {
   const minutes = new BigNumber(millisecond).div(1000 * 60, 10).toNumber()
   return parseHourFromMinute(minutes)
-}
-
-export const getCSTTime = () => {
-  const date = new Date()
-  const offsetGMT = date.getTimezoneOffset() // minutes
-  const now = date.getTime()
-  return now + (offsetGMT + 8 * 60) * 60 * 1000
 }

@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { CircleCorner } from '.'
+import variables from '../../styles/variables.module.scss'
 
 export const TransactionPanel = styled.div`
   width: 100%;
@@ -13,29 +14,13 @@ export const TransactionPanel = styled.div`
   flex-direction: column;
   font-size: 16px;
 
-  @media (max-width: 750px) {
+  &:first-child {
+    margin-top: 0;
+  }
+
+  @media (max-width: ${variables.mobileBreakPoint}) {
     padding: 15px 20px;
     font-size: 13px;
-  }
-`
-
-export const TransactionsReward = styled.div`
-  display: flex;
-  align-items: center;
-  height: 35px;
-  justify-content: space-between;
-
-  .transaction__cell {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    color: rgb(136 136 136);
-  }
-
-  .transaction__cell__capacity {
-    font-size: 16px;
-    color: rgb(136 136 136);
-    margin-left: 15px;
   }
 `
 
@@ -45,29 +30,29 @@ export const TransactionHashBlockPanel = styled.div`
   flex-direction: column;
   margin-top: 10px;
 
-  .transaction_item__content {
+  .transactionItemContent {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
     justify-content: space-between;
     margin-bottom: 10px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       flex-direction: column;
       justify-content: normal;
       margin-bottom: 10px;
     }
 
-    .transaction_item__hash {
+    .transactionItemHash {
       font-size: 14px;
       color: ${props => props.theme.primary};
       font-weight: 500;
     }
 
-    .transaction_item__block {
+    .transactionItemBlock {
       color: #000;
 
-      @media (max-width: 750px) {
+      @media (max-width: ${variables.mobileBreakPoint}) {
         font-weight: normal;
       }
     }
@@ -88,7 +73,7 @@ export const TransactionCellPanel = styled.div`
   flex-direction: row;
   align-items: flex-start;
 
-  @media (max-width: 1200px) {
+  @media (max-width: ${variables.extraLargeBreakPoint}) {
     flex-direction: column;
     align-items: center;
   }
@@ -99,19 +84,19 @@ export const TransactionCellPanel = styled.div`
     height: 16px;
   }
 
-  .transaction_item__input {
+  .transactionItemInput {
     margin-right: 40px;
     flex: 1;
     min-width: 0;
 
-    @media (max-width: 1200px) {
+    @media (max-width: ${variables.extraLargeBreakPoint}) {
       margin: 0;
       flex: none;
       width: 100%;
     }
   }
 
-  .transaction_item__output {
+  .transactionItemOutput {
     flex: 1;
     min-width: 0;
     display: flex;
@@ -119,19 +104,19 @@ export const TransactionCellPanel = styled.div`
     align-items: flex-start;
     margin-left: 40px;
 
-    @media (max-width: 1200px) {
+    @media (max-width: ${variables.extraLargeBreakPoint}) {
       margin: 0;
       flex: none;
       width: 100%;
     }
   }
 
-  .transaction_item__output__empty {
+  .transactionItemOutputEmpty {
     font-size: 16px;
     color: #666;
     margin-top: 18px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       font-size: 13px;
     }
   }

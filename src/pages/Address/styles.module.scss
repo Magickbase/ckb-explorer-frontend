@@ -1,60 +1,158 @@
+@import '../../styles/variables.module';
+
+.inscriptions {
+  overflow-x: scroll;
+  width: 100%;
+
+  @media (width >= $extraLargeBreakPoint) {
+    max-height: 220px;
+  }
+
+  @media (width <= $extraLargeBreakPoint) {
+    max-height: 310px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+    gap: 1rem;
+  }
+}
+
+.addressOverviewCard:not(
+    [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.']
+  ) {
+  margin-top: 24px;
+  padding-bottom: 40px;
+
+  .cardTitle {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  @media (width <= $mobileBreakPoint) {
+    margin-top: 20px;
+    padding-bottom: 16px;
+  }
+}
+
+.addressUDTAssetsPanel + .addressLockScriptPanel {
+  margin-top: 24px;
+}
+
 .addressWidthModify {
   max-width: 80%;
 
-  @media (max-width: 1200px) {
+  @media (width <= $extraLargeBreakPoint) {
     max-width: 40%;
   }
 
-  @media (max-width: 750px) {
+  @media (width <= $mobileBreakPoint) {
     max-width: 100%;
   }
 }
 
-.transactionTitleCard {
-  height: 80px;
+.txHeaderLabels {
+  display: flex;
+  align-items: stretch;
 
-  @media (max-width: 750px) {
-    height: 152px;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0;
-    > div {
-      display: flex;
-      align-items: center;
-      padding: 0 12px;
-    }
-    > div:first-child {
-      margin: 0;
-      height: 56px;
-    }
-    > div:last-child {
-      width: 100%;
-      order: 3;
-      height: 92px;
-      > div {
-        width: 100%;
-        > label {
-          width: 50%;
+  @media (width <= $mobileBreakPoint) {
+    margin-bottom: 1rem;
+  }
+
+  a {
+    position: relative;
+    height: 100%;
+    font-weight: 400;
+    white-space: nowrap;
+    margin-right: 1rem;
+
+    &[data-is-active='true'] {
+      font-weight: 600; // 500 is set in figma, but not obvious enough in fact
+      &::after {
+        content: '';
+        display: block;
+        width: 72px;
+        height: 4px;
+        background: var(--primary-color);
+        position: absolute;
+        bottom: -24px;
+        left: 50%;
+        transform: translateX(-50%);
+
+        @media (width <= $mobileBreakPoint) {
+          width: 104px;
+          height: 2px;
+          bottom: -10px;
         }
       }
     }
-    &:after {
-      content: ' ';
-      order: 2;
-      background: #ededed;
-      height: 4px;
-      width: 100%;
+
+    &:first-child {
+      margin-right: 4rem;
+
+      @media (width <= $extraLargeBreakPoint) {
+        margin-right: 1rem;
+      }
     }
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+}
+
+.transactionListOptionsCard:not(
+    [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.']
+  ) {
+  margin-top: 24px;
+
+  @media (width <= $mobileBreakPoint) {
+    padding-bottom: 16px;
+  }
+
+  .cardHeader {
+    padding: 20px 0;
+    overflow: scroll;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    @media (width <= $mobileBreakPoint) {
+      padding: 10px 0;
+    }
+  }
+}
+
+.searchOptionsAndModeSwitch {
+  display: flex;
+  gap: 40px;
+
+  @media (width <= $extraLargeBreakPoint) {
+    gap: 1rem;
+  }
+
+  @media (width <= $mobileBreakPoint) {
+    flex-direction: column-reverse;
+    align-items: flex-end;
   }
 }
 
 .sortAndFilter {
   display: flex;
   align-items: center;
-  padding-right: 2.6rem;
+
   svg {
     cursor: pointer;
   }
+
   &[data-is-active='true'] {
     svg {
       path {
@@ -65,34 +163,50 @@
 }
 
 .layoutButtons {
-  > label {
-    height: 40px;
-    width: 120px;
-    text-align: center;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 38px;
-    color: #333333;
-    border: 1px solid #e5e5e5;
-    box-shadow: none !important;
-    &::before {
-      content: none !important;
-    }
-    &:hover {
-      color: #333333;
-      background: #ffffff;
-    }
-    &:first-child {
-      border-radius: 4px 0 0 4px;
-    }
-    &:last-child {
-      border-radius: 0 4px 4px 0;
-    }
-    &:global(.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)) {
-      background: #333333;
-      border-color: #333333 !important;
+  width: 240px;
+
+  @media (width <= $mobileBreakPoint) {
+    width: 100%;
+  }
+
+  :global {
+    /* stylelint-disable-next-line selector-class-pattern */
+    .ant-radio-button-wrapper {
+      height: 40px;
+      width: 50%;
+      text-align: center;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 38px;
+      color: #333;
+      border: 1px solid #e5e5e5;
+      box-shadow: none;
+
+      &::before {
+        content: none;
+      }
+
       &:hover {
-        background: #333333;
+        color: #333;
+        background: #fff;
+      }
+
+      &:first-child {
+        border-radius: 4px 0 0 4px;
+      }
+
+      &:last-child {
+        border-radius: 0 4px 4px 0;
+      }
+
+      /* stylelint-disable-next-line selector-class-pattern */
+      &.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+        background: #333;
+        border-color: #333;
+
+        &:hover {
+          background: #333;
+        }
       }
     }
   }
@@ -101,7 +215,7 @@
 .liteTransactionHeader {
   display: flex;
   width: 100%;
-  background-color: #ffffff;
+  background-color: #fff;
   margin-top: 4px;
   padding: 23px 40px 22px;
   flex-direction: row;
@@ -109,24 +223,143 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 19px;
-  color: #333333;
+  color: #333;
+
   > div {
     &:first-child {
       width: 28%;
     }
+
     &:nth-child(2) {
       width: 13%;
     }
+
     &:nth-child(3) {
       width: 20%;
     }
+
     &:nth-child(4) {
       width: 20%;
     }
+
     &:last-child {
       width: 19%;
       text-align: right;
       padding: 0;
     }
   }
+}
+
+.openInNew {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.dasAccount {
+  display: flex;
+  align-items: center;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  height: 32px;
+  border-radius: 4px;
+  padding: 0 4px;
+  margin-left: 20px;
+  max-width: 152px;
+  font-size: 16px;
+  font-weight: 500;
+
+  @media (width <= $mobileBreakPoint) {
+    max-width: 90px;
+    font-size: 13px;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+    margin-right: 2px;
+    border-radius: 50%;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+  }
+}
+
+.noRecords {
+  display: flex;
+  background: #fff;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  font-size: 1rem;
+}
+
+.assetCardList {
+  margin-top: 10px;
+  background-color: #f1f1f1;
+  padding: 6px 25px;
+  border-radius: 4px;
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 1rem;
+}
+
+.scriptToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scriptHash {
+  margin-top: 12px;
+  padding: 12px 24px;
+  background: #f7f7f7;
+  word-break: break-all;
+}
+
+.cardFooterPanel {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  background: white;
+  flex-direction: row;
+  justify-content: center;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 2px 6px 0 rgb(0 0 0 / 12%);
+}
+
+.cardFooterButton {
+  height: 30px;
+  line-height: 30px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: rgb(245 245 245);
+  letter-spacing: 1px;
+  color: rgb(0 0 0);
+  pointer-events: auto;
+}
+
+.notice {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #ffb21e;
+  border: 1px solid #ffdba6;
+  background-color: #fffcf2;
 }

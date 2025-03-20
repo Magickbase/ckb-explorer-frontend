@@ -1,19 +1,23 @@
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import i18n, { currentLanguage } from '../../../utils/i18n'
-import { DATA_ZOOM_CONFIG, handleAxis } from '../../../utils/chart'
-import { parseDateNoTime } from '../../../utils/date'
+import dayjs from 'dayjs'
+import { DATA_ZOOM_CONFIG, assertIsArray, handleAxis } from '../../../utils/chart'
 import { handleHashRate } from '../../../utils/number'
 import { tooltipColor, tooltipWidth, SmartChartPage } from '../common'
-import { fetchStatisticHashRate } from '../../../service/http/fetcher'
-import { ChartCachedKeys } from '../../../constants/cache'
+import { ChartItem, explorerService } from '../../../services/ExplorerService'
+import { useCurrentLanguage } from '../../../utils/i18n'
+import { ChartColorConfig } from '../../../constants/common'
 
-const getOption = (
-  statisticHashRates: State.StatisticHashRate[],
-  chartColor: State.App['chartColor'],
+const useOption = (
+  statisticHashRates: ChartItem.HashRate[],
+  chartColor: ChartColorConfig,
   isMobile: boolean,
+
   isThumbnail = false,
 ): echarts.EChartOption => {
+  const { t } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
+
   const gridThumbnail = {
     left: '4%',
     right: '10%',
@@ -33,14 +37,13 @@ const getOption = (
     tooltip: !isThumbnail
       ? {
           trigger: 'axis',
-          formatter: (dataList: any) => {
-            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage() === 'en' ? 75 : 50)
-            let result = `<div>${tooltipColor('#333333')}${widthSpan(i18n.t('statistic.date'))} ${
-              dataList[0].data[0]
-            }</div>`
-            result += `<div>${tooltipColor(chartColor.colors[0])}${widthSpan(
-              i18n.t('block.hash_rate'),
-            )} ${handleHashRate(dataList[0].data[1])}</div>`
+          formatter: dataList => {
+            assertIsArray(dataList)
+            const widthSpan = (value: string) => tooltipWidth(value, currentLanguage === 'en' ? 75 : 50)
+            let result = `<div>${tooltipColor('#333333')}${widthSpan(t('statistic.date'))} ${dataList[0].data[0]}</div>`
+            result += `<div>${tooltipColor(chartColor.colors[0])}${widthSpan(t('block.hash_rate'))} ${handleHashRate(
+              dataList[0].data[1],
+            )}</div>`
             return result
           },
         }
@@ -49,7 +52,7 @@ const getOption = (
     dataZoom: isThumbnail ? [] : DATA_ZOOM_CONFIG,
     xAxis: [
       {
-        name: isMobile || isThumbnail ? '' : i18n.t('statistic.date'),
+        name: isMobile || isThumbnail ? '' : t('statistic.date'),
         nameLocation: 'middle',
         nameGap: 30,
         type: 'category',
@@ -59,7 +62,7 @@ const getOption = (
     yAxis: [
       {
         position: 'left',
-        name: isMobile || isThumbnail ? '' : i18n.t('block.hash_rate'),
+        name: isMobile || isThumbnail ? '' : t('block.hash_rate'),
         type: 'value',
         scale: true,
         axisLine: {
@@ -74,7 +77,7 @@ const getOption = (
     ],
     series: [
       {
-        name: i18n.t('block.hash_rate'),
+        name: t('block.hash_rate'),
         type: 'line',
         yAxisIndex: 0,
         symbol: isThumbnail ? 'none' : 'circle',
@@ -83,7 +86,7 @@ const getOption = (
     ],
     dataset: {
       source: statisticHashRates.map(data => [
-        parseDateNoTime(data.createdAtUnixtimestamp),
+        dayjs(+data.createdAtUnixtimestamp * 1000).format('YYYY/MM/DD'),
         new BigNumber(data.avgHashRate).toNumber(),
       ]),
       dimensions: ['timestamp', 'value'],
@@ -91,7 +94,7 @@ const getOption = (
   }
 }
 
-const toCSV = (statisticHashRates: State.StatisticHashRate[]) =>
+const toCSV = (statisticHashRates: ChartItem.HashRate[]) =>
   statisticHashRates ? statisticHashRates.map(data => [data.createdAtUnixtimestamp, data.avgHashRate]) : []
 
 export const HashRateChart = ({ isThumbnail = false }: { isThumbnail?: boolean }) => {
@@ -99,12 +102,12 @@ export const HashRateChart = ({ isThumbnail = false }: { isThumbnail?: boolean }
   return (
     <SmartChartPage
       title={t('block.hash_rate')}
+      description={t('glossary.hash_rate')}
       isThumbnail={isThumbnail}
-      fetchData={fetchStatisticHashRate}
-      getEChartOption={getOption}
+      fetchData={explorerService.api.fetchStatisticHashRate}
+      getEChartOption={useOption}
       toCSV={toCSV}
-      cacheKey={ChartCachedKeys.HashRate}
-      cacheMode="date"
+      queryKey="fetchStatisticHashRate"
     />
   )
 }

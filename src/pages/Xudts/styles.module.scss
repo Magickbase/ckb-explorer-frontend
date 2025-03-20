@@ -1,0 +1,400 @@
+@import '../../styles/variables.module';
+
+dl,
+dd,
+dt {
+  margin: 0;
+  padding: 0;
+}
+
+.tokensLoadingPanel {
+  width: 100%;
+  text-align: center;
+
+  @media (max-width: $mobileBreakPoint) {
+    height: 100px;
+    line-height: 100px;
+    margin-bottom: 160px;
+    width: 100%;
+    text-align: center;
+    margin-top: 4px;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 2px 6px 0 rgb(0 0 0 / 12%);
+    background-color: #fff;
+  }
+}
+
+.tokensContentEmpty {
+  height: 100px;
+  line-height: 100px;
+  width: 100%;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 2px 6px 0 rgb(0 0 0 / 12%);
+  background-color: #fff;
+  text-align: center;
+  font-size: 16px;
+  margin-top: 4px;
+
+  @media (max-width: $mobileBreakPoint) {
+    font-size: 14px;
+    border-radius: 6px;
+  }
+}
+
+.tokensPanel {
+  margin-top: 40px;
+  margin-bottom: 60px;
+
+  @media (max-width: $mobileBreakPoint) {
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+
+  .tokensTitlePanel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    @media (max-width: $mobileBreakPoint) {
+      margin-bottom: 10px;
+    }
+
+    > span {
+      color: #000;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    > a {
+      font-size: 14px;
+      color: var(--primary-color);
+    }
+  }
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  color: var(--primary-color);
+  font-size: 15px;
+  font-weight: 500;
+
+  &:hover {
+    color: var(--primary-color);
+  }
+}
+
+.filterSortCard:not(
+    [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.']
+  ) {
+  padding: 16px;
+}
+
+.sortOption {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #333;
+}
+
+.table {
+  display: block;
+
+  @media screen and (width <= $mobileBreakPoint) {
+    display: none;
+  }
+}
+
+.cards {
+  display: none;
+
+  @media screen and (width <= $mobileBreakPoint) {
+    display: block;
+  }
+}
+
+.tokensCard {
+  margin-top: 10px;
+  padding: 16px;
+  font-size: 14px;
+  box-shadow: 0 4px 4px 0 rgb(16 16 16 / 5%);
+  color: #333;
+}
+
+.tokenInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &:first-child {
+    @media (width <= $mobileBreakPoint) {
+      margin-top: 16px;
+    }
+  }
+
+  &:last-child {
+    @media (width <= $mobileBreakPoint) {
+      margin-bottom: 16px;
+    }
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #f5f5f5;
+    padding-bottom: 16px;
+  }
+
+  &:not(:first-child) {
+    margin-top: 16px;
+  }
+
+  .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--666666, #666);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+
+    & + dd {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .value {
+    word-wrap: break-word;
+    word-break: break-all;
+    color: var(--333333, #333);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+}
+
+.tokensTable:not(
+    [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.'][_='']
+  ) {
+  $paddingX: 40px;
+
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  font-size: 14px;
+  color: #333;
+
+  /* stylelint-disable-next-line selector-class-pattern */
+  :global(.ant-table-row) {
+    &:hover td {
+      background: unset;
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+
+    thead tr {
+      border-bottom: 4px solid #e5e5e5;
+    }
+
+    tbody tr {
+      position: relative;
+
+      &:not(:last-child)::after {
+        content: ' ';
+        position: absolute;
+        bottom: 0;
+        left: $paddingX;
+        display: block;
+        width: calc(100% - $paddingX * 2);
+        height: 1px;
+        background: #e5e5e5;
+      }
+    }
+
+    th {
+      background: #fff;
+      font-weight: 600;
+
+      &::before {
+        display: none;
+      }
+    }
+
+    th,
+    td {
+      border-bottom: 0;
+
+      &:first-child {
+        padding-left: $paddingX;
+      }
+
+      &:last-child {
+        padding-right: $paddingX;
+      }
+    }
+  }
+
+  .colTags {
+    display: flex;
+    align-items: center;
+
+    .tags {
+      flex-wrap: wrap;
+      display: flex;
+      gap: 8px;
+      margin-left: 8px;
+    }
+  }
+
+  .colName {
+    .container {
+      display: flex;
+      position: relative;
+      align-items: center;
+      gap: 10px;
+
+      .warningIcon {
+        position: absolute;
+        right: 101%;
+      }
+
+      .icon {
+        width: 30px;
+        height: 30px;
+      }
+
+      .right {
+        display: flex;
+        align-items: center;
+
+        .symbolAndName {
+          display: flex;
+          flex-direction: column;
+          align-items: left;
+          line-height: normal;
+          font-size: 14px;
+          color: #333;
+
+          .name {
+            margin-top: 2px;
+            font-size: 12px;
+            color: #999;
+          }
+
+          .helpIcon {
+            width: 16px;
+            height: 16px;
+            margin-left: 4px;
+          }
+        }
+
+        .description {
+          line-height: normal;
+          font-size: 12px;
+          color: #666;
+          margin-top: 8px;
+        }
+      }
+    }
+  }
+
+  .colStatus {
+    min-width: 240px;
+
+    .container {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #000;
+
+      .mintStatus {
+        width: 88px;
+      }
+    }
+  }
+
+  .colTransactions {
+    min-width: 200px;
+  }
+
+  .colAddressCount {
+    display: flex;
+    min-width: 170px;
+    flex-wrap: nowrap;
+
+    span {
+      white-space: nowrap;
+    }
+  }
+
+  .colCreatedTime {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  .loading {
+    position: static;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0;
+  }
+}
+
+.pagination {
+  border-top: 4px solid #e5e5e5;
+
+  @media (width <= $mobileBreakPoint) {
+    border-top: 0;
+    margin-top: 20px;
+    border-radius: 4px;
+    box-shadow: none;
+  }
+}
+
+.submitTokenInfoBtn {
+  color: var(--primary-color);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+.icon {
+  width: 30px;
+  border-radius: 50%;
+
+  @media (width <= $mobileBreakPoint) {
+    width: 20px;
+  }
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: bold;
+
+  a {
+    font-weight: normal;
+    font-size: 12px;
+    height: 28px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #333;
+    border: 1px solid #8a8a8a;
+    border-radius: 14px;
+
+    &:hover {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+  }
+}

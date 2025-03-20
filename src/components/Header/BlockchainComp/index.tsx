@@ -1,18 +1,16 @@
 import { useState, useLayoutEffect, FC, memo } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { isMainnet } from '../../../utils/chain'
 import WhiteDropdownIcon from '../../../assets/white_dropdown.png'
 import BlueDropUpIcon from '../../../assets/blue_drop_up.png'
 import GreenDropUpIcon from '../../../assets/green_drop_up.png'
-import { useAppState } from '../../../contexts/providers'
 import { HeaderBlockchainPanel, MobileSubMenuPanel } from './styled'
 import SimpleButton from '../../SimpleButton'
 import ChainDropdown from '../../Dropdown/ChainType'
-import { useIsMobile } from '../../../utils/hook'
-import { ChainName, MAINNET_URL, TESTNET_URL } from '../../../constants/common'
-import { fetchNodeVersion } from '../../../service/http/fetcher'
-import { AppCachedKeys } from '../../../constants/cache'
-import { fetchCachedData, storeCachedData } from '../../../utils/cache'
+import { ChainName, MAINNET_URL, ONE_DAY_MILLISECOND, TESTNET_URL } from '../../../constants/common'
+import { explorerService } from '../../../services/ExplorerService'
+import { cacheService } from '../../../services/CacheService'
+import { useChainName } from '../../../hooks/useCKBNode'
 
 const getDropdownIcon = (showDropdown: boolean) => {
   if (!showDropdown) return WhiteDropdownIcon
@@ -27,15 +25,14 @@ const handleVersion = (nodeVersion: string) => {
 }
 
 const BlockchainDropdown: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
-  const {
-    app: { language },
-  } = useAppState()
   const [showChainType, setShowChainType] = useState(false)
   const [chainTypeLeft, setChainTypeLeft] = useState(0)
   const [chainTypeTop, setChainTypeTop] = useState(0)
 
+  const chainName = useChainName()
+
   useLayoutEffect(() => {
-    if (showChainType && language) {
+    if (showChainType) {
       const chainDropdownComp = document.getElementById('header__blockchain__panel')
       if (chainDropdownComp) {
         const chainDropdownReact = chainDropdownComp.getBoundingClientRect()
@@ -45,7 +42,7 @@ const BlockchainDropdown: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
         }
       }
     }
-  }, [showChainType, language])
+  }, [showChainType])
   return (
     <HeaderBlockchainPanel
       id="header__blockchain__panel"
@@ -54,23 +51,23 @@ const BlockchainDropdown: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
       }}
     >
       <SimpleButton
-        className="header__blockchain__flag"
+        className="headerBlockchainFlag"
         onMouseOver={() => {
           setShowChainType(true)
         }}
       >
-        <div className="header__blockchain__content_panel">
+        <div className="headerBlockchainContentPanel">
           <div
-            className="header__blockchain__content"
+            className="headerBlockchainContent"
             style={{
               textTransform: 'uppercase',
             }}
           >
-            {isMainnet() ? ChainName.Mainnet : ChainName.Testnet}
+            {chainName}
           </div>
           <img src={getDropdownIcon(showChainType)} alt="dropdown icon" />
         </div>
-        <div className="header__blockchain__node__version">{handleVersion(nodeVersion)}</div>
+        <div className="headerBlockchainNodeVersion">{handleVersion(nodeVersion)}</div>
       </SimpleButton>
       {showChainType && <ChainDropdown setShow={setShowChainType} left={chainTypeLeft} top={chainTypeTop} />}
     </HeaderBlockchainPanel>
@@ -79,6 +76,8 @@ const BlockchainDropdown: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
 
 const BlockchainMenu: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
   const [showSubMenu, setShowSubMenu] = useState(false)
+
+  const chainName = useChainName()
 
   const chainTypeIcon = () => {
     if (!showSubMenu) {
@@ -90,29 +89,29 @@ const BlockchainMenu: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
   return (
     <MobileSubMenuPanel showSubMenu={false}>
       <SimpleButton
-        className="mobile__menus__main__item"
+        className="mobileMenusMainItem"
         onClick={() => {
           setShowSubMenu(!showSubMenu)
         }}
       >
         <div
-          className="mobile__menus__main__item__content__highlight"
+          className="mobileMenusMainItemContentHighlight"
           style={{
             textTransform: 'uppercase',
           }}
         >
-          {isMainnet() ? ChainName.Mainnet : ChainName.Testnet}
+          {chainName}
         </div>
-        <img className="mobile__menus__main__item__icon" alt="mobile chain type icon" src={chainTypeIcon()} />
+        <img className="mobileMenusMainItemIcon" alt="mobile chain type icon" src={chainTypeIcon()} />
       </SimpleButton>
-      <div className="blockchain__mobile__node__version">{handleVersion(nodeVersion)}</div>
+      <div className="blockchainMobileNodeVersion">{handleVersion(nodeVersion)}</div>
       {showSubMenu && (
         <>
-          <a className="mobile__menus__sub__item" href={MAINNET_URL}>
-            {`${ChainName.Mainnet} mainnet`}
+          <a className="mobileMenusSubItem" href={MAINNET_URL}>
+            {`${ChainName.Mainnet} Mainnet`}
           </a>
-          <a className="mobile__menus__sub__item" href={TESTNET_URL}>
-            {`${ChainName.Testnet} testnet`}
+          <a className="mobileMenusSubItem" href={TESTNET_URL}>
+            {`${ChainName.Testnet} Testnet`}
           </a>
         </>
       )}
@@ -120,32 +119,17 @@ const BlockchainMenu: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
   )
 }
 
-export default memo(() => {
-  const isMobile = useIsMobile()
-
+export default memo(({ isMobile }: { isMobile: boolean }) => {
   const query = useQuery(
     ['node_version'],
     async () => {
-      const wrapper = await fetchNodeVersion()
-      const nodeVersion = wrapper.attributes.version
-      storeCachedData(AppCachedKeys.Version, `${nodeVersion}&${new Date().getTime()}`)
-      return nodeVersion
+      const { version } = await explorerService.api.fetchNodeVersion()
+      cacheService.set<string>('node_version', version, { expireTime: ONE_DAY_MILLISECOND })
+      return version
     },
     {
       keepPreviousData: true,
-      initialData: () => {
-        // version cache format: version&timestamp
-        const data = fetchCachedData<string>(AppCachedKeys.Version)
-        if (!data?.includes('&')) return undefined
-
-        const timestamp = Number(data.substring(data.indexOf('&') + 1))
-        const DAY_TIMESTAMP = 24 * 60 * 60 * 1000
-        const isStale = Date.now() - timestamp > DAY_TIMESTAMP
-        if (isStale) return undefined
-
-        const nodeVersion = data.substring(0, data.indexOf('&'))
-        return nodeVersion
-      },
+      initialData: () => cacheService.get<string>('node_version'),
     },
   )
   const nodeVersion = query.data ?? ''

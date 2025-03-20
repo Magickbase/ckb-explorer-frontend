@@ -1,8 +1,9 @@
 import { Tooltip } from 'antd'
 import { ComponentProps, FC } from 'react'
 import classNames from 'classnames'
-import { Link, LinkProps } from 'react-router-dom'
-import { useBoolean } from '../../utils/hook'
+import { LinkProps } from 'react-router-dom'
+import { Link } from '../Link'
+import { useBoolean } from '../../hooks'
 import EllipsisMiddle from '../EllipsisMiddle'
 import CopyTooltipText from '../Text/CopyTooltipText'
 import styles from './styles.module.scss'
@@ -16,7 +17,11 @@ const AddressText: FC<{
   linkProps?: LinkProps
   monospace?: boolean
   useTextWidthForPlaceholderWidth?: boolean
+  style?: React.CSSProperties
+  onClick?: () => void
+  ellipsisMiddle?: boolean
 }> = ({
+  ellipsisMiddle = true,
   children: address,
   fontKey,
   className,
@@ -25,6 +30,8 @@ const AddressText: FC<{
   linkProps,
   monospace = true,
   useTextWidthForPlaceholderWidth = true,
+  style,
+  onClick,
 }) => {
   const [isTruncated, truncatedCtl] = useBoolean(false)
 
@@ -34,24 +41,32 @@ const AddressText: FC<{
       placement="top"
       title={<CopyTooltipText content={address} />}
     >
-      <EllipsisMiddle
-        useTextWidthForPlaceholderWidth={useTextWidthForPlaceholderWidth}
-        fontKey={fontKey}
-        className={classNames(
-          {
-            monospace,
-          },
-          linkProps == null && containerClass,
-          className,
-        )}
-        onTruncateStateChange={truncatedCtl.toggle}
-      >
-        {address}
-      </EllipsisMiddle>
+      {ellipsisMiddle ? (
+        <EllipsisMiddle
+          onClick={onClick}
+          style={style}
+          useTextWidthForPlaceholderWidth={useTextWidthForPlaceholderWidth}
+          fontKey={fontKey}
+          className={classNames(
+            {
+              monospace,
+            },
+            linkProps == null && containerClass,
+            className,
+          )}
+          onTruncateStateChange={truncatedCtl.toggle}
+        >
+          {address}
+        </EllipsisMiddle>
+      ) : (
+        <span className={className} style={{ wordBreak: 'break-all', maxWidth: '100%' }}>
+          {address}
+        </span>
+      )}
     </Tooltip>
   )
 
-  if (linkProps != null) {
+  if (linkProps != null && linkProps.to !== window.location.pathname) {
     const { className, ...props } = linkProps
     return (
       <Link className={classNames(styles.link, containerClass, className)} {...props}>

@@ -1,7 +1,8 @@
 module.exports = {
-  extends: ['airbnb', 'plugin:prettier/recommended'],
+  root: true,
+  extends: ['airbnb', 'plugin:prettier/recommended', 'plugin:storybook/recommended'],
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'react-hooks', 'unused-imports'],
   globals: {
     State: 'true',
     CustomRouter: 'true',
@@ -32,16 +33,10 @@ module.exports = {
       },
     ],
     'no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': 'error',
     'no-undef': 'off',
     'implicit-arrow-linebreak': 'off',
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      {
-        vars: 'local',
-        args: 'after-used',
-        ignoreRestSiblings: false,
-      },
-    ],
     'operator-linebreak': [0, 'none'],
     'arrow-parens': [2, 'as-needed'],
     'max-len': [
@@ -89,6 +84,7 @@ module.exports = {
         prop: 'ignore',
       },
     ],
+    'react/jsx-pascal-case': 'off',
     'no-console': ['error', { allow: ['error'] }],
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
@@ -105,6 +101,21 @@ module.exports = {
         allow: ['^.*_'],
       },
     ],
+    // The service layer uses the singleton pattern, so there will be many methods that do not use this.
+    'class-methods-use-this': 'off',
+    // TODO: Perhaps @typescript-eslint/recommended should be used.
+    '@typescript-eslint/array-type': 'error',
+    'no-dupe-class-members': 'off',
+    '@typescript-eslint/no-dupe-class-members': 'error',
+    'lines-between-class-members': 'off',
+    // It looks like this rule has a bug, and it seems that typescript-eslint missed this rule when supporting eslint v8.
+    '@typescript-eslint/lines-between-class-members': 'off',
+    'no-redeclare': 'off',
+    '@typescript-eslint/no-redeclare': 'error',
+    'jsx-a11y/label-has-associated-control': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
+    'jsx-a11y/no-noninteractive-element-interactions': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
   },
   env: {
     jest: true,

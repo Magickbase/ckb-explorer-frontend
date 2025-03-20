@@ -1,20 +1,24 @@
 import { FC } from 'react'
-import { localeNumberString } from '../../../utils/number'
+import { useTranslation } from 'react-i18next'
 import { shannonToCkb } from '../../../utils/util'
-import i18n from '../../../utils/i18n'
-import DecimalCapacity from '../../../components/DecimalCapacity'
+import Capacity from '../../../components/Capacity'
 import { handleBigNumber } from '../../../utils/string'
+import { CsvExport } from '../../../components/CsvExport'
 import {
   DepositorRankCardPanel,
   DepositorRankPanel,
   DepositorRankTitle,
   DepositorSeparate,
   DepositorRankItem,
+  DepositorFooterPanel,
 } from './styled'
-import { ItemCardData, ItemCardGroup } from '../../../components/Card/ItemCard'
 import AddressText from '../../../components/AddressText'
 import styles from './index.module.scss'
-import { useIsMobile } from '../../../utils/hook'
+import { useIsMobile } from '../../../hooks'
+import { NervosDaoDepositor } from '../../../services/ExplorerService'
+import { CardCellFactory, CardListWithCellsList } from '../../../components/CardList'
+
+type RankedDepositor = NervosDaoDepositor & { rank: number }
 
 const AddressTextCol = ({ address }: { address: string }) => {
   return (
@@ -29,31 +33,42 @@ const AddressTextCol = ({ address }: { address: string }) => {
   )
 }
 
-const DepositorCardGroup: FC<{ depositors: (State.NervosDaoDepositor & { rank: number })[] }> = ({ depositors }) => {
-  const items: ItemCardData<State.NervosDaoDepositor & { rank: number }>[] = [
+const DepositorCardGroup: FC<{ depositors: RankedDepositor[] }> = ({ depositors }) => {
+  const { t } = useTranslation()
+
+  const items: CardCellFactory<RankedDepositor>[] = [
     {
-      title: i18n.t('nervos_dao.dao_title_rank'),
-      render: depositor => depositor.rank,
+      title: t('nervos_dao.dao_title_rank'),
+      content: depositor => depositor.rank,
     },
     {
-      title: i18n.t('nervos_dao.dao_title_address'),
-      render: depositor => <AddressTextCol address={depositor.addressHash} />,
+      title: t('nervos_dao.dao_title_address'),
+      content: depositor => <AddressTextCol address={depositor.addressHash} />,
     },
     {
-      title: i18n.t('nervos_dao.dao_title_deposit_capacity'),
-      render: depositor => <DecimalCapacity value={localeNumberString(shannonToCkb(depositor.daoDeposit))} />,
+      title: t('nervos_dao.dao_title_deposit_capacity'),
+      content: depositor => <Capacity capacity={shannonToCkb(depositor.daoDeposit)} layout="responsive" />,
     },
     {
-      title: i18n.t('nervos_dao.dao_title_deposit_time'),
-      render: depositor => handleBigNumber(depositor.averageDepositTime, 1),
+      title: t('nervos_dao.dao_title_deposit_time'),
+      content: depositor => handleBigNumber(depositor.averageDepositTime, 1),
     },
   ]
 
-  return <ItemCardGroup items={items} dataSource={depositors} getDataKey={(_, idx) => idx} />
+  return (
+    <CardListWithCellsList
+      className={styles.depositorCardGroup}
+      dataSource={depositors}
+      getDataKey={data => data.addressHash}
+      cells={items}
+      cardProps={{ rounded: false }}
+    />
+  )
 }
 
-export default ({ depositors, filter }: { depositors: State.NervosDaoDepositor[]; filter?: string }) => {
-  const rankedDepositors = depositors.map((depositor, index) => ({
+export default ({ depositors, filter }: { depositors: NervosDaoDepositor[]; filter?: string }) => {
+  const { t } = useTranslation()
+  const rankedDepositors: RankedDepositor[] = depositors.map((depositor, index) => ({
     ...depositor,
     rank: index + 1,
   }))
@@ -61,28 +76,42 @@ export default ({ depositors, filter }: { depositors: State.NervosDaoDepositor[]
   const filteredDepositors = filter ? rankedDepositors.filter(d => d.addressHash === filter) : rankedDepositors
 
   return useIsMobile() ? (
-    <DepositorRankCardPanel>
-      <DepositorCardGroup depositors={filteredDepositors} />
-    </DepositorRankCardPanel>
+    <>
+      <DepositorRankCardPanel>
+        <DepositorCardGroup depositors={filteredDepositors} />
+      </DepositorRankCardPanel>
+      <DepositorFooterPanel>
+        <div style={{ marginLeft: 'auto' }}>
+          <CsvExport link="/nervosdao/depositor/export" />
+        </div>
+      </DepositorFooterPanel>
+    </>
   ) : (
-    <DepositorRankPanel>
-      <DepositorRankTitle>
-        <div>{i18n.t('nervos_dao.dao_title_rank')}</div>
-        <div>{i18n.t('nervos_dao.dao_title_address')}</div>
-        <div>{i18n.t('nervos_dao.dao_title_deposit_capacity')}</div>
-        <div>{i18n.t('nervos_dao.dao_title_deposit_time')}</div>
-      </DepositorRankTitle>
-      <DepositorSeparate />
-      {filteredDepositors.map(depositor => (
-        <DepositorRankItem key={depositor.addressHash}>
-          <div>{depositor.rank}</div>
-          <AddressTextCol address={depositor.addressHash} />
-          <div>
-            <DecimalCapacity value={localeNumberString(shannonToCkb(depositor.daoDeposit))} />
-          </div>
-          <div>{handleBigNumber(depositor.averageDepositTime, 1)}</div>
-        </DepositorRankItem>
-      ))}
-    </DepositorRankPanel>
+    <>
+      <DepositorRankPanel>
+        <DepositorRankTitle>
+          <div>{t('nervos_dao.dao_title_rank')}</div>
+          <div>{t('nervos_dao.dao_title_address')}</div>
+          <div>{t('nervos_dao.dao_title_deposit_capacity')}</div>
+          <div>{t('nervos_dao.dao_title_deposit_time')}</div>
+        </DepositorRankTitle>
+        <DepositorSeparate />
+        {filteredDepositors.map(depositor => (
+          <DepositorRankItem key={depositor.addressHash}>
+            <div>{depositor.rank}</div>
+            <AddressTextCol address={depositor.addressHash} />
+            <div>
+              <Capacity capacity={shannonToCkb(depositor.daoDeposit)} layout="responsive" />
+            </div>
+            <div>{handleBigNumber(depositor.averageDepositTime, 1)}</div>
+          </DepositorRankItem>
+        ))}
+      </DepositorRankPanel>
+      <DepositorFooterPanel>
+        <div style={{ marginLeft: 'auto' }}>
+          <CsvExport link="/nervosdao/depositor/export" />
+        </div>
+      </DepositorFooterPanel>
+    </>
   )
 }

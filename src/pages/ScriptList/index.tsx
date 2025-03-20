@@ -1,15 +1,16 @@
 import { FC } from 'react'
 import { useLocation } from 'react-router'
+import { useTranslation } from 'react-i18next'
 import Content from '../../components/Content'
-import i18n from '../../utils/i18n'
 import styles from './styles.module.scss'
 import { MainnetContractHashTags, TestnetContractHashTags } from '../../constants/scripts'
 import { isMainnet } from '../../utils/chain'
+import { Link } from '../../components/Link'
 
 const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
 
 type ScriptAttributes = Record<'name' | 'description', string> &
-  Partial<Record<'code' | 'rfc' | 'deprecated' | 'website', string>>
+  Partial<Record<'code' | 'rfc' | 'deprecated' | 'website' | 'doc', string>>
 
 export const scripts = new Map<string, ScriptAttributes>([
   [
@@ -164,7 +165,7 @@ export const scripts = new Map<string, ScriptAttributes>([
       description:
         'Omnilock is a lock script designed for interoperability. It comes with built-in support for verification of transaction signing methods used in Bitcoin, Ethereum, EOS, and Dogecoin. Omnilock is also extensible, so more verification algorithms can be added in future.',
       rfc: 'https://github.com/nervosnetwork/rfcs/tree/master/rfcs/0042-omnilock',
-      code: 'https://github.com/nervosnetwork/ckb-production-scripts/blob/master/c/omni_lock.c',
+      code: 'https://github.com/cryptape/omnilock',
     },
   ],
   [
@@ -186,20 +187,198 @@ export const scripts = new Map<string, ScriptAttributes>([
       website: 'https://github.com/godwokenrises/godwoken/tree/develop/gwos#eth-account-lock',
     },
   ],
+  [
+    'JoyID',
+    {
+      name: 'JoyID',
+      description: 'An universal Account Protocol for Web3 Mass-adoption.',
+      doc: 'https://docs.joy.id/',
+      website: ' https://joy.id/',
+    },
+  ],
+  [
+    'xUDT',
+    {
+      name: 'xUDT',
+      description: "Extensible UDT that derived from sUDT's programmability to support a wider range of scenarios",
+      code: 'https://github.com/nervosnetwork/ckb-production-scripts/blob/master/c/xudt_rce.c',
+      website: 'https://blog.cryptape.com/enhance-sudts-programmability-with-xudt#heading-xudt-cell',
+    },
+  ],
+  [
+    'xUDT(final_rls)',
+    {
+      name: 'xUDT(final_rls)',
+      description: "Extensible UDT that derived from sUDT's programmability to support a wider range of scenarios",
+      code: 'https://github.com/nervosnetwork/ckb-production-scripts/blob/master/c/xudt_rce.c',
+      website: 'https://blog.cryptape.com/enhance-sudts-programmability-with-xudt#heading-xudt-cell',
+    },
+  ],
+  [
+    'Spore',
+    {
+      name: 'Spore',
+      description:
+        'Spore Protocol infuses digital assets with enduring value backed by tokenomics, redeemable at any time. Ensures true on-chain ownership, privacy, creative freedom and frictionless interaction.',
+      rfc: 'https://github.com/sporeprotocol/spore-contract/blob/master/docs/RFC.md',
+      code: 'https://github.com/sporeprotocol/spore-contract',
+      doc: 'https://docs.spore.pro/',
+      website: 'https://spore.pro/',
+    },
+  ],
+  [
+    'Force Bridge',
+    {
+      name: 'Force Bridge',
+      description: 'Force Bridge Lock is compiled from the source code of Omnilock when it has not been released yet',
+      doc: 'https://github.com/Magickbase/ckb-explorer-public-issues/issues/532#issue-2097393857',
+      website: 'https://forcebridge.com/',
+    },
+  ],
+  [
+    'RGB++',
+    {
+      name: 'RGB++',
+      description: 'RGB++ Lock',
+      doc: 'https://github.com/ckb-cell/RGBPlusPlus-design/blob/main/docs/',
+    },
+  ],
+  [
+    'Unique Cell',
+    {
+      name: 'Unique Cell',
+      description:
+        'A unique cell can be created on the Nervos CKB through TypeID which makes sure the unique cell cannot be updated or destroyed.',
+      code: 'https://github.com/ckb-cell/unique-cell/',
+    },
+  ],
+  [
+    'BTC Time Lock',
+    {
+      name: 'BTC Time Lock',
+      description: 'A lock require n confirmations of Bitcoin transaction to unlock the cell.',
+      doc: 'https://github.com/ckb-cell/RGBPlusPlus-design/blob/main/docs/lockscript-design-prd-en.md#btc_time_lock',
+    },
+  ],
+  [
+    'Nostr',
+    {
+      name: 'Nostr',
+      description: 'The Nostr lock script is designed for interoperability with Nostr.',
+      doc: 'https://github.com/cryptape/nostr-binding/blob/main/docs/lightpaper.md',
+      code: 'https://github.com/cryptape/nostr-binding/',
+    },
+  ],
+  [
+    'Single Use Lock',
+    {
+      name: 'Single Use Lock',
+      description: 'A lock script that can only be used once.',
+      code: 'https://github.com/ckb-ecofund/ckb-proxy-locks',
+    },
+  ],
+  [
+    'iCKB Logic',
+    {
+      name: 'iCKB Logic',
+      description: 'iCKB Logic tokenizes NervosDAO deposits into the iCKB xUDT token.',
+      rfc: 'https://github.com/ickb/proposal',
+      code: 'https://github.com/ickb/v1-core/tree/454cfa966052a621c4e8b67001718c29ee8191a2/scripts/contracts/ickb_logic',
+      website: 'https://ickb.org/',
+    },
+  ],
+  [
+    'WR Owned-Owner',
+    {
+      name: 'WR Owned-Owner',
+      description:
+        'WR Owned-Owner enable to create Withdrawals Request from NervosDAO deposits locked with zero length args locks, developed as part of iCKB.',
+      rfc: 'https://github.com/ickb/proposal#owned-owner-script',
+      code: 'https://github.com/ickb/v1-core/tree/454cfa966052a621c4e8b67001718c29ee8191a2/scripts/contracts/owned_owner',
+    },
+  ],
+  [
+    'UDT Limit Order',
+    {
+      name: 'UDT Limit Order',
+      description: 'UDT Limit Order is a general purpose UDT based Limit Order, developed as part of iCKB.',
+      rfc: 'https://github.com/ickb/proposal#limit-order-script',
+      code: 'https://github.com/ickb/v1-core/tree/454cfa966052a621c4e8b67001718c29ee8191a2/scripts/contracts/limit_order',
+    },
+  ],
+  [
+    'Stable++ Pool',
+    {
+      name: 'Stable++ Pool',
+      description: 'Stable++ Pool',
+    },
+  ],
+  [
+    'DID',
+    {
+      name: 'DID',
+      description:
+        'DID is a blockchain-based, open source, censorship-resistant decentralized account system that provides a globally unique naming system with a .bit suffix that can be used for cryptocurrency transfers, domain name resolution, authentication, and other scenarios.',
+      code: 'https://github.com/dotbitHQ/did-contracts',
+      website: 'https://did.id/',
+    },
+  ],
+  [
+    'Stable++ Intent Lock',
+    {
+      name: 'Stable++ Intent Lock',
+      description: 'Stable++ Lock hosting pledge',
+      website: 'https://www.stablepp.xyz/stablecoin',
+    },
+  ],
+  [
+    'Stable++ Vault Lock',
+    {
+      name: 'Stable++ Vault Lock',
+      description: 'Stable++ Vault Lock Script',
+      website: 'https://www.stablepp.xyz/stablecoin',
+    },
+  ],
+  [
+    'Stable++ Asset',
+    {
+      name: 'Stable++ Asset',
+      description: 'Stable++ Asset',
+      website: 'https://www.stablepp.xyz/stablecoin',
+    },
+  ],
+  [
+    'USDI Asset',
+    {
+      name: 'USDI Asset',
+      description: 'USDI Asset',
+      website: 'https://www.interpaystellar.com/',
+    },
+  ],
+  [
+    'Fiber Channel',
+    {
+      name: 'Fiber Channel',
+      description: 'Fiber Channel',
+      website: 'https://www.ckbfiber.net',
+    },
+  ],
 ])
 
-const keysWithLinkValueInScript: Array<keyof ScriptAttributes> = ['rfc', 'code', 'deprecated', 'website']
+const keysWithLinkValueInScript: (keyof ScriptAttributes)[] = ['rfc', 'code', 'doc', 'deprecated', 'website']
 
 const ScriptList: FC = () => {
+  const { t } = useTranslation()
   const location = useLocation()
   const defaultOpenLabel = decodeURIComponent(location.hash.slice(1))
 
   return (
     <Content>
-      <div className={styles.title}>{i18n.t(`script_list.title`)}</div>
+      <div className={styles.title}>{t(`script_list.title`)}</div>
       <div className={styles.container}>
         {[...scripts].map(([label, meta]) => {
           const script = scriptDataList.find(s => s.tag === label)
+          if (!script) return null
           return (
             <details key={label} id={label} open={label === defaultOpenLabel}>
               <summary data-deprecated={!!meta.deprecated} title={meta.deprecated ? 'Deprecated' : undefined}>
@@ -207,31 +386,28 @@ const ScriptList: FC = () => {
                 {meta.description}
               </summary>
               <div>
-                <h3>{`${i18n.t('script_list.links')}:`}</h3>
+                <h3>{`${t('script_list.links')}:`}</h3>
                 <div className={styles.links}>
                   {keysWithLinkValueInScript.map(key =>
                     meta[key] ? (
                       <a key={key} href={meta[key]} target="_blank" rel="noopener noreferrer">
-                        {i18n.t(`script_list.link.${key}`)}
+                        {t(`script_list.link.${key}`)}
                       </a>
                     ) : null,
                   )}
-                  {script ? (
-                    <a
-                      href={`/script/${script.codeHashes[0]}/${script.hashType}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {i18n.t('script_list.link.detail')}
-                    </a>
-                  ) : null}
+                  <Link
+                    to={`/script/${script.codeHashes[0]}/${script.hashType}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t('script_list.link.detail')}
+                  </Link>
                 </div>
-                {script ? (
-                  <>
-                    <h3>{`${i18n.t(`script_list.on_chain_data`)}:`}</h3>
-                    {script.codeHashes.map((codeHash: string, idx: number) => (
-                      <pre key={codeHash}>
-                        {`{
+                <>
+                  <h3>{`${t(`script_list.on_chain_data`)}:`}</h3>
+                  {script.codeHashes.map((codeHash: string, idx: number) => (
+                    <pre key={codeHash}>
+                      {`{
   "code_hash": "${codeHash}",
   "hash_type": "${script.hashType}",
   "out_point": {
@@ -240,10 +416,9 @@ const ScriptList: FC = () => {
   },
   "dep_type": "${script.depType}"
 }`}
-                      </pre>
-                    ))}
-                  </>
-                ) : null}
+                    </pre>
+                  ))}
+                </>
               </div>
             </details>
           )

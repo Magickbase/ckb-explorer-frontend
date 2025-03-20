@@ -1,28 +1,16 @@
 import { FC, memo, useCallback } from 'react'
 import Search from '../../Search'
-import SearchLogo from '../../../assets/search_white.png'
-import { HeaderSearchPanel, HeaderSearchBarPanel } from './styled'
+import { HeaderSearchPanel } from './styled'
 
 export const SearchComp: FC<{
-  expanded: boolean
-  setExpanded: (expanded: boolean) => void
-}> = memo(({ expanded, setExpanded }) => {
-  const onEditEnd = useCallback(() => setExpanded(false), [setExpanded])
-
-  if (!expanded) {
-    return (
-      <HeaderSearchBarPanel
-        role="button"
-        tabIndex={-1}
-        onKeyDown={() => {}}
-        onClick={() => {
-          setExpanded(true)
-        }}
-      >
-        <img alt="header search bar" src={SearchLogo} />
-      </HeaderSearchBarPanel>
-    )
-  }
+  setExpanded?: (expanded: boolean) => void
+  hideMobileMenu?: () => void
+}> = memo(({ hideMobileMenu }) => {
+  const onEditEnd = useCallback(() => {
+    if (hideMobileMenu) {
+      setTimeout(() => hideMobileMenu(), 100)
+    }
+  }, [hideMobileMenu])
 
   return (
     <HeaderSearchPanel>

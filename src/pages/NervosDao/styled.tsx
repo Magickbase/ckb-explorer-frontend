@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import variables from '../../styles/variables.module.scss'
 
 export const DaoContentPanel = styled.div`
   display: flex;
@@ -7,38 +8,14 @@ export const DaoContentPanel = styled.div`
   margin-top: 30px;
   margin-bottom: 40px;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin: 0;
     padding: 20px;
-  }
-
-  .nervos_dao_title {
-    width: 100%;
-    border-radius: 6px;
-    box-shadow: 2px 2px 6px 0 #dfdfdf;
-    background-color: #fff;
-    height: 80px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding-left: 40px;
-    font-size: 30px;
-    font-weight: 500;
-    color: #000;
-
-    @media (max-width: 750px) {
-      height: 50px;
-      box-shadow: 1px 1px 3px 0 #dfdfdf;
-      font-size: 15px;
-      padding-left: 20px;
-    }
   }
 `
 
 export const DaoTabBarPanel = styled.div`
   width: 100%;
-  /* height: 58px; */
-
   background: white;
   display: flex;
   margin-top: 20px;
@@ -49,17 +26,17 @@ export const DaoTabBarPanel = styled.div`
   font-size: 18px;
   border-radius: 6px 6px 0 0;
 
-  @media (max-width: 1200px) {
+  @media (max-width: ${variables.extraLargeBreakPoint}) {
     font-size: 16px;
   }
 
-  @media (max-width: 750px) {
-    height: ${(props: { containSearchBar: boolean }) => (props.containSearchBar ? '100px' : '50px')};
-    padding: 10px 0px;
+  @media (max-width: ${variables.mobileBreakPoint}) {
+    padding: 10px 0;
     flex-direction: column;
     justify-content: center;
     font-size: 14px;
     align-items: stretch;
+
     > div {
       padding-left: 10px;
       padding-right: 10px;
@@ -67,24 +44,23 @@ export const DaoTabBarPanel = styled.div`
     }
   }
 
-  .nervos_dao_tab_bar {
+  .nervosDaoTabBar {
     display: flex;
     height: 30px;
     cursor: pointer;
     margin-right: 15px;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       display: flex;
       justify-content: space-between;
       margin-bottom: 25px;
       margin-right: 0;
-      /* margin-bottom: ${(props: { containSearchBar: boolean }) => (props.containSearchBar ? '15px' : '25px')}; */
     }
 
     .div {
       font-size: 20px;
 
-      @media (max-width: 750px) {
+      @media (max-width: ${variables.mobileBreakPoint}) {
         font-size: 13px;
       }
     }
@@ -92,24 +68,24 @@ export const DaoTabBarPanel = styled.div`
     div:nth-child(2) {
       margin-left: 50px;
 
-      @media (max-width: 1200px) {
+      @media (max-width: ${variables.extraLargeBreakPoint}) {
         margin-left: 30px;
       }
     }
 
-    .tab_bar_normal {
+    .tabBarNormal {
       width: 140px;
       text-align: center;
       color: #000;
       font-weight: normal;
       font-size: 18px;
 
-      @media (max-width: 1200px) {
+      @media (max-width: ${variables.extraLargeBreakPoint}) {
         width: 110px;
       }
     }
 
-    .tab_bar_selected {
+    .tabBarSelected {
       width: 140px;
       text-align: center;
       font-size: 18px;
@@ -117,7 +93,7 @@ export const DaoTabBarPanel = styled.div`
       font-weight: bold;
       border-bottom: 3px solid ${props => props.theme.primary};
 
-      @media (max-width: 1200px) {
+      @media (max-width: ${variables.extraLargeBreakPoint}) {
         width: 110px;
       }
     }

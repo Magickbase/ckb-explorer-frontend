@@ -1,6 +1,16 @@
 @font-face {
-  font-family: 'Lato';
+  font-family: Lato;
   src: local('Lato'), url('./Lato-Regular.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
+}
+
+@font-face {
+  font-family: digital-clock-font;
+  src: url('./digital-7.ttf');
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url('./Roboto-Regular.ttf');
 }

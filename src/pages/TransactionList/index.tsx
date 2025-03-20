@@ -1,18 +1,17 @@
 import { FC, ReactNode } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from '../../components/Link'
 import { parseSimpleDate } from '../../utils/date'
 import Content from '../../components/Content'
 import { shannonToCkb } from '../../utils/util'
 import { localeNumberString } from '../../utils/number'
-import i18n from '../../utils/i18n'
 import Pagination from '../../components/Pagination'
-import DecimalCapacity from '../../components/DecimalCapacity'
-import { ItemCardData, ItemCardGroup } from '../../components/Card/ItemCard'
+import Capacity from '../../components/Capacity'
 import AddressText from '../../components/AddressText'
-import { useIsMobile, usePaginationParamsInListPage, useSearchParams, useSortParam } from '../../utils/hook'
-import { fetchPendingTransactions, fetchPendingTransactionsCount, fetchTransactions } from '../../service/http/fetcher'
+import { useIsMobile, usePaginationParamsInListPage, useSearchParams, useSortParam } from '../../hooks'
+import { explorerService } from '../../services/ExplorerService'
 import { Tabs } from './Tabs'
 import styles from './index.module.scss'
 import { QueryResult } from '../../components/QueryResult'
@@ -21,24 +20,27 @@ import { RouteState } from '../../routes/state'
 import { assert } from '../../utils/error'
 import { ReactComponent as SortIcon } from '../../assets/sort_icon.svg'
 import { TableTitleRowItem } from '../../components/Table/styled'
+import { Transaction } from '../../models/Transaction'
+import { CardCellFactory, CardListWithCellsList } from '../../components/CardList'
 
 type TxStatus = 'confirmed' | 'pending'
 
 type ConfirmedSortByType = 'height' | 'capacity'
 type PendingSortByType = 'capacity' | 'time' | 'fee'
 
-interface SortItemCardData<T> extends ItemCardData<T> {
+interface SortItemCardData<T> extends CardCellFactory<T> {
   sortRule?: ConfirmedSortByType | PendingSortByType
 }
 
 const TransactionCardGroup: FC<{
-  transactions: State.Transaction[]
+  transactions: Transaction[]
   type: TxStatus
   sortButton: (sortRule?: ConfirmedSortByType | PendingSortByType) => ReactNode
 }> = ({ transactions, type, sortButton }) => {
-  const itemHash: SortItemCardData<State.Transaction> = {
-    title: i18n.t('transaction.transaction_hash'),
-    render: transaction => (
+  const { t } = useTranslation()
+  const itemHash: SortItemCardData<Transaction> = {
+    title: t('transaction.transaction_hash'),
+    content: transaction => (
       <AddressText
         disableTooltip
         monospace={false}
@@ -51,20 +53,20 @@ const TransactionCardGroup: FC<{
       </AddressText>
     ),
   }
-  const itemCapacity: SortItemCardData<State.Transaction> = {
-    title: i18n.t('transaction.capacity'),
+  const itemCapacity: SortItemCardData<Transaction> = {
+    title: t('transaction.capacity'),
     sortRule: 'capacity',
-    render: transaction => (
-      <DecimalCapacity value={localeNumberString(shannonToCkb(transaction.capacityInvolved))} hideUnit />
+    content: transaction => (
+      <Capacity capacity={shannonToCkb(transaction.capacityInvolved)} layout="responsive" unit={null} />
     ),
   }
 
-  const confirmedItems: SortItemCardData<State.Transaction>[] = [
+  const confirmedItems: SortItemCardData<Transaction>[] = [
     itemHash,
     {
-      title: i18n.t('transaction.height'),
+      title: t('transaction.height'),
       sortRule: 'height',
-      render: transaction => (
+      content: transaction => (
         <Link to={`/block/${transaction.blockNumber}`}>
           <span>{localeNumberString(transaction.blockNumber)}</span>
         </Link>
@@ -72,26 +74,26 @@ const TransactionCardGroup: FC<{
     },
     itemCapacity,
     {
-      title: i18n.t('transaction.time'),
-      render: transaction => parseSimpleDate(transaction.blockTimestamp),
+      title: t('transaction.time'),
+      content: transaction => parseSimpleDate(transaction.blockTimestamp),
     },
   ]
 
-  const pendingItems: SortItemCardData<State.Transaction>[] = [
+  const pendingItems: SortItemCardData<Transaction>[] = [
     itemHash,
     itemCapacity,
     {
-      title: i18n.t('transaction.time'),
+      title: t('transaction.time'),
       sortRule: 'time',
-      render: transaction => {
+      content: transaction => {
         assert(transaction.createTimestamp != null)
         return parseSimpleDate(transaction.createTimestamp)
       },
     },
     {
-      title: i18n.t('transaction.transaction_fee'),
+      title: t('transaction.transaction_fee'),
       sortRule: 'fee',
-      render: transaction => <DecimalCapacity value={localeNumberString(shannonToCkb(transaction.transactionFee))} />,
+      content: transaction => <Capacity capacity={shannonToCkb(transaction.transactionFee)} layout="responsive" />,
     },
   ]
 
@@ -102,31 +104,32 @@ const TransactionCardGroup: FC<{
       <div className={styles.transactionCardHeader}>
         {items
           .filter(data => data.sortRule)
-          .map((data: SortItemCardData<State.Transaction>) => (
-            <TableTitleRowItem width="fit-content" key={data.title}>
-              <div>{data.title}</div>
+          .map((data: SortItemCardData<Transaction>) => (
+            <TableTitleRowItem width="fit-content" key={typeof data.title === 'string' ? data.title : ''}>
+              {typeof data.title === 'function' ? null : <div>{data.title}</div>}
               {sortButton(data.sortRule)}
             </TableTitleRowItem>
           ))}
       </div>
-      <ItemCardGroup
-        cardClassName={styles.transactionCard}
-        items={items}
+      <CardListWithCellsList
+        className={styles.transactionCardGroup}
         dataSource={transactions}
         getDataKey={transaction => transaction.transactionHash}
+        cells={items}
+        cardProps={{ className: styles.transactionCard }}
       />
     </>
   )
 }
 
 const TransactionTable: FC<{
-  transactions: State.Transaction[]
+  transactions: Transaction[]
   type: TxStatus
   sortButton: (sortRule: ConfirmedSortByType | PendingSortByType) => ReactNode
 }> = ({ transactions, type, sortButton }) => {
   const [t] = useTranslation()
 
-  const colHash: Column<State.Transaction> = {
+  const colHash: Column<Transaction> = {
     key: 'hash',
     title: t('transaction.transaction_hash'),
     className: styles.colHash,
@@ -135,7 +138,7 @@ const TransactionTable: FC<{
     render: transaction => <AddressText disableTooltip>{transaction.transactionHash}</AddressText>,
   }
 
-  const confirmedColumns: Column<State.Transaction>[] = [
+  const confirmedColumns: Column<Transaction>[] = [
     colHash,
     {
       key: 'height',
@@ -159,7 +162,7 @@ const TransactionTable: FC<{
       ),
       width: '30%',
       render: transaction => (
-        <DecimalCapacity value={localeNumberString(shannonToCkb(transaction.capacityInvolved))} hideUnit />
+        <Capacity capacity={shannonToCkb(transaction.capacityInvolved)} layout="responsive" unit={null} />
       ),
     },
     {
@@ -170,7 +173,7 @@ const TransactionTable: FC<{
     },
   ]
 
-  const pendingColumns: Column<State.Transaction>[] = [
+  const pendingColumns: Column<Transaction>[] = [
     colHash,
     {
       key: 'capacity',
@@ -182,7 +185,7 @@ const TransactionTable: FC<{
       ),
       width: '22%',
       render: transaction => (
-        <DecimalCapacity value={localeNumberString(shannonToCkb(transaction.capacityInvolved))} hideUnit />
+        <Capacity capacity={shannonToCkb(transaction.capacityInvolved)} layout="responsive" unit={null} />
       ),
     },
     {
@@ -208,7 +211,7 @@ const TransactionTable: FC<{
         </>
       ),
       width: '22%',
-      render: transaction => <DecimalCapacity value={localeNumberString(shannonToCkb(transaction.transactionFee))} />,
+      render: transaction => <Capacity capacity={shannonToCkb(transaction.transactionFee)} layout="responsive" />,
     },
   ]
 
@@ -226,6 +229,7 @@ const TransactionTable: FC<{
 
 const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
   const isMobile = useIsMobile()
+  const { t } = useTranslation()
   const { currentPage, pageSize, setPage } = usePaginationParamsInListPage()
   const { state } = useLocation<RouteState>()
   const stateStaleTime = 3000
@@ -235,25 +239,27 @@ const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
     type === 'confirmed' ? s === 'height' || s === 'capacity' : s === 'capacity' || s === 'time' || s === 'fee',
   )
 
-  const query = useQuery(
+  const query = useQuery<
+    { transactions: Transaction[]; total: number },
+    unknown,
+    { transactions: Transaction[]; total: number }
+  >(
     [`${type}-transactions`, type, currentPage, pageSize, sortBy, orderBy] as const,
     async ({ queryKey }) => {
       const [, type] = queryKey
       switch (type) {
         case 'pending': {
-          const resp = await fetchPendingTransactions(currentPage, pageSize, sort)
-          return {
-            transactions: resp.data,
-            total: resp.meta?.total ?? 0,
-          }
+          const { transactions, total } = await explorerService.api.fetchPendingTransactions(
+            currentPage,
+            pageSize,
+            sort,
+          )
+          return { transactions, total }
         }
         case 'confirmed':
         default: {
-          const resp = await fetchTransactions(currentPage, pageSize, sort)
-          return {
-            transactions: resp.data.map(wrapper => wrapper.attributes) ?? [],
-            total: resp.meta?.total ?? 0,
-          }
+          const { transactions, total } = await explorerService.api.fetchTransactions(currentPage, pageSize, sort)
+          return { transactions, total }
         }
       }
     },
@@ -261,7 +267,7 @@ const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
       initialData:
         state?.type === 'TransactionListPage' && state.createTime + stateStaleTime > Date.now()
           ? state.transactionsDataWithFirstPage
-          : undefined,
+          : { total: 0, transactions: [] },
     },
   )
 
@@ -279,6 +285,9 @@ const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
   return (
     <QueryResult query={query}>
       {data => {
+        if (!data) {
+          return <div>{t('transaction.no_records')}</div>
+        }
         const totalPages = Math.min(Math.ceil(data.total / pageSize), MAX_PAGE_NUMBER)
         return (
           <>
@@ -295,7 +304,7 @@ const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
               onChange={setPage}
               annotation={
                 totalPages === MAX_PAGE_NUMBER
-                  ? i18n.t('pagination.only_first_pages_visible', { pages: MAX_PAGE_NUMBER })
+                  ? t('pagination.only_first_pages_visible', { pages: MAX_PAGE_NUMBER })
                   : undefined
               }
             />
@@ -309,7 +318,7 @@ const TransactionsPanel: FC<{ type: TxStatus }> = ({ type }) => {
 export default () => {
   const { tab } = useSearchParams('tab')
 
-  const { data } = useQuery(['transactions-count'], fetchPendingTransactionsCount)
+  const { data } = useQuery(['transactions-count'], explorerService.api.fetchPendingTransactionsCount)
 
   return (
     <Content>

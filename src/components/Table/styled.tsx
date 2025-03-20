@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import { Link } from '../Link'
+import variables from '../../styles/variables.module.scss'
 
 export const TableTitleRow = styled.div`
   background: white;
@@ -9,7 +10,7 @@ export const TableTitleRow = styled.div`
   padding: 0 20px;
   margin-bottom: 4px;
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     flex-flow: row wrap;
     min-height: auto;
     padding: 5px 20px;
@@ -29,17 +30,17 @@ export const TableTitleRowItem = styled.div`
     border: none;
     outline: none;
     background-color: transparent;
-    color: #333333;
+    color: #333;
     font-size: 18px;
     font-weight: 450;
     text-align: center;
 
-    @media (max-width: 1000px) {
+    @media (max-width: ${variables.largeBreakPoint}) {
       font-size: 16px;
     }
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: ${variables.mobileBreakPoint}) {
     margin: 10px 40px 10px 0;
     min-height: auto;
   }
@@ -95,30 +96,30 @@ export const TableMinerContentPanel = styled.div`
   text-align: center;
   margin: auto 0;
 
-  .table__miner__content {
-    color: ${(props: { theme: any }) => props.theme.primary};
+  .tableMinerContent {
+    color: ${props => props.theme.primary};
     text-decoration: none;
   }
 
-  .table__miner__text {
+  .tableMinerText {
     width: 100%;
     justify-content: center;
     font-size: ${(props: { width: string; fontSize: string }) => props.fontSize};
     font-weight: 500;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       font-size: 13px;
     }
   }
 
-  .table__miner__text__disable {
+  .tableMinerTextDisable {
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: ${(props: { width: string; fontSize: string }) => props.fontSize};
     color: #000;
 
-    @media (max-width: 750px) {
+    @media (max-width: ${variables.mobileBreakPoint}) {
       font-size: 13px;
     }
   }

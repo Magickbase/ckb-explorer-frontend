@@ -1,14 +1,13 @@
 import { MobileMenusPanel } from './styled'
-import MenuItems from '../MenusComp'
+import MenuItems, { MoreMenu } from '../MenusComp'
 import { SearchComp } from '../SearchComp'
-import LanguageComp from '../LanguageComp'
 import BlockchainComp from '../BlockchainComp'
 
-export default () => (
+export default ({ hideMobileMenu }: { hideMobileMenu: () => void }) => (
   <MobileMenusPanel>
-    <MenuItems />
-    <BlockchainComp />
-    <LanguageComp />
-    <SearchComp expanded setExpanded={() => {}} />
+    <MenuItems isMobile />
+    <BlockchainComp isMobile />
+    <MoreMenu isMobile />
+    <SearchComp hideMobileMenu={hideMobileMenu} />
   </MobileMenusPanel>
 )

@@ -1,39 +1,59 @@
-import { Link } from 'react-router-dom'
 import { Tooltip } from 'antd'
-import { CellType } from '../../../constants/common'
-import RightGreenArrow from '../../../assets/right_green_arrow.png'
-import RightBlueArrow from '../../../assets/right_blue_arrow.png'
-import LiveCellIcon from '../../../assets/live_cell.png'
-import LiveCellBlueIcon from '../../../assets/live_cell_blue.png'
+import { useTranslation } from 'react-i18next'
+import { Link } from '../../Link'
+import { IOType } from '../../../constants/common'
+import RightGreenArrow from './right_green_arrow.png'
+import RightBlueArrow from './right_blue_arrow.png'
+import LiveCellIcon from './live_cell.png'
+import LiveCellBlueIcon from './live_cell_blue.png'
 import { isMainnet } from '../../../utils/chain'
-import i18n from '../../../utils/i18n'
 import { RightArrowImage, LeftArrowImage } from './styled'
+import { Cell } from '../../../models/Cell'
 
-const CellInputIcon = ({ cell }: { cell: State.Cell }) =>
+export const RightArrow = ({ status = 'live' }: { status?: Cell['status'] }) => {
+  if (status === 'live') {
+    return <RightArrowImage src={isMainnet() ? LiveCellIcon : LiveCellBlueIcon} alt="right arrow" />
+  }
+
+  return <RightArrowImage src={isMainnet() ? RightGreenArrow : RightBlueArrow} alt="right arrow" />
+}
+
+export const LeftArrow = () => (
+  <LeftArrowImage
+    className="transactionCellLeftArrow"
+    src={isMainnet() ? RightGreenArrow : RightBlueArrow}
+    alt="left arrow"
+  />
+)
+
+export const CellInputIcon = ({ cell }: { cell: Partial<Pick<Cell, 'generatedTxHash' | 'cellIndex'>> }) =>
   cell.generatedTxHash ? (
     <Link to={`/transaction/${cell.generatedTxHash}#${cell.cellIndex}`}>
-      <LeftArrowImage
-        className="transaction__cell_left_arrow"
-        src={isMainnet() ? RightGreenArrow : RightBlueArrow}
-        alt="left arrow"
-      />
+      <LeftArrow />
     </Link>
   ) : null
 
-const CellOutputIcon = ({ cell }: { cell: State.Cell }) => {
-  if (cell.status === 'dead') {
+export const CellOutputIcon = ({ cell }: { cell: Partial<Pick<Cell, 'status' | 'consumedTxHash'>> }) => {
+  const { t } = useTranslation()
+
+  if (cell.status === 'dead' && cell.consumedTxHash) {
     return (
       <Link to={`/transaction/${cell.consumedTxHash}`}>
-        <RightArrowImage src={isMainnet() ? RightGreenArrow : RightBlueArrow} alt="right arrow" />
+        <RightArrow status="dead" />
       </Link>
     )
   }
+
+  if (cell.status === 'dead') {
+    return <RightArrow status="dead" />
+  }
+
   return (
-    <Tooltip placement="topRight" title={i18n.t('transaction.unspent_output')} arrowPointAtCenter>
-      <RightArrowImage src={isMainnet() ? LiveCellIcon : LiveCellBlueIcon} alt="right arrow" />
+    <Tooltip placement="topRight" title={t('transaction.unspent_output')} arrowPointAtCenter>
+      <RightArrow status="live" />
     </Tooltip>
   )
 }
 
-export default ({ cell, cellType }: { cell: State.Cell; cellType: CellType }) =>
-  cellType === CellType.Input ? <CellInputIcon cell={cell} /> : <CellOutputIcon cell={cell} />
+export default ({ cell, ioType }: { cell: Cell; ioType: IOType }) =>
+  ioType === IOType.Input ? <CellInputIcon cell={cell} /> : <CellOutputIcon cell={cell} />
