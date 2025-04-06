@@ -330,6 +330,12 @@ const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
           <h5 className={styles.cellTitle}>
             <span>{title}</span>
             <span> CKB ({parsedBlockCreateAt})</span>
+            <div className={styles.cellTags}>
+              {cell.tags.find(tag => tag === 'fiber') !== undefined && <span className={styles.fiberTag}>Fiber</span>}
+              {cell.tags.find(tag => tag === 'deployment') !== undefined && (
+                <span className={styles.deploymentTag}>Deployment</span>
+              )}
+            </div>
           </h5>
         </Tooltip>
 
