@@ -13,8 +13,8 @@ import { useSearchParams } from '../../../hooks'
 import { getFundingThreshold } from '../utils'
 import { handleFtImgError, shannonToCkb } from '../../../utils/util'
 import { parseNumericAbbr } from '../../../utils/chart'
-import { formalizeChannelAsset } from '../../../utils/fiber'
-import { fetchPrices } from '../../../services/UtilityService'
+import { formalizeChannelAsset, getIpFromP2pAddr } from '../../../utils/fiber'
+import { fetchIpsInfo, fetchPrices } from '../../../services/UtilityService'
 import Content from '../../../components/Content'
 import { Link } from '../../../components/Link'
 import Loading from '../../../components/Loading'
@@ -261,6 +261,18 @@ const GraphNode = () => {
   const { data: prices } = usePriceData()
   const node = data?.data
 
+  const ips =
+    (node?.addresses
+      ?.filter(a => !!a)
+      .map(getIpFromP2pAddr)
+      .filter(ip => !!ip) as string[]) ?? []
+
+  const { data: ipInfos } = useQuery({
+    queryKey: ['fiber_graph_ips_info', ips.join(',')],
+    queryFn: () => (ips.length ? fetchIpsInfo(ips) : undefined),
+    enabled: !!ips.length,
+  })
+
   useEffect(() => {
     if (node?.addresses[0]) {
       setAddr(node.addresses[0])
@@ -282,10 +294,13 @@ const GraphNode = () => {
     e.preventDefault()
     navigator?.clipboard.writeText(copyText).then(() => setToast({ message: t('common.copied') }))
   }
-  const firstSeen = node.timestamp
+  const firstSeen = node.createdTimestamp
   const lastUpdate = node.deletedAtTimestamp ?? node.lastUpdatedTimestamp
   const firstSeenISO = new Date(+firstSeen).toISOString()
   const lastUpdateISO = new Date(+lastUpdate).toISOString()
+
+  const ipOfSelectedAddr = getIpFromP2pAddr(addr)
+  const ipInfo = ipOfSelectedAddr && ipInfos?.ips ? ipInfos.ips[ipOfSelectedAddr] : null
 
   return (
     <Content>
@@ -321,6 +336,12 @@ const GraphNode = () => {
                   </button>
                 </dd>
               </dl>
+              {ipInfo ? (
+                <dl>
+                  <dt>{t('fiber.graph.node.isp')}</dt>
+                  <dd>{`${ipInfo.isp}@${ipInfo.city}`}</dd>
+                </dl>
+              ) : null}
               <dl>
                 <dt>{t('fiber.graph.node.first_seen_last_update')}</dt>
                 <dd className={styles.times}>
@@ -404,7 +425,12 @@ const GraphNode = () => {
                       usd: v.usd?.toFixed() ?? '0',
                     }))}
                   />
-                ) : null}
+                ) : (
+                  <div className={styles.noData}>
+                    <img src="/images/icons/empty-data.svg" alt="empty data" />
+                    <span>{t('common.no_data')}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -412,30 +438,54 @@ const GraphNode = () => {
         <div className={styles.activities}>
           <div className={styles.channels}>
             <h3>{t('fiber.peer.channels')}</h3>
-            <GraphChannelList
-              list={displayedChannels.slice((+channelPage - 1) * CHANNEL_PAGE_SIZE, +channelPage * CHANNEL_PAGE_SIZE)}
-              node={node.nodeId}
-              startIndex={(+channelPage - 1) * CHANNEL_PAGE_SIZE}
-            />
-            <div className={styles.pagination}>
-              <Pagination totalPages={Math.ceil(displayedChannels.length / CHANNEL_PAGE_SIZE)} keyword="channel_page" />
-            </div>
+            {displayedChannels.length ? (
+              <>
+                <GraphChannelList
+                  list={displayedChannels.slice(
+                    (+channelPage - 1) * CHANNEL_PAGE_SIZE,
+                    +channelPage * CHANNEL_PAGE_SIZE,
+                  )}
+                  node={node.nodeId}
+                  startIndex={(+channelPage - 1) * CHANNEL_PAGE_SIZE}
+                />
+                <div className={styles.pagination}>
+                  <Pagination
+                    totalPages={Math.ceil(displayedChannels.length / CHANNEL_PAGE_SIZE)}
+                    keyword="channel_page"
+                  />
+                </div>
+              </>
+            ) : (
+              <div className={styles.noData}>
+                <img src="/images/icons/empty-data.svg" alt="empty data" />
+                <span>{t('common.no_data')}</span>
+              </div>
+            )}
           </div>
           <div className={styles.transactions}>
             <h3>Open & Closed Transactions</h3>
-            <div>
-              {openAndClosedTxs
-                .slice((+activityPage - 1) * ACTIVITY_PAGE_SIZE, ACTIVITY_PAGE_SIZE * +activityPage)
-                .map(tx => (
-                  <TransactionRenderer key={tx.hash} tx={tx} />
-                ))}
-            </div>
-            <div className={styles.pagination}>
-              <Pagination
-                totalPages={Math.ceil(openAndClosedTxs.length / ACTIVITY_PAGE_SIZE)}
-                keyword="activity_page"
-              />
-            </div>
+            {openAndClosedTxs.length ? (
+              <>
+                <div>
+                  {openAndClosedTxs
+                    .slice((+activityPage - 1) * ACTIVITY_PAGE_SIZE, ACTIVITY_PAGE_SIZE * +activityPage)
+                    .map(tx => (
+                      <TransactionRenderer key={tx.hash} tx={tx} />
+                    ))}
+                </div>
+                <div className={styles.pagination}>
+                  <Pagination
+                    totalPages={Math.ceil(openAndClosedTxs.length / ACTIVITY_PAGE_SIZE)}
+                    keyword="activity_page"
+                  />
+                </div>
+              </>
+            ) : (
+              <div className={styles.noData}>
+                <img src="/images/icons/empty-data.svg" alt="empty data" />
+                <span>{t('common.no_data')}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

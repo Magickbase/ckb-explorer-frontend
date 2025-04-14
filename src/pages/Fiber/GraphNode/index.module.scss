@@ -447,3 +447,14 @@
     }
   }
 }
+
+.noData {
+  width: min-content;
+  text-align: center;
+  margin: 0 auto;
+
+  img {
+    display: block;
+    margin-right: -12px;
+  }
+}

@@ -18,7 +18,8 @@
       "seconds": "SECS",
       "minaraTime": "Est May 10th 2022",
       "miranaAlive": "MIRANA IS LIVE",
-      "extra": "Extra"
+      "extra": "Extra",
+      "no_data": "No Data"
     },
     "unit": {
       "days": "days",
@@ -1228,6 +1229,8 @@
           "chain": "Chain",
           "chain_hash": "Chain Hash",
           "addresses": "Addresses",
+          "addresses_and_isp": "Addresses & ISP",
+          "isp": "ISP",
           "total_capacity": "Capacity",
           "open_channels": "Open Channels",
           "total_liquidity": "Total Liquidity",
