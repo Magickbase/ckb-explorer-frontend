@@ -14,7 +14,7 @@
 }
 
 .countInfo {
-  color: #666666;
+  color: #666;
   font-size: 16px;
   font-weight: 400;
 }
@@ -193,6 +193,7 @@
 
   .openSourceAction {
     padding: 6px 8px;
+    margin: 0 6px;
     display: flex;
     align-items: center;
     border-radius: 24px;

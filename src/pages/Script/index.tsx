@@ -1,16 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 import { Link } from '../../components/Link'
 import Content from '../../components/Content'
 import { useCurrentLanguage } from '../../utils/i18n'
 import { localeNumberString } from '../../utils/number'
 import { CodeHashMessage, ScriptCells, ScriptTransactions } from './ScriptsComp'
-import { MainnetContractHashTags, TestnetContractHashTags } from '../../constants/scripts'
-import { isMainnet } from '../../utils/chain'
-import { scripts as scriptNameList } from '../ScriptList'
 import { usePaginationParamsInPage } from '../../hooks'
 import { shannonToCkb } from '../../utils/util'
 import Capacity from '../../components/Capacity'
@@ -21,54 +18,85 @@ import { Card, CardCellInfo, CardCellsLayout } from '../../components/Card'
 import { ReactComponent as OpenSourceIcon } from '../../assets/open-source.svg'
 import { HashType } from '../../constants/common'
 
-const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
-
-const useScriptHashNameMap = (): Map<string, string> => {
-  const { t } = useTranslation()
-  return new Map(
-    scriptDataList
-      .map(scriptData =>
-        scriptData.codeHashes.map(
-          codeHash =>
-            [
-              `${codeHash}_${scriptData.hashType}`,
-              scriptNameList.has(scriptData.tag)
-                ? scriptNameList.get(scriptData.tag)!.name
-                : t('scripts.unnamed_script'),
-            ] as [string, string],
-        ),
-      )
-      .flat(),
-  )
-}
-
-const useScriptInfo = (scriptInfo: ScriptInfo) => {
-  const { t } = useTranslation()
-  const { scriptName, scriptType, id, codeHash, hashType, capacityOfDeployedCells, capacityOfReferringCells } =
-    scriptInfo
+const getScriptInfo = (scriptInfo: ScriptInfo, t: TFunction) => {
+  const {
+    name,
+    dataHash,
+    typeHash,
+    hashType,
+    depType,
+    isLockScript,
+    isTypeScript,
+    capacityOfDeployedCells,
+    capacityOfReferringCells,
+    rfc,
+    sourceUrl,
+    website,
+    deprecated,
+    scriptOutPoint,
+  } = scriptInfo
+  const [outpointTxHash, outpointIndex] = scriptOutPoint.split('-')
+  const parsedHashType = hashType === null ? 'Type' : hashType
+  const scriptType = `${isTypeScript ? t('scripts.type_script') : ''} ${isLockScript ? t('scripts.lock_script') : ''}`
   const items: CardCellInfo<'left' | 'right'>[] = [
     {
       title: t('scripts.script_name'),
       tooltip: t('glossary.script_name'),
-      content: scriptName,
+      content: name,
     },
     {
-      title: t('scripts.hash_type'),
-      tooltip: t('glossary.hash_type'),
-      content: <span className={styles.hashType}>{hashType}</span>,
-    },
-    {
-      title: t('scripts.script_type'),
-      content: scriptType ? t(`scripts.${scriptType}`) : '-',
-    },
-    {
-      title: t('scripts.type_id'),
-      content: id ? <CodeHashMessage codeHash={id} /> : '-',
+      slot: 'left',
+      cell: {
+        title: t('scripts.script_type'),
+        content: scriptType,
+      },
     },
     {
       title: t('scripts.code_hash'),
-      tooltip: t('glossary.code_hash'),
-      content: <CodeHashMessage codeHash={codeHash} />,
+      content:
+        parsedHashType === 'Type' ? <CodeHashMessage codeHash={typeHash} /> : <CodeHashMessage codeHash={dataHash} />,
+    },
+    {
+      slot: 'right',
+      cell: {
+        title: t('scripts.hash_type'),
+        tooltip: t('glossary.hash_type'),
+        content: <span className={styles.hashType}>{parsedHashType}</span>,
+      },
+    },
+    {
+      slot: 'right',
+      cell:
+        parsedHashType === 'Type'
+          ? {
+              title: t('scripts.data_hash'),
+              content: dataHash ? <CodeHashMessage codeHash={dataHash} /> : '-',
+            }
+          : {
+              title: t('scripts.type_hash'),
+              content: typeHash ? <CodeHashMessage codeHash={typeHash} /> : '-',
+            },
+    },
+    {
+      slot: 'left',
+      cell: {
+        title: t('scripts.outpoint_tx_hash'),
+        content: outpointTxHash,
+      },
+    },
+    {
+      slot: 'left',
+      cell: {
+        title: t('scripts.outpoint_index'),
+        content: outpointIndex,
+      },
+    },
+    {
+      slot: 'left',
+      cell: {
+        title: t('scripts.outpoint_dep_type'),
+        content: depType,
+      },
     },
     {
       title: t('scripts.capacity_of_deployed_cells'),
@@ -82,19 +110,56 @@ const useScriptInfo = (scriptInfo: ScriptInfo) => {
         content: <Capacity capacity={shannonToCkb(capacityOfReferringCells)} display="short" />,
       },
     },
+    {
+      slot: 'left',
+      cell: {
+        title: t('scripts.status'),
+        content: deprecated === true ? t('scripts.deprecated') : t('scripts.active'),
+      },
+    },
   ]
+
+  if (rfc) {
+    items.push({
+      title: t('scripts.link.rfc'),
+      content: <Link to={rfc}>{t('scripts.link.rfc')}</Link>,
+    })
+  }
+  if (website) {
+    items.push({
+      title: t('scripts.link.website'),
+      content: <Link to={website}>{t('scripts.link.website')}</Link>,
+    })
+  }
+  if (sourceUrl) {
+    items.push({
+      title: t('scripts.link.code'),
+      content: (
+        <Link to={sourceUrl}>
+          {t('scripts.open_source_script')}
+          <OpenSourceIcon />
+        </Link>
+      ),
+    })
+  }
 
   return items
 }
 
-const useSeekScriptName = (codeHash: string, hashType: string): string => {
-  const { t } = useTranslation()
-  const nameMap = useScriptHashNameMap()
-  return nameMap.has(`${codeHash}_${hashType}`) ? nameMap.get(`${codeHash}_${hashType}`)! : t('scripts.unnamed_script')
-}
-
 type ScriptTabType = 'transactions' | 'deployed_cells' | 'referring_cells' | undefined
 
+export function ScriptInfosCard({ scriptInfos }: { scriptInfos: ScriptInfo[] }) {
+  const { t } = useTranslation()
+  return (
+    <>
+      {scriptInfos.map(scriptInfo => (
+        <Card style={{ marginTop: 24 }} key={scriptInfo.scriptOutPoint}>
+          <CardCellsLayout type="left-right" cells={getScriptInfo(scriptInfo, t)} />
+        </Card>
+      ))}
+    </>
+  )
+}
 export const ScriptPage = () => {
   const history = useHistory()
   const {
@@ -110,10 +175,6 @@ export const ScriptPage = () => {
   }>()
   const { currentPage, pageSize } = usePaginationParamsInPage()
 
-  const [countOfTransactions, setCountOfTransactions] = useState<number>(0)
-  const [countOfDeployedCells, setCountOfDeployedCells] = useState<number>(0)
-  const [countOfReferringCells, setCountOfReferringCells] = useState<number>(0)
-
   const [pageOfTransactions, setPageOfTransactions] = useState<number>(1)
   const [pageOfDeployedCells, setPageOfDeployedCells] = useState<number>(1)
   const [pageOfReferringCells, setPageOfReferringCells] = useState<number>(1)
@@ -122,59 +183,38 @@ export const ScriptPage = () => {
     explorerService.api.fetchScriptInfo(codeHash, hashType),
   )
 
-  const scriptInfo: ScriptInfo =
+  const scriptInfos: ScriptInfo[] =
     status === 'success' && resp
       ? resp.data
-      : {
-          id: '-',
-          scriptName: '',
-          scriptType: '',
-          codeHash,
-          hashType: hashType as HashType,
-          capacityOfDeployedCells: '0',
-          capacityOfReferringCells: '0',
-          countOfTransactions: 0,
-          countOfDeployedCells: 0,
-          countOfReferringCells: 0,
-        }
-  scriptInfo.scriptName = useSeekScriptName(scriptInfo.codeHash, scriptInfo.hashType)
+      : [
+          {
+            name: '',
+            dataHash: '',
+            typeHash: '',
+            depType: '',
+            hashType: hashType as HashType,
+            isTypeScript: false,
+            isLockScript: false,
+            capacityOfDeployedCells: '0',
+            capacityOfReferringCells: '0',
+            countOfTransactions: 0,
+            countOfReferringCells: 0,
+            rfc: '',
+            website: '',
+            sourceUrl: '',
+            deprecated: false,
+            scriptOutPoint: '',
+          },
+        ]
 
-  useEffect(() => {
-    setCountOfTransactions(scriptInfo.countOfTransactions)
-    setCountOfDeployedCells(scriptInfo.countOfDeployedCells)
-    setCountOfReferringCells(scriptInfo.countOfReferringCells)
-  }, [scriptInfo.countOfDeployedCells, scriptInfo.countOfReferringCells, scriptInfo.countOfTransactions])
-
-  useEffect(() => {
-    if (!Object.values(HashType).includes(hashType as HashType)) {
-      history.replace('/404')
-    }
-  }, [hashType, history])
-
-  const codeUrl = scriptNameList.get(scriptInfo.scriptName)?.code
+  const countOfDeployedCells = scriptInfos.length
+  const countOfReferringCells = scriptInfos.reduce((sum, item) => sum + item.countOfReferringCells, 0)
+  const countOfTransactions = scriptInfos.reduce((sum, item) => sum + item.countOfTransactions, 0)
 
   return (
     <Content>
       <div className={`${styles.scriptContentPanel} container`}>
-        <Card>
-          <div className={styles.headerCard}>
-            <span className={styles.headerTitle}>Script</span>
-
-            {scriptInfo.scriptName ? <span className={styles.headerSubTitle}>{scriptInfo.scriptName}</span> : null}
-
-            {codeUrl ? (
-              <Link to={codeUrl} style={{ marginLeft: 'auto' }} className={styles.openSourceAction}>
-                {t('scripts.open_source_script')}
-                <OpenSourceIcon />
-              </Link>
-            ) : null}
-          </div>
-        </Card>
-
-        <Card style={{ marginTop: 24 }}>
-          <CardCellsLayout type="left-right" cells={useScriptInfo(scriptInfo)} />
-        </Card>
-
+        <ScriptInfosCard scriptInfos={scriptInfos} />
         <ScriptTab
           key={currentLanguage + countOfTransactions + countOfDeployedCells + countOfReferringCells}
           className={styles.scriptTabs}
@@ -212,7 +252,7 @@ export const ScriptPage = () => {
           }}
         >
           <ScriptTabPane tab={<ScriptTabTitle>{`${t('transaction.transactions')}`}</ScriptTabTitle>} key="transactions">
-            <ScriptTransactions page={currentPage} size={pageSize} />
+            <ScriptTransactions page={currentPage} size={pageSize} countOfTransactions={countOfTransactions} />
           </ScriptTabPane>
           <ScriptTabPane
             tab={
