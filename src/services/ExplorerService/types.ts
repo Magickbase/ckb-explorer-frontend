@@ -516,6 +516,7 @@ export interface ScriptInfo {
   verified: boolean
   scriptOutPoint: string
   depType: string
+  description: string
 }
 export interface ScriptDetail {
   typeHash: string

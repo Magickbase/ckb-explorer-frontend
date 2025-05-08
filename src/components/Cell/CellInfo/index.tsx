@@ -201,7 +201,7 @@ const ScriptRender = ({ content: script }: { content: Script }) => {
         <JSONKeyValueView
           value={
             <div>
-              <HashTag content={hashTag.tag} category={hashTag.category} />
+              <HashTag content={hashTag.tag} category={hashTag.category} script={script} />
             </div>
           }
         />

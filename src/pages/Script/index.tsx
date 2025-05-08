@@ -170,13 +170,14 @@ export const ScriptPage = () => {
             deprecated: false,
             verified: false,
             scriptOutPoint: '',
+            description: '',
           },
         ]
 
   const countOfDeployedCells = scriptInfos.length
   const countOfReferringCells = scriptInfos.reduce((sum, item) => sum + item.countOfReferringCells, 0)
   const countOfTransactions = scriptInfos.reduce((sum, item) => sum + item.countOfTransactions, 0)
-  const { name, sourceUrl, rfc, website, deprecated, verified } = scriptInfos[0]
+  const { name, sourceUrl, rfc, website, deprecated, verified, description } = scriptInfos[0]
 
   return (
     <Content>
@@ -199,12 +200,16 @@ export const ScriptPage = () => {
               ) : null}
               {rfc ? (
                 <Tooltip title={t('scripts.link.rfc')} placement="top">
-                  <RFCIcon />
+                  <Link to={rfc}>
+                    <RFCIcon />
+                  </Link>
                 </Tooltip>
               ) : null}
               {website ? (
                 <Tooltip title={t('scripts.link.website')} placement="top">
-                  <WebsiteIcon />
+                  <Link to={website}>
+                    <WebsiteIcon />
+                  </Link>
                 </Tooltip>
               ) : null}
               {sourceUrl ? (
@@ -215,6 +220,7 @@ export const ScriptPage = () => {
               ) : null}
             </span>
           </div>
+          <div className={styles.headerDescription}>{description}</div>
         </Card>
 
         <ScriptInfosCard scriptInfos={scriptInfos} />
