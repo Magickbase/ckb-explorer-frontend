@@ -1014,12 +1014,10 @@
       "outpoint_index": "Outpoint Index",
       "outpoint_dep_type": "Outpoint Dep Type",
       "deprecated": "Deprecated",
-      "status": "Status",
-      "active": "Active",
+      "verified": "Verified",
       "link": {
         "rfc": "RFC",
         "code": "Source Code",
-        "doc": "Documentation",
         "website": "Website"
       }
     },

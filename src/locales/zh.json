@@ -977,13 +977,11 @@
       "restrict_mode": "受限模式",
       "restrict_tooltip": "在受限模式下，此交易列表不会包含仅仅将当前脚本作为其依赖项之一的交易。",
       "timestamp": "部署上链时间",
-      "status": "状态",
       "deprecated": "已废弃",
-      "active": "活跃",
+      "verified": "已验证",
       "link": {
         "rfc": "RFC",
         "code": "源代码",
-        "doc": "文档",
         "website": "官网"
       }
     },

@@ -205,6 +205,13 @@
       border-color: var(--primary-color);
     }
   }
+
+  .headerLink {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 8px;
+  }
 }
 
 .notice {

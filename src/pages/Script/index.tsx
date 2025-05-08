@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { Tooltip } from 'antd'
 import { TFunction, useTranslation } from 'react-i18next'
 import { Link } from '../../components/Link'
 import Content from '../../components/Content'
@@ -16,11 +17,14 @@ import { type ScriptInfo, explorerService } from '../../services/ExplorerService
 import { ScriptTab, ScriptTabPane, ScriptTabTitle } from './styled'
 import { Card, CardCellInfo, CardCellsLayout } from '../../components/Card'
 import { ReactComponent as OpenSourceIcon } from '../../assets/open-source.svg'
+import { ReactComponent as VerifiedIcon } from '../../assets/verified-icon.svg'
+import { ReactComponent as DeprecatedIcon } from '../../assets/deprecated-icon.svg'
+import { ReactComponent as RFCIcon } from '../../assets/rfc-icon.svg'
+import { ReactComponent as WebsiteIcon } from '../../assets/website-icon.svg'
 import { HashType } from '../../constants/common'
 
 const getScriptInfo = (scriptInfo: ScriptInfo, t: TFunction) => {
   const {
-    name,
     dataHash,
     typeHash,
     hashType,
@@ -29,21 +33,12 @@ const getScriptInfo = (scriptInfo: ScriptInfo, t: TFunction) => {
     isTypeScript,
     capacityOfDeployedCells,
     capacityOfReferringCells,
-    rfc,
-    sourceUrl,
-    website,
-    deprecated,
     scriptOutPoint,
   } = scriptInfo
   const [outpointTxHash, outpointIndex] = scriptOutPoint.split('-')
   const parsedHashType = hashType === null ? 'Type' : hashType
   const scriptType = `${isTypeScript ? t('scripts.type_script') : ''} ${isLockScript ? t('scripts.lock_script') : ''}`
   const items: CardCellInfo<'left' | 'right'>[] = [
-    {
-      title: t('scripts.script_name'),
-      tooltip: t('glossary.script_name'),
-      content: name,
-    },
     {
       slot: 'left',
       cell: {
@@ -110,38 +105,7 @@ const getScriptInfo = (scriptInfo: ScriptInfo, t: TFunction) => {
         content: <Capacity capacity={shannonToCkb(capacityOfReferringCells)} display="short" />,
       },
     },
-    {
-      slot: 'left',
-      cell: {
-        title: t('scripts.status'),
-        content: deprecated === true ? t('scripts.deprecated') : t('scripts.active'),
-      },
-    },
   ]
-
-  if (rfc) {
-    items.push({
-      title: t('scripts.link.rfc'),
-      content: <Link to={rfc}>{t('scripts.link.rfc')}</Link>,
-    })
-  }
-  if (website) {
-    items.push({
-      title: t('scripts.link.website'),
-      content: <Link to={website}>{t('scripts.link.website')}</Link>,
-    })
-  }
-  if (sourceUrl) {
-    items.push({
-      title: t('scripts.link.code'),
-      content: (
-        <Link to={sourceUrl}>
-          {t('scripts.open_source_script')}
-          <OpenSourceIcon />
-        </Link>
-      ),
-    })
-  }
 
   return items
 }
@@ -160,6 +124,7 @@ export function ScriptInfosCard({ scriptInfos }: { scriptInfos: ScriptInfo[] }) 
     </>
   )
 }
+
 export const ScriptPage = () => {
   const history = useHistory()
   const {
@@ -203,6 +168,7 @@ export const ScriptPage = () => {
             website: '',
             sourceUrl: '',
             deprecated: false,
+            verified: false,
             scriptOutPoint: '',
           },
         ]
@@ -210,10 +176,47 @@ export const ScriptPage = () => {
   const countOfDeployedCells = scriptInfos.length
   const countOfReferringCells = scriptInfos.reduce((sum, item) => sum + item.countOfReferringCells, 0)
   const countOfTransactions = scriptInfos.reduce((sum, item) => sum + item.countOfTransactions, 0)
+  const { name, sourceUrl, rfc, website, deprecated, verified } = scriptInfos[0]
 
   return (
     <Content>
       <div className={`${styles.scriptContentPanel} container`}>
+        <Card>
+          <div className={styles.headerCard}>
+            <span className={styles.headerTitle}>Script</span>
+            {name ? <span className={styles.headerSubTitle}>{name}</span> : null}
+
+            <span className={styles.headerLink}>
+              {verified === true ? (
+                <Tooltip title={t('scripts.verified')} placement="top">
+                  <VerifiedIcon />
+                </Tooltip>
+              ) : null}
+              {deprecated === true ? (
+                <Tooltip title={t('scripts.deprecated')} placement="top">
+                  <DeprecatedIcon />
+                </Tooltip>
+              ) : null}
+              {rfc ? (
+                <Tooltip title={t('scripts.link.rfc')} placement="top">
+                  <RFCIcon />
+                </Tooltip>
+              ) : null}
+              {website ? (
+                <Tooltip title={t('scripts.link.website')} placement="top">
+                  <WebsiteIcon />
+                </Tooltip>
+              ) : null}
+              {sourceUrl ? (
+                <Link to={sourceUrl} className={styles.openSourceAction}>
+                  {t('scripts.open_source_script')}
+                  <OpenSourceIcon />
+                </Link>
+              ) : null}
+            </span>
+          </div>
+        </Card>
+
         <ScriptInfosCard scriptInfos={scriptInfos} />
         <ScriptTab
           key={currentLanguage + countOfTransactions + countOfDeployedCells + countOfReferringCells}

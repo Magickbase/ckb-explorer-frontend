@@ -513,6 +513,7 @@ export interface ScriptInfo {
   website: string
   sourceUrl: string
   deprecated: boolean
+  verified: boolean
   scriptOutPoint: string
   depType: string
 }
