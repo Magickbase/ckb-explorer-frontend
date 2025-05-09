@@ -4,6 +4,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { ColumnGroupType, ColumnType } from 'antd/lib/table'
 import { Table } from 'antd'
 import { TFunction } from 'i18next'
+import classNames from 'classnames'
 import Content from '../../components/Content'
 import styles from './styles.module.scss'
 import { explorerService } from '../../services/ExplorerService'
@@ -580,6 +581,7 @@ const ScriptTable: FC<{
 }
 
 const ScriptList: FC = () => {
+  const { t } = useTranslation()
   const { script_type: scriptType } = useSearchParams('script_type') ?? {}
   const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
   const sortParam = useSortParam<SortField>(undefined, 'capacity.desc')
@@ -595,7 +597,8 @@ const ScriptList: FC = () => {
 
   return (
     <Content>
-      <div className="container">
+      <div className={classNames(styles.tokensPanel, 'container')}>
+        <div className={styles.title}>{t(`script_list.title`)}</div>
         <div className={styles.cards}>
           <ScriptCard query={query} sortParam={sortParam} />
         </div>

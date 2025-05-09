@@ -195,6 +195,11 @@ dt {
         height: 1px;
         background: #e5e5e5;
       }
+
+      .colCreatedTime {
+        color: #00cc9b;
+        font-size: 14px;
+      }
     }
 
     th {
@@ -335,22 +340,5 @@ dt {
   gap: 8px;
   font-size: 24px;
   font-weight: bold;
-
-  a {
-    font-weight: normal;
-    font-size: 12px;
-    height: 28px;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: #333;
-    border: 1px solid #8a8a8a;
-    border-radius: 14px;
-
-    &:hover {
-      color: var(--primary-color);
-      border-color: var(--primary-color);
-    }
-  }
+  margin: 20px 0;
 }
