@@ -2,6 +2,7 @@ export interface Script {
   codeHash: string
   args: string
   hashType: string
+  verifiedScriptName?: string | null
 }
 
 export interface ScriptDetail {

@@ -76,7 +76,7 @@ const getScriptInfo = (scriptInfo: ScriptInfo, t: TFunction) => {
       slot: 'left',
       cell: {
         title: t('scripts.outpoint_tx_hash'),
-        content: outpointTxHash,
+        content: <CodeHashMessage codeHash={outpointTxHash} />,
       },
     },
     {

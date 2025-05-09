@@ -85,7 +85,7 @@ const TransactionParameters: FC<{ hash: string }> = ({ hash }) => {
           const {
             outPoint: { txHash, index },
             depType,
-            script: { codeHash, hashType },
+            script: { codeHash, hashType, name },
           } = cellDep
           const hashTag = matchTxHash(txHash, Number(index))
           return (
@@ -97,11 +97,7 @@ const TransactionParameters: FC<{ hash: string }> = ({ hash }) => {
                 linkUrl={`/transaction/${txHash}`}
                 tag={
                   hashTag && (
-                    <HashTag
-                      content={hashTag.tag}
-                      category={hashTag.category}
-                      script={{ codeHash, hashType, args: '' }}
-                    />
+                    <HashTag content={name} category={hashTag.category} script={{ codeHash, hashType, args: '' }} />
                   )
                 }
               />
