@@ -208,6 +208,18 @@
     }
   }
 
+  .rfcAction {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+  }
+
+  .websiteAction {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+  }
+
   .headerLink {
     display: flex;
     align-items: center;
@@ -219,7 +231,7 @@
 .headerDescription {
   padding: 12px 0;
   font-size: 16px;
-  color: #666;
+  color: #333;
 }
 
 .notice {

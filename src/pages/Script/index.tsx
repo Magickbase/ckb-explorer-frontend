@@ -200,14 +200,14 @@ export const ScriptPage = () => {
               ) : null}
               {rfc ? (
                 <Tooltip title={t('scripts.link.rfc')} placement="top">
-                  <Link to={rfc}>
+                  <Link to={rfc} className={styles.rfcAction}>
                     <RFCIcon />
                   </Link>
                 </Tooltip>
               ) : null}
               {website ? (
                 <Tooltip title={t('scripts.link.website')} placement="top">
-                  <Link to={website}>
+                  <Link to={website} className={styles.websiteAction}>
                     <WebsiteIcon />
                   </Link>
                 </Tooltip>
