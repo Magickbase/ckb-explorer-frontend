@@ -7,7 +7,13 @@ import { IOType } from '../../../constants/common'
 import { parseUDTAmount } from '../../../utils/number'
 import { dayjs, parseSimpleDate } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
-import { shannonToCkb, shannonToCkbDecimal, parseSince, formatNftDisplayId } from '../../../utils/util'
+import {
+  shannonToCkb,
+  shannonToCkbDecimal,
+  parseSince,
+  formatNftDisplayId,
+  handleNftImgError,
+} from '../../../utils/util'
 import { UDT_CELL_TYPES } from '../../../utils/cell'
 import TransactionCellArrow from '../../../components/Transaction/TransactionCellArrow'
 import Capacity from '../../../components/Capacity'
@@ -166,7 +172,7 @@ const DOBInfo: FC<{ cell: Cell$Spore }> = ({ cell }) => {
 
   return (
     <div className={styles.dodInfo}>
-      <img src={imageUrl} alt="nft" className={styles.dodInfoImage} />
+      <img src={imageUrl} alt="nft" className={styles.dodInfoImage} onError={handleNftImgError} />
       <div className={styles.dodInfoDetails}>
         <div className={styles.dodInfoItem}>
           <div className={styles.dodInfoLabel}>Name</div>
