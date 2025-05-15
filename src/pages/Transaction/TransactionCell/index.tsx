@@ -1,5 +1,5 @@
 import { useState, ReactNode, FC, useEffect } from 'react'
-import { Skeleton, Tooltip } from 'antd'
+import { Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '../../../components/Link'
@@ -42,6 +42,7 @@ import CellModal from '../../../components/Cell/CellModal'
 import { CellBasicInfo } from '../../../utils/transformer'
 import { getSporeImg } from '../../../utils/spore'
 import { explorerService } from '../../../services/ExplorerService'
+import Skeleton from '../../../components/ui/Skeleton'
 
 export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBase }) => {
   const alias = useDASAccount(address)
@@ -170,14 +171,14 @@ const DOBInfo: FC<{ cell: Cell$Spore }> = ({ cell }) => {
     })
   }, [cell.extraInfo.data, cell.extraInfo.tokenId])
 
-  const textSkeleton = <Skeleton.Input active style={{ height: 16, width: 50 }} />
+  const textSkeleton = <Skeleton style={{ height: 16, width: 150 }} />
 
   return (
     <div className={styles.dodInfo}>
       {imageUrl ? (
         <img src={imageUrl} alt="nft" className={styles.dodInfoImage} onError={handleNftImgError} />
       ) : (
-        <Skeleton.Avatar active shape="square" size={72} />
+        <Skeleton shape="square" style={{ width: 72, height: 72 }} />
       )}
       <div className={styles.dodInfoDetails}>
         <div className={styles.dodInfoItem}>
