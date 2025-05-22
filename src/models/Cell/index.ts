@@ -102,6 +102,7 @@ export interface Cell$NoExtra extends Cell$Base {
     | 'omiga_inscription'
     | 'xudt'
     | 'xudt_compatible'
+    | 'ssri'
   extraInfo?: never
 }
 
@@ -136,7 +137,7 @@ export interface Omiga$XUDT extends Cell$Base {
 }
 
 export interface XUDT extends Cell$Base {
-  cellType: 'xudt' | 'xudt_compatible'
+  cellType: 'xudt' | 'xudt_compatible' | 'ssri'
   extraInfo: Record<'amount' | 'decimal' | 'name' | 'symbol', string>
 }
 

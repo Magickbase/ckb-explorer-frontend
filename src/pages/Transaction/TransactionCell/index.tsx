@@ -355,18 +355,14 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       tooltip = nftInfo
       break
     }
-    case 'omiga_inscription': {
-      detailTitle = 'xUDT'
-      detailIcon = UDTTokenIcon
-      tooltip = detailTitle
-      break
-    }
     case 'xudt_compatible': {
       detailTitle = 'xUDT-compatible'
       detailIcon = UDTTokenIcon
       tooltip = detailTitle
       break
     }
+    case 'ssri':
+    case 'omiga_inscription':
     case 'xudt': {
       detailTitle = 'xUDT'
       detailIcon = UDTTokenIcon
