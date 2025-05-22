@@ -13,7 +13,7 @@
   position: relative;
   background-color: $background-color;
   color: $text-color;
-  height: 300px;
+  height: 270px;
   overflow: hidden;
   font-family: Roboto, inherit, sans-serif;
 
@@ -25,10 +25,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 120px;
+    padding: 0 20vw;
     margin-top: 30px;
 
+    @media screen and (width <=$xxlBreakPoint) {
+      padding: 0 15vw;
+    }
+
     @media screen and (width <=$extraLargeBreakPoint) {
+      padding: 0 10vw;
+    }
+
+    @media screen and (width <=$largeBreakPoint) {
       padding: 0 60px;
     }
   }
@@ -51,6 +59,7 @@
     position: absolute;
     inset: 0;
     z-index: 2;
+    max-width: 40vw;
     width: fit-content;
     height: fit-content;
     display: flex;
@@ -76,6 +85,7 @@
       text-align: center;
       font-size: 1.5rem;
       line-height: 32px;
+      margin-bottom: 24px;
     }
   }
 
@@ -83,34 +93,45 @@
     font-size: 1rem;
     line-height: 20px;
     font-weight: 400;
-    white-space: nowrap;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 
     @media (width <= $mobileBreakPoint) {
       display: none;
     }
   }
 
-  .endAnimation {
-    position: absolute;
-    width: 20rem;
-    height: 15rem;
-    z-index: 1;
-    background: radial-gradient(
-      circle at center,
-      rgb(82 217 221 / 100%) 0%,
-      rgb(82 217 221 / 50%) 70%,
-      transparent 100%
-    );
-    filter: blur(100px);
-    backdrop-filter: blur(10px);
-    top: -10rem;
-    left: 0%;
-    transform-origin: center;
+  .announcementBtn {
+    background-color: var(--primary-color);
+    cursor: pointer;
+    user-select: none;
+    font-size: 16px;
+    padding: 14px 40px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    white-space: nowrap;
 
     @media (width <= $mobileBreakPoint) {
-      top: 0;
-      left: 10%;
+      padding: 8px 40px;
+    }
+  }
+
+  .endAnimation {
+    position: absolute;
+    width: 30rem;
+    height: 15rem;
+    z-index: 1;
+    background-image: url('./lamp.webp');
+    background-size: 130%;
+    background-position: center;
+    background-repeat: no-repeat;
+    top: -3rem;
+    left: -6rem;
+    transform-origin: top center;
+
+    @media (width <= $mobileBreakPoint) {
+      inset: 0;
+      width: 100%;
     }
   }
 

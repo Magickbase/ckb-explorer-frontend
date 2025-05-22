@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 
-import CommonButton from '../../../../components/CommonButton'
 import styles from './index.module.scss'
 import GodwokenImage from './godwoken.png'
 import ForceBridgeImage from './forcebridge.png'
@@ -14,8 +13,8 @@ const ForceBridge = () => {
             initial={{ opacity: 0.5, transform: 'scale(0.1)' }}
             whileInView={{ opacity: 1, transform: 'scale(1)' }}
             transition={{
-              delay: 0.3,
-              duration: 0.5,
+              delay: 0,
+              duration: 0.3,
               ease: 'easeInOut',
             }}
             className={styles.endAnimation}
@@ -28,12 +27,14 @@ const ForceBridge = () => {
             <div className={styles.description}>
               Withdraw your assets via Godwoken Bridge and Force Bridge before the deadline.
             </div>
-            <CommonButton
-              name="Check the announcement"
-              onClick={() => {
-                window.open('/forcebridge-exit-announcement', '_blank')
-              }}
-            />
+            <a
+              href="https://sunset.forcebridge.com/"
+              target="_blank"
+              rel="noreferrer noopener"
+              className={styles.announcementBtn}
+            >
+              Check the announcement
+            </a>
           </div>
         </div>
         <div className={styles.exitContent}>
@@ -42,7 +43,7 @@ const ForceBridge = () => {
             E<span className={styles.neonTextFade}>X</span>I<span className={styles.neonTextFade}>T</span>
           </div>
           <div className={styles.exitTextWrapper}>
-            <motion.div
+            <motion.a
               className={styles.exitText}
               initial={{ opacity: 0.5, transform: 'translateX(100%)' }}
               whileInView={{ opacity: 1, transform: 'translateX(0%)' }}
@@ -51,6 +52,9 @@ const ForceBridge = () => {
                 duration: 0.5,
                 ease: 'easeInOut',
               }}
+              href="https://sunset.forcebridge.com/force-bridge"
+              target="_blank"
+              rel="noreferrer noopener"
             >
               <img
                 src={ForceBridgeImage}
@@ -59,8 +63,8 @@ const ForceBridge = () => {
                 style={{ width: '24px', transform: 'skewY(30deg)' }}
               />
               <span>Force Bridge Exit Ends: Nov 30, 2025</span>
-            </motion.div>
-            <motion.div
+            </motion.a>
+            <motion.a
               className={styles.exitText}
               initial={{ opacity: 0.5, transform: 'translateX(100%)' }}
               whileInView={{ opacity: 1, transform: 'translateX(0%)' }}
@@ -72,6 +76,9 @@ const ForceBridge = () => {
               style={{
                 marginLeft: 'auto',
               }}
+              href="https://sunset.forcebridge.com/godwoken-v1"
+              target="_blank"
+              rel="noreferrer noopener"
             >
               <img
                 src={GodwokenImage}
@@ -80,7 +87,7 @@ const ForceBridge = () => {
                 style={{ width: '20px', transform: 'skewY(20deg)' }}
               />
               <span>Godwoken Exit Ends: Oct 31, 2025</span>
-            </motion.div>
+            </motion.a>
           </div>
         </div>
       </div>
