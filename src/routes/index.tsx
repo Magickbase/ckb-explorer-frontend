@@ -94,6 +94,8 @@ const FiberGraphNodeList = lazy(() => import('../pages/Fiber/GraphNodeList'))
 const FiberGraphNode = lazy(() => import('../pages/Fiber/GraphNode'))
 const FiberGraphChannelList = lazy(() => import('../pages/Fiber/GraphChannelList'))
 // ======
+const ForceBridgeExit = lazy(() => import('../pages/ForceBridgeExit'))
+// ======
 
 const routes: RouteProps[] = [
   {
@@ -391,6 +393,10 @@ const routes: RouteProps[] = [
   {
     path: '/fiber/graph/channels',
     component: FiberGraphChannelList,
+  },
+  {
+    path: '/forcebridge-exit-announcement',
+    component: ForceBridgeExit,
   },
 ]
 if (IS_MAINNET) {
