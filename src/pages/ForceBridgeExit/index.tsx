@@ -12,7 +12,7 @@ const data = [
     time: 'June 1, 2025 — October 30, 2025',
     title: 'Godwoken Phase-out',
     content:
-      'Godwoken will enter 5-months phase-out period starting June 1, 2025. Users are adivced to withdraw all assets through Godwoken Bridge before October 31, 2025. During this period, inflow will be disabled, and support will focus on ensuring smooth exits.Godwoken will enter 5-months phase-out period starting June 1, 2025. Users are adivced to withdraw all assets through Godwoken Bridge before October 31, 2025. During this period, inflow will be disabled, and support will focus on ensuring smooth exits.',
+      'Godwoken will enter 5-months phase-out period starting June 1, 2025. Users are advised to withdraw all assets through Godwoken Bridge before October 31, 2025. During this period, inflow will be disabled, and support will focus on ensuring smooth exits.Godwoken will enter 5-months phase-out period starting June 1, 2025. Users are advised to withdraw all assets through Godwoken Bridge before October 31, 2025. During this period, inflow will be disabled, and support will focus on ensuring smooth exits.',
     bg: bg1,
     mbg: mbg1,
     color: '#fff',
