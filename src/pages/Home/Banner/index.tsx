@@ -41,11 +41,11 @@ export default () => {
     { refetchInterval: 12 * 1000 },
   )
 
-  // mainnet banners
-  const mainnetBanners: BannerItem[] = [
+  const banners: BannerItem[] = [
     {
       key: 'hardfork',
       component: <HardforkBanner />,
+      isHidden: !IS_MAINNET,
     },
     {
       key: 'knowledge',
@@ -64,16 +64,13 @@ export default () => {
           </div>
         </div>
       ),
+      isHidden: !IS_MAINNET,
     },
     {
       key: 'force-bridge',
       component: <ForceBridge />,
-      isHidden: Date.now() < FORCE_BRIDGE_SHOWTIME,
+      isHidden: !IS_MAINNET || Date.now() < FORCE_BRIDGE_SHOWTIME,
     },
-  ]
-
-  // testnet banners
-  const testnetBanners: BannerItem[] = [
     {
       key: 'fiber',
       component: (
@@ -100,10 +97,9 @@ export default () => {
           </div>
         </div>
       ),
+      isHidden: IS_MAINNET,
     },
-  ]
-
-  const banners = IS_MAINNET ? mainnetBanners : testnetBanners
+  ].filter(b => !b.isHidden)
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [exitingIndex, setExitingIndex] = useState<number | null>(null)
@@ -177,15 +173,13 @@ export default () => {
 
       {banners.length > 1 && (
         <div className={styles.carouselDots}>
-          {banners
-            .filter(b => !b.isHidden)
-            .map((banner, index) => (
-              <div
-                key={banner.key}
-                className={`${styles.dot} ${index === currentIndex ? styles.activeDot : ''}`}
-                onClick={() => goToBanner(index)}
-              />
-            ))}
+          {banners.map((banner, index) => (
+            <div
+              key={banner.key}
+              className={`${styles.dot} ${index === currentIndex ? styles.activeDot : ''}`}
+              onClick={() => goToBanner(index)}
+            />
+          ))}
         </div>
       )}
     </div>
