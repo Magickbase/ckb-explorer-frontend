@@ -590,7 +590,6 @@
       "view_rgbpp_digest": "View RGB++ Digest",
       "transaction": "Transaction",
       "transactions": "Transactions",
-      "read_contract": "Read Contract",
       "pending_transactions": "Pending Transactions",
       "transaction_fee": "Transaction Fee",
       "fee_rate": "Fee Rate",
@@ -893,6 +892,13 @@
     "xudt": {
       "title": {
         "tags": "Tags"
+      },
+      "read_contract": {
+        "title": "Read Contract",
+        "query": "Query",
+        "add_parameter": "Add Parameter",
+        "expand_all": "Expand All",
+        "collapse_all": "Collapse All"
       },
       "holder_distribution": "Holder Distribution",
       "holder_distribution_description": "There are {{ckb}} CKB Holders and {{btc}} BTC holders of the current asset. BTC holder refers to the number of unique BTC addresses that own this asset.",

@@ -15,6 +15,8 @@ export const ReadContractContext = createContext<{
   contractOutPointIndex: number
   method: string
   SSRIExecutor: ssri.ExecutorJsonRpc
+  expandedMethods: string[]
+  setExpandedMethods: (methods: string[]) => void
 }>({
   paramsList: [],
   handleChange: () => {},
@@ -25,6 +27,8 @@ export const ReadContractContext = createContext<{
   contractOutPointIndex: 0,
   method: '',
   SSRIExecutor: new ssri.ExecutorJsonRpc(CONFIG.REACT_APP_SSRI_RPC_URL!),
+  expandedMethods: [],
+  setExpandedMethods: () => {},
 })
 
 export const ReadContractContextProvider: FC<{
@@ -34,7 +38,18 @@ export const ReadContractContextProvider: FC<{
   method: string
   SSRIExecutor: ssri.ExecutorJsonRpc
   signer: ccc.Signer | undefined
-}> = ({ children, contractOutPointTx, contractOutPointIndex, method, SSRIExecutor, signer }) => {
+  expandedMethods: string[]
+  setExpandedMethods: (methods: string[]) => void
+}> = ({
+  children,
+  contractOutPointTx,
+  contractOutPointIndex,
+  method,
+  SSRIExecutor,
+  signer,
+  expandedMethods,
+  setExpandedMethods,
+}) => {
   const [paramsList, setParamsList] = useState<ReadContractParameter[]>([])
   const setToast = useSetToast()
 
@@ -162,6 +177,8 @@ export const ReadContractContextProvider: FC<{
         contractOutPointIndex,
         method,
         SSRIExecutor,
+        expandedMethods,
+        setExpandedMethods,
       }}
     >
       {children}

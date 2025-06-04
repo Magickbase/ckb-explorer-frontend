@@ -1,6 +1,7 @@
 import { FC, useCallback, useEffect, useState } from 'react'
 import { ssri } from '@ckb-ccc/ssri'
 import { ccc } from '@ckb-ccc/core'
+import { useTranslation } from 'react-i18next'
 import MethodCaller from './MethodCaller'
 import styles from './index.module.scss'
 import { ReadContractContextProvider } from './context'
@@ -18,7 +19,9 @@ const signer = new ccc.SignerCkbPublicKey(
 )
 
 const ReadContract: FC<{ xudt: XUDT | undefined }> = ({ xudt }) => {
+  const { t } = useTranslation()
   const [methodList, setMethodList] = useState<string[]>([])
+  const [expandedMethods, setExpandedMethods] = useState<string[]>([])
 
   const getMethodList = useCallback(async () => {
     if (!xudt?.ssriContractOutpoint) {
@@ -45,7 +48,7 @@ const ReadContract: FC<{ xudt: XUDT | undefined }> = ({ xudt }) => {
 
     const methodList = await contract.getMethods()
     setMethodList(methodList.res)
-  }, [signer.client, xudt?.ssriContractOutpoint])
+  }, [xudt?.ssriContractOutpoint])
 
   useEffect(() => {
     getMethodList()
@@ -59,7 +62,17 @@ const ReadContract: FC<{ xudt: XUDT | undefined }> = ({ xudt }) => {
 
   return (
     <div className={styles.container}>
-      <BaseMethods xudt={xudt} />
+      <div className={styles.expandAllButtonContainer}>
+        <div
+          onClick={() => setExpandedMethods(expandedMethods.length === methodList.length ? [] : methodList)}
+          className={styles.expandAllButton}
+        >
+          {expandedMethods.length === methodList.length
+            ? t('xudt.read_contract.collapse_all')
+            : t('xudt.read_contract.expand_all')}
+        </div>
+      </div>
+      <BaseMethods xudt={xudt} expandedMethods={expandedMethods} setExpandedMethods={setExpandedMethods} />
       {customMethodList.map((method, index) => (
         <ReadContractContextProvider
           signer={signer}
@@ -68,6 +81,8 @@ const ReadContract: FC<{ xudt: XUDT | undefined }> = ({ xudt }) => {
           contractOutPointIndex={xudt.ssriContractOutpoint!.cellIndex}
           method={method}
           SSRIExecutor={SSRIExecutor}
+          expandedMethods={expandedMethods}
+          setExpandedMethods={setExpandedMethods}
         >
           <MethodCaller methodName={method} index={index + SSRIBaseMethods.length + 1} />
         </ReadContractContextProvider>

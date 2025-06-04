@@ -3,6 +3,7 @@ import { ccc } from '@ckb-ccc/core'
 // eslint-disable-next-line import/no-unresolved
 import { cccA } from '@ckb-ccc/core/advanced'
 import { ssri } from '@ckb-ccc/ssri'
+import { parseAddress } from '@ckb-lumos/helpers'
 import { useCallback, useContext, useState } from 'react'
 import { ReadContractContext } from './context'
 import { ReadContractParameterType } from './types'
@@ -13,6 +14,7 @@ export function useCallSSRIMethod() {
   const [methodResult, setMethodResult] = useState<any>(undefined)
   const [isLoading, setIsLoading] = useState(false)
   const [iconDataURL, setIconDataURL] = useState('')
+  const [ckbAddress, setCkbAddress] = useState<string | undefined>(undefined)
   const [isError, setIsError] = useState(false)
   const [transactionResult, setTransactionResult] = useState<ccc.Transaction | undefined>(undefined)
 
@@ -23,6 +25,7 @@ export function useCallSSRIMethod() {
     setMethodResult(undefined)
     setIconDataURL('')
     setIsError(false)
+    setCkbAddress(undefined)
 
     let contract: ssri.Trait | undefined
     try {
@@ -171,7 +174,12 @@ export function useCallSSRIMethod() {
         } catch (e) {
           // empty
         }
-        setMethodResult(content)
+        try {
+          parseAddress(content)
+          setCkbAddress(content)
+        } catch (e) {
+          // empty
+        }
         try {
           const dataURL = ccc.bytesTo(content as string, 'utf8')
           if (dataURL.startsWith('http') || dataURL.startsWith('data:image')) {
@@ -180,6 +188,7 @@ export function useCallSSRIMethod() {
         } catch (e) {
           // empty
         }
+        setMethodResult(content)
       }
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : String(e) || 'Unknown error'
@@ -190,5 +199,5 @@ export function useCallSSRIMethod() {
     }
   }, [SSRIExecutor, contractOutPointIndex, contractOutPointTx, method, paramsList, signer])
 
-  return { callSSRIMethod, methodResult, isLoading, iconDataURL, transactionResult, isError }
+  return { callSSRIMethod, methodResult, isLoading, iconDataURL, transactionResult, isError, ckbAddress }
 }

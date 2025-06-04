@@ -557,7 +557,6 @@
       "view_rgbpp_digest": "查看 RGB++ 摘要",
       "transaction": "交易",
       "transactions": "交易",
-      "read_contract": "读取合约",
       "pending_transactions": "待处理交易",
       "transaction_fee": "交易费",
       "fee_rate": "费率",
@@ -861,6 +860,13 @@
     "xudt": {
       "title": {
         "tags": "标签"
+      },
+      "read_contract": {
+        "title": "读取合约",
+        "query": "查询",
+        "add_parameter": "添加参数",
+        "expand_all": "展开所有",
+        "collapse_all": "收起所有"
       },
       "holder_distribution": "地址分布",
       "holder_distribution_description": "当前资产有 {{ckb}} 个 CKB 用户及 {{btc}} 个 BTC 用户，BTC holder 是指拥有此资产的去重 BTC 地址数量。",

@@ -102,7 +102,7 @@ export const Xudt = () => {
                 })}
                 onClick={() => setCurrentTab('contract')}
               >
-                {t('transaction.read_contract')}
+                {t('xudt.read_contract.title')}
               </div>
             )}
           </div>
