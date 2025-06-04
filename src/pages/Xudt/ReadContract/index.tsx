@@ -1,8 +1,9 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { ssri } from '@ckb-ccc/ssri'
+import { ccc } from '@ckb-ccc/core'
 import MethodCaller from './MethodCaller'
 import styles from './index.module.scss'
-import { ReadContractContext, ReadContractContextProvider } from './context'
+import { ReadContractContextProvider } from './context'
 import CONFIG from '../../../config'
 import { XUDT } from '../../../models/Xudt'
 import BaseMethods from './BaseMethods'
@@ -10,9 +11,13 @@ import { SSRIBaseMethods } from './types'
 
 const SSRIExecutorURL = CONFIG.REACT_APP_SSRI_RPC_URL!
 const SSRIExecutor = new ssri.ExecutorJsonRpc(SSRIExecutorURL)
+const client = CONFIG.CHAIN_TYPE === 'mainnet' ? new ccc.ClientPublicMainnet() : new ccc.ClientPublicTestnet()
+const signer = new ccc.SignerCkbPublicKey(
+  client,
+  '0x026f3255791f578cc5e38783b6f2d87d4709697b797def6bf7b3b9af4120e2bfd9',
+)
 
 const ReadContract: FC<{ xudt: XUDT | undefined }> = ({ xudt }) => {
-  const { signer } = useContext(ReadContractContext)
   const [methodList, setMethodList] = useState<string[]>([])
 
   const getMethodList = useCallback(async () => {
@@ -57,6 +62,7 @@ const ReadContract: FC<{ xudt: XUDT | undefined }> = ({ xudt }) => {
       <BaseMethods xudt={xudt} />
       {customMethodList.map((method, index) => (
         <ReadContractContextProvider
+          signer={signer}
           key={method}
           contractOutPointTx={xudt.ssriContractOutpoint!.txHash}
           contractOutPointIndex={xudt.ssriContractOutpoint!.cellIndex}

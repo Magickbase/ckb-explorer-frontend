@@ -5,16 +5,10 @@ import { useSetToast } from '../../../components/Toast'
 import { ReadContractParameter, ReadContractParameterType } from './types'
 import CONFIG from '../../../config'
 
-const client = new ccc.ClientPublicTestnet()
-const signer = new ccc.SignerCkbPublicKey(
-  client,
-  '0x026f3255791f578cc5e38783b6f2d87d4709697b797def6bf7b3b9af4120e2bfd9',
-)
-
 export const ReadContractContext = createContext<{
   paramsList: ReadContractParameter[]
   handleChange: (index: number, value: ReadContractParameter) => void
-  signer: ccc.Signer
+  signer: ccc.Signer | undefined
   handleAddParam: (type: ReadContractParameterType) => void
   handleDeleteParam: (index: number) => void
   contractOutPointTx: string
@@ -24,7 +18,7 @@ export const ReadContractContext = createContext<{
 }>({
   paramsList: [],
   handleChange: () => {},
-  signer,
+  signer: undefined,
   handleAddParam: () => {},
   handleDeleteParam: () => {},
   contractOutPointTx: '',
@@ -39,7 +33,8 @@ export const ReadContractContextProvider: FC<{
   contractOutPointIndex: number
   method: string
   SSRIExecutor: ssri.ExecutorJsonRpc
-}> = ({ children, contractOutPointTx, contractOutPointIndex, method, SSRIExecutor }) => {
+  signer: ccc.Signer | undefined
+}> = ({ children, contractOutPointTx, contractOutPointIndex, method, SSRIExecutor, signer }) => {
   const [paramsList, setParamsList] = useState<ReadContractParameter[]>([])
   const setToast = useSetToast()
 
