@@ -243,7 +243,7 @@
       "fiber_network": "Fiber Network",
       "fiber_statistics": "总览",
       "fiber_graph_nodes": "节点",
-      "coins": "代币"
+      "coins": "UDT"
     },
     "banner": {
       "fiber_title": "Fiber Network 不忘初心",
@@ -557,6 +557,7 @@
       "view_rgbpp_digest": "查看 RGB++ 摘要",
       "transaction": "交易",
       "transactions": "交易",
+      "read_contract": "读取合约",
       "pending_transactions": "待处理交易",
       "transaction_fee": "交易费",
       "fee_rate": "费率",
@@ -810,6 +811,8 @@
       "no_more_data": "没有更多数据了"
     },
     "udt": {
+      "udts": "UDT 列表",
+      "description": "所有满足 UDT 特征或特性的代币都将包含在此处。这包括 xUDT 和 sUDT。",
       "sudt": "sUDT",
       "name": "代币名称",
       "symbol": "代币符号",
@@ -825,7 +828,7 @@
       "submit_token_info": "提交代币信息",
       "modify_token_info": "修改代币信息",
       "unknown_token_description": "此代币信息暂时不完整，如果你是此代币的拥有者，请提交代币信息",
-      "tokens": "代币",
+      "tokens": "sUDT 列表",
       "transactions": "24小时交易数",
       "address_count": "持币用户数",
       "created_time": "创建时间",
@@ -863,7 +866,7 @@
       "lock_hash": "Lock Hash",
       "count": "Count",
       "xudt": "xUDT",
-      "xudts": "xUDTs",
+      "xudts": "xUDT 列表",
       "name": "名称",
       "symbol": "符号",
       "total_amount": "总量",
