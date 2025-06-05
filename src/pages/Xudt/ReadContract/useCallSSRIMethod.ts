@@ -16,6 +16,7 @@ export function useCallSSRIMethod() {
   const [iconDataURL, setIconDataURL] = useState('')
   const [ckbAddress, setCkbAddress] = useState<string | undefined>(undefined)
   const [isError, setIsError] = useState(false)
+  const [cellDeps, setCellDeps] = useState<cccA.JsonRpcOutPoint[] | undefined>(undefined)
   const [transactionResult, setTransactionResult] = useState<ccc.Transaction | undefined>(undefined)
 
   const callSSRIMethod = useCallback(async () => {
@@ -26,6 +27,7 @@ export function useCallSSRIMethod() {
     setIconDataURL('')
     setIsError(false)
     setCkbAddress(undefined)
+    setCellDeps(undefined)
 
     let contract: ssri.Trait | undefined
     try {
@@ -160,12 +162,14 @@ export function useCallSSRIMethod() {
         return ['run_script_level_code', []]
       })()
 
-      const { content } = (await SSRIExecutor.requestor.request(rpcMethod, [
+      const { content, cell_deps } = (await SSRIExecutor.requestor.request(rpcMethod, [
         code.txHash,
         Number(code.index),
         [method, ...argsHex.map(ccc.hexFrom)],
         ...rpcContext,
       ])) as { content: ccc.Hex; cell_deps: cccA.JsonRpcOutPoint[] }
+
+      setCellDeps(cell_deps)
 
       if (content) {
         try {
@@ -199,5 +203,5 @@ export function useCallSSRIMethod() {
     }
   }, [SSRIExecutor, contractOutPointIndex, contractOutPointTx, method, paramsList, signer])
 
-  return { callSSRIMethod, methodResult, isLoading, iconDataURL, transactionResult, isError, ckbAddress }
+  return { callSSRIMethod, methodResult, isLoading, iconDataURL, transactionResult, isError, ckbAddress, cellDeps }
 }
