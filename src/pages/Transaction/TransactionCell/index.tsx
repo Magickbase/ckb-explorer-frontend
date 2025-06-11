@@ -344,6 +344,11 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
   const isDob = cell.cellType === 'spore_cell' || cell.cellType === 'did_cell'
   const isZeroLock = lockScript.codeHash === ZERO_LOCK_CODE_HASH
 
+  const tokenIdStr = `${dobInfo.nftInfo?.standard === 'spore' ? '' : '#'}${formatNftDisplayId(
+    dobInfo.nftInfo?.token_id ?? '',
+    dobInfo.nftInfo?.standard ?? null,
+  )}`
+
   const taglists = [
     {
       tag: 'Dob Protocol',
@@ -466,7 +471,9 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
     }
     case 'did_cell':
     case 'spore_cell': {
-      detailTitle = 'Unique Item'
+      detailTitle = `${dobInfo.nftInfo?.collection.name ?? 'Unique Item'} ${
+        tokenIdStr.length > 10 ? `${tokenIdStr.slice(0, 3)}...${tokenIdStr.slice(-3)}` : tokenIdStr
+      }`
       detailIcon = dobInfo.cover
       tooltip = nftInfo
       break
