@@ -1,4 +1,5 @@
-import { useState, ReactNode, FC, useEffect } from 'react'
+/* eslint-disable no-console */
+import { useState, ReactNode, FC, useEffect, useRef } from 'react'
 import { Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
@@ -329,6 +330,50 @@ const useDOBInfo = (cell: Cell) => {
   }
 }
 
+const HoverablePopover = ({ children, content }: { children: ReactNode; content: ReactNode }) => {
+  const [open, setOpen] = useState(false)
+  const [isClicked, setIsClicked] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    setOpen(true)
+  }
+
+  const handleMouseLeave = () => {
+    if (!isClicked) {
+      timeoutRef.current = setTimeout(() => {
+        setOpen(false)
+      }, 300)
+    }
+  }
+
+  const handleClick = () => {
+    setIsClicked(true)
+    setOpen(prev => !prev)
+  }
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen)
+    if (!newOpen) {
+      setIsClicked(false)
+    }
+  }
+
+  return (
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleClick}>
+        {children}
+      </PopoverTrigger>
+      <PopoverContent onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        {content}
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
   const { t } = useTranslation()
   let detailTitle: JSX.Element | string = <span>{t('transaction.ckb_capacity')}</span>
@@ -351,6 +396,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
 
   const taglists = [
     {
+      key: 'Dob',
       tag: 'Dob Protocol',
       description: 'This cell is related to Dob Protocol.',
       display: isDob,
@@ -359,6 +405,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       iconColor: '#FFFEC1',
     },
     {
+      key: 'Deployment',
       tag: 'Deployment',
       description: 'This cell is related to Deployment.',
       display: isDeployment,
@@ -366,14 +413,20 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       icon: DobIcon, // The ui doesn't provide an icon yet, so use another icon for now.
     },
     {
-      tag: 'Multisig',
+      key: 'Multisig',
+      tag: (
+        <>
+          Multisig <span className="text-primary">@{lockScript.codeHash.slice(0, 6)}</span>
+        </>
+      ),
       description: 'This cell is related to Multisig. It can be used to create a multisig address.',
       display: isMultisig,
-      link: `/script/${scriptDataMap['secp256k1 / multisig'].codeHashes[0]}/${scriptDataMap['secp256k1 / multisig'].hashType}`,
+      link: `/script/${lockScript.codeHash}/${lockScript.hashType}`,
       icon: MultisigIcon,
       iconColor: '#DCEDFF',
     },
     {
+      key: 'Fiber',
       tag: 'Fiber Network',
       description: 'This cell is related to Fiber Network.',
       display: isFiber,
@@ -381,6 +434,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       icon: DobIcon, // The ui doesn't provide an icon yet, so use another icon for now.
     },
     {
+      key: 'ZeroLock',
       tag: 'Zero Lock',
       description: 'This cell is related to Zero Lock.',
       display: isZeroLock,
@@ -397,7 +451,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
     icon,
     iconColor,
   }: {
-    tag: string
+    tag: string | ReactNode
     description: string
     link: string
     icon: string
@@ -511,29 +565,14 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       <div>{detailTitle}</div>
 
       {isDisplayTagList ? (
-        <Popover>
-          <PopoverTrigger asChild>
-            <div className={styles.transactionCellTags}>
-              {taglists
-                .filter(tag => tag.display)
-                .map(tag => (
-                  <img
-                    key={tag.tag}
-                    src={tag.icon}
-                    className={styles.tagIcon}
-                    style={{ backgroundColor: tag.iconColor }}
-                    alt={`${tag.tag} icon`}
-                  />
-                ))}
-            </div>
-          </PopoverTrigger>
-          <PopoverContent>
+        <HoverablePopover
+          content={
             <div className={styles.transactionCellTagList}>
               {taglists
                 .filter(tag => tag.display)
                 .map(tag => (
                   <CellTag
-                    key={tag.tag}
+                    key={tag.key}
                     tag={tag.tag}
                     description={tag.description}
                     link={tag.link}
@@ -542,8 +581,22 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
                   />
                 ))}
             </div>
-          </PopoverContent>
-        </Popover>
+          }
+        >
+          <div className={styles.transactionCellTags}>
+            {taglists
+              .filter(tag => tag.display)
+              .map(tag => (
+                <img
+                  key={tag.key}
+                  src={tag.icon}
+                  className={styles.tagIcon}
+                  style={{ backgroundColor: tag.iconColor }}
+                  alt={`${tag.tag} icon`}
+                />
+              ))}
+          </div>
+        </HoverablePopover>
       ) : null}
     </div>
   )
