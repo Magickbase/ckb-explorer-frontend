@@ -431,7 +431,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       description: 'This cell is related to Fiber Network.',
       display: isFiber,
       link: cell.fiberGraphChannelInfo ? `/fiber/graph/node/${cell.fiberGraphChannelInfo.node1}` : '/fiber/graph/nodes',
-      icon: DobIcon, // The ui doesn't provide an icon yet, so use another icon for now.
+      icon: DobIcon, // FIXME: The ui doesn't provide an icon yet, so use another icon for now.
     },
     {
       key: 'ZeroLock',
