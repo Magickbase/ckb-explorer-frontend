@@ -96,6 +96,10 @@ a {
   }
 }
 
+.text-primary {
+  color: var(--primary-color);
+}
+
 .ant-tooltip-inner {
   white-space: pre-wrap;
   border-radius: 8px;
@@ -103,7 +107,7 @@ a {
 }
 
 .ant-input:focus {
-  border-color: none;
+  border-color: transparent;
 }
 
 .ant-input-affix-wrapper:hover,
