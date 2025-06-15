@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Dropdown } from 'antd'
 import { TFunction, useTranslation } from 'react-i18next'
 import { scriptToAddress } from '@nervosnetwork/ckb-sdk-utils'
 import { Cell } from '../../../models/Cell'
@@ -11,6 +10,7 @@ import { CellBasicInfo } from '../../../utils/transformer'
 import { ReactComponent as MoreIcon } from '../../../assets/more.svg'
 import { BTCExplorerLink, Link } from '../../Link'
 import styles from '../styles.module.scss'
+import Popover from '../../Popover'
 
 export const useGenerateMenuItem = ({
   t,
@@ -65,12 +65,11 @@ export const useGenerateMenuItem = ({
   )
 }
 
-const CellNode = (props: Cell & { modalRef?: HTMLDivElement | null; onViewCell: (cell: CellBasicInfo) => void }) => {
+const CellNode = (props: Cell & { onViewCell: (cell: CellBasicInfo) => void }) => {
   const {
     capacity,
     occupiedCapacity,
     status,
-    modalRef,
     id,
     onViewCell,
     generatedTxHash,
@@ -116,20 +115,17 @@ const CellNode = (props: Cell & { modalRef?: HTMLDivElement | null; onViewCell: 
     <div className={styles.cellNodeContainer}>
       <span className={styles.cellStatus} data-status={status} />
       <span>{`${(+shannonToCkb(capacity)).toLocaleString('en')} CKB`}</span>
-      <Dropdown
-        menu={{
-          items,
-          onClick(e) {
-            e.domEvent.stopPropagation()
-          },
-        }}
-        trigger={['click']}
-        getPopupContainer={() => modalRef ?? document.body}
+      <Popover
+        trigger={
+          <button type="button" className={styles.more} onClick={e => e.stopPropagation()}>
+            <MoreIcon />
+          </button>
+        }
       >
-        <button type="button" className={styles.more} onClick={e => e.stopPropagation()}>
-          <MoreIcon />
-        </button>
-      </Dropdown>
+        {items.map(item => {
+          return <div key={item.key}>{item.label}</div>
+        })}
+      </Popover>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { Tooltip, Radio } from 'antd'
+import classNames from 'classnames'
 import { FC, useMemo, useEffect } from 'react'
 import { addressToScript } from '@nervosnetwork/ckb-sdk-utils'
 import { Address as AddressInfo } from '../../models/Address'
@@ -41,6 +41,7 @@ import Qrcode from '../../components/Qrcode'
 import { FaucetMenu } from '../../components/FaucetMenu'
 import { isMainnet } from '../../utils/chain'
 import MultisigIcon from './multisig.svg'
+import Tooltip from '../../components/Tooltip'
 
 const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
 
@@ -214,17 +215,22 @@ export const Address = () => {
       <div className={styles.sortAndFilter} data-is-active={timeOrderBy === 'asc'}>
         {timeOrderBy === 'asc' ? <TimeDownIcon onClick={handleTimeSort} /> : <TimeUpIcon onClick={handleTimeSort} />}
       </div>
-      <Radio.Group
-        className={styles.layoutButtons}
-        options={[
-          { label: t('transaction.professional'), value: Professional },
-          { label: t('transaction.lite'), value: Lite },
-        ]}
-        onChange={({ target: { value } }) => onChangeLayout(value)}
-        value={layout}
-        optionType="button"
-        buttonStyle="solid"
-      />
+      <div className={styles.professionalLiteBox}>
+        <button
+          type="button"
+          className={classNames(styles.button, layout === LayoutLiteProfessional.Professional ? styles.selected : '')}
+          onClick={() => onChangeLayout(LayoutLiteProfessional.Professional)}
+        >
+          {t('transaction.professional')}
+        </button>
+        <button
+          className={classNames(styles.button, layout === LayoutLiteProfessional.Lite ? styles.selected : '')}
+          type="button"
+          onClick={() => onChangeLayout(LayoutLiteProfessional.Lite)}
+        >
+          {t('transaction.lite')}
+        </button>
+      </div>
     </div>
   )
 
@@ -247,25 +253,27 @@ export const Address = () => {
             customActions={[
               <Qrcode text={address} />,
               isMultisig ? (
-                <Tooltip placement="top" title="Multisig">
-                  <img src={MultisigIcon} alt="multisig" />
+                <Tooltip trigger={<img src={MultisigIcon} alt="multisig" />} placement="top">
+                  Multisig
                 </Tooltip>
               ) : null,
               isBtcAddress ? <LinkToBtcAddress address={address} /> : null,
               <FaucetMenu address={address} />,
               counterpartAddr ? (
                 <Tooltip
+                  trigger={
+                    <Link
+                      className={styles.openInNew}
+                      to={`/address/${counterpartAddr}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <ShareIcon />
+                    </Link>
+                  }
                   placement="top"
-                  title={t(`address.${newAddr === address ? 'visit-deprecated-address' : 'view-new-address'}`)}
                 >
-                  <Link
-                    className={styles.openInNew}
-                    to={`/address/${counterpartAddr}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ShareIcon />
-                  </Link>
+                  {t(`address.${newAddr === address ? 'visit-deprecated-address' : 'view-new-address'}`)}
                 </Tooltip>
               ) : null,
             ]}
@@ -344,10 +352,15 @@ export const Address = () => {
 const LinkToBtcAddress = ({ address }: { address: string }) => {
   const { t } = useTranslation()
   return (
-    <Tooltip placement="top" title={t('address.view_in_btc_explorer')}>
-      <BTCExplorerLink className={styles.openInNew} address={address} path="/address">
-        <ShareIcon />
-      </BTCExplorerLink>
+    <Tooltip
+      trigger={
+        <BTCExplorerLink className={styles.openInNew} address={address} path="/address">
+          <ShareIcon />
+        </BTCExplorerLink>
+      }
+      placement="top"
+    >
+      {t('address.view_in_btc_explorer')}
     </Tooltip>
   )
 }
@@ -370,11 +383,16 @@ export const DASInfo: FC<{ address: string }> = ({ address }) => {
   if (alias == null) return null
 
   return (
-    <Tooltip placement="top" title={alias}>
-      <a className={styles.dasAccount} href={`https://data.did.id/${alias}`} target="_blank" rel="noreferrer">
-        <img src={`https://display.did.id/identicon/${alias}`} alt={alias} />
-        <span>{alias}</span>
-      </a>
+    <Tooltip
+      trigger={
+        <a className={styles.dasAccount} href={`https://data.did.id/${alias}`} target="_blank" rel="noreferrer">
+          <img src={`https://display.did.id/identicon/${alias}`} alt={alias} />
+          <span>{alias}</span>
+        </a>
+      }
+      placement="top"
+    >
+      {alias}
     </Tooltip>
   )
 }
