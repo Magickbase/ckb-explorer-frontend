@@ -111,7 +111,7 @@
     "prop-types": "15.8.1",
     "react-app-rewired": "2.2.1",
     "react-test-renderer": "^17.0.2",
-    "rxjs": "7.8.1",
+    "rxjs": "7.8.2",
     "storybook": "7.6.19",
     "stylelint": "^16.20.0",
     "stylelint-config-css-modules": "^4.4.0",
