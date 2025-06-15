@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
+import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { Link1Icon, LinkBreak1Icon, OpenInNewWindowIcon, UpdateIcon } from '@radix-ui/react-icons'
 import { Tooltip } from 'antd'
@@ -9,7 +10,7 @@ import BigNumber from 'bignumber.js'
 import type { Response, Fiber } from '../../../services/ExplorerService'
 import { explorerService } from '../../../services/ExplorerService'
 import { useSetToast } from '../../../components/Toast'
-import { useSearchParams } from '../../../hooks'
+import { useSearchParams, useUpdateSearchParams } from '../../../hooks'
 import { getFundingThreshold } from '../utils'
 import { handleFtImgError, shannonToCkb } from '../../../utils/util'
 import { parseNumericAbbr } from '../../../utils/chart'
@@ -27,11 +28,31 @@ import FtFallbackIcon from '../../../assets/ft_fallback_icon.png'
 import styles from './index.module.scss'
 import { uniqueColor } from '../../../utils/color'
 
+import { Button } from '../../../components/ui/Button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Select'
+
 interface QueryResponse extends Response.Response<Fiber.Graph.NodeDetail> {}
 
 const CHANNEL_PAGE_SIZE = 10
 const ACTIVITY_PAGE_SIZE = 39
 const TIME_TEMPLATE = 'YYYY-MM-DD HH:mm:ss'
+
+const isChannelSort = (
+  sort?: string,
+): sort is 'position_time.desc' | 'position_time.asc' | 'capacity.desc' | 'capacity.asc' | undefined => {
+  if (!sort) return true
+  return ['position_time.desc', 'position_time.asc', 'capacity.desc', 'capacity.asc'].includes(sort)
+}
+
+const isTxSort = (sort?: string): sort is 'block_timestamp.desc' | 'block_timestamp.asc' | undefined => {
+  if (!sort) return true
+  return ['block_timestamp.desc', 'block_timestamp.asc'].includes(sort)
+}
+
+const isTxStatus = (status?: string): status is 'open' | 'closed' | undefined => {
+  if (!status) return true
+  return ['open', 'closed'].includes(status)
+}
 
 const useNodeData = (id: string | undefined) => {
   return useQuery({
@@ -52,15 +73,14 @@ const usePriceData = () => {
 const useTransactions = (id: string, query: Parameters<typeof explorerService.api.getGraphNodeTransactions>[1]) => {
   return useQuery({
     queryKey: ['fiber', 'graph', 'node', id, 'transaction', query] as const,
-    queryFn: () =>
-      explorerService.api.getGraphNodeTransactions(id!, query).then(res => res.data.fiberGraphTransactions),
+    queryFn: () => explorerService.api.getGraphNodeTransactions(id!, query),
     enabled: !!id,
   })
 }
 const useNodeChannels = (id: string, query: Parameters<typeof explorerService.api.getGraphNodeChannels>[1]) => {
   return useQuery({
     queryKey: ['fiber', 'graph', 'node', id, 'channels', query] as const,
-    queryFn: () => explorerService.api.getGraphNodeChannels(id!, query).then(res => res.data.fiberGraphChannels),
+    queryFn: () => explorerService.api.getGraphNodeChannels(id!, query),
     enabled: !!id,
   })
 }
@@ -200,8 +220,56 @@ const GraphNode = () => {
   const {
     channel_state: channelState,
     channel_page: channelPage = '1',
+    channel_sort: channelSort = 'position_time.desc',
+    channel_type_hash: channelTypeHash,
+    channel_time_range: channelTimeRange,
+    channel_amount_range: channelAmountRange,
+    channel_address: channelAddress,
+
     activity_page: activityPage = '1',
-  } = useSearchParams('channel_state', 'channel_page', 'activity_page')
+    tx_sort: txSort = 'block_timestamp.desc',
+    tx_type_hash: txTypeHash,
+    tx_time_range: txTimeRange,
+    tx_amount_range: txAmountRange,
+    tx_status: txStatus,
+    tx_address: txAddress,
+  } = useSearchParams(
+    'channel_state',
+    'channel_page',
+    'channel_sort',
+    'channel_type_hash',
+    'channel_time_range',
+    'channel_amount_range',
+    'channel_address',
+    'activity_page',
+    'tx_sort',
+    'tx_type_hash',
+    'tx_time_range',
+    'tx_amount_range',
+    'tx_status',
+    'tx_address',
+  )
+
+  const [txSortKey, txSortOrder] = txSort?.split('.')
+  const [channelSortKey, channelSortOrder] = channelSort?.split('.')
+
+  const updateSearchParams = useUpdateSearchParams<
+    | 'channel_state'
+    | 'channel_sort'
+    | 'channel_type_hash'
+    | 'channel_time_range'
+    | 'channel_amount_range'
+    | 'channel_address'
+    | 'channel_page'
+    | 'activity_page'
+    | 'tx_sort'
+    | 'tx_type_hash'
+    | 'tx_time_range'
+    | 'tx_amount_range'
+    | 'tx_status'
+    | 'tx_address'
+  >()
+
   const setToast = useSetToast()
 
   const { data, isLoading } = useNodeData(id)
@@ -226,15 +294,33 @@ const GraphNode = () => {
     }
   }, [node])
 
-  const { data: openAndClosedTxs } = useTransactions(id, {
+  const { data: txData = { fiberGraphTransactions: [], meta: { total: 0, pageSize: 0 } } } = useTransactions(id, {
     page: activityPage,
     pageSize: ACTIVITY_PAGE_SIZE.toString(),
+    sort: isTxSort(txSort) ? txSort : undefined,
+    typeHash: txTypeHash,
+    minTokenAmount: txAmountRange?.split('-')[0],
+    maxTokenAmount: txAmountRange?.split('-')[1],
+    addressHash: txAddress,
+    status: isTxStatus(txStatus) ? txStatus : undefined,
+    startDate: txTimeRange?.split('-')[0],
+    endDate: txTimeRange?.split('-')[1],
   })
-  const { data: channels = [] } = useNodeChannels(id, {
+  const { data: channelData = { fiberGraphChannels: [], meta: { total: 0, pageSize: 0 } } } = useNodeChannels(id, {
     page: channelPage,
     pageSize: CHANNEL_PAGE_SIZE.toString(),
+    sort: isChannelSort(channelSort) ? channelSort : undefined,
+    typeHash: channelTypeHash,
+    minTokenAmount: channelAmountRange?.split('-')[0],
+    maxTokenAmount: channelAmountRange?.split('-')[1],
+    addressHash: channelAddress,
+    startDate: channelTimeRange?.split('-')[0],
+    endDate: channelTimeRange?.split('-')[1],
     status: channelState === 'closed' ? 'closed' : 'open',
   })
+  const { fiberGraphChannels: channels = [], meta: channelMeta } = channelData
+  const { fiberGraphTransactions: openAndClosedTxs = [], meta: txMeta } = txData
+
   const totalLiquidity = useTotalLiquidity(channels, prices)
 
   if (isLoading) return <Loading show />
@@ -395,7 +481,39 @@ const GraphNode = () => {
         </div>
         <div className={styles.activities}>
           <div className={styles.channels}>
-            <h3>{t('fiber.peer.channels')}</h3>
+            <div className={styles.tabHeader}>
+              <span className={styles.tabTitle}>{t('fiber.peer.channels')}</span>
+
+              <div className={styles.tabActions}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  style={{ borderWidth: 1 }}
+                  onClick={() => {
+                    updateSearchParams(params => ({
+                      ...params,
+                      channel_sort: `${channelSortKey}.${channelSortOrder === 'desc' ? 'asc' : 'desc'}`,
+                    }))
+                  }}
+                >
+                  {channelSortOrder === 'desc' ? <ArrowDownWideNarrow /> : <ArrowUpNarrowWide />}
+                </Button>
+                <Select
+                  value={channelSortKey}
+                  onValueChange={value =>
+                    updateSearchParams(params => ({ ...params, channel_sort: `${value}.${channelSortOrder}` }))
+                  }
+                >
+                  <SelectTrigger style={{ borderWidth: 1, padding: 4, width: '180px' }}>
+                    <SelectValue placeholder="sorting" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="position_time">position time</SelectItem>
+                    <SelectItem value="capacity">capacity</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             {channels.length ? (
               <>
                 <GraphChannelList
@@ -404,7 +522,7 @@ const GraphNode = () => {
                   startIndex={(+channelPage - 1) * CHANNEL_PAGE_SIZE}
                 />
                 <div className={styles.pagination}>
-                  <Pagination totalPages={Math.ceil(channels.length / CHANNEL_PAGE_SIZE)} keyword="channel_page" />
+                  <Pagination totalPages={Math.ceil(channelMeta.total / channelMeta.pageSize)} keyword="channel_page" />
                 </div>
               </>
             ) : (
@@ -415,7 +533,38 @@ const GraphNode = () => {
             )}
           </div>
           <div className={styles.transactions}>
-            <h3>Open & Closed Transactions</h3>
+            <div className={styles.tabHeader}>
+              <span className={styles.tabTitle}>Open & Closed Transactions</span>
+
+              <div className={styles.tabActions}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  style={{ borderWidth: 1 }}
+                  onClick={() => {
+                    updateSearchParams(params => ({
+                      ...params,
+                      tx_sort: `${txSortKey}.${txSortOrder === 'desc' ? 'asc' : 'desc'}`,
+                    }))
+                  }}
+                >
+                  {txSortOrder === 'desc' ? <ArrowDownWideNarrow /> : <ArrowUpNarrowWide />}
+                </Button>
+                <Select
+                  value={txSortKey}
+                  onValueChange={value =>
+                    updateSearchParams(params => ({ ...params, tx_sort: `${value}.${txSortOrder}` }))
+                  }
+                >
+                  <SelectTrigger style={{ borderWidth: 1, padding: 4, width: '180px' }}>
+                    <SelectValue placeholder="sorting" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="block_timestamp">block timestamp</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             {openAndClosedTxs?.length ? (
               <>
                 <div>
@@ -424,10 +573,7 @@ const GraphNode = () => {
                   ))}
                 </div>
                 <div className={styles.pagination}>
-                  <Pagination
-                    totalPages={Math.ceil(openAndClosedTxs.length / ACTIVITY_PAGE_SIZE)}
-                    keyword="activity_page"
-                  />
+                  <Pagination totalPages={Math.ceil(txMeta.total / txMeta.pageSize)} keyword="activity_page" />
                 </div>
               </>
             ) : (

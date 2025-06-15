@@ -60,7 +60,7 @@
     align-items: center;
     appearance: none;
     padding: 0;
-    border: none;
+    border-width: 0;
     background: none;
     cursor: pointer;
 
@@ -465,5 +465,27 @@
   img {
     display: block;
     margin-right: -12px;
+  }
+}
+
+.tabHeader {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 1px solid #e5e5e5;
+
+  .tabTitle {
+    font-size: 1.25rem !important;
+    margin-right: auto;
+  }
+
+  .tabActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }
