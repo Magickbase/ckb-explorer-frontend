@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
-import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react'
+import { ArrowDownWideNarrow, ArrowUpNarrowWide, FilterIcon } from 'lucide-react'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { Link1Icon, LinkBreak1Icon, OpenInNewWindowIcon, UpdateIcon } from '@radix-ui/react-icons'
 import { Tooltip } from 'antd'
@@ -10,7 +10,7 @@ import BigNumber from 'bignumber.js'
 import type { Response, Fiber } from '../../../services/ExplorerService'
 import { explorerService } from '../../../services/ExplorerService'
 import { useSetToast } from '../../../components/Toast'
-import { useSearchParams, useUpdateSearchParams } from '../../../hooks'
+import { useIsMobile, useSearchParams, useUpdateSearchParams } from '../../../hooks'
 import { getFundingThreshold } from '../utils'
 import { handleFtImgError, shannonToCkb } from '../../../utils/util'
 import { parseNumericAbbr } from '../../../utils/chart'
@@ -30,12 +30,43 @@ import { uniqueColor } from '../../../utils/color'
 
 import { Button } from '../../../components/ui/Button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Select'
+import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/Popover'
+import { Drawer, DrawerContent, DrawerTrigger } from '../../../components/ui/Drawer'
+
+import { Label } from '../../../components/ui/Label'
+import { Input } from '../../../components/ui/Input'
+import { Tabs, TabsList, TabsTrigger } from '../../../components/ui/Tabs'
 
 interface QueryResponse extends Response.Response<Fiber.Graph.NodeDetail> {}
 
 const CHANNEL_PAGE_SIZE = 10
 const ACTIVITY_PAGE_SIZE = 39
 const TIME_TEMPLATE = 'YYYY-MM-DD HH:mm:ss'
+
+const ResponsivePopover = ({ children, content }: { children: ReactNode; content: ReactNode }) => {
+  const isMobile = useIsMobile()
+  if (isMobile) {
+    return (
+      <Drawer>
+        <DrawerTrigger>{children}</DrawerTrigger>
+        <DrawerContent
+          style={{
+            padding: 24,
+          }}
+        >
+          {content}
+        </DrawerContent>
+      </Drawer>
+    )
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger>{children}</PopoverTrigger>
+      <PopoverContent>{content}</PopoverContent>
+    </Popover>
+  )
+}
 
 const isChannelSort = (
   sort?: string,
@@ -251,7 +282,9 @@ const GraphNode = () => {
   )
 
   const [txSortKey, txSortOrder] = txSort?.split('.')
-  const [channelSortKey, channelSortOrder] = channelSort?.split('.')
+  const [minTxAmount, maxTxAmount] = (txAmountRange ?? '').split('-')
+  const [minChannelAmount, maxChannelAmount] = (channelAmountRange ?? '').split('-')
+  const [channelSortKey, channelSortOrder] = channelSort.split('.')
 
   const updateSearchParams = useUpdateSearchParams<
     | 'channel_state'
@@ -301,7 +334,7 @@ const GraphNode = () => {
     typeHash: txTypeHash,
     minTokenAmount: txAmountRange?.split('-')[0],
     maxTokenAmount: txAmountRange?.split('-')[1],
-    addressHash: txAddress,
+    addressHash: txAddress !== '' ? txAddress : undefined,
     status: isTxStatus(txStatus) ? txStatus : undefined,
     startDate: txTimeRange?.split('-')[0],
     endDate: txTimeRange?.split('-')[1],
@@ -504,7 +537,7 @@ const GraphNode = () => {
                     updateSearchParams(params => ({ ...params, channel_sort: `${value}.${channelSortOrder}` }))
                   }
                 >
-                  <SelectTrigger style={{ borderWidth: 1, padding: 4, width: '180px' }}>
+                  <SelectTrigger style={{ borderWidth: 1, padding: '0.5rem 0.75rem', width: '180px' }}>
                     <SelectValue placeholder="sorting" />
                   </SelectTrigger>
                   <SelectContent>
@@ -512,6 +545,85 @@ const GraphNode = () => {
                     <SelectItem value="capacity">capacity</SelectItem>
                   </SelectContent>
                 </Select>
+
+                <ResponsivePopover
+                  content={
+                    <div className={styles.filterList}>
+                      <div className={styles.filterItem}>
+                        <Label>Address</Label>
+                        <Input
+                          placeholder="input address for filter"
+                          value={channelAddress}
+                          onChange={e =>
+                            updateSearchParams(params => ({
+                              ...params,
+                              channel_address: e.target.value === '' ? undefined : e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+
+                      <div className={styles.filterItem}>
+                        <Label>Transaction Type</Label>
+                        <Tabs
+                          value={channelState ?? undefined}
+                          onValueChange={value => updateSearchParams(params => ({ ...params, channel_state: value }))}
+                        >
+                          <TabsList>
+                            <TabsTrigger value={undefined as unknown as string}>All</TabsTrigger>
+                            <TabsTrigger value="open">Open</TabsTrigger>
+                            <TabsTrigger value="closed">Closed</TabsTrigger>
+                          </TabsList>
+                        </Tabs>
+                      </div>
+
+                      <div className={styles.filterItem}>
+                        <Label>Asset</Label>
+                        <Select
+                          value={channelTypeHash}
+                          onValueChange={value =>
+                            updateSearchParams(params => ({ ...params, channel_type_hash: value }))
+                          }
+                        >
+                          <SelectTrigger style={{ borderWidth: 1, padding: '0.5rem 0.75rem', width: '100%' }}>
+                            <SelectValue placeholder="filter token" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={null as unknown as string}>All</SelectItem>
+                            <SelectItem value="0x0">CKB</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        <div className={styles.group}>
+                          <Input
+                            placeholder="Min Amount"
+                            value={minChannelAmount}
+                            onChange={e =>
+                              updateSearchParams(params => ({
+                                ...params,
+                                channel_amount_range: `${e.target.value}-${maxChannelAmount ?? ''}`,
+                              }))
+                            }
+                          />
+                          <Input
+                            placeholder="Max Amount"
+                            value={maxChannelAmount}
+                            onChange={e =>
+                              updateSearchParams(params => ({
+                                ...params,
+                                channel_amount_range: `${minChannelAmount ?? ''}-${e.target.value}`,
+                              }))
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  }
+                >
+                  <Button variant="outline" size="icon" style={{ borderWidth: 1 }}>
+                    <FilterIcon />
+                  </Button>
+                </ResponsivePopover>
               </div>
             </div>
             {channels.length ? (
@@ -556,13 +668,90 @@ const GraphNode = () => {
                     updateSearchParams(params => ({ ...params, tx_sort: `${value}.${txSortOrder}` }))
                   }
                 >
-                  <SelectTrigger style={{ borderWidth: 1, padding: 4, width: '180px' }}>
+                  <SelectTrigger style={{ borderWidth: 1, padding: '0.5rem 0.75rem', width: '180px' }}>
                     <SelectValue placeholder="sorting" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="block_timestamp">block timestamp</SelectItem>
                   </SelectContent>
                 </Select>
+
+                <ResponsivePopover
+                  content={
+                    <div className={styles.filterList}>
+                      <div className={styles.filterItem}>
+                        <Label>Address</Label>
+                        <Input
+                          placeholder="input address for filter"
+                          value={txAddress}
+                          onChange={e =>
+                            updateSearchParams(params => ({
+                              ...params,
+                              tx_address: e.target.value === '' ? undefined : e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+
+                      <div className={styles.filterItem}>
+                        <Label>Transaction Type</Label>
+                        <Tabs
+                          value={txStatus ?? undefined}
+                          onValueChange={value => updateSearchParams(params => ({ ...params, tx_status: value }))}
+                        >
+                          <TabsList>
+                            <TabsTrigger value={undefined as unknown as string}>All</TabsTrigger>
+                            <TabsTrigger value="open">Open</TabsTrigger>
+                            <TabsTrigger value="closed">Closed</TabsTrigger>
+                          </TabsList>
+                        </Tabs>
+                      </div>
+
+                      <div className={styles.filterItem}>
+                        <Label>Asset</Label>
+                        <Select
+                          value={txTypeHash}
+                          onValueChange={value => updateSearchParams(params => ({ ...params, tx_type_hash: value }))}
+                        >
+                          <SelectTrigger style={{ borderWidth: 1, padding: '0.5rem 0.75rem', width: '100%' }}>
+                            <SelectValue placeholder="filter token" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={null as unknown as string}>All</SelectItem>
+                            <SelectItem value="0x0">CKB</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        <div className={styles.group}>
+                          <Input
+                            placeholder="Min Amount"
+                            value={minTxAmount}
+                            onChange={e =>
+                              updateSearchParams(params => ({
+                                ...params,
+                                tx_amount_range: `${e.target.value}-${maxTxAmount ?? ''}`,
+                              }))
+                            }
+                          />
+                          <Input
+                            placeholder="Max Amount"
+                            value={maxTxAmount}
+                            onChange={e =>
+                              updateSearchParams(params => ({
+                                ...params,
+                                tx_amount_range: `${minTxAmount ?? ''}-${e.target.value}`,
+                              }))
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  }
+                >
+                  <Button variant="outline" size="icon" style={{ borderWidth: 1 }}>
+                    <FilterIcon />
+                  </Button>
+                </ResponsivePopover>
               </div>
             </div>
             {openAndClosedTxs?.length ? (
