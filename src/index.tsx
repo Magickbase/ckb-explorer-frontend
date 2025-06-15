@@ -1,5 +1,4 @@
 import ReactDOM from 'react-dom'
-import 'antd/dist/antd.css'
 // This should be after all third-party library styles so that it can override them.
 import './styles/index.css'
 import './utils/i18n'
