@@ -33,7 +33,7 @@
     "@tailwindcss/postcss": "^4.1.10",
     "@tanstack/react-query": "4.0.5",
     "@types/cytoscape": "^3.21.2",
-    "antd": "4.24.5",
+    "antd": "5.26.1",
     "autoprefixer": "^10.4.21",
     "axios": "1.8.2",
     "bech32": "2.0.0",
