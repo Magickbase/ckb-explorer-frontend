@@ -181,26 +181,29 @@ export const CellGraph = ({
               <MoreIcon />
             </button>
           }
+          portalContainer={ref.current}
         >
-          {useGenerateMenuItem({
-            t,
-            address,
-            btcUtxo,
-            onViewCell,
-            cell: {
-              id,
-              generatedTxHash,
-              consumedTxHash,
-              isGenesisOutput,
-              capacity,
-              occupiedCapacity,
-              cellIndex,
-              rgbInfo,
-              status,
-            },
-          }).map(item => {
-            return <div key={item.key}>{item.label}</div>
-          })}
+          <div onClick={e => e.stopPropagation()}>
+            {useGenerateMenuItem({
+              t,
+              address,
+              btcUtxo,
+              onViewCell,
+              cell: {
+                id,
+                generatedTxHash,
+                consumedTxHash,
+                isGenesisOutput,
+                capacity,
+                occupiedCapacity,
+                cellIndex,
+                rgbInfo,
+                status,
+              },
+            }).map(item => {
+              return <div key={item.key}>{item.label}</div>
+            })}
+          </div>
         </Popover>
       </div>
     </div>

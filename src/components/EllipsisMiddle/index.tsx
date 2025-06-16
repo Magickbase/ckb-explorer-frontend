@@ -1,5 +1,6 @@
 import { useResizeDetector } from 'react-resize-detector'
 import { forwardRef, HTMLAttributes, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { assert } from '../../utils/error'
 import { createTextWidthMeasurer } from '../../utils/string'
 
 const EllipsisMiddle = forwardRef<
@@ -35,19 +36,14 @@ const EllipsisMiddle = forwardRef<
     const { width: resizedWidth } = useResizeDetector({
       targetRef: ref,
       handleHeight: false,
-      refreshMode: 'debounce',
     })
-    const onTruncateStateChangeRef = useRef(onTruncateStateChange)
     const [parts, setParts] = useState<string[]>([text ?? children ?? ''])
     const [originTextWidth, setOriginTextWidth] = useState(0)
 
-    useEffect(() => {
-      onTruncateStateChangeRef.current = onTruncateStateChange
-    }, [onTruncateStateChange])
-
+    useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(outerRef, () => ref.current)
     useEffect(() => {
       if (!ref.current) return
-      const width = resizedWidth || ref.current.clientWidth
+      const width = resizedWidth ?? ref.current.clientWidth
 
       const fullText = text ?? children ?? ''
       const measureText = createTextWidthMeasurer(ref.current)
@@ -56,7 +52,7 @@ const EllipsisMiddle = forwardRef<
       setOriginTextWidth(fullWidth)
       if (fullWidth <= width) {
         setParts([fullText])
-        onTruncateStateChangeRef.current?.(false)
+        onTruncateStateChange?.(false)
         return
       }
 
@@ -73,7 +69,7 @@ const EllipsisMiddle = forwardRef<
           if (rightPart.length === 0 && !nextDirectionIsLeft) break
 
           const char = nextDirectionIsLeft ? leftPart.pop() : rightPart.shift()
-          if (!char) break
+          assert(char)
           const charWidth = measureText(char)
           currentWidth -= charWidth
           nextDirectionIsLeft = !nextDirectionIsLeft
@@ -82,7 +78,7 @@ const EllipsisMiddle = forwardRef<
         // eslint-disable-next-line no-constant-condition
         while (true) {
           const char = nextDirectionIsLeft ? remainingChars.shift() : remainingChars.pop()
-          if (!char) break
+          assert(char)
           const charWidth = measureText(char)
 
           if (currentWidth + charWidth > width) {
@@ -100,13 +96,14 @@ const EllipsisMiddle = forwardRef<
       }
 
       setParts([leftPart.join(''), ellipsis, rightPart.join('')])
-      onTruncateStateChangeRef.current?.(true)
+      onTruncateStateChange?.(true)
     }, [
       children,
       // Active trigger recalculation
       fontKey,
       minEndLen,
       minStartLen,
+      onTruncateStateChange,
       ref,
       resizedWidth,
       text,
@@ -126,7 +123,6 @@ const EllipsisMiddle = forwardRef<
           : style,
       [originTextWidth, style, useTextWidthForPlaceholderWidth],
     )
-    useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(outerRef, () => ref.current)
 
     return (
       <div ref={ref} style={combinedStyle} {...restDivProps}>

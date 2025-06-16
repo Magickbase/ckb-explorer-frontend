@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import { DayPicker } from 'react-day-picker'
+import { Calendar } from 'lucide-react'
 import 'react-day-picker/src/style.css'
 import { useEffect, useState } from 'react'
 import classNames from 'classnames'
@@ -12,6 +13,7 @@ import { ReactComponent as BlockIcon } from './block_icon.svg'
 import { ReactComponent as ErrorIcon } from './error_icon.svg'
 import { ReactComponent as SuccessIcon } from './success_icon.svg'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs'
+import Popover from '../Popover'
 
 interface ExportPageProps {
   csvFileName?: string
@@ -197,27 +199,47 @@ export const ExportPage: React.FC<ExportPageProps> = ({
                   <div className={styles.dateOrBlockPanel}>
                     <div className={styles.datePickerPanel}>
                       <div>{t('export_transactions.start_date')}</div>
-                      <DayPicker
-                        animate
-                        mode="single"
-                        captionLayout="dropdown"
-                        selected={dayjs(startDate).toDate()}
-                        disabled={disabledStartDate}
-                        onSelect={d => setStartDate(d ? dayjs(d).valueOf() : undefined)}
-                        footer={dayjs(startDate).format('YYYY-MM-DD')}
-                      />
+                      <Popover
+                        forceClick
+                        trigger={
+                          <div className={styles.datePickerTrigger}>
+                            <Calendar className={styles.datePickerIcon} />
+                            <span>{dayjs(startDate).format('YYYY-MM-DD')}</span>
+                          </div>
+                        }
+                      >
+                        <DayPicker
+                          animate
+                          mode="single"
+                          captionLayout="dropdown"
+                          selected={dayjs(startDate).toDate()}
+                          disabled={disabledStartDate}
+                          onSelect={d => setStartDate(d ? dayjs(d).valueOf() : undefined)}
+                          footer={dayjs(startDate).format('YYYY-MM-DD')}
+                        />
+                      </Popover>
                     </div>
                     <div className={styles.datePickerPanel}>
                       <div>{t('export_transactions.end_date')}</div>
-                      <DayPicker
-                        animate
-                        mode="single"
-                        captionLayout="dropdown"
-                        selected={dayjs(endDate).toDate()}
-                        disabled={disabledEndDate}
-                        onSelect={d => setEndDate(d ? dayjs(d).endOf('D').valueOf() : undefined)}
-                        footer={dayjs(endDate).format('YYYY-MM-DD')}
-                      />
+                      <Popover
+                        forceClick
+                        trigger={
+                          <div className={styles.datePickerTrigger}>
+                            <Calendar className={styles.datePickerIcon} />
+                            <span>{dayjs(endDate).format('YYYY-MM-DD')}</span>
+                          </div>
+                        }
+                      >
+                        <DayPicker
+                          animate
+                          mode="single"
+                          captionLayout="dropdown"
+                          selected={dayjs(endDate).toDate()}
+                          disabled={disabledEndDate}
+                          onSelect={d => setEndDate(d ? dayjs(d).endOf('D').valueOf() : undefined)}
+                          footer={dayjs(endDate).format('YYYY-MM-DD')}
+                        />
+                      </Popover>
                     </div>
                   </div>
                 </TabsContent>

@@ -14,6 +14,9 @@ export interface TooltipProps {
   contentStyle?: React.CSSProperties
   contentClassName?: string
   disabled?: boolean
+  showArrow?: boolean
+  portalContainer?: HTMLElement | null
+  forceClick?: boolean
 }
 const Popover: FC<TooltipProps> = ({
   children,
@@ -24,13 +27,16 @@ const Popover: FC<TooltipProps> = ({
   contentStyle,
   contentClassName,
   disabled,
+  showArrow = true,
+  portalContainer,
+  forceClick,
 }) => {
   const isMobile = useIsMobile()
 
   if (disabled) {
     return <>{trigger}</>
   }
-  if (!isMobile) {
+  if (!isMobile && !forceClick) {
     return (
       <Tooltip
         trigger={trigger}
@@ -40,6 +46,8 @@ const Popover: FC<TooltipProps> = ({
         contentStyle={contentStyle}
         contentClassName={contentClassName}
         isPopover
+        showArrow={showArrow}
+        portalContainer={portalContainer}
       >
         {children}
       </Tooltip>
@@ -48,9 +56,9 @@ const Popover: FC<TooltipProps> = ({
   return (
     <Root open={open} onOpenChange={onOpenChange}>
       <Trigger asChild>{trigger}</Trigger>
-      <Portal>
+      <Portal container={portalContainer}>
         <Content side={placement} style={contentStyle} className={classNames(styles.content, contentClassName)}>
-          <Arrow className={styles.arrow} />
+          {showArrow && <Arrow className={styles.arrow} />}
           {children}
         </Content>
       </Portal>

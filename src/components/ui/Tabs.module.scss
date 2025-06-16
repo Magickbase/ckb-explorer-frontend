@@ -4,33 +4,20 @@
   align-items: center;
   position: relative;
   gap: 0.25rem;
-
-  &::before {
-    border-bottom: 1px solid #f0f0f0;
-    content: '';
-    left: 0;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-  }
 }
 
 .tabsTrigger {
   display: inline-flex;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   justify-content: center;
   align-items: center;
   font-size: 0.875rem;
-  line-height: 1.25rem;
-  font-weight: 500;
+  line-height: 1.5rem;
   white-space: nowrap;
-  background: #fafafa;
-  border: 1px solid #f0f0f0;
   cursor: pointer;
-
-  &:first-child {
-    margin-left: 0.25rem;
-  }
+  border: none;
+  height: 100%;
+  background-color: inherit;
 
   &:disabled {
     pointer-events: none;
@@ -38,13 +25,19 @@
   }
 
   &[data-state='active'] {
-    margin-bottom: -1px;
+    position: relative;
+    color: var(--primary-color);
     z-index: 2;
-    background: #fff;
-    border-bottom: solid 2px #fff;
-  }
-}
 
-.tabsContent {
-  margin-top: 1rem;
+    &::before {
+      content: '';
+      left: 50%;
+      position: absolute;
+      bottom: 0;
+      width: 30%;
+      height: 3px;
+      transform: translateX(-50%);
+      background-color: var(--primary-color);
+    }
+  }
 }

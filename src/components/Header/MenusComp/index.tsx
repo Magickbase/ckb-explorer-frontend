@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { FC, memo, PropsWithChildren, useState } from 'react'
+import { FC, memo, PropsWithChildren, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
@@ -140,14 +140,24 @@ const useMenuDataList = () => {
   return list
 }
 
-const SubmenuDropdown: FC<PropsWithChildren<{ menu: (MenuData | MenuItemLabel | MenuSeparator)[] }>> = ({
-  children,
-  menu,
-  ...props
-}) => {
+const SubmenuDropdown: FC<
+  PropsWithChildren<{ menu: (MenuData | MenuItemLabel | MenuSeparator)[]; isMobile?: boolean }>
+> = ({ children, menu, isMobile, ...props }) => {
+  const portalContainer = useRef<HTMLDivElement>(null)
+
   return (
-    <Popover {...props} trigger={children}>
-      <div className={styles.submenu}>
+    <Popover
+      {...props}
+      trigger={children}
+      showArrow={false}
+      contentStyle={{
+        padding: 0,
+        fontSize: 14,
+        width: isMobile ? 'var(--radix-popper-anchor-width)' : 'auto',
+      }}
+      portalContainer={portalContainer.current}
+    >
+      <div className={styles.submenu} ref={portalContainer}>
         {menu.map(menuItem => {
           switch (menuItem.type) {
             case 'separator':
@@ -203,6 +213,7 @@ export const MoreMenu = ({ isMobile = false }: { isMobile?: boolean }) => {
       <Popover
         onOpenChange={setOpen}
         open={open}
+        showArrow={false}
         trigger={
           isMobile ? (
             <MobileMenuOuterLink className={styles.mobileSubmenuTrigger}>
@@ -264,7 +275,7 @@ export default memo(({ isMobile }: { isMobile: boolean }) => {
           const isNew = menu.attrs?.includes('new')
           if (menu.children) {
             return (
-              <SubmenuDropdown key={menu.name} menu={menu.children}>
+              <SubmenuDropdown key={menu.name} menu={menu.children} isMobile={isMobile}>
                 <MobileMenuOuterLink className={styles.mobileSubmenuTrigger}>
                   {menu.icon}
                   {menu.name}

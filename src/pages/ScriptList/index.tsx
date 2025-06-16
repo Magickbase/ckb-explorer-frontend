@@ -526,10 +526,10 @@ const ScriptTable: FC<{
     },
     {
       title: (
-        <>
+        <div>
           {t('scripts.script_type')}
           <MultiFilterButton filterName="script_type" key="" filterList={getfilterList(t)} />
-        </>
+        </div>
       ),
       key: 'script_type',
       className: styles.colTags,
@@ -542,10 +542,10 @@ const ScriptTable: FC<{
     },
     {
       title: (
-        <>
+        <div>
           {t('scripts.capacity_of_referring_cells')}
           <SortButton field="capacity" sortParam={sortParam} />
-        </>
+        </div>
       ),
       key: 'capacity',
       className: styles.colTransactions,
@@ -555,10 +555,10 @@ const ScriptTable: FC<{
     },
     {
       title: (
-        <>
+        <div>
           {t('scripts.timestamp')}
           <SortButton field="timestamp" sortParam={sortParam} />
-        </>
+        </div>
       ),
       key: 'timestamp',
       className: styles.colCreatedTime,
@@ -567,21 +567,19 @@ const ScriptTable: FC<{
   ]
 
   return (
-    <table className={styles.tokensTable} style={{ background: '#fff' }}>
+    <table className={styles.tokensTable}>
       <thead>
         <tr>
           {columns.map(column => (
-            <th key={column.key} style={{ padding: 8 }}>
-              {column.title}
-            </th>
+            <th key={column.key}>{column.title}</th>
           ))}
         </tr>
       </thead>
       <tbody>
         {query.data?.data.map(script => (
-          <tr key={script.typeHash} style={{ borderBottom: '1px solid #e5e5e5' }}>
+          <tr key={script.typeHash}>
             {columns.map(column => (
-              <td key={column.key} style={{ padding: 8 }} className={column.className}>
+              <td key={column.key} className={column.className}>
                 {column.render?.(script)}
               </td>
             ))}

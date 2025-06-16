@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import EllipsisMiddle from '../../EllipsisMiddle'
@@ -17,15 +18,17 @@ const TxNode = ({ txHash }: { txHash: string }) => {
     return transaction
   })
   const { t } = useTranslation()
+  const ref = useRef<HTMLDivElement>(null)
   const blockNumberFormat = query.data?.blockNumber !== undefined ? (+query.data.blockNumber).toLocaleString('en') : ''
   return (
-    <div className={styles.txNodeContainer}>
+    <div className={styles.txNodeContainer} ref={ref}>
       <div className={classNames(styles.txHash, 'monospace')}>
         {t('utxo_graph.tx_hash')}:
         <Tooltip trigger={<EllipsisMiddle text={txHash} />}>
           <CopyTooltipText content={txHash} />
         </Tooltip>
         <Popover
+          portalContainer={ref.current}
           trigger={
             <button type="button" className={styles.more} onClick={e => e.stopPropagation()}>
               <MoreIcon />

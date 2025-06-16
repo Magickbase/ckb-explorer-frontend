@@ -263,10 +263,10 @@ const TokenTable: FC<{
     },
     isInscription && {
       title: (
-        <>
+        <span>
           {t('udt.status')}
           <SortButton field="mint_status" sortParam={sortParam} />
-        </>
+        </span>
       ),
       className: styles.colStatus,
       key: 'status',
@@ -283,10 +283,10 @@ const TokenTable: FC<{
     },
     {
       title: (
-        <>
+        <span>
           {t('udt.transactions')}
           <SortButton field="transactions" sortParam={sortParam} />
-        </>
+        </span>
       ),
       className: styles.colTransactions,
       key: 'transactions',
@@ -294,10 +294,10 @@ const TokenTable: FC<{
     },
     {
       title: (
-        <>
+        <span>
           {t('udt.address_count')}
           <SortButton field="addresses_count" sortParam={sortParam} />
-        </>
+        </span>
       ),
       className: styles.colAddressCount,
       key: 'addresses_count',
@@ -305,10 +305,10 @@ const TokenTable: FC<{
     },
     {
       title: (
-        <>
+        <span>
           {t('udt.created_time')}
           <SortButton field="created_time" sortParam={sortParam} />
-        </>
+        </span>
       ),
       className: styles.colCreatedTime,
       key: 'created_time',
@@ -318,21 +318,19 @@ const TokenTable: FC<{
   const columns = nullableColumns.filter(BooleanT())
 
   return (
-    <table className={styles.tokensTable} style={{ background: '#fff' }}>
+    <table className={styles.tokensTable}>
       <thead>
         <tr>
           {columns.map(column => (
-            <th key={column.key} style={{ padding: '8px 16px', textAlign: 'left' }}>
-              {column.title}
-            </th>
+            <th key={column.key}>{column.title}</th>
           ))}
         </tr>
       </thead>
       <tbody>
         {query.data?.tokens.map(token => (
-          <tr key={token.typeHash} style={{ borderBottom: '1px solid #e5e5e5' }}>
+          <tr key={token.typeHash}>
             {columns.map(column => (
-              <td key={column.key} style={{ padding: 16 }} className={column.className}>
+              <td key={column.key} className={column.className}>
                 {column.render?.(token)}
               </td>
             ))}

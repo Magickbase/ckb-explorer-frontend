@@ -13,6 +13,8 @@ export interface TooltipProps {
   contentClassName?: string
   disabled?: boolean
   isPopover?: boolean
+  showArrow?: boolean
+  portalContainer?: HTMLElement | null
 }
 const Tooltip: FC<TooltipProps> = ({
   children,
@@ -24,6 +26,8 @@ const Tooltip: FC<TooltipProps> = ({
   contentClassName,
   disabled,
   isPopover = false,
+  showArrow = true,
+  portalContainer,
 }) => {
   if (disabled) {
     return <>{trigger}</>
@@ -32,13 +36,13 @@ const Tooltip: FC<TooltipProps> = ({
     <Provider delayDuration={0}>
       <Root open={open} onOpenChange={onOpenChange}>
         <Trigger asChild>{trigger}</Trigger>
-        <Portal>
+        <Portal container={portalContainer}>
           <Content
             side={placement}
             style={contentStyle}
             className={classNames(styles.content, contentClassName, { [styles.popover]: isPopover })}
           >
-            <Arrow className={classNames(styles.arrow, { [styles.popoverArrow]: isPopover })} />
+            {showArrow && <Arrow className={classNames(styles.arrow, { [styles.popoverArrow]: isPopover })} />}
             {children}
           </Content>
         </Portal>

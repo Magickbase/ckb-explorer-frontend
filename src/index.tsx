@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom'
 // This should be after all third-party library styles so that it can override them.
+import './index.css'
 import './styles/index.css'
 import './utils/i18n'
 import App from './App'

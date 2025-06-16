@@ -96,7 +96,7 @@ export const FaucetMenu = ({ address, tokenId }: { address?: string; tokenId?: s
 
   if (address) {
     return (
-      <Popover trigger={<FaucetIcon />}>
+      <Popover trigger={<FaucetIcon />} contentStyle={{ padding: 0 }}>
         <div className={styles.container}>
           {CLAIMABLE_TEST_TOKENS.map(token => {
             return (
