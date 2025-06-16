@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, FilterIcon } from 'lucide-react'
+import { utils } from '@ckb-lumos/base'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { Link1Icon, LinkBreak1Icon, OpenInNewWindowIcon, UpdateIcon } from '@radix-ui/react-icons'
 import { Tooltip } from 'antd'
@@ -309,6 +310,15 @@ const GraphNode = () => {
   const { data: prices } = usePriceData()
   const node = data?.data
 
+  const relatedTokens = (node?.udtCfgInfos ?? []).map(i => ({
+    typeHash: utils.computeScriptHash({
+      codeHash: i.codeHash,
+      hashType: i.hashType,
+      args: i.args,
+    }),
+    symbol: i.symbol,
+  }))
+
   const ips =
     (node?.addresses
       ?.filter(a => !!a)
@@ -591,6 +601,11 @@ const GraphNode = () => {
                           <SelectContent>
                             <SelectItem value={null as unknown as string}>All</SelectItem>
                             <SelectItem value="0x0">CKB</SelectItem>
+                            {relatedTokens.map(token => (
+                              <SelectItem value={token.typeHash} key={token.typeHash}>
+                                {token.symbol}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
 
@@ -719,6 +734,11 @@ const GraphNode = () => {
                           <SelectContent>
                             <SelectItem value={null as unknown as string}>All</SelectItem>
                             <SelectItem value="0x0">CKB</SelectItem>
+                            {relatedTokens.map(token => (
+                              <SelectItem value={token.typeHash} key={token.typeHash}>
+                                {token.symbol}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
 
