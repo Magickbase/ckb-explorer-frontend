@@ -259,7 +259,7 @@ export const Address = () => {
                       </div>
                       <div>
                         <div className={styles.copyCodeHash}>
-                          Code Hash:{' '}
+                          Code Hash:
                           <CopyIcon
                             className={styles.copyIcon}
                             onClick={() => {
