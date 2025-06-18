@@ -322,7 +322,9 @@ const TokenTable: FC<{
       <thead>
         <tr>
           {columns.map(column => (
-            <th key={column.key}>{column.title}</th>
+            <th key={column.key} style={{ width: `${100 / columns.length}%` }}>
+              {column.title}
+            </th>
           ))}
         </tr>
       </thead>
@@ -330,7 +332,7 @@ const TokenTable: FC<{
         {query.data?.tokens.map(token => (
           <tr key={token.typeHash}>
             {columns.map(column => (
-              <td key={column.key} className={column.className}>
+              <td key={column.key} className={column.className} style={{ width: `${100 / columns.length}%` }}>
                 {column.render?.(token)}
               </td>
             ))}
