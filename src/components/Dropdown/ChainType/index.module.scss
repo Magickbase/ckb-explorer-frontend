@@ -1,6 +1,4 @@
-import styled from 'styled-components'
-
-export const ChainTypePanel = styled.div`
+.chainTypePanel {
   width: 130px;
   height: 74px;
   background: white;
@@ -24,10 +22,7 @@ export const ChainTypePanel = styled.div`
     color: #000;
   }
 
-  left: ${(props: { left: number; top: number }) => props.left}px;
-  top: ${(props: { left: number; top: number }) => props.top}px;
-
-  .chainTypeSelected {
+  :global(.chainTypeSelected) {
     width: 94%;
     font-size: 12px;
     height: 33px;
@@ -49,7 +44,7 @@ export const ChainTypePanel = styled.div`
     }
   }
 
-  .chainTypeNormal {
+  :global(.chainTypeNormal) {
     width: 94%;
     height: 33px;
     font-size: 12px;
@@ -70,10 +65,10 @@ export const ChainTypePanel = styled.div`
     }
   }
 
-  .chainTypeSeparate {
+  :global(.chainTypeSeparate) {
     width: 88%;
     height: 0.5px;
     border: solid 0.5px #c3c3c3;
     margin: 0 6%;
   }
-`
+}

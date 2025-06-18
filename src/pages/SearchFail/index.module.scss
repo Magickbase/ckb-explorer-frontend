@@ -1,26 +1,25 @@
-import styled from 'styled-components'
-import variables from '../../styles/variables.module.scss'
+@import '../../styles/variables.module';
 
-export const SearchPanel = styled.div`
+.searchPanel {
   margin-top: 200px;
   margin-bottom: 240px;
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     margin-top: 120px;
     margin-bottom: 150px;
   }
 
-  .searchFailBar {
+  :global(.searchFailBar) {
     width: 600px;
     margin: 0 auto;
 
-    @media (max-width: ${variables.mobileBreakPoint}) {
+    @media (max-width: $mobileBreakPoint) {
       width: 340px;
     }
   }
-`
+}
 
-export const SearchContent = styled.div`
+.searchContent {
   font-size: 14px;
   color: #606060;
   margin: 0 auto;
@@ -29,20 +28,20 @@ export const SearchContent = styled.div`
   white-space: pre-wrap;
   width: 600px;
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     width: 340px;
   }
 
   a {
-    color: ${props => props.theme.primary};
+    color: var(--primary-color);
     margin-left: 3px;
   }
 
   a:hover {
-    color: ${props => props.theme.primary};
+    color: var(--primary-color);
   }
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     font-size: 12px;
   }
 
@@ -50,11 +49,11 @@ export const SearchContent = styled.div`
     font-size: 11px;
   }
 
-  .searchFailItems {
+  :global(.searchFailItems) {
     font-weight: bold;
     font-size: 16px;
 
-    @media (max-width: ${variables.mobileBreakPoint}) {
+    @media (max-width: $mobileBreakPoint) {
       font-size: 12px;
     }
 
@@ -62,4 +61,4 @@ export const SearchContent = styled.div`
       font-size: 11px;
     }
   }
-`
+}

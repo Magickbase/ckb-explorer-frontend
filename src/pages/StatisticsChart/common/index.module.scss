@@ -1,12 +1,11 @@
-import styled from 'styled-components'
-import variables from '../../../styles/variables.module.scss'
+@import '../../../styles/variables.module';
 
-export const ChartDetailPanel = styled.div`
+.chartDetailPanel {
   margin-bottom: 30px;
   background: white;
-`
+}
 
-export const ChartDetailTitle = styled.div`
+.chartDetailTitle {
   background: white;
   margin-top: 30px;
   padding: 10px 0;
@@ -14,11 +13,11 @@ export const ChartDetailTitle = styled.div`
   justify-content: center;
   align-items: center;
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     margin-top: 20px;
   }
 
-  .chartDetailTitlePanel {
+  :global(.chartDetailTitlePanel) {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -30,7 +29,7 @@ export const ChartDetailTitle = styled.div`
       font-size: 24px;
       margin-left: 100px;
 
-      @media (max-width: ${variables.mobileBreakPoint}) {
+      @media (max-width: $mobileBreakPoint) {
         font-size: 16px;
         margin-left: 0;
       }
@@ -43,7 +42,7 @@ export const ChartDetailTitle = styled.div`
     }
   }
 
-  .chartDetailTitleDownload {
+  :global(.chartDetailTitleDownload) {
     width: 100px;
     padding: 5px 0;
     border-radius: 2px;
@@ -53,49 +52,63 @@ export const ChartDetailTitle = styled.div`
     color: #666;
     margin-right: 3.6%;
 
-    @media (max-width: ${variables.mobileBreakPoint}) {
+    @media (max-width: $mobileBreakPoint) {
       display: none;
     }
   }
-`
+}
 
-export const LoadingPanel = styled.div`
+.loadingPanel {
   display: flex;
   width: 100%;
-  height: ${(props: { isThumbnail?: boolean }) => (props.isThumbnail ? '200px' : '70vh')};
+  height: 70vh;
   align-items: center;
   justify-content: center;
-`
 
-export const ChartNoDataPanel = styled.div`
+  &.isThumbnail {
+    height: 200px;
+  }
+}
+
+.chartNoDataPanel {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: ${(props: { isThumbnail?: boolean }) => (props.isThumbnail ? '92px' : '184px')};
-  height: ${(props: { isThumbnail?: boolean }) => (props.isThumbnail ? '56px' : '112px')};
+  width: 184px;
+  height: 112px;
   border-radius: 6px;
   box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%);
-  border: solid 0.5px ${props => props.theme.primary};
+  border: solid 0.5px var(--primary-color);
   background-color: #fff;
 
+  &.isThumbnail {
+    width: 92px;
+    height: 56px;
+  }
+
   > img {
-    width: ${(props: { isThumbnail?: boolean }) => (props.isThumbnail ? '18.5px' : '37px')};
-    height: ${(props: { isThumbnail?: boolean }) => (props.isThumbnail ? '14px' : '28px')};
+    width: 37px;
+    height: 28px;
+
+    &.isThumbnail {
+      width: 18.5px;
+      height: 14px;
+    }
   }
 
   > span {
     font-size: 12px;
     font-weight: 500;
     margin-top: 5px;
-    color: ${props => props.theme.primary};
+    color: var(--primary-color);
   }
-`
+}
 
-export const ChartNotePanel = styled.div`
+.chartNotePanel {
   font-size: 12px;
   width: 100%;
   color: rgb(0 0 0 / 60%);
   padding: 6px 3%;
   text-align: left;
-`
+}

@@ -1,65 +1,64 @@
-import styled from 'styled-components'
-import variables from '../../styles/variables.module.scss'
+/* stylelint-disable selector-class-pattern */
+@import '../../styles/variables.module';
 
-export const ChartsContent = styled.div`
+.chartsContent {
   margin-top: 40px;
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     margin-top: 20px;
   }
-`
+}
 
-export const ChartsTitle = styled.div`
+.chartsTitle {
   font-size: 24px;
   font-weight: 600;
   color: #000;
-`
+}
 
-export const ChartsPanel = styled.div`
+.chartsPanel {
   margin: 20px 0;
   padding: 20px;
   background: white;
   border-radius: 6px;
   box-shadow: 2px 2px 6px 0 rgb(0 0 0 / 12%);
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     padding: 20px 10px;
   }
 
-  .chartsCategoryTitle {
+  :global(.chartsCategoryTitle) {
     font-size: 20px;
     font-weight: 600;
     color: #000;
     margin-left: 10px;
   }
 
-  .chartsCategoryPanel {
+  :global(.chartsCategoryPanel) {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     margin: 0 3px;
   }
-`
+}
 
-export const ChartCardPanel = styled.div`
+.chartCardPanel {
   width: 280px;
   height: 220px;
   background: white;
   margin: 20px 7px;
   cursor: pointer;
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     width: 100%;
   }
 
-  /* stylelint-disable-next-line selector-class-pattern */
-  .echarts-for-react {
+  :global(.echarts-for-react) {
     canvas {
       cursor: pointer;
     }
   }
 
-  .chartCardTitlePenal {
+  :global(.chartCardTitlePenal) {
     display: flex;
     align-items: center;
     padding-left: 12px;
@@ -76,7 +75,7 @@ export const ChartCardPanel = styled.div`
     }
   }
 
-  .chartCardTitle {
+  :global(.chartCardTitle) {
     height: 40px;
     line-height: 40px;
     color: #000;
@@ -84,9 +83,9 @@ export const ChartCardPanel = styled.div`
     font-weight: 600;
   }
 
-  .chartCardBody {
+  :global(.chartCardBody) {
     border-radius: 0 0 6px 6px;
     box-shadow: 2px 2px 10px 0 rgb(43 43 43 / 5%);
     border: 1px solid #e2e2e2;
   }
-`
+}
