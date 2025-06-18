@@ -1,20 +1,19 @@
-import styled from 'styled-components'
-import variables from '../../styles/variables.module.scss'
+@import '../../styles/variables.module';
 
-export const DaoContentPanel = styled.div`
+.daoContentPanel {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 30px;
   margin-bottom: 40px;
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     margin: 0;
     padding: 20px;
   }
-`
+}
 
-export const DaoTabBarPanel = styled.div`
+.daoTabBarPanel {
   width: 100%;
   background: white;
   display: flex;
@@ -26,11 +25,11 @@ export const DaoTabBarPanel = styled.div`
   font-size: 18px;
   border-radius: 6px 6px 0 0;
 
-  @media (max-width: ${variables.extraLargeBreakPoint}) {
+  @media (max-width: $extraLargeBreakPoint) {
     font-size: 16px;
   }
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     padding: 10px 0;
     flex-direction: column;
     justify-content: center;
@@ -44,23 +43,23 @@ export const DaoTabBarPanel = styled.div`
     }
   }
 
-  .nervosDaoTabBar {
+  :global(.nervosDaoTabBar) {
     display: flex;
     height: 30px;
     cursor: pointer;
     margin-right: 15px;
 
-    @media (max-width: ${variables.mobileBreakPoint}) {
+    @media (max-width: $mobileBreakPoint) {
       display: flex;
       justify-content: space-between;
       margin-bottom: 25px;
       margin-right: 0;
     }
 
-    .div {
+    :global(.div) {
       font-size: 20px;
 
-      @media (max-width: ${variables.mobileBreakPoint}) {
+      @media (max-width: $mobileBreakPoint) {
         font-size: 13px;
       }
     }
@@ -68,34 +67,34 @@ export const DaoTabBarPanel = styled.div`
     div:nth-child(2) {
       margin-left: 50px;
 
-      @media (max-width: ${variables.extraLargeBreakPoint}) {
+      @media (max-width: $extraLargeBreakPoint) {
         margin-left: 30px;
       }
     }
 
-    .tabBarNormal {
+    :global(.tabBarNormal) {
       width: 140px;
       text-align: center;
       color: #000;
       font-weight: normal;
       font-size: 18px;
 
-      @media (max-width: ${variables.extraLargeBreakPoint}) {
+      @media (max-width: $extraLargeBreakPoint) {
         width: 110px;
       }
     }
 
-    .tabBarSelected {
+    :global(.tabBarSelected) {
       width: 140px;
       text-align: center;
       font-size: 18px;
       color: #000;
       font-weight: bold;
-      border-bottom: 3px solid ${props => props.theme.primary};
+      border-bottom: 3px solid var(--primary-color);
 
-      @media (max-width: ${variables.extraLargeBreakPoint}) {
+      @media (max-width: $extraLargeBreakPoint) {
         width: 110px;
       }
     }
   }
-`
+}
