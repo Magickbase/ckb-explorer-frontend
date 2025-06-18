@@ -190,12 +190,12 @@ export const ExportPage: React.FC<ExportPageProps> = ({
           <div className={styles.exportHeader}>
             <div>{t('export_transactions.select_download_options')}</div>
             <div>
-              <Tabs value={tab} onValueChange={handleTabChange}>
-                <TabsList style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+              <Tabs style={{ alignItems: 'center', width: '100%' }} value={tab} onValueChange={handleTabChange}>
+                <TabsList style={{ width: '50%' }}>
                   <TabsTrigger value="date">{t('export_transactions.date')}</TabsTrigger>
                   <TabsTrigger value="height">{t('export_transactions.block_number')}</TabsTrigger>
                 </TabsList>
-                <TabsContent value="date">
+                <TabsContent value="date" style={{ width: '100%' }}>
                   <div className={styles.dateOrBlockPanel}>
                     <div className={styles.datePickerPanel}>
                       <div>{t('export_transactions.start_date')}</div>
@@ -204,7 +204,7 @@ export const ExportPage: React.FC<ExportPageProps> = ({
                         trigger={
                           <div className={styles.datePickerTrigger}>
                             <Calendar className={styles.datePickerIcon} />
-                            <span>{dayjs(startDate).format('YYYY-MM-DD')}</span>
+                            <span>{startDate ? dayjs(startDate).format('YYYY-MM-DD') : ''}</span>
                           </div>
                         }
                       >
@@ -212,10 +212,9 @@ export const ExportPage: React.FC<ExportPageProps> = ({
                           animate
                           mode="single"
                           captionLayout="dropdown"
-                          selected={dayjs(startDate).toDate()}
+                          selected={startDate ? dayjs(startDate).toDate() : undefined}
                           disabled={disabledStartDate}
                           onSelect={d => setStartDate(d ? dayjs(d).valueOf() : undefined)}
-                          footer={dayjs(startDate).format('YYYY-MM-DD')}
                         />
                       </Popover>
                     </div>
@@ -226,7 +225,7 @@ export const ExportPage: React.FC<ExportPageProps> = ({
                         trigger={
                           <div className={styles.datePickerTrigger}>
                             <Calendar className={styles.datePickerIcon} />
-                            <span>{dayjs(endDate).format('YYYY-MM-DD')}</span>
+                            <span>{endDate ? dayjs(endDate).format('YYYY-MM-DD') : ''}</span>
                           </div>
                         }
                       >
@@ -234,10 +233,11 @@ export const ExportPage: React.FC<ExportPageProps> = ({
                           animate
                           mode="single"
                           captionLayout="dropdown"
-                          selected={dayjs(endDate).toDate()}
+                          selected={endDate ? dayjs(endDate).toDate() : undefined}
                           disabled={disabledEndDate}
-                          onSelect={d => setEndDate(d ? dayjs(d).endOf('D').valueOf() : undefined)}
-                          footer={dayjs(endDate).format('YYYY-MM-DD')}
+                          onSelect={d => {
+                            setEndDate(d ? dayjs(d).endOf('D').valueOf() : undefined)
+                          }}
                         />
                       </Popover>
                     </div>

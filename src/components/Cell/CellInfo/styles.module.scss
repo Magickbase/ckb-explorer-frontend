@@ -378,3 +378,15 @@
 .transactionCellDetailTitle {
   font-size: 16px;
 }
+
+.tabs {
+  overflow-x: auto;
+
+  .tabsList {
+    width: 100%;
+
+    @media (max-width: $mobileBreakPoint) {
+      justify-content: flex-start;
+    }
+  }
+}

@@ -29,6 +29,7 @@ import { localeNumberString } from '../../utils/number'
 import { isAxiosError } from '../../utils/error'
 import RgbppBanner from '../../components/RgbppBanner'
 import { Card, HashCardHeader } from '../../components/Card'
+import { ReactComponent as CopyIcon } from '../../components/Card/copy.svg'
 import { CardHeader } from '../../components/Card/CardHeader'
 import { ReactComponent as ShareIcon } from './share.svg'
 import styles from './styles.module.scss'
@@ -42,6 +43,7 @@ import { FaucetMenu } from '../../components/FaucetMenu'
 import { isMainnet } from '../../utils/chain'
 import MultisigIcon from './multisig.svg'
 import Tooltip from '../../components/Tooltip'
+import { useSetToast } from '../../components/Toast'
 
 const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
 
@@ -49,6 +51,7 @@ export const Address = () => {
   const { address } = useParams<{ address: string }>()
   const { t } = useTranslation()
   const isMobile = useIsMobile()
+  const setToast = useSetToast()
   const { currentPage, pageSize } = usePaginationParamsInListPage()
   const searchParams = useSearchParams('layout', 'tx_status')
   const { layout: _layout, tx_status: txStatus } = searchParams
@@ -254,7 +257,24 @@ export const Address = () => {
               <Qrcode text={address} />,
               isMultisig ? (
                 <Tooltip trigger={<img src={MultisigIcon} alt="multisig" />} placement="top">
-                  Multisig
+                  <div>
+                    <div>
+                      Multisig <span className="text-primary">(@{addressInfo?.lockScript.codeHash.slice(0, 6)})</span>
+                    </div>
+                    <div>
+                      <div className={styles.copyCodeHash}>
+                        Code Hash:
+                        <CopyIcon
+                          className={styles.copyIcon}
+                          onClick={() => {
+                            navigator.clipboard.writeText(addressInfo?.lockScript.codeHash ?? '')
+                            setToast({ message: t('common.copied') })
+                          }}
+                        />
+                      </div>
+                      {addressInfo?.lockScript.codeHash}
+                    </div>
+                  </div>
                 </Tooltip>
               ) : null,
               isBtcAddress ? <LinkToBtcAddress address={address} /> : null,

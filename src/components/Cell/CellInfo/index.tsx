@@ -520,8 +520,8 @@ export default ({ cell: entryCell, onClose }: CellInfoProps) => {
         <img src={CloseIcon} alt="close icon" tabIndex={-1} onKeyDown={() => {}} onClick={() => onClose()} />
       </div>
       <div className={styles.transactionDetailPanel}>
-        <Tabs value={selectedInfo} onValueChange={v => changeType(v as CellInfo)}>
-          <TabsList style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        <Tabs className={styles.tabs} value={selectedInfo} onValueChange={v => changeType(v as CellInfo)}>
+          <TabsList className={styles.tabsList}>
             <TabsTrigger value={CellInfo.LOCK}>
               <>
                 <span className={styles.transactionCellDetailTitle}>{t('transaction.lock_script')}</span>
