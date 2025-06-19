@@ -1,4 +1,4 @@
-import { WarningOutlined } from '@ant-design/icons'
+import { TriangleAlert } from 'lucide-react'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { FC, Fragment, ReactNode, useState } from 'react'
@@ -24,6 +24,7 @@ import { scripts } from '../ScriptList'
 import { ReactComponent as OpenSourceIcon } from '../../assets/open-source.svg'
 import { BooleanT } from '../../utils/array'
 import Tooltip from '../../components/Tooltip'
+import Loading from '../../components/Loading'
 
 type SortField = 'transactions' | 'addresses_count' | 'created_time' | 'mint_status'
 
@@ -71,9 +72,9 @@ const TokenInfo: FC<{ token: UDT | OmigaInscriptionCollection }> = ({ token }) =
 
   return (
     <div key={token.typeHash} className={styles.tokenInfo}>
-      <span>
+      <span className="flex items-center gap-1">
         {isOmigaInscriptionCollection(token) && (token.isRepeatedSymbol ?? !token.published) && (
-          <Tooltip trigger={<WarningOutlined style={{ fontSize: '16px', color: '#FFB21E' }} />} placement="top">
+          <Tooltip trigger={<TriangleAlert className="text-[#FFB21E]" size={16} />} placement="top">
             {t('udt.repeat_inscription_symbol')}
           </Tooltip>
         )}
@@ -219,7 +220,7 @@ const TokenTable: FC<{
           <div className={styles.container}>
             <div className={styles.warningIcon}>
               {isOmigaInscriptionCollection(token) && (token.isRepeatedSymbol ?? !token.published) && (
-                <Tooltip trigger={<WarningOutlined style={{ fontSize: '16px', color: '#FFB21E' }} />}>
+                <Tooltip trigger={<TriangleAlert className="text-[#FFB21E]" size={16} />}>
                   {t('udt.repeat_inscription_symbol')}
                 </Tooltip>
               )}
@@ -238,7 +239,11 @@ const TokenTable: FC<{
                     }
                   >
                     {symbol}
-                    {!isOmigaInscriptionCollection(token) && <span className={styles.name}>{name}</span>}
+                    {!isOmigaInscriptionCollection(token) && (
+                      <Tooltip trigger={<span className={styles.name}>{name}</span>} placement="bottom">
+                        {name}
+                      </Tooltip>
+                    )}
                   </Link>
                 ) : (
                   <>
@@ -254,7 +259,11 @@ const TokenTable: FC<{
                 )}
               </div>
 
-              {token.description && <div className={styles.description}>{token.description}</div>}
+              {token.description && (
+                <Tooltip trigger={<div className={styles.description}>{token.description}</div>} placement="bottom">
+                  {token.description}
+                </Tooltip>
+              )}
             </div>
           </div>
         )
@@ -316,6 +325,39 @@ const TokenTable: FC<{
   ]
   const columns = nullableColumns.filter(BooleanT())
 
+  let content: ReactNode = null
+  if (query.isLoading) {
+    content = (
+      <tr>
+        <td colSpan={columns.length}>
+          <Loading className={styles.loading} show />
+        </td>
+      </tr>
+    )
+  } else if (!query.data?.tokens.length) {
+    content = (
+      <tr>
+        <td colSpan={columns.length}>
+          <div className={styles.tokensContentEmpty}>{t('udt.tokens_empty')}</div>
+        </td>
+      </tr>
+    )
+  } else {
+    content = (
+      <>
+        {query.data?.tokens.map(token => (
+          <tr key={token.typeHash}>
+            {columns.map(column => (
+              <td key={column.key} className={column.className} style={{ width: `${100 / columns.length}%` }}>
+                {column.render?.(token)}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </>
+    )
+  }
+
   return (
     <table className={styles.tokensTable}>
       <thead>
@@ -327,17 +369,7 @@ const TokenTable: FC<{
           ))}
         </tr>
       </thead>
-      <tbody>
-        {query.data?.tokens.map(token => (
-          <tr key={token.typeHash}>
-            {columns.map(column => (
-              <td key={column.key} className={column.className} style={{ width: `${100 / columns.length}%` }}>
-                {column.render?.(token)}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
+      <tbody>{content}</tbody>
     </table>
   )
 }
