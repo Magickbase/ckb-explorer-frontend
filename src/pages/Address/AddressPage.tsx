@@ -7,7 +7,6 @@ import { addressToScript } from '@nervosnetwork/ckb-sdk-utils'
 import { Address as AddressInfo } from '../../models/Address'
 import { LayoutLiteProfessional } from '../../constants/common'
 import Content from '../../components/Content'
-import { AddressContentPanel } from './styled'
 import { AddressTransactions, AddressOverviewCard } from './AddressComp'
 import { ReactComponent as TimeDownIcon } from '../../assets/time_down.svg'
 import { ReactComponent as TimeUpIcon } from '../../assets/time_up.svg'
@@ -248,7 +247,7 @@ export const Address = () => {
   return (
     <Content>
       {isRGBPP ? <RgbppBanner path={`/address/${address}`} /> : null}
-      <AddressContentPanel className="container">
+      <div className={classNames(styles.addressContentPanel, 'container')}>
         <Card>
           <HashCardHeader
             title={addressInfo?.type === 'LockHash' ? t('address.lock_hash') : t('address.address')}
@@ -364,7 +363,7 @@ export const Address = () => {
             )}
           </QueryResult>
         )}
-      </AddressContentPanel>
+      </div>
     </Content>
   )
 }
