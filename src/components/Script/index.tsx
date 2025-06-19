@@ -25,7 +25,7 @@ const ScriptComp = ({ script }: { script: Script }) => {
   if (isTypeIdScript(script)) {
     hashTag = { tag: TYPE_ID_TAG }
   } else {
-    hashTag = getContractHashTag(script)
+    hashTag = getContractHashTag(script, true)
   }
 
   return (
@@ -33,7 +33,9 @@ const ScriptComp = ({ script }: { script: Script }) => {
       <ScriptItem title={t('address.code_hash')}>
         <div className="scriptCodeHash">
           <span className="monospace">{script.codeHash}</span>
-          {hashTag && <HashTag content={hashTag.tag} script={script} />}
+          {hashTag && (
+            <HashTag content={hashTag.tag} script={script} showScriptPrefix={hashTag.tag === 'secp256k1 / multisig'} />
+          )}
         </div>
       </ScriptItem>
       <ScriptItem title={t('address.hash_type')}>

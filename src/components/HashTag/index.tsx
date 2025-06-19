@@ -11,10 +11,12 @@ export default ({
   content,
   category = 'lock',
   script,
+  showScriptPrefix = false,
 }: {
   content: string
   category?: 'lock' | 'type'
   script: Script
+  showScriptPrefix?: boolean
 }) => {
   const { t } = useTranslation()
   if (content === TYPE_ID_TAG) {
@@ -36,6 +38,7 @@ export default ({
         style={{ color: '#000', display: 'flex', alignItems: 'center', gap: 4 }}
       >
         {content}
+        {showScriptPrefix ? <span className="text-primary">(@{script.codeHash.slice(0, 6)})</span> : undefined}
         {codeUrl ? <Tooltip trigger={<OpenSourceIcon />}>{t(`scripts.open_source_script`)}</Tooltip> : null}
       </Link>
     </TagPanel>
