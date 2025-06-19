@@ -1,6 +1,6 @@
 import { useState, FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { MobileSubMenuPanel } from './styled'
+import styles from './style.module.scss'
 import SimpleButton from '../../SimpleButton'
 import WhiteDropdownIcon from '../../../assets/white_dropdown.png'
 import WhiteDropUpIcon from './white_drop_up.png'
@@ -13,7 +13,7 @@ export const LanguageMenu: FC<{ hideMobileMenu: () => void }> = ({ hideMobileMen
   const currentLanguageText = useLanguageText()
 
   return (
-    <MobileSubMenuPanel showSubMenu={false}>
+    <div className={styles.mobileSubMenuPanel}>
       <SimpleButton
         className="mobileMenusMainItem"
         onClick={() => {
@@ -34,6 +34,6 @@ export const LanguageMenu: FC<{ hideMobileMenu: () => void }> = ({ hideMobileMen
             {t(`navbar.language_${lng}`)}
           </Link>
         ))}
-    </MobileSubMenuPanel>
+    </div>
   )
 }

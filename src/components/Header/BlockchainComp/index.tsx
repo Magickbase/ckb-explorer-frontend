@@ -4,13 +4,13 @@ import { isMainnet } from '../../../utils/chain'
 import WhiteDropdownIcon from '../../../assets/white_dropdown.png'
 import BlueDropUpIcon from '../../../assets/blue_drop_up.png'
 import GreenDropUpIcon from '../../../assets/green_drop_up.png'
-import { HeaderBlockchainPanel, MobileSubMenuPanel } from './styled'
 import SimpleButton from '../../SimpleButton'
 import ChainDropdown from '../../Dropdown/ChainType'
 import { ChainName, MAINNET_URL, ONE_DAY_MILLISECOND, TESTNET_URL } from '../../../constants/common'
 import { explorerService } from '../../../services/ExplorerService'
 import { cacheService } from '../../../services/CacheService'
 import { useChainName } from '../../../hooks/useCKBNode'
+import styles from './index.module.scss'
 
 const getDropdownIcon = (showDropdown: boolean) => {
   if (!showDropdown) return WhiteDropdownIcon
@@ -44,7 +44,8 @@ const BlockchainDropdown: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
     }
   }, [showChainType])
   return (
-    <HeaderBlockchainPanel
+    <div
+      className={styles.headerBlockchainPanel}
       id="header__blockchain__panel"
       onMouseLeave={() => {
         setShowChainType(false)
@@ -70,7 +71,7 @@ const BlockchainDropdown: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
         <div className="headerBlockchainNodeVersion">{handleVersion(nodeVersion)}</div>
       </SimpleButton>
       {showChainType && <ChainDropdown setShow={setShowChainType} left={chainTypeLeft} top={chainTypeTop} />}
-    </HeaderBlockchainPanel>
+    </div>
   )
 }
 
@@ -87,7 +88,7 @@ const BlockchainMenu: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
   }
 
   return (
-    <MobileSubMenuPanel showSubMenu={false}>
+    <div className={styles.mobileSubMenuPanel}>
       <SimpleButton
         className="mobileMenusMainItem"
         onClick={() => {
@@ -115,7 +116,7 @@ const BlockchainMenu: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
           </a>
         </>
       )}
-    </MobileSubMenuPanel>
+    </div>
   )
 }
 

@@ -1,18 +1,17 @@
-import styled from 'styled-components'
-import variables from '../../../styles/variables.module.scss'
+@import '../../../styles/variables.module';
 
-export const TransactionIncomePanel = styled.div`
+.transactionIncomePanel {
   width: 100%;
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     justify-content: center;
   }
-`
+}
 
-export const TransactionCapacityValuePanel = styled.div<{ increased: boolean }>`
+.transactionCapacityValuePanel {
   height: 36px;
   border-radius: 18px;
   background-color: white;
@@ -20,8 +19,12 @@ export const TransactionCapacityValuePanel = styled.div<{ increased: boolean }>`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  color: ${props => (props.increased ? props.theme.primary : '#FF6347')};
+  color: #ff6347;
   font-size: 16px;
+
+  &.increased {
+    color: var(--primary-color);
+  }
 
   img {
     width: 13px;
@@ -29,7 +32,7 @@ export const TransactionCapacityValuePanel = styled.div<{ increased: boolean }>`
     margin-bottom: 2px;
   }
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     font-size: 14px;
 
     img {
@@ -38,4 +41,4 @@ export const TransactionCapacityValuePanel = styled.div<{ increased: boolean }>`
       margin-bottom: 0;
     }
   }
-`
+}

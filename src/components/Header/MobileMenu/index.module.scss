@@ -1,6 +1,6 @@
-import styled from 'styled-components'
+@import '../../../styles/variables.module';
 
-export const MobileMenusPanel = styled.div`
+.mobileMenusPanel {
   flex: 1;
   width: 100%;
   background: #1c1c1c;
@@ -10,4 +10,4 @@ export const MobileMenusPanel = styled.div`
   color: white;
   overflow: auto;
   overscroll-behavior: contain;
-`
+}

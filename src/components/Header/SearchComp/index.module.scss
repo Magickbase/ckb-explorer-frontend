@@ -1,6 +1,6 @@
-import styled from 'styled-components'
+@import '../../../styles/variables.module';
 
-export const HeaderSearchPanel = styled.div`
+.headerSearchPanel {
   display: flex;
   align-items: center;
   margin-right: 20px;
@@ -21,14 +21,4 @@ export const HeaderSearchPanel = styled.div`
     flex-direction: column;
     width: auto;
   }
-`
-
-export const HeaderSearchBarPanel = styled.div`
-  display: flex;
-  align-items: center;
-
-  > img {
-    width: 18px;
-    height: 18px;
-  }
-`
+}

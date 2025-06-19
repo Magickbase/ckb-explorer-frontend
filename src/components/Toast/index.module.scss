@@ -1,7 +1,6 @@
-import styled from 'styled-components'
-import variables from '../../styles/variables.module.scss'
+@import '../../styles/variables.module';
 
-export const ToastPanel = styled.div`
+.toastPanel {
   position: absolute;
   position: -webkit-absolute;
   top: 0;
@@ -12,9 +11,9 @@ export const ToastPanel = styled.div`
   z-index: 9998;
   flex-direction: column;
   pointer-events: none;
-`
+}
 
-export const ToastItemPanel = styled.div`
+.toastItemPanel {
   width: 100%;
   position: fixed;
   position: -webkit-fixed;
@@ -23,18 +22,18 @@ export const ToastItemPanel = styled.div`
   z-index: 9999;
   height: 60px;
 
-  .toastText {
+  :global(.toastText) {
     color: white;
     font-size: 20px;
     line-height: 60px;
     text-align: center;
   }
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     top: 42px;
     height: 36px;
 
-    .toastText {
+    :global(.toastText) {
       font-size: 14px;
       line-height: 36px;
     }
@@ -44,9 +43,9 @@ export const ToastItemPanel = styled.div`
     top: 42px;
     height: 36px;
 
-    .toastText {
+    :global(.toastText) {
       font-size: 12px;
       line-height: 36px;
     }
   }
-`
+}

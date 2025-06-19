@@ -114,7 +114,7 @@
     height: 16px;
   }
 
-  .transactionItemInput {
+  :global(.transactionItemInput) {
     margin-right: 40px;
     flex: 1;
     min-width: 0;
@@ -126,7 +126,7 @@
     }
   }
 
-  .transactionItemOutput {
+  :global(.transactionItemOutput) {
     flex: 1;
     min-width: 0;
     display: flex;
@@ -141,7 +141,7 @@
     }
   }
 
-  .transactionItemOutputEmpty {
+  :global(.transactionItemOutputEmpty) {
     font-size: 16px;
     color: #666;
     margin-top: 18px;
@@ -154,4 +154,32 @@
 
 .fullPanel {
   width: 100%;
+}
+
+.transactionCellListPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  width: 100%;
+
+  .transactionItemViewAll {
+    font-size: 16px;
+    color: var(--primary-color);
+    margin-top: 20px;
+    height: 20px;
+
+    @media (max-width: $mobileBreakPoint) {
+      font-size: 14px;
+      margin-top: 15px;
+      height: 16px;
+    }
+  }
+
+  a {
+    color: var(--primary-color);
+  }
+
+  a:hover {
+    color: var(--primary-color);
+  }
 }

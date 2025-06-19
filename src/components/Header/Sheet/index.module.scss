@@ -1,8 +1,6 @@
-/* eslint-disable no-nested-ternary */
-import styled from 'styled-components'
-import variables from '../../../styles/variables.module.scss'
+@import '../../../styles/variables.module';
 
-export const SheetPanel = styled.div`
+.sheetPanel {
   width: 100%;
   background: #d03a3a;
   display: flex;
@@ -11,12 +9,12 @@ export const SheetPanel = styled.div`
   justify-content: center;
   padding: 15px 0 20px;
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     padding: 6px 0 10px;
   }
-`
+}
 
-export const SheetItem = styled.div`
+.sheetItem {
   color: white;
   font-size: 18px;
   display: flex;
@@ -24,16 +22,20 @@ export const SheetItem = styled.div`
   justify-content: left;
   margin-top: 5px;
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     font-size: 14px;
   }
-`
+}
 
-export const SheetPointPanel = styled.div`
+.sheetPointPanel {
   display: flex;
   align-items: top;
-  justify-content: ${(props: { isSingle: boolean }) => (props.isSingle ? 'center' : 'left')};
+  justify-content: left;
   width: 50%;
+
+  &.isSingle {
+    justify-content: center;
+  }
 
   > span {
     margin-right: 3px;
@@ -41,11 +43,11 @@ export const SheetPointPanel = styled.div`
     color: white;
   }
 
-  @media (max-width: ${variables.mobileBreakPoint}) {
+  @media (max-width: $mobileBreakPoint) {
     width: 86%;
 
     > span {
       margin-top: 0;
     }
   }
-`
+}
