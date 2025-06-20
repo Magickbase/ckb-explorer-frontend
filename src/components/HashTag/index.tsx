@@ -35,7 +35,7 @@ export default ({
         to={`/script/${script.codeHash}/${script.hashType}`}
         rel="noopener noreferrer"
         target="_blank"
-        className="text-[#000] flex items-center gap-1"
+        className="text-[#000]! flex items-center gap-1"
       >
         {content}
         {showScriptSuffix ? <span className="text-primary">(@{script.codeHash.slice(2, 10)})</span> : undefined}
