@@ -91,7 +91,7 @@ export default () => {
               </div>
               <div className={styles.expandable}>{(defaultSearchBarVisible || isShowSearchBar) && <SearchComp />}</div>
             </div>
-            <BlockchainComp isMobile={isMobile} />
+            <BlockchainComp />
             <MoreMenu />
           </>
         )}

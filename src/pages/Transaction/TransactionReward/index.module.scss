@@ -13,11 +13,11 @@
     justify-content: space-between;
   }
 
-  .rewardName {
+  :global(.rewardName) {
     font-weight: 500;
   }
 
-  .rewardCapacity {
+  :global(.rewardCapacity) {
     margin-left: 15px;
 
     > span {
@@ -31,7 +31,7 @@
     margin-bottom: -20px;
   }
 
-  .transactionRewardTitle {
+  :global(.transactionRewardTitle) {
     margin-left: 10px;
     margin-top: 12px;
     color: #666;

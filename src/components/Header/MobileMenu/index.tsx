@@ -6,7 +6,7 @@ import BlockchainComp from '../BlockchainComp'
 export default ({ hideMobileMenu }: { hideMobileMenu: () => void }) => (
   <div className={styles.mobileMenusPanel}>
     <MenuItems isMobile />
-    <BlockchainComp isMobile />
+    <BlockchainComp />
     <MoreMenu isMobile />
     <SearchComp hideMobileMenu={hideMobileMenu} />
   </div>

@@ -332,19 +332,21 @@ export const CodeHashMessage = ({ codeHash }: { codeHash: string }) => {
         <AddressText>{codeHash}</AddressText>
       </div>
 
-      <CopyIcon
-        className={styles.action}
-        onClick={() => {
-          navigator.clipboard.writeText(codeHash).then(
-            () => {
-              setToast({ message: t('common.copied') })
-            },
-            error => {
-              console.error(error)
-            },
-          )
-        }}
-      />
+      {!!codeHash && (
+        <CopyIcon
+          className={styles.action}
+          onClick={() => {
+            navigator.clipboard.writeText(codeHash).then(
+              () => {
+                setToast({ message: t('common.copied') })
+              },
+              error => {
+                console.error(error)
+              },
+            )
+          }}
+        />
+      )}
     </div>
   )
 }
