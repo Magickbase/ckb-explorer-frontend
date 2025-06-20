@@ -38,7 +38,7 @@ export default ({
         className="text-[#000] flex items-center gap-1"
       >
         {content}
-        {showScriptSuffix ? <span className="text-primary">(@{script.codeHash.slice(2, 8)})</span> : undefined}
+        {showScriptSuffix ? <span className="text-primary">(@{script.codeHash.slice(2, 10)})</span> : undefined}
         {codeUrl ? <Tooltip trigger={<OpenSourceIcon />}>{t(`scripts.open_source_script`)}</Tooltip> : null}
       </Link>
     </TagPanel>
