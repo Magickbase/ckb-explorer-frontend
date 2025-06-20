@@ -1,6 +1,6 @@
 import { memo, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TableTitleRowItem, TableContentRowItem, TableMinerContentPanel } from './styled'
+import { TableTitleRowItem, TableContentRowItem, TableMinerContentPanel } from './TableComp'
 import AddressText from '../AddressText'
 import { useIsMobile } from '../../hooks'
 import { Link } from '../Link'
