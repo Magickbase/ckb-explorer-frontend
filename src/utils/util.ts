@@ -22,6 +22,7 @@ import { isMainnet } from './chain'
 import { Script } from '../models/Script'
 import { Cell } from '../models/Cell'
 import { parseBtcTimeLockArgs } from './rgbpp'
+import FtFallbackIcon from '../assets/ft_fallback_icon.png'
 
 export const shannonToCkbDecimal = (value: BigNumber | string | number, decimal?: number) => {
   if (!value) return 0
@@ -70,6 +71,38 @@ export const toCamelcase = <T>(object: any): T => {
     ),
   ) as T
 }
+type SnakeCase<S extends string> = S extends `${infer T}${infer U}`
+  ? `${T extends Uppercase<T> ? '_' : ''}${Lowercase<T>}${SnakeCase<U>}`
+  : S
+
+type ToSnakeCaseKeys<T> = T extends object
+  ? {
+      [K in keyof T as SnakeCase<string & K>]: T[K] extends object ? ToSnakeCaseKeys<T[K]> : T[K]
+    }
+  : T
+
+export function toSnakeCase<T>(obj: T): ToSnakeCaseKeys<T> {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj as ToSnakeCaseKeys<T>
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => toSnakeCase(item)) as ToSnakeCaseKeys<T>
+  }
+
+  const result: any = {}
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const snakeKey = key
+        .replace(/([A-Z])/g, '_$1')
+        .toLowerCase()
+        .replace(/^_/, '')
+      result[snakeKey] = toSnakeCase(obj[key])
+    }
+  }
+
+  return result as ToSnakeCaseKeys<T>
+}
 
 export const useFormatConfirmation = () => {
   const { t } = useTranslation()
@@ -91,9 +124,9 @@ export const isValidReactNode = (node: ReactNode) => {
   return !!node
 }
 
-export const getContractHashTag = (script: Script): ContractHashTag | undefined => {
+export const getContractHashTag = (script: Script, ignoreHashType = false): ContractHashTag | undefined => {
   if (!script.codeHash || !script.hashType) return undefined
-  const contractHashTag = matchScript(script.codeHash, script.hashType)
+  const contractHashTag = matchScript(script.codeHash, ignoreHashType ? undefined : script.hashType)
   if (!!contractHashTag && ScriptTagExtraRules.has(contractHashTag.tag)) {
     return {
       ...contractHashTag,
@@ -103,14 +136,18 @@ export const getContractHashTag = (script: Script): ContractHashTag | undefined 
   return contractHashTag
 }
 
-export const matchScript = (contractHash: string, hashType: string): ContractHashTag | undefined => {
+export const matchScript = (contractHash: string, hashType?: string): ContractHashTag | undefined => {
   if (isMainnet()) {
     return MainnetContractHashTags.find(
-      scriptTag => scriptTag.codeHashes.find(codeHash => codeHash === contractHash) && scriptTag.hashType === hashType,
+      scriptTag =>
+        scriptTag.codeHashes.find(codeHash => codeHash === contractHash) &&
+        (!hashType || scriptTag.hashType === hashType),
     )
   }
   return TestnetContractHashTags.find(
-    scriptTag => scriptTag.codeHashes.find(codeHash => codeHash === contractHash) && scriptTag.hashType === hashType,
+    scriptTag =>
+      scriptTag.codeHashes.find(codeHash => codeHash === contractHash) &&
+      (!hashType || scriptTag.hashType === hashType),
   )
 }
 
@@ -190,6 +227,10 @@ export const handleNftImgError = (e: SyntheticEvent<HTMLImageElement, Event>) =>
     return
   }
   e.currentTarget.src = '/images/nft_placeholder.png'
+}
+
+export const handleFtImgError = (e: SyntheticEvent<HTMLImageElement, Event>) => {
+  e.currentTarget.src = FtFallbackIcon
 }
 
 export const patchMibaoImg = (url: string) => {

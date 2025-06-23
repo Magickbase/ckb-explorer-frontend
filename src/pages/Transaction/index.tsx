@@ -2,9 +2,9 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { ResultFormatter } from '@ckb-lumos/rpc'
 import Content from '../../components/Content'
-import { TransactionDiv as TransactionPanel } from './TransactionComp/styled'
 import { explorerService } from '../../services/ExplorerService'
 import { QueryResult } from '../../components/QueryResult'
+import RgbppBanner from '../../components/RgbppBanner'
 import { defaultTransactionInfo } from './state'
 import { useSearchParams } from '../../hooks'
 import { useCKBNode } from '../../hooks/useCKBNode'
@@ -16,6 +16,7 @@ import { TransactionOverviewCard } from './TransactionComp/TransactionOverview'
 import { NodeTransactionOverviewCard } from './TransactionComp/NodeTransactionOverview'
 import { TransactionDetailsHeader } from './TransactionComp/TransactionDetailsHeader'
 import { RGBDigestComp } from './TransactionComp/RGBDigestComp'
+import styles from './index.module.scss'
 
 export default () => {
   const { Professional, Lite } = LayoutLiteProfessional
@@ -46,7 +47,8 @@ export default () => {
 
   return (
     <Content>
-      <TransactionPanel>
+      {transaction.isRgbTransaction ? <RgbppBanner path={`/transaction/${transaction.transactionHash}`} /> : null}
+      <div className={`${styles.transactionDiv} container`}>
         {nodeActivated ? (
           <QueryResult query={nodeTxQuery} delayLoading>
             {nodeTx =>
@@ -96,7 +98,7 @@ export default () => {
             )}
           </>
         )}
-      </TransactionPanel>
+      </div>
     </Content>
   )
 }

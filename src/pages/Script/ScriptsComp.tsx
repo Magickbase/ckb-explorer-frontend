@@ -4,24 +4,39 @@ import { useQuery } from '@tanstack/react-query'
 import camelcase from 'camelcase'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { RefreshCw } from 'lucide-react'
 import Pagination from '../../components/Pagination'
 import TransactionItem from '../../components/TransactionItem/index'
 import { explorerService } from '../../services/ExplorerService'
-import { TransactionCellDetailModal, TransactionCellInfoPanel } from '../Transaction/TransactionCell/styled'
+import { TransactionCellInfoPanel } from '../Transaction/TransactionCell/TransactionCellComp'
 import SimpleButton from '../../components/SimpleButton'
 import SimpleModal from '../../components/Modal'
-import TransactionCellScript from '../Transaction/TransactionCellScript'
+import { localeNumberString } from '../../utils/number'
 import { shannonToCkb } from '../../utils/util'
 import Capacity from '../../components/Capacity'
 import styles from './styles.module.scss'
 import AddressText from '../../components/AddressText'
 import { ReactComponent as CopyIcon } from '../../assets/copy_icon.svg'
 import { ReactComponent as InfoMoreIcon } from './info_more_icon.svg'
+import { ReactComponent as LiveCellIcon } from './radio-wave-on.svg'
+import { ReactComponent as DeadCellIcon } from './radio-wave-off.svg'
 import { useSetToast } from '../../components/Toast'
-import { CellBasicInfo, transformToTransaction } from '../../utils/transformer'
-import { usePrevious } from '../../hooks'
+import { CellBasicInfo, transformToCellBasicInfo, transformToTransaction } from '../../utils/transformer'
+import { usePrevious, useSearchParams } from '../../hooks'
+import CellModal from '../../components/Cell/CellModal'
+import { Switch } from '../../components/ui/Switch'
+import { HelpTip } from '../../components/HelpTip'
+import Tooltip from '../../components/Tooltip'
 
-export const ScriptTransactions = ({ page, size }: { page: number; size: number }) => {
+export const ScriptTransactions = ({
+  page,
+  size,
+  countOfTransactions,
+}: {
+  page: number
+  size: number
+  countOfTransactions: number
+}) => {
   const {
     t,
     i18n: { language },
@@ -31,39 +46,89 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
 
   const [transactionsEmpty, setTransactionsEmpty] = useState(false)
   const previousTransactionEmpty = usePrevious(transactionsEmpty)
+  const { restrict } = useSearchParams('restrict')
+  const isRestricted = restrict === 'true'
 
-  const transactionsQuery = useQuery(['scripts_ckb_transactions', codeHash, hashType, page, size], async () => {
-    try {
-      const { transactions, total } = await explorerService.api.fetchScriptCKBTransactions(
-        codeHash,
-        hashType,
-        page,
-        size,
-      )
+  const {
+    data = {
+      total: 0,
+      ckbTransactions: [],
+    },
+    isLoading,
+    error,
+  } = useQuery(['scripts_ckb_transactions', codeHash, hashType, isRestricted, page, size], async () => {
+    const { transactions, total } = await explorerService.api.fetchScriptCKBTransactions(
+      codeHash,
+      hashType,
+      isRestricted,
+      page,
+      size,
+    )
 
-      if (!transactions.length) {
-        setTransactionsEmpty(true)
-      }
-      return {
-        total,
-        ckbTransactions: transactions,
-      }
-    } catch (error) {
+    if (!transactions.length) {
       setTransactionsEmpty(true)
-      return { total: 0, ckbTransactions: [] }
+    }
+    return {
+      total,
+      ckbTransactions: transactions,
     }
   })
 
-  const ckbTransactions = transactionsQuery.data?.ckbTransactions ?? []
-  const total = transactionsQuery.data?.total ?? 0
+  const { total, ckbTransactions } = data
   const totalPages = Math.ceil(total / size)
 
   const onChange = (page: number) => {
-    history.push(`/${language}/script/${codeHash}/${hashType}?page=${page}&size=${size}`)
+    const search = new URLSearchParams(window.location.search)
+    search.set('page', page.toString()) // we can also use { ...search, page, search }
+    search.set('size', size.toString())
+    search.set('restrict', isRestricted.toString())
+    const url = `/${language}/script/${codeHash}/${hashType}?${search}`
+    history.push(url)
   }
+
+  const switchRestrictMode = (checked: boolean) => {
+    history.push(`/${language}/script/${codeHash}/${hashType}?restrict=${checked.toString()}`)
+  }
+
+  const status = (() => {
+    if (error) {
+      return (error as Error).message
+    }
+
+    if (isLoading && !previousTransactionEmpty) {
+      return t('nft.loading')
+    }
+
+    return t(`nft.no_record`)
+  })()
 
   return (
     <>
+      {total >= 5000 && (
+        <div className={styles.notice}>
+          {t('transaction.range_notice', {
+            count: 5000,
+          })}
+        </div>
+      )}
+      <div className={styles.scriptTransactionsConfigPanel}>
+        <span className={styles.countInfo}>
+          Total {isLoading ? <RefreshCw className="animate-spin" size={16} /> : localeNumberString(countOfTransactions)}{' '}
+          Transactions
+        </span>
+
+        <label style={{ marginLeft: 'auto' }} htmlFor="script-restrict-mode">
+          {t('scripts.restrict_mode')}
+        </label>
+        <HelpTip>{t('scripts.restrict_tooltip')}</HelpTip>
+        <Switch
+          id="script-restrict-mode"
+          style={{ marginLeft: '4px' }}
+          checked={isRestricted}
+          onCheckedChange={checked => switchRestrictMode(checked)}
+        />
+      </div>
+
       <div className={styles.scriptTransactionsPanel}>
         {ckbTransactions.length > 0 ? (
           ckbTransactions.map(tr => (
@@ -77,9 +142,7 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
             />
           ))
         ) : (
-          <div className={styles.loadingOrEmpty}>
-            {transactionsQuery.isLoading && !previousTransactionEmpty ? t('nft.loading') : t(`nft.no_record`)}
-          </div>
+          <div className={styles.loadingOrEmpty}>{status}</div>
         )}
       </div>
       {totalPages > 1 && (
@@ -89,6 +152,37 @@ export const ScriptTransactions = ({ page, size }: { page: number; size: number 
       )}
     </>
   )
+}
+
+const CellIcon = ({ status }: { status: 'live' | 'dead' | null }) => {
+  const [t] = useTranslation()
+  if (status === 'live') {
+    return (
+      <Tooltip
+        trigger={
+          <span>
+            <LiveCellIcon width="16" height="16" />
+          </span>
+        }
+      >
+        {t('cell.live_cell')}
+      </Tooltip>
+    )
+  }
+  if (status === 'dead') {
+    return (
+      <Tooltip
+        trigger={
+          <span>
+            <DeadCellIcon width="16" height="16" />
+          </span>
+        }
+      >
+        {t('cell.dead_cell')}
+      </Tooltip>
+    )
+  }
+  return <InfoMoreIcon />
 }
 
 export const CellInfo = ({ cell }: { cell: CellBasicInfo }) => {
@@ -101,12 +195,10 @@ export const CellInfo = ({ cell }: { cell: CellBasicInfo }) => {
           setShowModal(true)
         }}
       >
-        <InfoMoreIcon />
+        <CellIcon status={cell.status} />
       </SimpleButton>
       <SimpleModal isShow={showModal} setIsShow={setShowModal}>
-        <TransactionCellDetailModal>
-          <TransactionCellScript cell={cell} onClose={() => setShowModal(false)} />
-        </TransactionCellDetailModal>
+        <CellModal cell={cell} onClose={() => setShowModal(false)} />
       </SimpleModal>
     </TransactionCellInfoPanel>
   )
@@ -166,6 +258,14 @@ export const ScriptCells = ({
 
   return (
     <>
+      {total >= 500 && (
+        <div className={styles.notice}>
+          {t('transaction.range_notice', {
+            count: 500,
+          })}
+        </div>
+      )}
+
       <div className={styles.scriptCellsPanel}>
         <table>
           <thead>
@@ -198,14 +298,7 @@ export const ScriptCells = ({
                     </td>
                     <td>
                       <div className={styles.cellInfoMore}>
-                        <CellInfo
-                          cell={{
-                            id: record.id,
-                            capacity: record.capacity,
-                            isGenesisOutput: false,
-                            occupiedCapacity: String(record.occupiedCapacity),
-                          }}
-                        />
+                        <CellInfo cell={transformToCellBasicInfo(record)} />
                       </div>
                     </td>
                   </tr>
@@ -239,19 +332,21 @@ export const CodeHashMessage = ({ codeHash }: { codeHash: string }) => {
         <AddressText>{codeHash}</AddressText>
       </div>
 
-      <CopyIcon
-        className={styles.action}
-        onClick={() => {
-          navigator.clipboard.writeText(codeHash).then(
-            () => {
-              setToast({ message: t('common.copied') })
-            },
-            error => {
-              console.error(error)
-            },
-          )
-        }}
-      />
+      {!!codeHash && (
+        <CopyIcon
+          className={styles.action}
+          onClick={() => {
+            navigator.clipboard.writeText(codeHash).then(
+              () => {
+                setToast({ message: t('common.copied') })
+              },
+              error => {
+                console.error(error)
+              },
+            )
+          }}
+        />
+      )}
     </div>
   )
 }

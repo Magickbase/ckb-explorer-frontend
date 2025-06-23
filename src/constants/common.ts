@@ -150,7 +150,7 @@ export type ChartColorConfig = typeof ChartColor
 
 export enum ChainName {
   Mainnet = 'mirana',
-  Testnet = 'pudge',
+  Testnet = 'meepo',
 }
 
 export enum LayoutLiteProfessional {
@@ -165,9 +165,19 @@ export enum HashType {
 }
 
 export const MAINNET_URL = `https://${config.BASE_URL}`
-export const TESTNET_URL = `https://${ChainName.Testnet}.${config.BASE_URL}`
+export const TESTNET_URL = `https://testnet.${config.BASE_URL}`
 
 export const TYPE_ID_CODE_HASH = '0x00000000000000000000000000000000000000000000000000545950455f4944'
 
 export const NERVOS_DAO_RFC_URL =
   'https://www.github.com/nervosnetwork/rfcs/blob/master/rfcs/0023-dao-deposit-withdraw/0023-dao-deposit-withdraw.md'
+
+export const TIME_TEMPLATE = 'YYYY-MM-DD HH:mm:ss'
+
+export const DEFAULT_SPORE_IMAGE = '/images/spore_placeholder.svg'
+
+// https://github.com/nervosnetwork/ckb/pull/4807/files#diff-1beb40a3d17a41c5906970fca040280ff421695a65b0f3da51e6abb06329c4a6R10
+export const HARDFORK_ESTIMATED_ACTIVATION_TIME = {
+  start: new Date('2025-03-05T08:00:00'),
+  epoch: 12_293,
+}

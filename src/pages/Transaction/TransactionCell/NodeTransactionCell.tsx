@@ -1,12 +1,10 @@
 import { useState, ReactNode } from 'react'
-import { Tooltip } from 'antd'
 import type { Cell } from '@ckb-lumos/base'
-import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { Link } from '../../../components/Link'
 import { IOType } from '../../../constants/common'
-import { parseUDTAmount } from '../../../utils/number'
-import { shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
+import { shannonToCkbDecimal } from '../../../utils/util'
 import {
   TransactionCellContentPanel,
   TransactionCellDetailPanel,
@@ -18,9 +16,9 @@ import {
   TransactionCellAddressPanel,
   TransactionCellInfoPanel,
   TransactionCellMobileItem,
-} from './styled'
-import { LeftArrow } from '../../../components/Transaction/TransactionCellArrow'
-import Capacity from '../../../components/Capacity'
+} from './TransactionCellComp'
+import { LeftArrow, CellOutputIcon } from '../../../components/Transaction/TransactionCellArrow'
+import { NodeCellCapacityAmount } from '../../../components/TransactionItem/TransactionItemCell/NodeCellCapacityAmount'
 import NervosDAODepositIcon from '../../../assets/nervos_dao_cell.png'
 import NervosDAOWithdrawingIcon from '../../../assets/nervos_dao_withdrawing.png'
 import UDTTokenIcon from '../../../assets/udt_token.png'
@@ -30,14 +28,17 @@ import NFTTokenIcon from './m_nft.svg'
 import CoTACellIcon from './cota_cell.svg'
 import CoTARegCellIcon from './cota_reg_cell.svg'
 import SporeCellIcon from './spore.svg'
+import CodeIcon from './code.svg'
+import FiberIcon from './fiber.svg'
 import { CellInfoModal } from '../TransactionCellScript'
 import SimpleModal from '../../../components/Modal'
 import SimpleButton from '../../../components/SimpleButton'
 import { useIsMobile } from '../../../hooks'
-import { explorerService } from '../../../services/ExplorerService'
-import { UDT_CELL_TYPES, getCellType, calculateScriptHash, getUDTAmountByData } from '../../../utils/cell'
+import { getCellType } from '../../../utils/cell'
 import { encodeNewAddress, encodeDeprecatedAddress } from '../../../utils/address'
 import { Addr } from './index'
+import { useCKBNode } from '../../../hooks/useCKBNode'
+import Tooltip from '../../../components/Tooltip'
 
 const TransactionCellIndexAddress = ({
   cell,
@@ -50,9 +51,21 @@ const TransactionCellIndexAddress = ({
   index: number
   isAddrNew: boolean
 }) => {
+  const { nodeService, isActivated } = useCKBNode()
   const deprecatedAddr = encodeDeprecatedAddress(cell.cellOutput.lock)
   const newAddr = encodeNewAddress(cell.cellOutput.lock)
   const address = isAddrNew ? newAddr : deprecatedAddr
+
+  const cellStatus = useQuery(
+    ['cellStatus', cell.outPoint],
+    async () => {
+      if (!cell.outPoint) return 'dead'
+      const liveCell = await nodeService.rpc.getLiveCell(cell.outPoint, false)
+      if (liveCell.status === 'live') return 'live'
+      return 'dead'
+    },
+    { enabled: isActivated && cell.outPoint && ioType && ioType === IOType.Output },
+  )
 
   return (
     <TransactionCellAddressPanel>
@@ -66,6 +79,7 @@ const TransactionCellIndexAddress = ({
           </Link>
         )}
         <Addr address={address ?? ''} isCellBase={false} />
+        {ioType === IOType.Output && <CellOutputIcon cell={{ status: cellStatus.data ?? 'dead' }} />}
       </TransactionCellHashPanel>
     </TransactionCellAddressPanel>
   )
@@ -73,11 +87,29 @@ const TransactionCellIndexAddress = ({
 
 export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
   const { t } = useTranslation()
-  const cellType = getCellType(cell)
+  const { type: cellType, info } = getCellType(cell)
   let detailTitle = t('transaction.ckb_capacity')
   let detailIcon
   let tooltip: string | ReactNode = ''
   switch (cellType) {
+    case 'Fiber Channel': {
+      detailTitle = t('transaction.fiber_channel')
+      detailIcon = FiberIcon
+      break
+    }
+    case 'deployment': {
+      detailTitle = t('transaction.deployment')
+      detailIcon = CodeIcon
+      if (info?.tag) {
+        tooltip = (
+          <span>
+            {`${t('transaction.deployed_script')}: `}
+            <a href={`/scripts#${info.tag}`}>{info.tag}</a>
+          </span>
+        )
+      }
+      break
+    }
     case 'nervos_dao_deposit':
       detailTitle = t('transaction.nervos_dao_deposit')
       detailIcon = NervosDAODepositIcon
@@ -152,8 +184,8 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
     <TransactionCellDetailPanel isWithdraw={cellType === 'nervos_dao_withdrawing'}>
       <div className="transactionCellDetailPanel">
         {tooltip ? (
-          <Tooltip placement="top" title={tooltip}>
-            <img src={detailIcon} alt="cell detail" />
+          <Tooltip trigger={<img src={detailIcon} alt="cell detail" />} placement="top">
+            {tooltip}
           </Tooltip>
         ) : (
           detailIcon && <img src={detailIcon} alt="cell detail" />
@@ -195,39 +227,6 @@ const TransactionCellInfo = ({
   )
 }
 
-const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
-  const { t } = useTranslation()
-  const cellType = getCellType(cell)
-  const isUDTCell = UDT_CELL_TYPES.findIndex(type => type === cellType) !== -1
-  const udtTypeHash = isUDTCell ? calculateScriptHash(cell.cellOutput.type!) : undefined
-  const udtInfo = useQuery(
-    ['udt', udtTypeHash],
-    () => {
-      if (!udtTypeHash) return undefined
-      return explorerService.api.fetchSimpleUDT(udtTypeHash)
-    },
-    {
-      enabled: isUDTCell,
-      staleTime: Infinity,
-    },
-  )
-
-  if (isUDTCell && udtTypeHash && udtInfo.data) {
-    const amount = getUDTAmountByData(cell.data)
-    if (cellType === 'udt' && udtInfo.data.published) {
-      return <span>{`${parseUDTAmount(amount, udtInfo.data.decimal)} ${udtInfo.data.symbol}`}</span>
-    }
-
-    if (cellType === 'xudt' && udtInfo.data.decimal && udtInfo.data.symbol) {
-      return <span>{`${parseUDTAmount(amount, udtInfo.data.decimal)} ${udtInfo.data.symbol}`}</span>
-    }
-
-    return <span>{`${t('udt.unknown_token')} #${udtTypeHash.substring(udtTypeHash.length - 4)}`}</span>
-  }
-
-  return <Capacity capacity={shannonToCkb(cell.cellOutput.capacity)} layout="responsive" />
-}
-
 export default ({
   cell,
   index,
@@ -257,10 +256,7 @@ export default ({
             </TransactionCellInfo>
           }
         />
-        <TransactionCellMobileItem
-          title={t('transaction.capacity')}
-          value={<TransactionCellCapacityAmount cell={cell} />}
-        />
+        <TransactionCellMobileItem title={t('transaction.capacity')} value={<NodeCellCapacityAmount cell={cell} />} />
       </TransactionCellCardPanel>
     )
   }
@@ -277,7 +273,7 @@ export default ({
         </div>
 
         <div className="transactionCellCapacity">
-          <TransactionCellCapacityAmount cell={cell} />
+          <NodeCellCapacityAmount cell={cell} />
         </div>
 
         <div className="transactionDetailCellInfo">

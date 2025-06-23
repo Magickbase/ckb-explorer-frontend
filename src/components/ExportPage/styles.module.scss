@@ -1,0 +1,325 @@
+@import '../../styles/variables.module';
+
+.containerPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (width <= $mobileBreakPoint) {
+    margin: 0;
+  }
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+
+  @media (width <= $mobileBreakPoint) {
+    margin-top: 20px;
+    width: calc(100% - 32px);
+    justify-content: start;
+  }
+
+  > span {
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 28px;
+
+    @media (width <= $mobileBreakPoint) {
+      font-size: 20px;
+      line-height: normal;
+    }
+  }
+
+  > span:first-child {
+    color: #333;
+  }
+
+  > span:last-child {
+    color: #999;
+  }
+}
+
+.description {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+
+  > div {
+    width: 60%;
+    text-align: center;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #333;
+  }
+
+  @media (width <= $mobileBreakPoint) {
+    display: none;
+  }
+}
+
+.exportPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 24px;
+  margin-bottom: 80px;
+  width: 70%;
+  min-width: 342px;
+  border-radius: 4px;
+  background: white;
+
+  @media (width <= $mobileBreakPoint) {
+    margin-top: 12px;
+    margin-bottom: 20px;
+    width: calc(100% - 32px);
+  }
+
+  > div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .exportHeader {
+    flex-direction: column;
+
+    > div:first-child {
+      padding-top: 24px;
+      padding-bottom: 4px;
+
+      @media (width <= $mobileBreakPoint) {
+        padding: 16px 0;
+      }
+
+      text-align: center;
+      font-weight: 500;
+      font-size: 16px;
+      color: #333;
+    }
+
+    @media (width <= $mobileBreakPoint) {
+      margin-top: 12px;
+    }
+  }
+
+  .dateOrBlockPanel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    color: #666;
+
+    @media (width <= $mobileBreakPoint) {
+      margin-top: 8px;
+      flex-direction: column;
+
+      > div:nth-child(2) {
+        margin-top: 24px;
+      }
+    }
+
+    .datePickerPanel,
+    .heightInputPanel {
+      margin-left: 24px;
+      margin-right: 24px;
+      display: flex;
+      flex-direction: column;
+      width: 40%;
+      max-width: 256px;
+
+      @media (width <= $mobileBreakPoint) {
+        margin-left: 16px;
+        margin-right: 16px;
+      }
+
+      @media (width <= $mobileBreakPoint) {
+        width: 100%;
+        max-width: 312px;
+      }
+
+      > div:first-child {
+        margin-bottom: 12px;
+
+        @media (width <= $mobileBreakPoint) {
+          margin-bottom: 8px;
+        }
+      }
+
+      > div:last-child {
+        width: 100%;
+
+        input {
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  .note {
+    display: flex;
+    justify-content: center;
+    color: #999;
+    line-height: 24px;
+
+    > div {
+      background: white;
+      text-align: center;
+      padding: 56px 24px 40px;
+
+      @media (width <= $mobileBreakPoint) {
+        padding: 24px 8px 16px;
+        max-width: 312px;
+      }
+    }
+  }
+
+  .hint {
+    > div {
+      padding: 12px;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 16px;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+
+      > svg {
+        min-width: 14px;
+        min-height: 14px;
+        margin-right: 8px;
+        margin-top: 3px;
+      }
+
+      &.noHint {
+        visibility: hidden;
+      }
+
+      &.successHint,
+      &.errorHint {
+        width: 100%;
+        border-radius: 8px;
+        max-width: 560px;
+        font-size: 14px;
+
+        @media (width <= $mobileBreakPoint) {
+          max-width: 312px;
+        }
+      }
+
+      &.successHint {
+        border: 1px solid rgb(0 204 155 / 100%);
+        background: rgb(230 252 247 / 100%);
+        color: rgb(0 204 155 / 100%);
+
+        path {
+          fill: rgb(0 204 155 / 100%);
+        }
+      }
+
+      .hintText {
+        line-height: 20px;
+        word-break: break-all;
+      }
+
+      &.errorHint {
+        border: 1px solid #ffa6a6;
+        background: #fff2f2;
+        color: #fa504f;
+      }
+    }
+  }
+
+  .downloadButton {
+    > button {
+      text-align: center;
+      margin-top: 32px;
+      margin-bottom: 56px;
+      width: 152px;
+      height: 48px;
+
+      &[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      @media (width <= $mobileBreakPoint) {
+        margin-top: 20px;
+        margin-bottom: 24px;
+      }
+
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 14px 40px;
+      cursor: pointer;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 19px;
+    }
+  }
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.inputContent {
+  flex: 1;
+  max-width: 256px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  line-height: 19px;
+  color: #333;
+  padding: 0;
+  margin: 0;
+}
+
+.datePickerTrigger {
+  display: flex;
+  gap: 4px;
+  height: 40px;
+  cursor: pointer;
+  font-feature-settings: 'tnum', 'tnum';
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #000000d9;
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  margin: 0;
+  padding: 6.5px 11px;
+  position: relative;
+  transition: border 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    border-color: var(--primary-color);
+  }
+
+  .datePickerIcon {
+    width: 16px;
+    height: 16px;
+    color: #d9d9d9;
+  }
+
+  span {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+  }
+}

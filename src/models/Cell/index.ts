@@ -34,6 +34,16 @@ export interface CellInfo {
   data: string
 }
 
+export interface SporeCellInfo {
+  clusterName: string
+  tokenId: string
+  collection: {
+    typeHash: string
+  }
+  published: boolean
+  data: string
+}
+
 export interface Cell$Base {
   id: number
   addressHash: string
@@ -59,6 +69,7 @@ export interface Cell$Base {
   interest: string
   daoTypeHash: string
   cellInfo: CellInfo
+  tags?: string[]
   since?: {
     raw: string
     median_timestamp?: string
@@ -67,6 +78,12 @@ export interface Cell$Base {
     address: string
     index: string
     txid: string
+    consumedTxid: string
+    status: 'bound' | 'unbound' | 'binding' | 'normal'
+  }
+  fiberGraphChannelInfo?: {
+    node1: string
+    node2: string
   }
 }
 
@@ -127,6 +144,11 @@ export interface XUDT extends Cell$Base {
   extraInfo: Record<'amount' | 'decimal' | 'name' | 'symbol', string>
 }
 
+export interface Cell$Spore extends Cell$Base {
+  cellType: 'spore_cell' | 'did_cell'
+  extraInfo: SporeCellInfo
+}
+
 export type Cell =
   | Cell$NoExtra
   | Cell$UDT
@@ -135,4 +157,5 @@ export type Cell =
   | Cell$NftToken
   | Cell$Nrc721Token
   | Omiga$XUDT
+  | Cell$Spore
   | XUDT

@@ -1,9 +1,10 @@
-import { Tooltip } from 'antd'
 import BigNumber from 'bignumber.js'
 import classnames from 'classnames'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import { ReactComponent as WarningCircle } from '../../assets/warning_circle.svg'
+import Tooltip from '../../components/Tooltip'
+import { TIME_TEMPLATE } from '../../constants/common'
 import { useHalving, useIsMobile } from '../../hooks'
 import { useStatistics } from '../../services/ExplorerService'
 import styles from './index.module.scss'
@@ -46,15 +47,9 @@ export const HalvingInfo = () => {
           <div className={styles.epochInfoItem}>
             <div className={styles.epochInfoValue}>
               <div className={styles.flexItemsCenter}>
-                <span style={{ marginRight: 2 }}>{dayjs(estimatedDate).format('YYYY.MM.DD hh:mm:ss')}</span>
-                <Tooltip
-                  placement="topRight"
-                  color="#fff"
-                  arrowPointAtCenter
-                  overlayInnerStyle={{ color: '#333333' }}
-                  title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
-                >
-                  <WarningCircle width={12} height={12} />
+                <span style={{ marginRight: 2 }}>{dayjs(estimatedDate).format(TIME_TEMPLATE)}</span>
+                <Tooltip trigger={<WarningCircle width={16} height={16} />}>
+                  {`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
                 </Tooltip>
               </div>
             </div>
@@ -91,13 +86,9 @@ export const HalvingInfo = () => {
 
       <div className={styles.epochInfoItem}>
         <strong className={styles.epochInfoValue}>
-          {dayjs(estimatedDate).format('YYYY.MM.DD HH:mm:ss')}
-          <Tooltip
-            color="#fff"
-            overlayInnerStyle={{ color: '#333333' }}
-            title={`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
-          >
-            <WarningCircle style={{ cursor: 'pointer', marginLeft: '4px' }} width={16} height={16} />
+          {dayjs(estimatedDate).format(TIME_TEMPLATE)}
+          <Tooltip trigger={<WarningCircle style={{ cursor: 'pointer', marginLeft: '4px' }} width={16} height={16} />}>
+            {`UTC ${utcOffset > 0 ? `+ ${utcOffset}` : utcOffset}`}
           </Tooltip>
         </strong>
         <div className={styles.textSecondary}>{t('halving.estimated_time')}</div>

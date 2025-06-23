@@ -1,42 +1,23 @@
 import { useState, FC, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Radio } from 'antd'
+import { addressToScript } from '@nervosnetwork/ckb-sdk-utils'
 import { useTranslation } from 'react-i18next'
 import { EyeOpenIcon, EyeClosedIcon } from '@radix-ui/react-icons'
 import { utils } from '@ckb-lumos/base'
-import { Link } from '../../components/Link'
 import TransactionItem from '../../components/TransactionItem/index'
+import NodeTransactionItem from '../../components/TransactionItem/NodeTransactionItem'
 import { explorerService, RawBtcRPC } from '../../services/ExplorerService'
 import { localeNumberString } from '../../utils/number'
 import { shannonToCkb, deprecatedAddrToNewAddr } from '../../utils/util'
-import {
-  AddressAssetsTab,
-  AddressAssetsTabPane,
-  AddressAssetsTabPaneTitle,
-  AddressLockScriptController,
-  AddressLockScriptPanel,
-  AddressTransactionsPanel,
-  AddressUDTAssetsPanel,
-} from './styled'
 import Capacity from '../../components/Capacity'
 import CKBTokenIcon from './ckb_token_icon.png'
-import { ReactComponent as TimeDownIcon } from '../../assets/time_down.svg'
-import { ReactComponent as TimeUpIcon } from '../../assets/time_up.svg'
-import {
-  OrderByType,
-  useIsMobile,
-  useNewAddr,
-  usePaginationParamsInListPage,
-  useSearchParams,
-  useUpdateSearchParams,
-} from '../../hooks'
+import { useNewAddr, usePaginationParamsInListPage, useSearchParams } from '../../hooks'
 import styles from './styles.module.scss'
 import LiteTransactionList from '../../components/LiteTransactionList'
 import Script from '../../components/Script'
 import AddressText from '../../components/AddressText'
 import { parseSimpleDateNoSecond } from '../../utils/date'
 import { LayoutLiteProfessional } from '../../constants/common'
-import { omit } from '../../utils/object'
 import { CsvExport } from '../../components/CsvExport'
 import PaginationWithRear from '../../components/PaginationWithRear'
 import { Transaction } from '../../models/Transaction'
@@ -46,6 +27,10 @@ import { CardHeader } from '../../components/Card/CardHeader'
 import Cells from './Cells'
 import DefinedTokens from './DefinedTokens'
 import { AddressOmigaInscriptionComp } from './AddressAssetComp'
+import { useCKBNode } from '../../hooks/useCKBNode'
+import { useTransactions } from '../../hooks/transaction'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs'
+import SimpleButton from '../../components/SimpleButton'
 
 enum AssetInfo {
   UDT = 1,
@@ -112,9 +97,9 @@ const AddressLockScript: FC<{ address: Address }> = ({ address }) => {
     : null
 
   return (
-    <AddressLockScriptPanel className={styles.addressLockScriptPanel}>
+    <div className={styles.addressLockScriptPanel}>
       <CardCellsLayout type="left-right" cells={overviewItems} borderTop />
-      <AddressLockScriptController onClick={toggleScriptDisplay}>
+      <SimpleButton className={styles.addressLockScriptController} onClick={toggleScriptDisplay}>
         {isScriptDisplayed ? (
           <div className={styles.scriptToggle}>
             <EyeOpenIcon />
@@ -126,18 +111,18 @@ const AddressLockScript: FC<{ address: Address }> = ({ address }) => {
             <div>{t('address.lock_script_hash')}</div>
           </div>
         )}
-      </AddressLockScriptController>
+      </SimpleButton>
       {isScriptDisplayed ? (
         <Script script={address.lockScript} />
       ) : (
         <div className={`monospace ${styles.scriptHash}`}>{hash}</div>
       )}
-    </AddressLockScriptPanel>
+    </div>
   )
 }
 
 export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { udtAccounts = [] } = address
   const [activeTab, setActiveTab] = useState<AssetInfo>(AssetInfo.UDT)
 
@@ -243,65 +228,76 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
       <CardCellsLayout type="leftSingle-right" cells={overviewItems} borderTop />
 
       {hasAssets || hasInscriptions || hasCells ? (
-        <AddressUDTAssetsPanel className={styles.addressUDTAssetsPanel}>
-          <AddressAssetsTab animated={false} key={i18n.language} activeKey={activeTab.toString()}>
-            {hasCells ? (
-              <AddressAssetsTabPane
-                tab={
-                  <AddressAssetsTabPaneTitle onClick={() => setActiveTab(AssetInfo.CELLs)}>
+        <div className={styles.addressUDTAssetsPanel}>
+          <Tabs value={activeTab.toString()} type="underline">
+            <TabsList>
+              {!!hasCells && (
+                <TabsTrigger value={AssetInfo.CELLs.toString()}>
+                  <span className={styles.addressAssetsTabPaneTitle} onClick={() => setActiveTab(AssetInfo.CELLs)}>
                     {t('address.live_cell_tab')}
-                  </AddressAssetsTabPaneTitle>
-                }
-                key={AssetInfo.CELLs}
-              >
+                  </span>
+                </TabsTrigger>
+              )}
+              {!!hasAssets && (
+                <TabsTrigger value={AssetInfo.UDT.toString()}>
+                  <span className={styles.addressAssetsTabPaneTitle} onClick={() => setActiveTab(AssetInfo.UDT)}>
+                    {t('address.user_defined_token')}
+                  </span>
+                </TabsTrigger>
+              )}
+              {!!hasInscriptions && (
+                <TabsTrigger value={AssetInfo.INSCRIPTION.toString()}>
+                  <span
+                    className={styles.addressAssetsTabPaneTitle}
+                    onClick={() => setActiveTab(AssetInfo.INSCRIPTION)}
+                  >
+                    {t('address.inscription')}
+                  </span>
+                </TabsTrigger>
+              )}
+            </TabsList>
+            {!!hasCells && (
+              <TabsContent value={AssetInfo.CELLs.toString()} style={{ width: '100%' }}>
                 <div className={styles.assetCardList}>
                   <Cells address={address.addressHash} count={+address.liveCellsCount} />
                 </div>
-              </AddressAssetsTabPane>
-            ) : null}
-            {hasAssets && (
-              <AddressAssetsTabPane
-                tab={
-                  <AddressAssetsTabPaneTitle onClick={() => setActiveTab(AssetInfo.UDT)}>
-                    {t('address.user_defined_token')}
-                  </AddressAssetsTabPaneTitle>
-                }
-                key={AssetInfo.UDT}
-              >
+              </TabsContent>
+            )}
+            {!!hasAssets && (
+              <TabsContent value={AssetInfo.UDT.toString()} style={{ width: '100%' }}>
                 <div className={styles.assetCardList}>
                   <DefinedTokens udts={udts} cotaList={cotaList} />
                 </div>
-              </AddressAssetsTabPane>
+              </TabsContent>
             )}
-            {hasInscriptions ? (
-              <AddressAssetsTabPane
-                tab={
-                  <AddressAssetsTabPaneTitle onClick={() => setActiveTab(AssetInfo.INSCRIPTION)}>
-                    {t('address.inscription')}
-                  </AddressAssetsTabPaneTitle>
-                }
-                key={AssetInfo.INSCRIPTION}
-              >
+            {!!hasInscriptions && (
+              <TabsContent value={AssetInfo.INSCRIPTION.toString()} style={{ width: '100%' }}>
                 <div className={styles.assetCardList}>
-                  {inscriptions.map(inscription => {
-                    switch (inscription.udtType) {
-                      case 'omiga_inscription':
-                        return (
-                          <AddressOmigaInscriptionComp
-                            account={inscription}
-                            key={`${inscription.symbol + inscription.udtType + inscription.udtAmount}`}
-                          />
-                        )
+                  <div className={styles.inscriptions}>
+                    <ul>
+                      {inscriptions.map(inscription => {
+                        switch (inscription.udtType) {
+                          case 'omiga_inscription':
+                            return (
+                              <li>
+                                <AddressOmigaInscriptionComp
+                                  account={inscription}
+                                  key={`${inscription.symbol + inscription.udtType + inscription.udtAmount}`}
+                                />
+                              </li>
+                            )
 
-                      default:
-                        return null
-                    }
-                  })}
+                          default:
+                            return null
+                        }
+                      })}
+                    </ul>
+                  </div>
                 </div>
-              </AddressAssetsTabPane>
-            ) : null}
-          </AddressAssetsTab>
-        </AddressUDTAssetsPanel>
+              </TabsContent>
+            )}
+          </Tabs>
+        </div>
       ) : null}
 
       <AddressLockScript address={address} />
@@ -313,42 +309,26 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
 export const AddressTransactions = ({
   address,
   transactions,
-  timeOrderBy,
-  meta: { counts },
+  meta,
 }: {
   address: string
   transactions: (Transaction & { btcTx: RawBtcRPC.BtcTx | null })[]
-  timeOrderBy: OrderByType
-  meta: { counts: Record<'committed' | 'pending', number | '-'> }
+  meta: { totalPages?: number }
 }) => {
-  const isMobile = useIsMobile()
+  const { totalPages = 0 } = meta
   const { t } = useTranslation()
-  const { currentPage, pageSize, setPage } = usePaginationParamsInListPage()
+  const { currentPage, setPage } = usePaginationParamsInListPage()
   const { Professional, Lite } = LayoutLiteProfessional
-  const searchParams = useSearchParams('layout', 'tx_status')
   const defaultLayout = Professional
-  const updateSearchParams = useUpdateSearchParams<'layout' | 'sort' | 'tx_type'>()
+
+  const searchParams = useSearchParams('layout', 'tx_status')
+
   const layout = searchParams.layout === Lite ? Lite : defaultLayout
 
   const txStatus = searchParams.tx_status
   const isPendingListActive = txStatus === 'pending'
-  const total = isPendingListActive ? counts.pending : counts.committed
-  const totalPages = total === '-' ? 0 : Math.ceil(total / pageSize)
-
-  const onChangeLayout = (layoutType: LayoutLiteProfessional) => {
-    updateSearchParams(params =>
-      layoutType === defaultLayout
-        ? Object.fromEntries(Object.entries(params).filter(entry => entry[0] !== 'layout'))
-        : { ...params, layout: layoutType },
-    )
-  }
-  const handleTimeSort = () => {
-    updateSearchParams(
-      params =>
-        timeOrderBy === 'asc' ? omit(params, ['sort', 'tx_type']) : omit({ ...params, sort: 'time' }, ['tx_type']),
-      true,
-    )
-  }
+  // const total = isPendingListActive ? counts.pending : counts.committed
+  // const totalPages = _totalPages ?? total === '-' ? 0 : Math.ceil(total / pageSize)
 
   const newAddr = useNewAddr(address)
   const isNewAddr = newAddr === address
@@ -366,52 +346,9 @@ export const AddressTransactions = ({
       }))
     : transactions
 
-  const searchOptionsAndModeSwitch = (
-    <div className={styles.searchOptionsAndModeSwitch}>
-      <div className={styles.sortAndFilter} data-is-active={timeOrderBy === 'asc'}>
-        {timeOrderBy === 'asc' ? <TimeDownIcon onClick={handleTimeSort} /> : <TimeUpIcon onClick={handleTimeSort} />}
-      </div>
-      <Radio.Group
-        className={styles.layoutButtons}
-        options={[
-          { label: t('transaction.professional'), value: Professional },
-          { label: t('transaction.lite'), value: Lite },
-        ]}
-        onChange={({ target: { value } }) => onChangeLayout(value)}
-        value={layout}
-        optionType="button"
-        buttonStyle="solid"
-      />
-    </div>
-  )
-
   return (
     <>
-      <Card className={styles.transactionListOptionsCard} rounded="top">
-        <CardHeader
-          className={styles.cardHeader}
-          leftContent={
-            <div className={styles.txHeaderLabels}>
-              <Link
-                to={`/address/${address}?${new URLSearchParams({ ...searchParams, tx_status: 'committed' })}`}
-                data-is-active={!isPendingListActive}
-              >{`${t('transaction.transactions')} (${
-                counts.committed === '-' ? counts.committed : localeNumberString(counts.committed)
-              })`}</Link>
-              <Link
-                to={`/address/${address}?${new URLSearchParams({ ...searchParams, tx_status: 'pending' })}`}
-                data-is-active={isPendingListActive}
-              >{`${t('transaction.pending_transactions')} (${
-                counts.pending === '-' ? counts.pending : localeNumberString(counts.pending)
-              })`}</Link>
-            </div>
-          }
-          rightContent={!isMobile && searchOptionsAndModeSwitch}
-        />
-        {isMobile && searchOptionsAndModeSwitch}
-      </Card>
-
-      <AddressTransactionsPanel>
+      <div className={styles.addressTransactionsPanel}>
         {layout === 'lite' ? (
           <LiteTransactionList address={address} list={transactions} />
         ) : (
@@ -429,7 +366,7 @@ export const AddressTransactions = ({
             {txList.length === 0 ? <div className={styles.noRecords}>{t(`transaction.no_records`)}</div> : null}
           </>
         )}
-      </AddressTransactionsPanel>
+      </div>
       <PaginationWithRear
         currentPage={currentPage}
         totalPages={totalPages}
@@ -445,3 +382,130 @@ export const AddressTransactions = ({
 }
 
 // FIXME: plural in i18n not work, address.cell and address.cells
+
+export const NodeAddressOverviewCard: FC<{ address: string }> = ({ address }) => {
+  const { t } = useTranslation()
+  const [isScriptDisplayed, setIsScriptDisplayed] = useState<boolean>(false)
+  const { nodeService } = useCKBNode()
+
+  const lockScript = addressToScript(address)
+  const lockScriptHash = utils.computeScriptHash(lockScript)
+
+  const capacityQuery = useQuery(
+    ['node', 'address', 'capacity', address],
+    () => nodeService.rpc.getCellsCapacity({ script: lockScript, scriptType: 'lock' }),
+    { staleTime: 1000 * 60 },
+  )
+
+  const occupiedCapacityQuery = useQuery(
+    ['node', 'address', 'occupied', 'capacity', address],
+    () =>
+      nodeService.rpc.getCellsCapacity({
+        script: lockScript,
+        scriptType: 'lock',
+        filter: { scriptLenRange: ['0x1', '0x1000'] },
+      }),
+    { staleTime: 1000 * 60 },
+  )
+
+  const overviewItems: CardCellInfo<'left' | 'right'>[] = [
+    {
+      slot: 'left',
+      cell: {
+        icon: <img src={CKBTokenIcon} alt="item icon" width="100%" />,
+        title: t('common.ckb_unit'),
+        content: capacityQuery.data ? <Capacity capacity={shannonToCkb(capacityQuery.data.capacity)} /> : 'loading...',
+      },
+    },
+    {
+      title: t('address.occupied'),
+      tooltip: t('glossary.occupied'),
+      content: occupiedCapacityQuery.data ? (
+        <Capacity capacity={shannonToCkb(occupiedCapacityQuery.data.capacity)} />
+      ) : (
+        'loading...'
+      ),
+    },
+  ]
+
+  return (
+    <Card className={styles.addressOverviewCard}>
+      <div className={styles.cardTitle}>{t('address.overview')}</div>
+
+      <div style={{ marginBottom: 24 }}>
+        <CardCellsLayout type="left-right" cells={overviewItems} borderTop />
+      </div>
+
+      <SimpleButton
+        className={styles.addressLockScriptController}
+        onClick={() => setIsScriptDisplayed(!isScriptDisplayed)}
+      >
+        {isScriptDisplayed ? (
+          <div className={styles.scriptToggle}>
+            <EyeOpenIcon />
+            <div>{t('address.lock_script')}</div>
+          </div>
+        ) : (
+          <div className={styles.scriptToggle}>
+            <EyeClosedIcon />
+            <div>{t('address.lock_script_hash')}</div>
+          </div>
+        )}
+      </SimpleButton>
+      {isScriptDisplayed ? (
+        <Script script={lockScript} />
+      ) : (
+        <div className={`monospace ${styles.scriptHash}`}>{lockScriptHash}</div>
+      )}
+    </Card>
+  )
+}
+
+export const NodeAddressTransactions = ({ address }: { address: string }) => {
+  const { t } = useTranslation()
+  const lockScript = addressToScript(address)
+  const { data, isLoading, hasNextPage, fetchNextPage } = useTransactions({
+    searchKey: { script: lockScript, scriptType: 'lock' },
+    pageSize: 10,
+  })
+
+  return (
+    <>
+      <Card className={styles.transactionListOptionsCard} rounded="top">
+        <CardHeader
+          className={styles.cardHeader}
+          leftContent={<div className={styles.txHeaderLabels}>{t('transaction.transactions')}</div>}
+        />
+      </Card>
+
+      <div className={styles.addressTransactionsPanel}>
+        {data?.pages.map(page =>
+          page.txs.map(tx => (
+            <NodeTransactionItem
+              transaction={tx.transaction}
+              key={tx.transaction.hash!}
+              highlightAddress={address}
+              blockHashOrNumber={tx.txStatus.blockHash ?? undefined}
+            />
+          )),
+        )}
+        {!isLoading && data?.pages.length === 0 ? (
+          <div className={styles.noRecords}>{t(`transaction.no_records`)}</div>
+        ) : null}
+      </div>
+
+      {data?.pages.length !== 0 && (
+        <div className={styles.cardFooterPanel} style={{ marginTop: 4 }}>
+          {hasNextPage ? (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+            <div className={styles.cardFooterButton} onClick={() => fetchNextPage()}>
+              {t('pagination.load_more')}
+            </div>
+          ) : (
+            <div>{t('pagination.no_more_data')}</div>
+          )}
+        </div>
+      )}
+    </>
+  )
+}

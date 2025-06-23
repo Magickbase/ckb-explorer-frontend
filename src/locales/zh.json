@@ -17,7 +17,9 @@
       "minutes": "分钟",
       "seconds": "秒",
       "minaraTime": "美国东部时间: 2022 年 05 月 10 日",
-      "miranaAlive": "MIRANA 已经激活"
+      "miranaAlive": "MIRANA 已经激活",
+      "extra": "额外信息",
+      "no_data": "暂无数据"
     },
     "unit": {
       "days": "天",
@@ -96,6 +98,30 @@
       "expected": "预计",
       "share_text": "📢 @NervosNetwork CKB 预计于 {{date}} 迎来{{times}}减半🚀，\n\n📅距离减半倒计时还有 {{countdown}}。\n\n🔗 访问👉 https://explorer.nervos.org 了解更多"
     },
+    "hardfork": {
+      "comment1": "什么是硬分叉？硬分叉是对区块链协议的重大更新，它永久性地偏离了之前的版本。它引入了非向后兼容的更改，要求所有网络节点升级。如果大多数节点在指定的纪元号前升级成功，则部署分叉。运行过时版本的节点会失去连接，因为它们遵循的旧规则已不再适用。",
+      "comment2": "硬分叉的目的：Nervos CKB 实施硬分叉以增强网络的功能和安全性。这些升级引入了新的功能，如修改数据结构、RISC-V 扩展和新的系统调用。硬分叉还能解决关键问题、修复安全漏洞、解决无法通过向后兼容更新修补的协议限制，从而确保平台的长期稳定性和发展。",
+      "comment3": "CKB 硬分叉过程： Nervos CKB 硬分叉过程分为三个阶段。首先，创建、讨论和敲定方案，然后是实施和本地测试，耗时约九个月。接下来，更新会部署到公共预览网络和测试网络，以进一步进行稳定性测试。最后，经过三个月的准备期后，在主网上激活分叉，确保平稳过渡。",
+      "comment4": "主网: 60 天前的区块是: 14908742 \n0x216095bfc3bb68e7509db4b3f98b105ac5565586876a795a9c5c3d0dfe134cb5 in Sun Dec 22 03:04:27 PM CST 2024\nyou can view this block in https://explorer.nervos.org/block\n0x216095bfc3bb68e7509db4b3f98b105ac5565586876a795a9c5c3d0dfe134cb5.\nTestNet:the 60 days ago block is: 15641938 0xd92fe833fd53c6e0c7f05516609c3bbf4777aa05d016523cf1ff8aeaeec6fc13 in Sun Dec 22 03:09:16 PM CST 2024\nyou can view this block in https://pudge.explorer.nervos.org/block/0xd92fe833fd53c6e0c7f05516609c3bbf4777aa05d016523cf1ff8aeaeec6fc13",
+      "comment5": "改进:\nNetRpcImpl::get_peers return Remoteaddress.addresses dedup #4795: NetRpcImpl::get_peers return Remoteaddress.addresses without duplicates (@eval-exec)\nThis is a breaking change of RPC.\nUpgrade openssl from 0.10.68 to 0.10.70, fix https://rustsec.org/advisories/RUSTSEC-2025-0004 #4801: Upgrade openssl from 0.10.68 to 0.10.70, fix RUSTSEC-2025-0004 (@eval-exec)\nImproving spawn and exec syscalls #4785: Improving spawn and exec syscalls (@mohanson)",
+      "comment6": "Features\nchore: 2nd hardfork mainnet activation params #4807: Activate CKB Edition Meepo (2024) on the Mainnet (@zhangsoledad)\nThis is a breaking change of consensus once activated.\nfeat: impl filter with transport #4800: Implement nodes filter with P2P transport service types (@driftluo)\nfeat: mark dns address connected time on peer store #4793: Mark DNS address connected time on peer store (@driftluo)\nhttps://github.com/nervosnetwork/ckb/issues/4806#issuecomment-2673786997",
+      "comment7": "Third-party adaptation\nmainnet hardfork && improving spawn\nhttps://github.com/nervosnetwork/ckb-light-client.git @quake\nhttps://github.com/nervosnetwork/ckb-light-client/tree/develop/wasm @Officeyutong\nneuron\nimproving spawn\nhttps://github.com/nervosnetwork/ckb-testtool @XuJiandong @mohanson\nhttps://github.com/nervosnetwork/ckb-standalone-debugger @XuJiandong @mohanson",
+      "comment8": "Nervos CKB 硬分叉是一种重大的协议升级，会导致与之前区块链版本的永久性差异。与只要求矿工节点升级的软分叉不同，硬分叉要求所有节点都进行更新，以维持共识。这可以确保平稳过渡，同时引入必要的新功能和安全增强功能。.",
+      "comment9": "Nervos CKB 实施了硬叉，引入了重大改进。这些改进包括新的功能，如修改数据结构、RISC-V 扩展和新的系统调用，以增强平台的实用性。此外，hardforks 还解决了无法通过向后兼容更新修复的关键问题和限制，从而解决了安全问题。这些更新的组合确保了长期的可扩展性和可靠性。",
+      "comment10": "为防止频繁升级造成网络不稳定，Nervos CKB 遵循一种时间策略，确保硬分叉之间至少间隔一年（2,190 个历元）。这一策略使每次升级都具有实质性和前向兼容性，为开发人员提供了充足的时间进行测试和调整，同时保持了网络的稳定性。",
+      "comment11": "Nervos CKB 中的每个硬叉都被称为 “版本”，其名称灵感来自 Dota 英雄。格式如下：CKB 版本 [名称]（年份），例如 CKB 版本 Meepo（2025 年）。主网和测试网使用相同的名称，仅在必要时添加后缀。这种约定在网络升级时保持一致。",
+      "comment12": "第一阶段首先是创建详细的硬分叉提案，然后是社区讨论，征求反馈意见并加以改进。最终确定的建议将作为 RFC 发布。然后开始开发和初步测试，并根据需要调整建议。发布硬分叉节点版本供本地预览，同时更新 SDK、探索器和钱包。这一阶段通常需要 9 个月左右的时间。",
+      "comment13": "一旦实施工作接近尾声，将部署一个公共预览网络进行进一步测试。我们会密切监控网络的稳定性。一旦认为网络稳定，测试网络就会进行硬分叉，包括： \n 节点二进制发布 \n 公布纪元号 \n 在指定的纪元激活 升级不会立即发生，而是在公布的纪元生效。如果大多数节点升级成功，硬分叉将被视为部署成功。运行过时版本的节点将无法连接硬叉后的测试网络。",
+      "comment14": "最后阶段与测试网部署过程相同。一旦网络参与者准备就绪，就会启动主网硬分叉。关键步骤包括： \n 发布主网硬叉二进制文件和激活纪元 \n 至少三个月的准备期 \n 多数节点升级后激活 \n 一旦在指定纪元激活，硬叉即被视为成功部署，标志着升级的完成。",
+      "ckb_vm_desc": "其中一个值得注意的新增功能是包含了一个名为 “Spawn ”的新系统调用，可以在 RFC50: CKB-VM Syscalls 3 中进一步了解。从本质上讲，Spawn 可以替代动态库调用和 Exec。有了 Spawn，脚本可以创建具有独立内存区域的子脚本，数据可以在父脚本和子脚本之间无限制地传递。\n执行更多的宏操作融合以减少周期消耗，从而使脚本运行得更高效。\n在 Scripthash_type 字段中添加了新的 data2 值，以便顺利管理不同的虚拟机版本，确保无缝升级路径。",
+      "spawn_desc": "2025 年的 Meepo 硬分叉为 CKB 脚本开发引入了一系列增强功能，其中一项主要创新就是 Spawn。\n在 CKB 脚本中，Spawn 指的是创建新进程的一个概念和一组系统调用。与 2021 年 CKB 第一次硬分叉时引入的 exec 系统调用不同，Spawn 可以直接跨脚本调用，在简化开发流程的同时提供更强的控制和优化能力。",
+      "fee_estimator_desc": "随着 CKB 上交易数量的不断增长，准确估算费率变得越来越重要。CKB v0.120.0 引入了一项新的实验性功能--费用估算器，以帮助开发人员和用户确定最佳交易费率。"
+    },
+    "components": {
+      "multi_filter_button": {
+        "select": "选择"
+      }
+    },
     "glossary": {
       "block_height": "区块高度，又称为区块编号，表示区块链的长度，在添加新区块后会增加。",
       "cell": "CKB 采用了更通用的 Cell 模型，而不是 UTXO 模型。交易会销毁先前交易中创建的某些输出，并创建一些新的输出。每个交易的输出都是一个 Cell。",
@@ -149,7 +175,8 @@
       "cota": "一种 NFT 协议。一种用于极低成本 NFT 和 FT 的紧凑型代币聚合标准。更多详细信息，请查阅 <cota_link>CoTA RDC</cota_link>",
       "m_nft": "NFT 类型脚本是 RFC——Nervos CKB 上多用途 NFT 草案规范——的实现。更多详细信息，请查阅 <m_nft_link>CKB-NFT-Script</m_nft_link>",
       "nrc721": "NRC-721 是 Nervos CKB 区块链上的非同质化代币 (NFT) 标准。它类似于以太坊区块链上使用的 ERC-721 代币标准，为在 CKB 网络上创建、管理和转移独特数字资产提供了通用接口。NRC-721 代币是独特且不可互换的，这使它们非常适合代表收藏品、游戏道具和其他独特的数字资产。",
-      "hash_rate": "哈希率 (Hash Rate) 是用于挖掘加密货币时每秒使用的计算能力的度量。它表示矿工在一定时间内可以执行的哈希操作数量。在区块链的上下文中，哈希率用于衡量网络维护区块链所做的工作量。更高的哈希率表示网络更安全，因为对于恶意行为者来说，执行 51%攻击变得更加困难。"
+      "hash_rate": "哈希率 (Hash Rate) 是用于挖掘加密货币时每秒使用的计算能力的度量。它表示矿工在一定时间内可以执行的哈希操作数量。在区块链的上下文中，哈希率用于衡量网络维护区块链所做的工作量。更高的哈希率表示网络更安全，因为对于恶意行为者来说，执行 51%攻击变得更加困难。",
+      "spore": "Spore"
     },
     "toast": {
       "invalid_network": "网络出错，请稍后再试",
@@ -158,6 +185,21 @@
       "result_not_found": "没有找到搜索结果",
       "handling-reorg": " 检测到 {{time}} 发生 Reorg, CKB 浏览器正在彻底检查数据。所需时间约为半小时, 请稍后访问",
       "migration-notice": "浏览器服务将于 {{time}} 进行迁移, 可能出现短时不可用状态"
+    },
+    "cell": {
+      "live_cell": "未消耗 Cell",
+      "dead_cell": "已消耗 Cell",
+      "pending_cell": "待确认 Cell",
+      "cell_info": "Cell 信息",
+      "bind_description": {
+        "binding": "“待绑定”：当前Cell 对应的UTXO 已被消耗。如果“待绑定”持续时间过长，请检查消耗 此UTXO 对应BTC地址下的CKB交易状态。",
+        "bound": "“已绑定”： “已绑定” 意味着 Cell 的 Owner 是一个live 的 BTC UTXO, 该Cell 已被绑定至某个BTC地址。",
+        "unbound": "“异常解绑”状态：“异常解绑”意味着 Cell 的 Owner 是一个已经被消费掉的 BTC UTXO 或不存在, 该Cell 变成了一个无主Cell，没有任何地址可以使用。"
+      },
+      "out_point": "位置",
+      "in_block": "位于区块",
+      "time": "时间",
+      "capacity": "容量"
     },
     "navbar": {
       "wallet": "钱包",
@@ -197,7 +239,18 @@
       "wallet_renrenbit": "Renrenbit",
       "wallet_renrenbit_description": "A digital asset management platform offering 100% reserve",
       "wallets_memo": "In alphabetical order",
-      "nft_collections": "NFT 藏品"
+      "nft_collections": "NFT 藏品",
+      "fiber_network": "Fiber Network",
+      "fiber_statistics": "总览",
+      "fiber_graph_nodes": "节点",
+      "coins": "UDT"
+    },
+    "banner": {
+      "fiber_title": "Fiber Network 不忘初心",
+      "fiber_subtitle": "下一代通用闪电网络",
+      "learn_more": "了解更多",
+      "find_nodes": "更多节点",
+      "coming_soon": "敬请期待"
     },
     "blockchain": {
       "latest_block": "最高块",
@@ -208,16 +261,18 @@
       "estimated_epoch_time": "预计 Epoch 时间",
       "transactions_per_minute": "每分钟的交易数",
       "transactions_last_24hrs": "最近 24 小时的交易数",
+      "tags": "Tags",
       "nervos_dao": "Nervos DAO",
       "mainnet": "Lina Mainnet",
       "testnet": "Testnet"
     },
     "statistic": {
-      "transaction_num": "BTC 交易数量",
+      "btc_transaction_count": "BTC 交易数量",
       "new_btc_address": "新增加 BTC 地址",
       "rgbpp_transaction_list": "RGB++ 交易列表",
       "transaction_count": "交易数量",
       "address_count": "已使用的地址数",
+      "knowledge_size": "知识总量",
       "total_dao_deposit_depositor": "Nervos DAO 锁定总额 & 累计锁定地址数",
       "total_dao_deposit_title": "Nervos DAO 锁定总额",
       "total_dao_deposit": "锁定总额",
@@ -276,6 +331,7 @@
       "circulating_supply": "总流通量",
       "burnt": "销毁量",
       "locked": "未解锁数量",
+      "week": "时间 (周)",
       "year": "时间 (年)",
       "nominal_apc": "基准补偿率",
       "inflation_rate": "通胀率",
@@ -292,6 +348,7 @@
       "percent": "百分比",
       "others": "其他",
       "address_count_description": "链上已使用的地址总数",
+      "knowledge_size_description": "链上知识占用的空间",
       "block_time_distribution_description": "横轴表示区块间隔，纵轴表示对应区块间隔在过去 50,000 个区块中出现的比率。",
       "epoch_time_distribution_description": "横轴表示 epoch 时长，纵轴表示该时长的 epoch 在过去 500 个 epoch 中过去出现的次数。",
       "average_block_time_description": "按日和周进行滑动窗口平均统计的平均区块间隔",
@@ -309,6 +366,13 @@
       "ckb_amount": "CKB 数量",
       "contract_resource_distributed": "合约资源分布图",
       "contract_resource_distributed_description": "横轴表示合约的唯一地址数量, 纵轴是合约的 CKB 数量, 图标大小代表合约的交易数量",
+      "active_addresses": "活跃地址",
+      "active_addresses_description": "活跃地址是指在特定时间段内有交易记录的地址",
+      "active_address_count": "活跃地址数量",
+      "asset_activity": "资产活跃度",
+      "asset_activity_description": "横轴表示日期，纵轴表示交易次数和持有者数量。",
+      "udt_holders": "UDT 持有人",
+      "udt_txs": "UDT 交易",
       "country": "国家（地区）",
       "node_country_distribution": "节点国家(地区)分布图",
       "top_50_holders": "前 50 持有地址",
@@ -322,7 +386,8 @@
       "one_year_to_three_years": "1年-3年",
       "over_three_years": "> 3年",
       "ckb_hodl_wave": "CKB持有波动图",
-      "h24_transaction_count": "交易数量（最近24小时）"
+      "h24_transaction_count": "交易数量（最近24小时）",
+      "holder_count": "持有人数量"
     },
     "home": {
       "height": "高度",
@@ -354,7 +419,13 @@
       "youtube": "YouTube",
       "forum": "Forum",
       "tools": "工具箱",
-      "api-doc": "API 文档"
+      "api-doc": "API 文档",
+      "knowledge_base": "知识库",
+      "network": "网络",
+      "community_nodes": "社区节点",
+      "media_kit": "媒体包",
+      "ckb_world": "CKB World",
+      "eco_fund": "Eco Fund"
     },
     "search": {
       "loading": "加载中...",
@@ -384,7 +455,8 @@
       "bitcoin_address": "BTC 地址",
       "token_collection": "藏品集",
       "token_item": "藏品",
-      "did": "分布式数字身份（DID）"
+      "did": "分布式数字身份（DID）",
+      "fiber_graph_node": "Fiber Graph Node"
     },
     "address": {
       "address": "地址",
@@ -414,6 +486,7 @@
       "cells": "Cells",
       "inscription": "铭文",
       "rgb_plus_plus": "RGB++",
+      "invalid": "Invalid",
       "confirmation": "确认区块",
       "confirmations": "确认区块",
       "unable_decode_address": "地址解析失败",
@@ -426,11 +499,11 @@
       "transaction_rgbpp_digest": "RGB++ Digest",
       "seal_tx_on_bitcoin": "Seal Tx On Bitcoin",
       "tx_on_bitcoin": "Tx On Bitcoin",
-      "leap_in": "L1 → L2",
-      "leap_out": "L2 → L1",
-      "leap_with_in_btc": "L1 → L1",
-      "leap_in_tip": "本笔 RGB++ 交易被标记为\"L1 → L2\"，即存在一般 CKB 资产转化为 RGB++ 资产。",
-      "leap_out_tip": "本笔 RGB++ 交易被标记为\"L2 → L1\"，即存在 RGB++ 资产转化为一般 CKB 资产。",
+      "leap_in": "Leap from BTC",
+      "leap_out": "Leap to BTC",
+      "leap_with_in_btc": "在 BTC 上转移",
+      "leap_in_tip": "本笔 RGB++ 交易被标记为\"BTC → CKB\"，即存在一般 CKB 资产转化为 RGB++ 资产。",
+      "leap_out_tip": "本笔 RGB++ 交易被标记为\"CKB → BTC\"，即存在 RGB++ 资产转化为一般 CKB 资产。",
       "view_in_btc_explorer": "在 Bitcoin 浏览器查看",
       "view-as-asset-items": "查看资产分布",
       "view-as-merged-assets": "查看资产合计(不含 CKB)",
@@ -445,7 +518,16 @@
       "cell-info": "Cell详情"
     },
     "rgbpp": {
+      "assets": {
+        "multiple_warning": "当前 UTXO 下有多个资产，消耗 UTXO 时请确保资产不会丢失"
+      },
       "transaction": {
+        "direction": {
+          "other": "Others",
+          "description": {
+            "other": "Others 包括了不严格遵循 RGB++ 规则的 CKB 交易"
+          }
+        },
         "ckb_tx": "CKB 交易",
         "btc_tx": "BTC 交易",
         "block_number": "区块序号",
@@ -463,9 +545,15 @@
           "unlock": "解锁"
         }
       },
-      "amount": "数量"
+      "amount": "数量",
+      "visit": "访问",
+      "rgbpp_explorer": "RGB++ 浏览器",
+      "explore_the": "探索",
+      "ecosystem": "生态",
+      "visit_this_item_on_rgbpp_explorer": "在 RGB++ 浏览器访问此项目"
     },
     "transaction": {
+      "ckb-cell-info": "CKB Cell Info",
       "view_rgbpp_digest": "查看 RGB++ 摘要",
       "transaction": "交易",
       "transactions": "交易",
@@ -473,6 +561,7 @@
       "transaction_fee": "交易费",
       "fee_rate": "费率",
       "cell_deps": "CellDeps",
+      "out_point": "OutPoint",
       "out_point_tx_hash": "OutPoint.TxHash",
       "out_point_index": "OutPoint.Index",
       "dep_type": "DepType",
@@ -535,6 +624,8 @@
       "script_data": "data",
       "export-transaction": "导出交易",
       "capacity_usage": "Capacity 使用情况",
+      "rgbpp": "RGB++",
+      "utxo_graph": "UTXO 图形化",
       "declared_capacity": "declared",
       "occupied_capacity": "occupied",
       "size": "交易体积",
@@ -568,7 +659,27 @@
       "view-btc-tx": "查看 BTC 交易",
       "isomorphic-binding-with-index": "与CKB Tx {{index}} 同构绑定",
       "isomorphic-binding-with-index-commitment": "与 CKB Tx {{index}} 同构绑定\n\nCommitment:\n{{commitment}}",
-      "loading": "Loading..."
+      "fiber_cell_input": "当前输入是 Fiber 网络交易输入。",
+      "fiber_cell_output": "当前输出是 Fiber 网络交易输出。",
+      "loading": "Loading...",
+      "fiber_channel": "Fiber Channel",
+      "deployment": "部署",
+      "deployed_script": "部署脚本",
+      "range_notice": "只显示最近的 5,000 条相关交易",
+      "status_label": {
+        "pending": {
+          "label": "待处理",
+          "tooltip": "交易尚未被提交到区块中"
+        },
+        "rejected": {
+          "label": "已拒绝",
+          "tooltip": "交易被拒绝，不会被提交到区块中"
+        },
+        "untracked": {
+          "label": "未追踪",
+          "tooltip": "交易未被浏览器追踪，请与发送方确认"
+        }
+      }
     },
     "block": {
       "block": "区块",
@@ -667,7 +778,7 @@
       "view_apc_trending": "预计年化补贴率(APC)"
     },
     "error": {
-      "maintain": "最新区块为 {{tip}}, 当前同步高度落后 {{lag}} 区块",
+      "maintain": "最新区块为 {{tip}}, 当前同步高度落后 {{lag}} 区块. 可以使用 <switcher>节点模式</switcher>查看最新数据",
       "page_crashed_tip": "遇到了一些错误",
       "back_home": "前往首页",
       "codes": {
@@ -695,9 +806,13 @@
       "current_page": "第",
       "of_page": "页，共",
       "only_first_pages_visible": "显示最近 {{pages}} 页",
-      "show_rows": "每页显示"
+      "show_rows": "每页显示",
+      "load_more": "加载更多",
+      "no_more_data": "没有更多数据了"
     },
     "udt": {
+      "udts": "UDT 列表",
+      "description": "所有满足 UDT 特征或特性的代币都将包含在此处。这包括 xUDT 和 sUDT。",
       "sudt": "sUDT",
       "name": "代币名称",
       "symbol": "代币符号",
@@ -713,7 +828,7 @@
       "submit_token_info": "提交代币信息",
       "modify_token_info": "修改代币信息",
       "unknown_token_description": "此代币信息暂时不完整，如果你是此代币的拥有者，请提交代币信息",
-      "tokens": "代币",
+      "tokens": "sUDT 列表",
       "transactions": "24小时交易数",
       "address_count": "持币用户数",
       "created_time": "创建时间",
@@ -743,12 +858,22 @@
       "repeat_inscription_symbol": "此铭文与早期发布的铭文同名"
     },
     "xudt": {
-      "holder_allocation": "地址分布",
-      "holder_allocation_description": "当前资产有 {{ckb}} 个 CKB 用户及 {{btc}} 个 BTC 用户",
+      "title": {
+        "tags": "标签"
+      },
+      "read_contract": {
+        "title": "读取合约",
+        "query": "查询",
+        "add_parameter": "添加参数",
+        "expand_all": "展开所有",
+        "collapse_all": "收起所有"
+      },
+      "holder_distribution": "地址分布",
+      "holder_distribution_description": "当前资产有 {{ckb}} 个 CKB 用户及 {{btc}} 个 BTC 用户，BTC holder 是指拥有此资产的去重 BTC 地址数量。",
       "lock_hash": "Lock Hash",
       "count": "Count",
       "xudt": "xUDT",
-      "xudts": "xUDTs",
+      "xudts": "xUDT 列表",
       "name": "名称",
       "symbol": "符号",
       "total_amount": "总量",
@@ -758,21 +883,42 @@
       "type_script_hash": "Type Script Hash",
       "holders": "用户数",
       "unique_addresses": "CKB 地址数",
+      "rgbpp_holders_count": "持有人数",
+      "display_unique_ckb_addresses": "展示 CKB 地址数",
+      "display_rgbpp_holders": "展示 RGB++ 持有人数",
       "decimal": "小数位",
       "transactions": "24小时交易数",
       "address_count": "用户数",
       "created_time": "创建时间",
       "tokens_empty": "目前没有 xUDT。",
-      "invalid": "无效",
-      "suspicious": "可疑",
-      "out-of-length-range": "超长",
-      "duplicate": "重复",
-      "layer-1-asset": "Layer 1 资产",
-      "layer-2-asset": "Layer 2 资产",
-      "verified-on": "Platform 平台认证",
-      "supply-limited": "有限供应资产",
-      "supply-unlimited": "无限供应资产",
-      "rgbpp-compatible": "RGB++兼容",
+      "tags": {
+        "invalid": "无效",
+        "suspicious": "可疑",
+        "utility": "有效用的",
+        "out-of-length-range": "超长",
+        "duplicate": "重复",
+        "layer-1-asset": "发行于 Bitcoin",
+        "layer-2-asset": "发行于 CKB",
+        "verified-on": "Platform 平台认证",
+        "supply-limited": "有限供应资产",
+        "supply-unlimited": "无限供应资产",
+        "rgb++": "RGB++",
+        "unnamed": "未命名"
+      },
+      "tags_description": {
+        "invalid": "此 Tag 标记的资产名称中含有无效字符。",
+        "suspicious": "此 Tag 标记的资产名称中含有大量隐藏字符类型。",
+        "out-of-length-range": "此 Tag 标记的资产名称长度超过 60 字符。",
+        "duplicate": "区分大小写前提下，此 Tag 标记的资产名称与已发行过的资产重复。",
+        "rgb++": "此 Tag 标记的资产是 RGB++ 协议兼容资产，可以在 BTC 和 CKB 之间相互转移。",
+        "layer-1-asset": "此 Tag 标记的资产是发行在 Bitcoin 上的资产。",
+        "layer-2-asset": "此 Tag 标记的资产是发行在 CKB 上的资产。",
+        "verified-on": "此 Tag 标记的资产是经过 Cell Studio 校验的资产。",
+        "supply-limited": "此Tag标记的资产是有限供应的资产，有最大资产数量限制。",
+        "supply-unlimited": "此Tag标记的资产是无限供应的资产，无最大资产数量限制。",
+        "view_more": "查看更多",
+        "unnamed": "此Tag标记的资产名称字段为空。"
+      },
       "category": "类别"
     },
     "nft": {
@@ -818,17 +964,7 @@
       "no-traits": "没有特征"
     },
     "script_list": {
-      "title": "脚本",
-      "links": "相关链接",
-      "on_chain_data": "链上数据",
-      "link": {
-        "rfc": "RFC",
-        "code": "源代码",
-        "doc": "文档",
-        "deprecated": "已废弃",
-        "website": "官网",
-        "detail": "详情"
-      }
+      "title": "脚本"
     },
     "scripts": {
       "script": "Script",
@@ -845,7 +981,19 @@
       "capacity_of_deployed_cells": "部署的 Cells 所占 Capacity",
       "capacity_of_referring_cells": "引用的 Cells 所占 Capacity",
       "LockScript": "Lock Script",
-      "TypeScript": "Type Script"
+      "TypeScript": "Type Script",
+      "deployed_script": "部署的脚本",
+      "open_source_script": "已开源脚本",
+      "restrict_mode": "受限模式",
+      "restrict_tooltip": "在受限模式下，此交易列表不会包含仅仅将当前脚本作为其依赖项之一的交易。",
+      "timestamp": "部署上链时间",
+      "deprecated": "已废弃",
+      "verified": "已验证",
+      "link": {
+        "rfc": "RFC",
+        "code": "源代码",
+        "website": "官网"
+      }
     },
     "fee_rate_tracker": {
       "title": "费率追踪",
@@ -873,8 +1021,12 @@
       "csv_export": "CSV导出",
       "download_data": "下载数据",
       "holders_by_block": "Holders by Block",
+      "holders_allocation": "Holders 配置",
       "holders_by_block_title": "Holders by Block CSV download",
       "holders_by_block_des": "您可以在本页下载特定区块编号地址持有的 xUDT 数量记录",
+      "select_export_data": "数据聚合方式",
+      "by_owner": "按持有人",
+      "by_ckb_address": "按 CKB Address",
       "transactions": "交易",
       "description_str": "您请求的信息可以从该页面下载。 在继续之前，请通过填写下面的验证码来验证您不是机器人。",
       "select_download_options": "选择下载选项",
@@ -885,6 +1037,8 @@
       "to_block": "目标块高",
       "block_height": "区块高度",
       "note_str": "这将导出所选范围内最早的 5,000 条记录",
+      "dao_tx_note_str": "这将导出所选范围内最早的 5,000 条记录，记录数可能会超过 5,000 条，因为一条交易可能包括多条记录。",
+      "dao_depositor_note_str": "这将导出所选范围内排名最高的 5,000 名存款人",
       "download": "下载",
       "block_number": "块高",
       "please_pick_date": "请选择开始日期和结束日期!",
@@ -944,6 +1098,7 @@
       "token-info": "Token Info",
       "xudt-data": "XUDT Data",
       "btc-time-lock": "BTC Time Lock",
+      "spore-cluster": "Spore Cluster",
       "spore": "Spore",
       "json": "JSON",
       "select-x-from-y": "从 {{y}} 字符起选择了 {{x}} 个字符",
@@ -979,8 +1134,93 @@
     "node": {
       "alert": "当前使用节点模式。在节点模式中，浏览器数据将取自节点，因此部分功能/数据无法不再支持，同时。您可在浏览器右上角或<switcher>点击此处</switcher>切换节点",
       "done": "完成",
+      "alias": "别名",
+      "rpc_url": "节点地址",
+      "node_existed": "该节点已存在",
+      "add_success": "添加节点成功",
+      "modify_success": "修改节点成功",
+      "default_node": "默认节点",
+      "add_node": "添加节点",
+      "modify_node": "修改节点",
+      "alias_required": "请输入节点别名",
+      "url_required": "请输入节点地址",
+      "url_invalid": "节点地址不是有效的 URL",
       "node_connect_mode": "节点连接模式",
+      "invalid_network": "节点不匹配，请尝试切换 主网 / 测试网 来连接此节点",
+      "connect_failed": "节点连接失败",
       "node_connect_tooltip": "打开节点连接模式时，浏览器数据将从节点获取，因此无法再支持某些功能/数据。"
+    },
+    "utxo_graph": {
+      "view_tx": "查看交易",
+      "tx_hash": "交易",
+      "view_address": "查看地址",
+      "view_btc_utxo": "查看 BTC UTXO",
+      "view_cell_info": "查看 Cell 信息"
+    },
+    "fiber": {
+      "fiber_node": "Fiber 节点",
+      "peer": {
+        "peer_id": "ID",
+        "name": "名称",
+        "channels_count": "通道数",
+        "channels": "通道",
+        "open_time": "开启时间",
+        "update_time": "最后更新时间",
+        "total_local_balance": "本地余额",
+        "rpc_addr": "RPC 地址",
+        "connect_id": "连接 ID"
+      },
+      "channel": {
+        "channel_id": "通道 ID",
+        "fiber_peers": "Fiber 节点",
+        "state": "状态",
+        "open_time": "开启时间",
+        "update_time": "最后更新时间",
+        "shutdown_time": "关闭时间",
+        "balance": "余额",
+        "local": "本地",
+        "remote": "远程",
+        "tlc_balance": "TLC 余额",
+        "offered": "已提供",
+        "received": "已接收"
+      },
+      "action": {
+        "open": "开启",
+        "close": "关闭"
+      },
+      "graph": {
+        "total_capacity": "总 Capacity",
+        "total_liquidity": "总流动性",
+        "total_nodes": "总节点数",
+        "total_channels": "总通道数",
+        "mean": "均值",
+        "median": "中位数",
+        "mean_locked_capacity": "平均锁定 Capacity",
+        "mean_fee_rate": "平均费率",
+        "median_locked_capacity": "中位数锁定 Capacity",
+        "median_fee_rate": "中位数费率",
+        "public_fiber_node_world_map": "公开 Fiber 节点地图",
+        "public_fiber_nodes": "公开 Fiber 节点",
+        "node": {
+          "id": "节点 ID",
+          "name": "名称",
+          "alias": "别名",
+          "auto_accept_funding_amount": "资金设定",
+          "first_seen_last_update": "首次发现/最后更新",
+          "node_id": "节点 ID",
+          "chain": "链",
+          "chain_hash": "链哈希",
+          "addresses": "地址",
+          "total_capacity": "总容量",
+          "open_channels": "开启通道",
+          "total_liquidity": "总流动性",
+          "liquidity_allocation": "流动性分布",
+          "not_found": "未找到节点"
+        },
+        "channel": {
+          "connected_node": "连接节点"
+        }
+      }
     }
   }
 }

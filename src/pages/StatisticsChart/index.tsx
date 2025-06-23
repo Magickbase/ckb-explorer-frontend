@@ -6,16 +6,18 @@ import { DifficultyHashRateChart } from './mining/DifficultyHashRate'
 import { DifficultyUncleRateEpochChart } from './mining/DifficultyUncleRateEpoch'
 import { TransactionCountChart } from './activities/TransactionCount'
 import { AddressCountChart } from './activities/AddressCount'
+import { KnowledgeSizeChart } from './activities/KnowledgeSize'
 import { CellCountChart } from './activities/CellCount'
 import { CkbHodlWaveChart } from './activities/CkbHodlWave'
 import { TotalDaoDepositChart } from './nervosDao/TotalDaoDeposit'
-import { ChartsPanel, ChartCardPanel, ChartsTitle, ChartsContent } from './styled'
 import { AddressBalanceRankChart } from './activities/AddressBalanceRank'
 import { DifficultyChart } from './mining/Difficulty'
 import { HashRateChart } from './mining/HashRate'
 import { UncleRateChart } from './mining/UncleRate'
 import { BalanceDistributionChart } from './activities/BalanceDistribution'
 import { ContractResourceDistributedChart } from './activities/ContractResourceDistributed'
+import { ActiveAddressesChart } from './activities/ActiveAddressesChart'
+import { AssetActivityChart } from './activities/AssetActivity'
 import { TxFeeHistoryChart } from './activities/TxFeeHistory'
 import { BlockTimeDistributionChart } from './block/BlockTimeDistribution'
 import { EpochTimeDistributionChart } from './block/EpochTimeDistribution'
@@ -34,6 +36,7 @@ import NodeGeoDistributionChart from './mining/NodeGeoDistribution'
 import { useIsMobile } from '../../hooks'
 import { HelpTip } from '../../components/HelpTip'
 import { Link } from '../../components/Link'
+import styles from './index.module.scss'
 
 interface ChartData {
   title: string
@@ -50,22 +53,20 @@ interface ChartCategory {
 const ChartTitle = ({ chartData }: { chartData: ChartData }) => (
   <div className="chartCardTitlePenal">
     <div className="chartCardTitle">{chartData.title}</div>
-    {chartData.description && (
-      <HelpTip placement="bottom" title={chartData.description} iconProps={{ alt: 'chart help' }} />
-    )}
+    {chartData.description && <HelpTip iconProps={{ alt: 'chart help' }}>{chartData.description}</HelpTip>}
   </div>
 )
 
 const ChartCard = ({ chartData }: { chartData: ChartData }) => {
   const isMobile = useIsMobile()
   return (
-    <ChartCardPanel>
+    <div className={styles.chartCardPanel}>
       {isMobile && <ChartTitle chartData={chartData} />}
       <Link to={chartData.path}>
         {!isMobile && <ChartTitle chartData={chartData} />}
         <div className="chartCardBody">{chartData.chart}</div>
       </Link>
-    </ChartCardPanel>
+    </div>
   )
 }
 
@@ -119,6 +120,24 @@ const useChartsData = () => {
           chart: <ContractResourceDistributedChart isThumbnail />,
           path: '/charts/contract-resource-distributed',
           description: t('statistic.contract_resource_distributed_description'),
+        },
+        {
+          title: `${t('statistic.active_addresses')}`,
+          chart: <ActiveAddressesChart isThumbnail />,
+          path: '/charts/active-addresses',
+          description: t('statistic.active_addresses_description'),
+        },
+        {
+          title: t('statistic.asset_activity'),
+          chart: <AssetActivityChart isThumbnail />,
+          path: '/charts/asset-activity',
+          description: t('statistic.asset_activity_description'),
+        },
+        {
+          title: `${t('statistic.knowledge_size')}`,
+          chart: <KnowledgeSizeChart isThumbnail />,
+          path: '/charts/knowledge-size',
+          description: t('statistic.knowledge_size'),
         },
       ],
     },
@@ -261,19 +280,19 @@ export default () => {
   const chartsData = useChartsData()
   return (
     <Content>
-      <ChartsContent className="container">
-        <ChartsTitle>{t('statistic.charts_title')}</ChartsTitle>
+      <div className={`${styles.chartsContent} container`}>
+        <div className={styles.chartsTitle}>{t('statistic.charts_title')}</div>
         {chartsData().map(chartData => (
-          <ChartsPanel key={chartData.category}>
+          <div className={styles.chartsPanel} key={chartData.category}>
             <div className="chartsCategoryTitle">{chartData.category}</div>
             <div className="chartsCategoryPanel">
               {chartData.charts.map(chart => (
                 <ChartCard chartData={chart} key={chart.title} />
               ))}
             </div>
-          </ChartsPanel>
+          </div>
         ))}
-      </ChartsContent>
+      </div>
     </Content>
   )
 }

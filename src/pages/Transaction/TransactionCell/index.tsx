@@ -1,25 +1,21 @@
-import { useState, ReactNode, FC } from 'react'
-import { Tooltip } from 'antd'
+import { useState, ReactNode, FC, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from '@tanstack/react-query'
+import { addressToScript } from '@nervosnetwork/ckb-sdk-utils'
 import { Link } from '../../../components/Link'
-import { IOType } from '../../../constants/common'
+import { IOType, IS_MAINNET } from '../../../constants/common'
+import { MainnetContractHashTags, TestnetContractHashTags, ZERO_LOCK_CODE_HASH } from '../../../constants/scripts'
 import { parseUDTAmount } from '../../../utils/number'
-import { parseSimpleDate } from '../../../utils/date'
+import { dayjs, parseSimpleDate } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
-import { shannonToCkb, shannonToCkbDecimal, parseSince } from '../../../utils/util'
 import {
-  TransactionCellContentPanel,
-  TransactionCellDetailPanel,
-  TransactionCellHashPanel,
-  TransactionCellPanel,
-  TransactionCellDetailModal,
-  TransactionCellCardPanel,
-  TransactionCellAddressPanel,
-  TransactionCellInfoPanel,
-  TransactionCellMobileItem,
-  TransactionCellNftInfo,
-  TransactionCellCardSeparate,
-} from './styled'
+  shannonToCkb,
+  shannonToCkbDecimal,
+  parseSince,
+  formatNftDisplayId,
+  handleNftImgError,
+} from '../../../utils/util'
+import { UDT_CELL_TYPES } from '../../../utils/cell'
 import TransactionCellArrow from '../../../components/Transaction/TransactionCellArrow'
 import Capacity from '../../../components/Capacity'
 import NervosDAODepositIcon from '../../../assets/nervos_dao_cell.png'
@@ -28,12 +24,16 @@ import UDTTokenIcon from '../../../assets/udt_token.png'
 import NFTIssuerIcon from './m_nft_issuer.svg'
 import NFTClassIcon from './m_nft_class.svg'
 import NFTTokenIcon from './m_nft.svg'
+import MoreIcon from './more.svg'
+import DobIcon from './dob.svg'
+import OwnerlessIcon from './ownerless.svg'
 import CoTACellIcon from './cota_cell.svg'
+import FiberIcon from './fiber.svg'
 import CoTARegCellIcon from './cota_reg_cell.svg'
 import SporeCellIcon from './spore.svg'
+import MultisigIcon from './multisig.svg'
 import { ReactComponent as LockTimeIcon } from './clock.svg'
 import { ReactComponent as BitAccountIcon } from '../../../assets/bit_account.svg'
-import TransactionCellScript from '../TransactionCellScript'
 import SimpleModal from '../../../components/Modal'
 import SimpleButton from '../../../components/SimpleButton'
 import TransactionReward from '../TransactionReward'
@@ -43,8 +43,20 @@ import { useDeprecatedAddr, useIsMobile, useNewAddr } from '../../../hooks'
 import { useDASAccount } from '../../../hooks/useDASAccount'
 import styles from './styles.module.scss'
 import AddressText from '../../../components/AddressText'
-import { Cell } from '../../../models/Cell'
+import { Cell, Cell$Spore, UDTInfo } from '../../../models/Cell'
+import CellModal from '../../../components/Cell/CellModal'
 import { CellBasicInfo } from '../../../utils/transformer'
+import { getSporeImg } from '../../../utils/spore'
+import { explorerService } from '../../../services/ExplorerService'
+import Skeleton from '../../../components/ui/Skeleton'
+import Tooltip from '../../../components/Tooltip'
+import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/Popover'
+
+const scriptDataList = IS_MAINNET ? MainnetContractHashTags : TestnetContractHashTags
+const scriptDataMap = scriptDataList.reduce((acc, item) => {
+  acc[item.tag] = item
+  return acc
+}, {} as Record<string, (typeof scriptDataList)[number]>)
 
 export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBase }) => {
   const alias = useDASAccount(address)
@@ -53,11 +65,11 @@ export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, is
   if (alias && address) {
     return (
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Tooltip title=".bit Name">
+        <Tooltip trigger=".bit Name">
           <BitAccountIcon className={styles.icon} />
         </Tooltip>
 
-        <Tooltip placement="top" title={<CopyTooltipText content={address} />}>
+        <Tooltip placement="top" trigger={<CopyTooltipText content={address} />}>
           <Link to={`/address/${address}`} className="monospace">
             {alias}
           </Link>
@@ -70,7 +82,7 @@ export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, is
     return (
       <AddressText
         linkProps={{
-          className: 'transactionCellAddressLink',
+          className: styles.transactionCellAddressLink,
           to: `/address/${address}`,
         }}
       >
@@ -79,7 +91,9 @@ export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, is
     )
   }
   return (
-    <span className="transactionCellAddressNoLink">{isCellBase ? 'Cellbase' : t('address.unable_decode_address')}</span>
+    <span className={styles.transactionCellAddressNoLink}>
+      {isCellBase ? 'Cellbase' : t('address.unable_decode_address')}
+    </span>
   )
 }
 
@@ -115,11 +129,11 @@ const TransactionCellIndexAddress = ({
     // ignore
   }
   return (
-    <TransactionCellAddressPanel>
-      <div className="transactionCellIndex">
+    <div className={styles.transactionCellAddressPanel}>
+      <div className={styles.transactionCellIndex}>
         <div>{`#${index}`}</div>
       </div>
-      <TransactionCellHashPanel highLight={cell.addressHash !== null}>
+      <div className={styles.transactionCellHashPanel} data-is-highlight={cell.addressHash !== null}>
         {!cell.fromCellbase && ioType === IOType.Input && (
           <span>
             <TransactionCellArrow cell={cell} ioType={ioType} />
@@ -130,15 +144,103 @@ const TransactionCellIndexAddress = ({
         {since ? (
           <Tooltip
             placement="top"
-            title={t(`transaction.since.${since.base}.${since.type}`, {
+            trigger={t(`transaction.since.${since.base}.${since.type}`, {
               since: since.value,
             })}
           >
             <LockTimeIcon className={styles.locktime} />
           </Tooltip>
         ) : null}
-      </TransactionCellHashPanel>
-    </TransactionCellAddressPanel>
+      </div>
+    </div>
+  )
+}
+
+const DOBInfo: FC<{ cell: Cell$Spore }> = ({ cell }) => {
+  const { collection: { typeHash } = {} } = cell.extraInfo
+  const { data: dobInfo, isLoading } = useDOBInfo(cell)
+
+  const tokenIdStr = `${dobInfo.nftInfo?.standard === 'spore' ? '' : '#'}${formatNftDisplayId(
+    dobInfo.nftInfo?.token_id ?? '',
+    dobInfo.nftInfo?.standard ?? null,
+  )}`
+
+  const textSkeleton = <Skeleton style={{ height: 16, width: 150 }} />
+
+  return (
+    <div className={styles.dodInfo}>
+      {dobInfo.cover ? (
+        <img src={dobInfo.cover} alt="nft" className={styles.dodInfoImage} onError={handleNftImgError} />
+      ) : (
+        <Skeleton shape="square" style={{ width: 72, height: 72 }} />
+      )}
+      <div className={styles.dodInfoDetails}>
+        <div className={styles.dodInfoItem}>
+          <div className={styles.dodInfoLabel}>Name</div>
+          <div className={styles.dodInfoValue}>
+            {isLoading ? (
+              textSkeleton
+            ) : (
+              <Link to={`/nft-info/${typeHash}/${dobInfo.nftInfo?.token_id}`} className={styles.dodInfoValue}>
+                <span className="monospace">
+                  {dobInfo.nftInfo?.collection.name ?? 'Unique Item'}{' '}
+                  {tokenIdStr.length > 10 ? `${tokenIdStr.slice(0, 6)}...${tokenIdStr.slice(-6)}` : tokenIdStr}
+                </span>
+              </Link>
+            )}
+          </div>
+        </div>
+        <div className={styles.dodInfoRow}>
+          <div className={styles.dodInfoItem}>
+            <div className={styles.dodInfoLabel}>Collection</div>
+            <div className={styles.dodInfoValue}>
+              {isLoading ? (
+                textSkeleton
+              ) : (
+                <Link to={`/nft-collections/${typeHash}`} className={styles.collection}>
+                  {dobInfo.nftInfo?.collection.name ?? 'Unique Item'}
+                </Link>
+              )}
+            </div>
+          </div>
+          <div className={styles.dodInfoItem}>
+            <div className={styles.dodInfoLabel}>Token ID</div>
+            <div className={`${styles.dodInfoValue}`}>
+              {isLoading ? (
+                textSkeleton
+              ) : (
+                <Link to={`/nft-info/${typeHash}/${dobInfo.nftInfo?.token_id}`} className="monospace">
+                  {tokenIdStr.length > 10 ? `${tokenIdStr.slice(0, 6)}...${tokenIdStr.slice(-6)}` : tokenIdStr}
+                </Link>
+              )}
+            </div>
+          </div>
+          <div className={styles.dodInfoItem}>
+            <div className={styles.dodInfoLabel}>Created At</div>
+            <div>{isLoading ? textSkeleton : dayjs(dobInfo.nftInfo?.created_at).format('YYYY/MM/DD HH:mm:ss')}</div>
+          </div>
+          <div className={styles.dodInfoItem}>
+            <div className={styles.dodInfoLabel}>Creator</div>
+            {isLoading ? (
+              textSkeleton
+            ) : (
+              <div>
+                {dobInfo.nftInfo?.collection.creator ? (
+                  <Link to={`/address/${dobInfo.nftInfo.collection.creator}`} className={styles.dodInfoValue}>
+                    <span className="monospace">{`${dobInfo.nftInfo.collection.creator.slice(
+                      0,
+                      6,
+                    )}...${dobInfo.nftInfo.collection.creator.slice(-6)}`}</span>
+                  </Link>
+                ) : (
+                  '-'
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -146,7 +248,7 @@ const useParseNftInfo = (cell: Cell) => {
   const { t } = useTranslation()
   if (cell.cellType === 'nrc_721_token') {
     const nftInfo = cell.extraInfo
-    return <TransactionCellNftInfo>{`${nftInfo.symbol} #${nftInfo.amount}`}</TransactionCellNftInfo>
+    return <div className={styles.transactionCellNftInfo}>{`${nftInfo.symbol} #${nftInfo.amount}`}</div>
   }
 
   if (cell.cellType === 'm_nft_issuer') {
@@ -162,23 +264,213 @@ const useParseNftInfo = (cell: Cell) => {
     const className = nftInfo.className ? sliceNftName(nftInfo.className) : t('transaction.unknown_nft')
     const limit = nftInfo.total === '0' ? t('transaction.nft_unlimited') : t('transaction.nft_limited')
     const total = nftInfo.total === '0' ? '' : nftInfo.total
-    return <TransactionCellNftInfo>{`${className}\n${limit} ${total}`}</TransactionCellNftInfo>
+    return <div className={styles.transactionCellNftInfo}>{`${className}\n${limit} ${total}`}</div>
   }
 
   if (cell.cellType === 'm_nft_token') {
     const nftInfo = cell.extraInfo
     const className = nftInfo.className ? sliceNftName(nftInfo.className) : t('transaction.unknown_nft')
     const total = nftInfo.total === '0' ? '' : ` / ${nftInfo.total}`
-    return <TransactionCellNftInfo>{`${className}\n#${parseInt(nftInfo.tokenId, 16)}${total}`}</TransactionCellNftInfo>
+    return (
+      <div className={styles.transactionCellNftInfo}>{`${className}\n#${parseInt(nftInfo.tokenId, 16)}${total}`}</div>
+    )
   }
+
+  if (cell.cellType === 'spore_cell' || cell.cellType === 'did_cell') {
+    return <DOBInfo cell={cell as Cell$Spore} />
+  }
+}
+
+const useDOBInfo = (cell: Cell) => {
+  const [cover, setCover] = useState('/images/spore_placeholder.svg')
+
+  const { typeHash, tokenId } = (() => {
+    if (cell.cellType !== 'spore_cell' && cell.cellType !== 'did_cell') {
+      return { typeHash: undefined, tokenId: undefined }
+    }
+
+    if (!cell.extraInfo || !('collection' in cell.extraInfo)) {
+      return { typeHash: undefined, tokenId: undefined }
+    }
+
+    return {
+      typeHash: cell.extraInfo.collection?.typeHash,
+      tokenId: cell.extraInfo.tokenId,
+    }
+  })()
+
+  const { data, isLoading } = useQuery(
+    ['nft-item-info', typeHash, tokenId],
+    () => explorerService.api.fetchNFTCollectionItem(typeHash!, tokenId!),
+    {
+      enabled: !!typeHash && !!tokenId && (cell.cellType === 'spore_cell' || cell.cellType === 'did_cell'),
+    },
+  )
+
+  useEffect(() => {
+    if (cell.cellType !== 'spore_cell' && cell.cellType !== 'did_cell') {
+      return
+    }
+
+    if (!cell.extraInfo) {
+      return
+    }
+
+    getSporeImg({ data: cell.extraInfo.data, id: cell.extraInfo.tokenId }).then(res => {
+      setCover(res)
+    })
+  }, [cell])
+
+  return {
+    data: {
+      cover,
+      nftInfo: data,
+    },
+    isLoading,
+  }
+}
+
+const HoverablePopover = ({ children, content }: { children: ReactNode; content: ReactNode }) => {
+  const [open, setOpen] = useState(false)
+  const [isClicked, setIsClicked] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    setOpen(true)
+  }
+
+  const handleMouseLeave = () => {
+    if (!isClicked) {
+      timeoutRef.current = setTimeout(() => {
+        setOpen(false)
+      }, 300)
+    }
+  }
+
+  const handleClick = () => {
+    setIsClicked(true)
+    setOpen(prev => !prev)
+  }
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen)
+    if (!newOpen) {
+      setIsClicked(false)
+    }
+  }
+
+  return (
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleClick}>
+        {children}
+      </PopoverTrigger>
+      <PopoverContent onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        {content}
+      </PopoverContent>
+    </Popover>
+  )
 }
 
 export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
   const { t } = useTranslation()
-  let detailTitle = t('transaction.ckb_capacity')
+  let detailTitle: JSX.Element | string = <span>{t('transaction.ckb_capacity')}</span>
   let detailIcon
   let tooltip: string | ReactNode = ''
   const nftInfo = useParseNftInfo(cell)
+  const { data: dobInfo } = useDOBInfo(cell)
+
+  const lockScript = addressToScript(cell.addressHash)
+  const isMultisig = (cell.tags ?? []).find(tag => tag === 'multisig') !== undefined
+  const isFiber = (cell.tags ?? []).find(tag => tag === 'fiber') !== undefined
+  const isDeployment = (cell.tags ?? []).find(tag => tag === 'deployment') !== undefined
+  const isDob = cell.cellType === 'spore_cell' || cell.cellType === 'did_cell'
+  const isZeroLock = lockScript.codeHash === ZERO_LOCK_CODE_HASH
+
+  const tokenIdStr = `${dobInfo.nftInfo?.standard === 'spore' ? '' : '#'}${formatNftDisplayId(
+    dobInfo.nftInfo?.token_id ?? '',
+    dobInfo.nftInfo?.standard ?? null,
+  )}`
+
+  const taglists = [
+    {
+      key: 'Dob',
+      tag: 'Dob Protocol',
+      description: 'This cell is related to Dob Protocol.',
+      display: isDob,
+      link: `/script/${scriptDataMap.Spore.codeHashes[0]}/${scriptDataMap.Spore.hashType}`,
+      icon: DobIcon,
+      iconColor: '#FFFEC1',
+    },
+    {
+      key: 'Deployment',
+      tag: 'Deployment',
+      description: 'This cell is related to Deployment.',
+      display: isDeployment,
+      link: '/scripts',
+      icon: DobIcon, // The ui doesn't provide an icon yet, so use another icon for now.
+    },
+    {
+      key: 'Multisig',
+      tag: (
+        <>
+          Multisig <span className="text-primary">(@{lockScript.codeHash.slice(2, 10)})</span>
+        </>
+      ),
+      description: 'This cell is related to Multisig. It can be used to create a multisig address.',
+      display: isMultisig,
+      link: `/script/${lockScript.codeHash}/${lockScript.hashType}`,
+      icon: MultisigIcon,
+      iconColor: '#DCEDFF',
+    },
+    {
+      key: 'Fiber',
+      tag: 'Fiber Network',
+      description: 'This cell is related to Fiber Network.',
+      display: isFiber,
+      link: cell.fiberGraphChannelInfo ? `/fiber/graph/node/${cell.fiberGraphChannelInfo.node1}` : '/fiber/graph/nodes',
+      icon: FiberIcon,
+    },
+    {
+      key: 'Ownerless',
+      tag: 'Ownerless Cell',
+      description: `This cell ownerless because it's bound to a zero lock script.`,
+      display: isZeroLock,
+      link: '/script/0x0000000000000000000000000000000000000000000000000000000000000000/data',
+      icon: OwnerlessIcon,
+    },
+  ]
+  const isDisplayTagList = taglists.filter(tag => tag.display).length > 0
+
+  const CellTag = ({
+    tag,
+    description,
+    link,
+    icon,
+    iconColor,
+  }: {
+    tag: string | ReactNode
+    description: string
+    link: string
+    icon: string
+    iconColor?: string
+  }) => {
+    return (
+      <Link to={link}>
+        <div className={styles.transactionCellTag}>
+          <div className={styles.tagHeader}>
+            <img src={icon} className={styles.tagIcon} style={{ backgroundColor: iconColor }} alt={`${tag} tag icon`} />
+            <span>{tag}</span>
+            <img src={MoreIcon} style={{ marginLeft: 'auto' }} width={20} height={20} alt="more" />
+          </div>
+          <div className={styles.tagDescription}>{description}</div>
+        </div>
+      </Link>
+    )
+  }
+
   switch (cell.cellType) {
     case 'nervos_dao_deposit':
       detailTitle = t('transaction.nervos_dao_deposit')
@@ -233,9 +525,11 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
     }
     case 'did_cell':
     case 'spore_cell': {
-      detailTitle = t('nft.dob')
-      detailIcon = SporeCellIcon
-      tooltip = t('transaction.spore')
+      detailTitle = `${dobInfo.nftInfo?.collection.name ?? 'Unique Item'} ${
+        tokenIdStr.length > 10 ? `${tokenIdStr.slice(0, 3)}...${tokenIdStr.slice(-3)}` : tokenIdStr
+      }`
+      detailIcon = dobInfo.cover
+      tooltip = nftInfo
       break
     }
     case 'omiga_inscription': {
@@ -260,18 +554,55 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       break
   }
   return (
-    <TransactionCellDetailPanel isWithdraw={cell.cellType === 'nervos_dao_withdrawing'}>
-      <div className="transactionCellDetailPanel">
-        {tooltip ? (
-          <Tooltip placement="top" title={tooltip}>
-            <img src={detailIcon} alt="cell detail" />
-          </Tooltip>
-        ) : (
-          detailIcon && <img src={detailIcon} alt="cell detail" />
-        )}
-        <div>{detailTitle}</div>
-      </div>
-    </TransactionCellDetailPanel>
+    <div className={styles.transactionCellDetailPanel} data-is-withdraw={cell.cellType === 'nervos_dao_withdrawing'}>
+      {tooltip ? (
+        <Tooltip
+          placement="top"
+          trigger={<img src={detailIcon} alt="cell detail" />}
+          contentStyle={{ maxWidth: 'unset', width: 'max-content' }}
+        >
+          {tooltip}
+        </Tooltip>
+      ) : (
+        detailIcon && <img src={detailIcon} alt="cell detail" />
+      )}
+      <div className="max-w-[140px] md:max-w-[200px] line-clamp-2">{detailTitle}</div>
+
+      {isDisplayTagList ? (
+        <HoverablePopover
+          content={
+            <div className={styles.transactionCellTagList}>
+              {taglists
+                .filter(tag => tag.display)
+                .map(tag => (
+                  <CellTag
+                    key={tag.key}
+                    tag={tag.tag}
+                    description={tag.description}
+                    link={tag.link}
+                    icon={tag.icon}
+                    iconColor={tag.iconColor}
+                  />
+                ))}
+            </div>
+          }
+        >
+          <div className={styles.transactionCellTags}>
+            {taglists
+              .filter(tag => tag.display)
+              .map(tag => (
+                <img
+                  key={tag.key}
+                  src={tag.icon}
+                  className={styles.tagIcon}
+                  style={{ backgroundColor: tag.iconColor }}
+                  alt={`${tag.tag} icon`}
+                />
+              ))}
+          </div>
+        </HoverablePopover>
+      ) : null}
+    </div>
   )
 }
 
@@ -286,51 +617,49 @@ export const TransactionCellInfo = ({
 }) => {
   const [showModal, setShowModal] = useState(false)
   return (
-    <TransactionCellInfoPanel>
+    <div className={styles.transactionCellInfoPanel}>
       <SimpleButton
-        className={isDefaultStyle ? 'transactionCellInfoContent' : ''}
+        className={isDefaultStyle ? styles.transactionCellInfoContent : ''}
         onClick={() => {
           setShowModal(true)
         }}
       >
         <div>{children}</div>
-        <div className="transactionCellInfoSeparate" />
+        <div className={styles.transactionCellInfoSeparate} />
       </SimpleButton>
 
       <SimpleModal isShow={showModal} setIsShow={setShowModal}>
-        <TransactionCellDetailModal>
-          <TransactionCellScript cell={cell} onClose={() => setShowModal(false)} />
-        </TransactionCellDetailModal>
+        <CellModal cell={cell} onClose={() => setShowModal(false)} />
       </SimpleModal>
-    </TransactionCellInfoPanel>
+    </div>
   )
 }
 
 const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
   const { t } = useTranslation()
-  if (cell.cellType === 'udt') {
-    const udtInfo = cell.extraInfo
-    if (udtInfo.published) {
-      return <span>{`${parseUDTAmount(udtInfo.amount, udtInfo.decimal)} ${udtInfo.symbol}`}</span>
+  const isUDTCell = UDT_CELL_TYPES.findIndex(type => type === cell.cellType) !== -1
+  if (isUDTCell) {
+    const udtInfo = cell.extraInfo as UDTInfo
+    const { amount } = udtInfo
+
+    if (udtInfo.decimal && udtInfo.symbol) {
+      return <span>{`${parseUDTAmount(amount, udtInfo.decimal)} ${udtInfo.symbol}`}</span>
     }
-    return <span>{`${t('udt.unknown_token')} #${udtInfo.typeHash.substring(udtInfo.typeHash.length - 4)}`}</span>
+
+    return (
+      <span>{`${t('udt.unknown_token')} #${udtInfo.typeHash?.substring(udtInfo.typeHash.length - 4) ?? '?'}`}</span>
+    )
   }
 
-  if (cell.cellType === 'xudt' || cell.cellType === 'xudt_compatible') {
-    const info = cell.extraInfo
-    if (info?.decimal && info?.amount && info?.symbol) {
-      return <span>{`${parseUDTAmount(info.amount, info.decimal)} ${info.symbol}`}</span>
-    }
-  }
-
-  if (cell.cellType === 'omiga_inscription') {
-    const info = cell.extraInfo
-    if (info?.decimal && info?.amount && info?.symbol) {
-      return <span>{`${parseUDTAmount(info.amount, info.decimal)} ${info.symbol}`}</span>
-    }
-  }
   return <Capacity capacity={shannonToCkb(cell.capacity)} layout="responsive" />
 }
+
+const TransactionCellMobileItem = ({ title, value = null }: { title: string | ReactNode; value?: ReactNode }) => (
+  <div className={styles.transactionCellCardContent}>
+    <div className={styles.transactionCellCardTitle}>{title}</div>
+    <div className={styles.transactionCellCardValue}>{value}</div>
+  </div>
+)
 
 export default ({
   cell,
@@ -360,8 +689,8 @@ export default ({
 
   if (isMobile) {
     return (
-      <TransactionCellCardPanel>
-        <TransactionCellCardSeparate />
+      <div className={styles.transactionCellCardPanel}>
+        <div className={styles.transactionCellCardSeparate} />
         <TransactionCellMobileItem
           title={
             cell.fromCellbase && ioType === IOType.Input ? (
@@ -389,14 +718,14 @@ export default ({
             />
           </>
         )}
-      </TransactionCellCardPanel>
+      </div>
     )
   }
 
   return (
-    <TransactionCellPanel id={ioType === IOType.Output ? `output_${index}_${txHash}` : ''}>
-      <TransactionCellContentPanel isCellbase={cell.fromCellbase}>
-        <div className="transactionCellAddress">
+    <div className={styles.transactionCellPanel} id={ioType === IOType.Output ? `output_${index}_${txHash}` : ''}>
+      <div className={styles.transactionCellContentPanel} data-is-cell-base={cell.fromCellbase ?? false}>
+        <div className={styles.transactionCellAddress}>
           {cell.fromCellbase && ioType === IOType.Input ? (
             <Cellbase cell={cell} isDetail />
           ) : (
@@ -404,18 +733,18 @@ export default ({
           )}
         </div>
 
-        <div className="transactionCellDetail">
+        <div className={styles.transactionCellDetail}>
           {cell.fromCellbase && ioType === IOType.Input ? cellbaseReward : <TransactionCellDetail cell={cell} />}
         </div>
 
-        <div className="transactionCellCapacity">
+        <div className={styles.transactionCellCapacity}>
           <TransactionCellCapacityAmount cell={cell} />
         </div>
 
-        <div className="transactionDetailCellInfo">
+        <div className={styles.transactionDetailCellInfo}>
           <TransactionCellInfo cell={cell}>Cell Info</TransactionCellInfo>
         </div>
-      </TransactionCellContentPanel>
-    </TransactionCellPanel>
+      </div>
+    </div>
   )
 }

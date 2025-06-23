@@ -1,6 +1,22 @@
 import BigNumber from 'bignumber.js'
 import { BI } from '@ckb-lumos/bi'
 
+export function isNumeric(str: string) {
+  return !Number.isNaN(str) && !Number.isNaN(parseFloat(str))
+}
+
+const BLOCK_HASH_LENGTH = 64
+
+export function isBlockNumber(str: string) {
+  if (str.length >= BLOCK_HASH_LENGTH) return false
+
+  if (!Number.isNaN(str) && !Number.isNaN(parseFloat(str)) && parseFloat(str) !== 0) {
+    return true
+  }
+
+  return !Number.isNaN(str) && !Number.isNaN(parseInt(str, 16)) && parseInt(str, 16) !== 0
+}
+
 export const localeNumberString = (value: BigNumber | string | number): string => {
   if (!value) return '0'
   const origin = typeof value === 'string' || typeof value === 'number' ? new BigNumber(value) : value
@@ -125,4 +141,28 @@ export function isValidNoNegativeInteger(input: string | number | undefined) {
   if (!input) return false
   const number = Number(input)
   return !Number.isNaN(number) && Number.isInteger(number) && number >= 0
+}
+
+export function numberToOrdinal(number: number, showText = false) {
+  if (showText) {
+    switch (number) {
+      case 1:
+        return 'first'
+      case 2:
+        return 'second'
+      default:
+        break
+    }
+  }
+
+  switch (number % 10) {
+    case 1:
+      return `${number}st`
+    case 2:
+      return `${number}nd`
+    case 3:
+      return `${number}rd`
+    default:
+      return `${number}th`
+  }
 }

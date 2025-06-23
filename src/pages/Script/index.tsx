@@ -1,73 +1,97 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { useTranslation } from 'react-i18next'
+import { TFunction, useTranslation } from 'react-i18next'
+import { Link } from '../../components/Link'
 import Content from '../../components/Content'
 import { useCurrentLanguage } from '../../utils/i18n'
 import { localeNumberString } from '../../utils/number'
 import { CodeHashMessage, ScriptCells, ScriptTransactions } from './ScriptsComp'
-import { MainnetContractHashTags, TestnetContractHashTags } from '../../constants/scripts'
-import { isMainnet } from '../../utils/chain'
-import { scripts as scriptNameList } from '../ScriptList'
 import { usePaginationParamsInPage } from '../../hooks'
 import { shannonToCkb } from '../../utils/util'
 import Capacity from '../../components/Capacity'
 import styles from './styles.module.scss'
-import { explorerService } from '../../services/ExplorerService'
-import type { ScriptInfo } from '../../services/ExplorerService/fetcher'
-import { ScriptTab, ScriptTabPane, ScriptTabTitle } from './styled'
+import { type ScriptInfo, explorerService } from '../../services/ExplorerService'
 import { Card, CardCellInfo, CardCellsLayout } from '../../components/Card'
+import { ReactComponent as OpenSourceIcon } from '../../assets/open-source.svg'
+import { ReactComponent as VerifiedIcon } from '../../assets/verified-icon.svg'
+import { ReactComponent as DeprecatedIcon } from '../../assets/deprecated-icon.svg'
+import { ReactComponent as RFCIcon } from '../../assets/rfc-icon.svg'
+import { ReactComponent as WebsiteIcon } from '../../assets/website-icon.svg'
 import { HashType } from '../../constants/common'
+import Tooltip from '../../components/Tooltip'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs'
 
-const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
-
-const useScriptHashNameMap = (): Map<string, string> => {
-  const { t } = useTranslation()
-  return new Map(
-    scriptDataList
-      .map(scriptData =>
-        scriptData.codeHashes.map(
-          codeHash =>
-            [
-              `${codeHash}_${scriptData.hashType}`,
-              scriptNameList.has(scriptData.tag)
-                ? scriptNameList.get(scriptData.tag)!.name
-                : t('scripts.unnamed_script'),
-            ] as [string, string],
-        ),
-      )
-      .flat(),
-  )
-}
-
-const useScriptInfo = (scriptInfo: ScriptInfo) => {
-  const { t } = useTranslation()
-  const { scriptName, scriptType, id, codeHash, hashType, capacityOfDeployedCells, capacityOfReferringCells } =
-    scriptInfo
+const getScriptInfo = (scriptInfo: ScriptInfo, t: TFunction) => {
+  const {
+    dataHash,
+    typeHash,
+    hashType,
+    depType,
+    isLockScript,
+    isTypeScript,
+    capacityOfDeployedCells,
+    capacityOfReferringCells,
+    scriptOutPoint,
+  } = scriptInfo
+  const [outpointTxHash, outpointIndex] = scriptOutPoint.split('-')
+  const parsedHashType = hashType === null ? 'Type' : hashType
+  const scriptType = `${isTypeScript ? t('scripts.type_script') : ''} ${isLockScript ? t('scripts.lock_script') : ''}`
   const items: CardCellInfo<'left' | 'right'>[] = [
     {
-      title: t('scripts.script_name'),
-      tooltip: t('glossary.script_name'),
-      content: scriptName,
-    },
-    {
-      title: t('scripts.hash_type'),
-      tooltip: t('glossary.hash_type'),
-      content: <span className={styles.hashType}>{hashType}</span>,
-    },
-    {
-      title: t('scripts.script_type'),
-      content: scriptType ? t(`scripts.${scriptType}`) : '-',
-    },
-    {
-      title: t('scripts.type_id'),
-      content: id ? <CodeHashMessage codeHash={id} /> : '-',
+      slot: 'left',
+      cell: {
+        title: t('scripts.script_type'),
+        content: scriptType,
+      },
     },
     {
       title: t('scripts.code_hash'),
-      tooltip: t('glossary.code_hash'),
-      content: <CodeHashMessage codeHash={codeHash} />,
+      content:
+        parsedHashType === 'Type' ? <CodeHashMessage codeHash={typeHash} /> : <CodeHashMessage codeHash={dataHash} />,
+    },
+    {
+      slot: 'right',
+      cell: {
+        title: t('scripts.hash_type'),
+        tooltip: t('glossary.hash_type'),
+        content: <span className={styles.hashType}>{parsedHashType}</span>,
+      },
+    },
+    {
+      slot: 'right',
+      cell:
+        parsedHashType === 'Type'
+          ? {
+              title: t('scripts.data_hash'),
+              content: dataHash ? <CodeHashMessage codeHash={dataHash} /> : '-',
+            }
+          : {
+              title: t('scripts.type_hash'),
+              content: typeHash ? <CodeHashMessage codeHash={typeHash} /> : '-',
+            },
+    },
+    {
+      slot: 'left',
+      cell: {
+        title: t('scripts.outpoint_tx_hash'),
+        content: <CodeHashMessage codeHash={outpointTxHash} />,
+      },
+    },
+    {
+      slot: 'left',
+      cell: {
+        title: t('scripts.outpoint_index'),
+        content: outpointIndex,
+      },
+    },
+    {
+      slot: 'left',
+      cell: {
+        title: t('scripts.outpoint_dep_type'),
+        content: depType,
+      },
     },
     {
       title: t('scripts.capacity_of_deployed_cells'),
@@ -86,13 +110,20 @@ const useScriptInfo = (scriptInfo: ScriptInfo) => {
   return items
 }
 
-const useSeekScriptName = (codeHash: string, hashType: string): string => {
-  const { t } = useTranslation()
-  const nameMap = useScriptHashNameMap()
-  return nameMap.has(`${codeHash}_${hashType}`) ? nameMap.get(`${codeHash}_${hashType}`)! : t('scripts.unnamed_script')
-}
-
 type ScriptTabType = 'transactions' | 'deployed_cells' | 'referring_cells' | undefined
+
+export function ScriptInfosCard({ scriptInfos }: { scriptInfos: ScriptInfo[] }) {
+  const { t } = useTranslation()
+  return (
+    <>
+      {scriptInfos.map(scriptInfo => (
+        <Card style={{ marginTop: 24 }} key={scriptInfo.scriptOutPoint}>
+          <CardCellsLayout type="left-right" cells={getScriptInfo(scriptInfo, t)} />
+        </Card>
+      ))}
+    </>
+  )
+}
 
 export const ScriptPage = () => {
   const history = useHistory()
@@ -109,10 +140,6 @@ export const ScriptPage = () => {
   }>()
   const { currentPage, pageSize } = usePaginationParamsInPage()
 
-  const [countOfTransactions, setCountOfTransactions] = useState<number>(0)
-  const [countOfDeployedCells, setCountOfDeployedCells] = useState<number>(0)
-  const [countOfReferringCells, setCountOfReferringCells] = useState<number>(0)
-
   const [pageOfTransactions, setPageOfTransactions] = useState<number>(1)
   const [pageOfDeployedCells, setPageOfDeployedCells] = useState<number>(1)
   const [pageOfReferringCells, setPageOfReferringCells] = useState<number>(1)
@@ -121,48 +148,99 @@ export const ScriptPage = () => {
     explorerService.api.fetchScriptInfo(codeHash, hashType),
   )
 
-  const scriptInfo: ScriptInfo =
+  const scriptInfos: ScriptInfo[] =
     status === 'success' && resp
       ? resp.data
-      : {
-          id: '-',
-          scriptName: '',
-          scriptType: '',
-          codeHash,
-          hashType: hashType as HashType,
-          capacityOfDeployedCells: '0',
-          capacityOfReferringCells: '0',
-          countOfTransactions: 0,
-          countOfDeployedCells: 0,
-          countOfReferringCells: 0,
-        }
-  scriptInfo.scriptName = useSeekScriptName(scriptInfo.codeHash, scriptInfo.hashType)
+      : [
+          {
+            name: '',
+            dataHash: '',
+            typeHash: '',
+            depType: '',
+            hashType: hashType as HashType,
+            isTypeScript: false,
+            isLockScript: false,
+            capacityOfDeployedCells: '0',
+            capacityOfReferringCells: '0',
+            countOfTransactions: 0,
+            countOfReferringCells: 0,
+            rfc: '',
+            website: '',
+            sourceUrl: '',
+            deprecated: false,
+            verified: false,
+            scriptOutPoint: '',
+            description: '',
+          },
+        ]
 
-  useEffect(() => {
-    setCountOfTransactions(scriptInfo.countOfTransactions)
-    setCountOfDeployedCells(scriptInfo.countOfDeployedCells)
-    setCountOfReferringCells(scriptInfo.countOfReferringCells)
-  }, [scriptInfo.countOfDeployedCells, scriptInfo.countOfReferringCells, scriptInfo.countOfTransactions])
-
-  useEffect(() => {
-    if (!Object.values(HashType).includes(hashType as HashType)) {
-      history.replace('/404')
-    }
-  }, [hashType, history])
+  const countOfDeployedCells = scriptInfos.length
+  const countOfReferringCells = scriptInfos.reduce((sum, item) => sum + item.countOfReferringCells, 0)
+  const countOfTransactions = scriptInfos.reduce((sum, item) => sum + item.countOfTransactions, 0)
+  const { name, sourceUrl, rfc, website, deprecated, verified, description } = scriptInfos[0]
 
   return (
     <Content>
       <div className={`${styles.scriptContentPanel} container`}>
         <Card>
-          <CardCellsLayout type="left-right" cells={useScriptInfo(scriptInfo)} />
+          <div className={styles.headerCard}>
+            <span className={styles.headerTitle}>Script</span>
+            {name ? <span className={styles.headerSubTitle}>{name}</span> : null}
+
+            <span className={styles.headerLink}>
+              {verified === true ? (
+                <Tooltip trigger={<VerifiedIcon />} placement="top">
+                  {t('scripts.verified')}
+                </Tooltip>
+              ) : null}
+              {deprecated === true ? (
+                <Tooltip trigger={<DeprecatedIcon />} placement="top">
+                  {t('scripts.deprecated')}
+                </Tooltip>
+              ) : null}
+              {rfc ? (
+                <Tooltip
+                  trigger={
+                    <Link to={rfc} className={styles.rfcAction}>
+                      <RFCIcon />
+                    </Link>
+                  }
+                  placement="top"
+                >
+                  {t('scripts.link.rfc')}
+                </Tooltip>
+              ) : null}
+              {website ? (
+                <Tooltip
+                  trigger={
+                    <Link to={website} className={styles.websiteAction}>
+                      <WebsiteIcon />
+                    </Link>
+                  }
+                  placement="top"
+                >
+                  {t('scripts.link.website')}
+                </Tooltip>
+              ) : null}
+              {sourceUrl ? (
+                <Link to={sourceUrl} className={styles.openSourceAction}>
+                  {t('scripts.open_source_script')}
+                  <OpenSourceIcon />
+                </Link>
+              ) : null}
+            </span>
+          </div>
+          <div className={styles.headerDescription}>{description}</div>
         </Card>
 
-        <ScriptTab
+        <ScriptInfosCard scriptInfos={scriptInfos} />
+        <Tabs
           key={currentLanguage + countOfTransactions + countOfDeployedCells + countOfReferringCells}
           className={styles.scriptTabs}
-          activeKey={tab ?? 'transactions'}
-          animated={{ inkBar: false }}
-          onTabClick={key => {
+          type="underline"
+          value={tab ?? 'transactions'}
+          style={{ marginTop: 24 }}
+          onValueChange={key => {
             const currentTab = tab ?? 'transactions'
             if (currentTab === key) return
 
@@ -185,45 +263,32 @@ export const ScriptPage = () => {
               history.push(`/${language}/script/${codeHash}/${hashType}?page=${pageOfTransactions}&size=${pageSize}`)
             }
           }}
-          renderTabBar={(props, DefaultTabBar) => {
-            return (
-              <Card rounded="top" className={styles.cardHeader}>
-                <DefaultTabBar {...props} className={styles.tablist} />
-              </Card>
-            )
-          }}
         >
-          <ScriptTabPane
-            tab={
-              <ScriptTabTitle>
-                {`${t('transaction.transactions')} (${localeNumberString(countOfTransactions!)})`}
-              </ScriptTabTitle>
-            }
-            key="transactions"
-          >
-            <ScriptTransactions page={currentPage} size={pageSize} />
-          </ScriptTabPane>
-          <ScriptTabPane
-            tab={
-              <ScriptTabTitle>
+          <TabsList>
+            <TabsTrigger value="transactions">
+              <span className={styles.scriptTabTitle}>{`${t('transaction.transactions')}`}</span>
+            </TabsTrigger>
+            <TabsTrigger value="deployed_cells">
+              <span className={styles.scriptTabTitle}>
                 {`${t('scripts.deployed_cells')} (${localeNumberString(countOfDeployedCells)})`}
-              </ScriptTabTitle>
-            }
-            key="deployed_cells"
-          >
-            <ScriptCells page={currentPage} size={pageSize} cellType="deployed_cells" />
-          </ScriptTabPane>
-          <ScriptTabPane
-            tab={
-              <ScriptTabTitle>
+              </span>
+            </TabsTrigger>
+            <TabsTrigger value="referring_cells">
+              <span className={styles.scriptTabTitle}>
                 {`${t('scripts.referring_cells')} (${localeNumberString(countOfReferringCells)})`}
-              </ScriptTabTitle>
-            }
-            key="referring_cells"
-          >
-            <ScriptCells page={currentPage} size={pageSize} cellType="referring_cells" />
-          </ScriptTabPane>
-        </ScriptTab>
+              </span>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="transactions" style={{ width: '100%' }}>
+            <ScriptTransactions page={currentPage} size={pageSize} countOfTransactions={countOfTransactions} />
+          </TabsContent>
+          <TabsContent value="deployed_cells" style={{ width: '100%' }}>
+            <ScriptCells page={currentPage} size={pageSize} cellType="deployed_cells" />
+          </TabsContent>
+          <TabsContent value="referring_cells" style={{ width: '100%' }}>
+            <ScriptCells page={currentPage} size={100} cellType="referring_cells" />
+          </TabsContent>
+        </Tabs>
       </div>
     </Content>
   )

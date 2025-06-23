@@ -22,13 +22,13 @@ const NftCollections = () => {
     i18n: { language },
   } = useTranslation()
   const { search } = useLocation()
-  const { page = '1', type } = useSearchParams('page', 'type')
+  const { page = '1', type, tags } = useSearchParams('page', 'type', 'tags')
   const { sort } = useNFTCollectionsSortParam()
 
   const isValidFilter = isTxFilterType(type) && type !== 'all'
 
-  const { isLoading, data } = useQuery(['nft-collections', page, sort, type], () =>
-    explorerService.api.fetchNFTCollections(page, sort, isValidFilter ? type : undefined),
+  const { isLoading, data } = useQuery(['nft-collections', page, sort, type, tags, 'true'], () =>
+    explorerService.api.fetchNFTCollections(page, sort, isValidFilter ? type : undefined, tags, 'true'),
   )
 
   const list = data?.data ?? []
@@ -60,8 +60,12 @@ const NftCollections = () => {
           </a>
         </div>
         <div className={styles.list}>
-          <ListOnDesktop isLoading={isLoading} list={list} />
-          <ListOnMobile isLoading={isLoading} list={list} />
+          <div className={styles.cardList}>
+            <ListOnMobile isLoading={isLoading} list={list} />
+          </div>
+          <div className={styles.tableList}>
+            <ListOnDesktop isLoading={isLoading} list={list} />
+          </div>
         </div>
 
         <Pagination

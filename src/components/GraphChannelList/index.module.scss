@@ -1,0 +1,141 @@
+@import '../../styles/variables.module';
+@import '../../styles/text.module';
+
+.container {
+  font-size: 14px !important;
+
+  a {
+    color: var(--primary-color);
+  }
+
+  svg {
+    pointer-events: none;
+  }
+
+  dl,
+  dd,
+  dt {
+    margin: 0;
+
+    /* white-space: pre; */
+
+    /* flex-wrap: wrap; */
+  }
+
+  dt {
+    color: #666;
+    font-weight: 400;
+
+    &::after {
+      content: ':';
+    }
+  }
+
+  dd {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .channel {
+    margin-bottom: 4px;
+    background: #fff;
+    padding: 8px 0;
+
+    > dl {
+      display: grid;
+      grid-template-columns: 16% 83%;
+
+      @media screen and (width <= $mobileBreakPoint) {
+        display: block;
+      }
+    }
+
+    @media screen and (width <= $largeBreakPoint) {
+      padding: 8px 0;
+    }
+
+    h1 {
+      color: #333;
+      font-weight: bolder;
+    }
+  }
+
+  .funding {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+
+    dd {
+      overflow: hidden;
+    }
+
+    a.address {
+      @extend %hash;
+
+      min-width: 180px;
+    }
+  }
+
+  .outPoint {
+    dd {
+      overflow: hidden;
+    }
+
+    a {
+      @extend %hash;
+    }
+  }
+
+  .copy {
+    width: 12px;
+  }
+
+  .nodesContainer {
+    padding: 8px;
+    margin-top: 8px;
+    background: rgb(0 0 0 / 3%);
+
+    dt,
+    dd {
+      display: flex;
+      flex-wrap: nowrap;
+    }
+  }
+
+  .nodes {
+    display: flex;
+    flex-direction: column;
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 1rem;
+
+      span {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    gap: 20px;
+
+    .node {
+      flex: 1;
+      overflow: hidden;
+
+      dd {
+        overflow: hidden;
+      }
+
+      a {
+        @extend %hash;
+      }
+    }
+
+    @media screen and (width <= $mobileBreakPoint) {
+      flex-direction: column;
+    }
+  }
+}

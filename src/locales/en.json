@@ -17,7 +17,9 @@
       "minutes": "MINS",
       "seconds": "SECS",
       "minaraTime": "Est May 10th 2022",
-      "miranaAlive": "MIRANA IS LIVE"
+      "miranaAlive": "MIRANA IS LIVE",
+      "extra": "Extra",
+      "no_data": "No Data"
     },
     "unit": {
       "days": "days",
@@ -96,6 +98,32 @@
       "expected": "Expected",
       "share_text": "📢 @NervosNetwork CKB Expected {{times}} halving on {{date}}🚀，\n\n📅There are {{countdown}} left in the countdown to the halving.\n\n🔗 Click 👉 https://explorer.nervos.org know more"
     },
+    "hardfork": {
+      "comment1": "What is a Hard Fork? A hard fork is a significant update to a blockchain protocol that permanently diverges from its previous version. It introduces non-backward-compatible changes, requiring all network nodes to upgrade. If most nodes update successfully by the designated epoch number, the fork is deployed. Nodes running outdated versions lose connectivity, as they follow old rules that no longer apply.",
+      "comment2": "Purpose of a Hard Fork: Nervos CKB implements hard forks to enhance the network’s functionality and security. These upgrades introduce new capabilities such as modified data structures, RISC-V extensions, and new syscalls. Hard forks also resolve critical issues, fix security vulnerabilities, and address protocol limitations that cannot be patched through backward-compatible updates, ensuring the long-term stability and growth of the platform.",
+      "comment3": "CKB Hard Fork Process: The Nervos CKB hard fork process is divided into three phases. First, a proposal is created, discussed, and finalized, followed by implementation and local testing, taking about nine months. Next, the update is deployed on a public preview network and testnet for further stability testing. Finally, after a three-month preparation period, the fork is activated on the mainnet, ensuring a smooth transition.",
+      "comment4": "MainNet: the 60 days ago block is: 14908742 \n0x216095bfc3bb68e7509db4b3f98b105ac5565586876a795a9c5c3d0dfe134cb5 in Sun Dec 22 03:04:27 PM CST 2024\nyou can view this block in https://explorer.nervos.org/block\n0x216095bfc3bb68e7509db4b3f98b105ac5565586876a795a9c5c3d0dfe134cb5.\nTestNet:the 60 days ago block is: 15641938 0xd92fe833fd53c6e0c7f05516609c3bbf4777aa05d016523cf1ff8aeaeec6fc13 in Sun Dec 22 03:09:16 PM CST 2024\nyou can view this block in https://pudge.explorer.nervos.org/block/0xd92fe833fd53c6e0c7f05516609c3bbf4777aa05d016523cf1ff8aeaeec6fc13",
+      "comment5": "Improvements:\nNetRpcImpl::get_peers return Remoteaddress.addresses dedup #4795: NetRpcImpl::get_peers return Remoteaddress.addresses without duplicates (@eval-exec)\nThis is a breaking change of RPC.\nUpgrade openssl from 0.10.68 to 0.10.70, fix https://rustsec.org/advisories/RUSTSEC-2025-0004 #4801: Upgrade openssl from 0.10.68 to 0.10.70, fix RUSTSEC-2025-0004 (@eval-exec)\nImproving spawn and exec syscalls #4785: Improving spawn and exec syscalls (@mohanson)",
+      "comment6": "Features\nchore: 2nd hardfork mainnet activation params #4807: Activate CKB Edition Meepo (2024) on the Mainnet (@zhangsoledad)\nThis is a breaking change of consensus once activated.\nfeat: impl filter with transport #4800: Implement nodes filter with P2P transport service types (@driftluo)\nfeat: mark dns address connected time on peer store #4793: Mark DNS address connected time on peer store (@driftluo)\nhttps://github.com/nervosnetwork/ckb/issues/4806#issuecomment-2673786997",
+      "comment7": "Third-party adaptation\nmainnet hardfork && improving spawn\nhttps://github.com/nervosnetwork/ckb-light-client.git @quake\nhttps://github.com/nervosnetwork/ckb-light-client/tree/develop/wasm @Officeyutong\nneuron\nimproving spawn\nhttps://github.com/nervosnetwork/ckb-testtool @XuJiandong @mohanson\nhttps://github.com/nervosnetwork/ckb-standalone-debugger @XuJiandong @mohanson",
+      "comment8": "The Nervos CKB hardfork is a major protocol upgrade that results in a permanent divergence from the previous blockchain version. Unlike soft forks, which require only miner nodes to upgrade, a hardfork mandates that all nodes update to maintain consensus. This ensures a smooth transition while introducing essential new functionalities and security enhancements.",
+      "comment9": "Nervos CKB implements hardforks to introduce significant improvements. These include new functionalities such as modified data structures, RISC-V extensions, and new syscalls to enhance platform utility. Additionally, hardforks address security concerns by resolving critical issues and limitations that cannot be fixed through backward-compatible updates. The combination of these updates ensures long-term scalability and reliability.",
+      "comment10": "To prevent network instability from frequent upgrades, Nervos CKB follows a timing policy ensuring at least a one-year interval (2,190 epochs) between hardforks. This strategy allows each upgrade to be substantial and forward-compatible, providing developers with sufficient time for testing and adaptation while maintaining network stability.",
+      "comment11": "Each hardfork in Nervos CKB is referred to as an \"edition,\" with names inspired by Dota heroes. The format follows \"CKB Edition [Name] (Year),\" such as CKB Edition Meepo (2025). Both mainnet and testnet share the same name, with suffixes added only when necessary. This convention maintains consistency across network upgrades.",
+      "comment12": "The first phase begins with the creation of a detailed hardfork proposal, followed by community discussions for feedback and refinement. The finalized proposal is published as an RFC. Development and initial testing then commence, adjusting the proposal as necessary. A hardfork-ready node version is released for local preview, along with updates to SDKs, explorers, and wallets. This phase typically takes around 9 months.",
+      "comment13": "A public preview network is deployed for further testing once implementation nears completion. The network is closely monitored for stability. Once deemed stable, the testnet undergoes a hardfork, including:\nNode binary release\nEpoch number announcement\nActivation at the specified epoch\nThe upgrade does not occur immediately but takes effect at the announced epoch. If the majority of nodes upgrade successfully, the hardfork is considered successfully deployed. Nodes running outdated versions will be unable to connect to the testnet post-hardfork.",
+      "comment14": "The final phase mirrors the testnet deployment process. Once network participants are ready, the mainnet hardfork is initiated. Key steps include:\nRelease of the mainnet hardfork binary and activation epoch\nA preparation period of at least three months\nActivation upon majority node upgrade\n.Once activated at the specified epoch, the hardfork is deemed successfully deployed, marking the completion of the upgrade.",
+      "ckb_vm_desc": "RFC 0049 defines the specifications for CKB-VM version 2, introduced in the CKB Meepo hard fork, aiming to enhance security, portability, and performance. The update addresses key concerns such as the lack of a secure method to invoke scripts and the need for higher performance to support complex computations like zero-knowledge proofs. Key improvements include the “Spawn” syscall, which provides an isolated execution environment for scripts, eliminating security risks associated with dynamic library calls and making script execution more manageable. Additionally, Macro-Operation Fusion (MOPs) optimizations are introduced, adding five new fused opcodes that improve computational efficiency by reducing cycle consumption. These enhancements make CKB-VM v2 more robust, scalable, and efficient for advanced on-chain computations.",
+      "syscall_desc": "RFC 0050 introduces new syscalls as part of the CKB Meepo hard fork, significantly enhancing the flexibility of CKB Script by incorporating Unix-like process management. The update enables process spawning, allowing scripts to create independent CKB-VM instances using a spawn mechanism. Key features include pipes for inter-process communication, inherited file descriptors, and deterministic process scheduling to ensure security and stability. A total of eight spawn-related syscalls and one block-related syscall are added, along with strict resource limits to prevent excessive usage. The document also defines new error codes, outlines potential deadlock scenarios, and specifies cycle consumption for each syscall. This enhancement improves modularity and scalability, paving the way for more complex on-chain computation.",
+      "data_structure_desc": "RFC 0048 proposes removing the reservation rule for the version field in the CKB block header, allowing it to be used for softfork activation as defined in RFC 43. Currently, the version field is restricted to 0 in CKB2021 and earlier, preventing its use for signaling upgrades. By lifting this restriction, any unsigned 32-bit integer will become a valid version field after activation. This change, requiring a hard fork, eliminates the need for verification rules on the version field, enabling greater flexibility for future consensus upgrades and softfork signaling.",
+      "metrics": {
+        "current_epoch": "Current Epoch",
+        "target_epoch": "Target Epoch",
+        "miner_percent": "Miners %",
+        "estimated_time": "Estimated Time",
+        "activated": "Activated"
+      }
+    },
     "glossary": {
       "block_height": "Also known as Block Number. The block height, which indicates the length of the blockchain, increases after the addition of the new block.",
       "cell": "CKB adopts cell model, which is more generic than UTXO model. A transaction destroys some outputs created in previous transactions and creates some new outputs. Every transaction's output is a cell.",
@@ -149,7 +177,8 @@
       "cota": "A kind of NFT protocol. A Compact Token Aggregator Standard for Extremely Low Cost NFTs and FTs. For more details, please check the <cota_link>CoTA RDC</cota_link>",
       "m_nft": "The NFT Type Scripts implement of RFC: Multi-purpose NFT Draft Spec on Nervos CKB. For more details, please check the <m_nft_link>CKB-NFT-Script</m_nft_link>",
       "nrc721": "NRC-721 is a token standard for non-fungible tokens (NFTs) on the Nervos CKB blockchain. It is similar to the ERC-721 token standard used on the Ethereum blockchain, and provides a common interface for creating, managing, and transferring unique digital assets on the CKB network. NRC-721 tokens are unique and non-interchangeable, which makes them ideal for representing assets such as collectibles, game items, and other unique digital assets.",
-      "hash_rate": "Hash Rate is a measure of the computational power per second used when mining a cryptocurrency. It represents the number of hash operations that can be performed by a miner in a given period of time. In the context of blockchain, hash rate is used to measure the amount of work that is being done by the network to maintain the blockchain. A higher hash rate indicates that the network is more secure, as it becomes more difficult for a malicious actor to perform a 51% attack."
+      "hash_rate": "Hash Rate is a measure of the computational power per second used when mining a cryptocurrency. It represents the number of hash operations that can be performed by a miner in a given period of time. In the context of blockchain, hash rate is used to measure the amount of work that is being done by the network to maintain the blockchain. A higher hash rate indicates that the network is more secure, as it becomes more difficult for a malicious actor to perform a 51% attack.",
+      "spore": "Spore"
     },
     "toast": {
       "invalid_network": "Network exception, please try again later",
@@ -158,6 +187,11 @@
       "result_not_found": "Search result not found",
       "handling-reorg": "Reorg detected at {{time}} so CKB Explorer is checking data thoroughly. It may take half an hour, please visit later",
       "migration-notice": "Service of CKB explorer will have a migration on {{time}}, and the server might be unavailable temporarily"
+    },
+    "components": {
+      "multi_filter_button": {
+        "select": "Select"
+      }
     },
     "navbar": {
       "wallet": "Wallet",
@@ -171,7 +205,7 @@
       "sUDT": "sUDT",
       "inscriptions": "Inscriptions",
       "docs": "Docs",
-      "search_placeholder": "Block/Transaction/Address/Script Hash/Args/BTC Address/BTC Txid/DID",
+      "search_placeholder": "Block/Transaction/Address/Script Hash/Args/BTC Address/BTC Txid/DID/Fiber Peer Id/Fiber Node Id",
       "search_by_name_placeholder": "Token Name",
       "more": "More",
       "mainnet": "LINA",
@@ -197,7 +231,18 @@
       "wallet_renrenbit": "Renrenbit",
       "wallet_renrenbit_description": "A digital asset management platform offering 100% reserve",
       "wallets_memo": "In alphabetical order",
-      "nft_collections": "NFT Collections"
+      "nft_collections": "NFT Collections",
+      "fiber_network": "Fiber Network",
+      "fiber_statistics": "Statistics",
+      "fiber_graph_nodes": "Graph Nodes",
+      "coins": "UDT"
+    },
+    "banner": {
+      "fiber_title": "Fiber Network is making Satoshi’s vision a reality",
+      "fiber_subtitle": "The Next-generation Common Lightning Network",
+      "learn_more": "Learn More",
+      "find_nodes": "Find Nodes",
+      "coming_soon": "Coming soon"
     },
     "blockchain": {
       "latest_block": "Latest Block",
@@ -208,16 +253,18 @@
       "estimated_epoch_time": "Estimated Epoch Time",
       "transactions_per_minute": "Transactions per Minute",
       "transactions_last_24hrs": "Transactions in Last 24hrs",
+      "tags": "Tags",
       "nervos_dao": "Nervos DAO",
       "mainnet": "Lina Mainnet",
       "testnet": "Testnet"
     },
     "statistic": {
-      "transaction_num": "BTC Transaction Count",
+      "btc_transaction_count": "BTC Transaction Count",
       "new_btc_address": "New BTC Address",
       "rgbpp_transaction_list": "RGB++ Transaction List",
       "transaction_count": "Transaction Count",
       "address_count": "Unique Addresses Used",
+      "knowledge_size": "Knowledge Size",
       "total_dao_deposit_depositor": "Total Nervos DAO Deposit & Accrued Total Depositors",
       "total_dao_deposit_title": "Total Deposit",
       "total_dao_deposit": "Total Deposit",
@@ -277,6 +324,7 @@
       "circulating_supply": "Circulating Supply",
       "burnt": "Burnt",
       "locked": "Unvested",
+      "week": "Time (week)",
       "year": "Time (year)",
       "nominal_apc": "Nominal DAO Compensation Rate",
       "inflation_rate": "Inflation Rate",
@@ -293,6 +341,7 @@
       "percent": "Percentage",
       "others": "Others",
       "address_count_description": "The total number of unique addresses used on the blockchain.",
+      "knowledge_size_description": "Bytes occupied by on-chain knowledge",
       "block_time_distribution_description": "The x axis is block intervals in seconds, and the y axis is the frequency of occurrence in the latest 50,000 blocks.",
       "epoch_time_distribution_description": "The x axis is epoch intervals in hours, and the y axis is the frequency of occurrence in the latest 500 epochs.",
       "average_block_time_description": "Average block intervals with daily & weekly smooth window",
@@ -310,6 +359,13 @@
       "ckb_amount": "CKB Amount",
       "contract_resource_distributed": "Contract Resource Distribution",
       "contract_resource_distributed_description": "The x axis represents contract's unique address count, the y axis represents the contract's CKB amount, the symbol size represents the contract's transaction count.",
+      "active_addresses": "Active Addresses",
+      "active_addresses_description": "The number of unique addresses that have participated in the network as a sender or receiver.",
+      "active_address_count": "Active Addresses Count",
+      "asset_activity": "Asset Activity",
+      "asset_activity_description": "The x axis represents the date, the y axis represents the transaction count and holder count.",
+      "udt_holders": "UDT Holders",
+      "udt_txs": "UDT Transactions",
       "country": "Country/Region",
       "node_country_distribution": "Nodes distribution by Country/Region",
       "top_50_holders": "Top 50 Holders",
@@ -323,7 +379,34 @@
       "one_year_to_three_years": "1y-3y",
       "over_three_years": "> 3y",
       "ckb_hodl_wave": "CKB HODL Wave",
-      "h24_transaction_count": "24hr Transaction Count"
+      "h24_transaction_count": "24hr Transaction Count",
+      "holder_count": "Holder Count",
+      "address_label": {
+        "anyoneCanPayLock": "Anyone Can Pay",
+        "btcTimeLock": "BTC Time",
+        "cheque": "Cheque",
+        "flashSigner": "Flash Signer",
+        "godwokenCustodianLock": "Godwoken Custodian",
+        "godwokenDepositLock": "Godwoken Deposit",
+        "godwokenStakeLock": "Godwoken Stake",
+        "godwokenWithdrawalLock": "Godwoken Withdrawal",
+        "iCkbLogic": "iCKB Logic",
+        "joyId": "Joy ID",
+        "nostr": "Nostr",
+        "omniLockV1": "Omni Lock V1",
+        "omniLockV2": "Omni Lock V2",
+        "pwLock": "Portal Wallet",
+        "rgb++": "RGB++",
+        "secp256K1/blake160": "Secp256k1/Blake160",
+        "secp256K1/multisig": "Secp256k1/Multisig",
+        "singleUseLock": "Single Use",
+        "udtLimitOrderr": "UDT Limit Order",
+        "unipassV2": "Unipass V2",
+        "unipassV3": "Unipass V3",
+        "wrOwnedOwner": "WR Owned Owner",
+        "forceBridge": "Force Bridge",
+        "others": "Others"
+      }
     },
     "home": {
       "height": "Height",
@@ -354,13 +437,19 @@
       "youtube": "YouTube",
       "forum": "Forum",
       "tools": "Tools",
-      "api-doc": "API Documentation"
+      "api-doc": "API Documentation",
+      "knowledge_base": "Knowledge Base",
+      "network": "Network",
+      "community_nodes": "Community Nodes",
+      "media_kit": "Media Kit",
+      "ckb_world": "CKB World",
+      "eco_fund": "Eco Fund"
     },
     "search": {
       "loading": "Loading...",
       "no_search_result": "Oops! Your search did not match any record.",
       "empty_result": "Oops! Your search did not match any record. \n\nPlease make sure input contains only one of the following items:\n",
-      "empty_result_items": "Block Number/ Block Hash/ Transaction Hash/ Address/ Script Hash/ Args/ BTC Address/ BTC Txid/DID",
+      "empty_result_items": "Block Number/ Block Hash/ Transaction Hash/ Address/ Script Hash/ Args/ BTC Address/ BTC Txid/DID/Fiber Peer Id/Fiber Node Id",
       "address_type_testnet_error": "Testnet address detected，please goto",
       "address_type_mainnet_error": "Mainnet address detected，please goto",
       "address_type_testnet_url": "testnet explorer",
@@ -384,7 +473,23 @@
       "bitcoin_address": "BTC Address",
       "token_collection": "Token Collection",
       "token_item": "Token Item",
-      "did": "DID"
+      "did": "DID",
+      "fiber_graph_node": "Fiber Graph Node"
+    },
+    "cell": {
+      "live_cell": "Live Cell",
+      "dead_cell": "Consumed Cell",
+      "cell_info": "Cell Info",
+      "pending_cell": "Pending Cell",
+      "bind_description": {
+        "binding": "\"Binding\": The UTXO corresponding to the current Cell has been consumed. If the \"Binding\" status persists for too long, please check the CKB transaction status under the BTC address that consumed this UTXO.",
+        "bound": "\"Bound\": \"Bound\" means that the Owner of the Cell is a live BTC UTXO, and the Cell has been bound to a specific BTC address.",
+        "unbound": "\"Abnormal Unbind\" status: \"Abnormal Unbind\" means that the Owner of the Cell is a consumed or non-existent BTC UTXO, making the Cell ownerless and unusable by any address."
+      },
+      "out_point": "OutPoint",
+      "in_block": "In Block",
+      "time": "Time",
+      "capacity": "Capacity"
     },
     "address": {
       "address": "Address",
@@ -413,6 +518,7 @@
       "cell": "Cell",
       "cells": "Cells",
       "rgb_plus_plus": "RGB++",
+      "invalid": "Invalid",
       "inscription": "Inscription",
       "confirmation": "Confirmation",
       "confirmations": "Confirmations",
@@ -426,11 +532,11 @@
       "transaction_rgbpp_digest": "RGB++ Digest",
       "seal_tx_on_bitcoin": "Seal Tx On Bitcoin",
       "tx_on_bitcoin": "Tx On Bitcoin",
-      "leap_in": "L1 → L2",
-      "leap_out": "L2 → L1",
-      "leap_with_in_btc": "L1 → L1",
-      "leap_in_tip": "This RGB++ transaction is marked as \"L1 → L2\", indicating that the number of cells with RGB++ lock in the output exceeds the number of cells with RGB++ lock in the input.",
-      "leap_out_tip": "This RGB++ transaction is marked as \"L2 → L1\", indicating that the number of cells with RGB++ lock in the input exceeds the number of cells with RGB++ lock in the output.",
+      "leap_in": "Leap from BTC",
+      "leap_out": "Leap to BTC",
+      "leap_with_in_btc": "Transfer on BTC",
+      "leap_in_tip": "This RGB++ transaction is marked as \"BTC → CKB\", indicating that the number of cells with RGB++ lock in the output exceeds the number of cells with RGB++ lock in the input.",
+      "leap_out_tip": "This RGB++ transaction is marked as \"CKB → BTC\", indicating that the number of cells with RGB++ lock in the input exceeds the number of cells with RGB++ lock in the output.",
       "view_in_btc_explorer": "View in Bitcoin Explorer",
       "view-as-asset-items": "View Asset Distribution",
       "view-as-merged-assets": "View Asset Amounts(CKB excluded)",
@@ -445,7 +551,16 @@
       "cell-info": "Cell Info"
     },
     "rgbpp": {
+      "assets": {
+        "multiple_warning": "The current UTXO contains multiple assets. Please ensure that the assets are not lost when consuming the UTXO."
+      },
       "transaction": {
+        "direction": {
+          "other": "Others",
+          "description": {
+            "other": "Others include CKB transactions that do not strictly adhere to RGB++ rules"
+          }
+        },
         "ckb_tx": "CKB Tx",
         "btc_tx": "BTC Tx",
         "block_number": "Block Number",
@@ -463,9 +578,15 @@
           "unlock": "Unlock"
         }
       },
-      "amount": "Amount"
+      "amount": "Amount",
+      "visit": "Visit",
+      "rgbpp_explorer": "RGB++ Explorer",
+      "explore_the": "Explore the",
+      "ecosystem": "Ecosystem",
+      "visit_this_item_on_rgbpp_explorer": "Visit this item on RGB++ Explorer"
     },
     "transaction": {
+      "ckb-cell-info": "CKB Cell Info",
       "view_rgbpp_digest": "View RGB++ Digest",
       "transaction": "Transaction",
       "transactions": "Transactions",
@@ -473,6 +594,7 @@
       "transaction_fee": "Transaction Fee",
       "fee_rate": "Fee Rate",
       "cell_deps": "CellDeps",
+      "out_point": "OutPoint",
       "out_point_tx_hash": "OutPoint.TxHash",
       "out_point_index": "OutPoint.Index",
       "dep_type": "DepType",
@@ -535,6 +657,8 @@
       "script_data": "data",
       "export-transaction": "Export Transaction",
       "capacity_usage": "Capacity Usage",
+      "rgbpp": "RGB++",
+      "utxo_graph": "UTXO graph",
       "declared_capacity": "declared",
       "occupied_capacity": "occupied",
       "size": "Size",
@@ -562,13 +686,33 @@
       "transaction_details": "Transaction Details",
       "unknown_assets": "Unknown Assets",
       "mint": "Mint",
-      "no_records": "No records",
+      "no_records": "No record",
       "data-being-processed": "Data is being processed, please wait...",
       "view-btc-utxos": "BTC UTXOs",
       "view-btc-tx": "View BTC Tx",
       "isomorphic-binding-with-index": "Isomorphic bound to CKB Tx {{index}}",
       "isomorphic-binding-with-index-commitment": "Isomorphic bound to CKB Tx {{index}}\n\nCommitment:\n{{commitment}}",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "fiber_channel": "Fiber Channel",
+      "deployment": "Deployment",
+      "deployed_script": "Deployed Script",
+      "range_notice": "Only the latest {{count}} related items will be displayed here.",
+      "fiber_cell_input": "The current input is the Fiber Network transaction input.",
+      "fiber_cell_output": "The current output is the Fiber Network transaction output.",
+      "status_label": {
+        "pending": {
+          "label": "Pending",
+          "tooltip": "The transaction is pending and has not been committed in a block yet."
+        },
+        "rejected": {
+          "label": "Rejected",
+          "tooltip": "The transaction is rejected and will not be committed in a block."
+        },
+        "untracked": {
+          "label": "Untracked",
+          "tooltip": "The transaction is untracked and please confirm with the sender"
+        }
+      }
     },
     "block": {
       "block": "Block",
@@ -666,7 +810,7 @@
       "view_apc_trending": "Nominal APC"
     },
     "error": {
-      "maintain": "The tip block number {{tip}}, the current synced block lagging behind by {{lag}} blocks",
+      "maintain": "The tip block number {{tip}}, the current synced block lagging behind by {{lag}} blocks. You can use <switcher>node-connection mode</switcher> to track the latest data",
       "page_crashed_tip": "Oops! Some errors were encountered.",
       "back_home": "BACK HOME",
       "codes": {
@@ -694,9 +838,13 @@
       "current_page": "Page",
       "of_page": "of",
       "only_first_pages_visible": "Showing first {{pages}} pages",
-      "show_rows": "Show Rows"
+      "show_rows": "Show Rows",
+      "load_more": "Load More",
+      "no_more_data": "No more data"
     },
     "udt": {
+      "udts": "UDT List",
+      "description": "All the Tokens satisfying UDT features or traits will be included here. This includes xUDTs and sUDTs.",
       "sudt": "sUDT",
       "name": "Name",
       "symbol": "Symbol",
@@ -712,7 +860,7 @@
       "submit_token_info": "Submit Token Info",
       "modify_token_info": "Modify Token Info",
       "unknown_token_description": "The token’s information is incomplete. If you are the owner of this token, please submit token info.",
-      "tokens": "Tokens",
+      "tokens": "sUDT List",
       "transactions": "24hr Transactions",
       "address_count": "Address Count",
       "created_time": "Created Time",
@@ -742,12 +890,22 @@
       "repeat_inscription_symbol": "This inscription is a duplicate with an earlier release of the same symbol."
     },
     "xudt": {
-      "holder_allocation": "Holder Allocation",
-      "holder_allocation_description": "There are {{ckb}} CKB Holder and {{btc}} BTC holder of the current asset.",
+      "title": {
+        "tags": "Tags"
+      },
+      "read_contract": {
+        "title": "Read Contract",
+        "query": "Query",
+        "add_parameter": "Add Parameter",
+        "expand_all": "Expand All",
+        "collapse_all": "Collapse All"
+      },
+      "holder_distribution": "Holder Distribution",
+      "holder_distribution_description": "There are {{ckb}} CKB Holders and {{btc}} BTC holders of the current asset. BTC holder refers to the number of unique BTC addresses that own this asset.",
       "lock_hash": "Lock Hash",
       "count": "Count",
       "xudt": "xUDT",
-      "xudts": "xUDTs",
+      "xudts": "xUDT List",
       "name": "Name",
       "symbol": "Symbol",
       "total_amount": "Total Amount",
@@ -757,21 +915,42 @@
       "type_script_hash": "Type Script Hash",
       "holders": "Holders",
       "unique_addresses": "Unique CKB Addresses",
+      "rgbpp_holders_count": "Holders",
+      "display_unique_ckb_addresses": "Display Unique CKB Addresses",
+      "display_rgbpp_holders": "Display RGB++ Holders",
       "decimal": "Decimal",
       "transactions": "24hr Transactions",
       "address_count": "Address Count",
       "created_time": "Created Time",
       "tokens_empty": "There are no xUDTs at this time.",
-      "invalid": "Invalid",
-      "suspicious": "Suspicious",
-      "out-of-length-range": "Out Of Length Range",
-      "duplicate": "Duplicate",
-      "layer-1-asset": "Layer 1 Asset",
-      "layer-2-asset": "Layer 2 Asset",
-      "verified-on": "Verified On Platform",
-      "supply-limited": "Supply Limited",
-      "supply-unlimited": "Supply Unlimited",
-      "rgbpp-compatible": "RGB++ Compatible",
+      "tags": {
+        "invalid": "Invalid Name",
+        "suspicious": "Suspicious Name",
+        "utility": "Utility",
+        "out-of-length-range": "Name Length Exceeded",
+        "duplicate": "Duplicate",
+        "layer-1-asset": "Issued on Bitcoin",
+        "layer-2-asset": "Issued on CKB",
+        "verified-on": "Verified On Platform",
+        "supply-limited": "Supply Limited",
+        "supply-unlimited": "Supply Unlimited",
+        "rgb++": "RGB++",
+        "unnamed": "Unnamed"
+      },
+      "tags_description": {
+        "invalid": "This tag marks an asset whose name contains invalid characters.",
+        "suspicious": "This tag marks an asset whose name contains multiple hidden character types.",
+        "out-of-length-range": "This tag marks an asset whose name exceeds 60 characters in length.",
+        "duplicate": "Under case-sensitive conditions, this tag marks an asset whose name duplicates an already issued asset.",
+        "rgb++": "This tag marks an asset that is compatible with the RGB++ protocol, allowing for transfers between BTC and CKB.",
+        "layer-1-asset": "This tag marks an asset that is issued on Bitcoin.",
+        "layer-2-asset": "This tag marks an asset that is issued on CKB.",
+        "verified-on": "This tag marks an asset that has been verified by Cell Studio.",
+        "supply-limited": "This tag marks an asset that has a limited supply, with a maximum quantity limit.",
+        "supply-unlimited": "This tag marks an asset that has an unlimited supply, with no maximum quantity limit.",
+        "view_more": "View more items",
+        "unnamed": "This tag marks an asset whose name field is empty."
+      },
       "category": "Category"
     },
     "nft": {
@@ -779,7 +958,7 @@
       "collection_name": "Collection Name",
       "standard": "Type",
       "minter_address": "Creator",
-      "no_record": "No records",
+      "no_record": "No record",
       "mnft": "M-NFT",
       "m_nft": "m-NFT",
       "nrc721": "NRC 721",
@@ -817,17 +996,7 @@
       "no-traits": "No Traits"
     },
     "script_list": {
-      "title": "Scripts",
-      "links": "Links",
-      "on_chain_data": "On-chain data",
-      "link": {
-        "rfc": "RFC",
-        "code": "Source Code",
-        "doc": "Documentation",
-        "deprecated": "Deprecated",
-        "website": "Website",
-        "detail": "Detail"
-      }
+      "title": "Scripts"
     },
     "scripts": {
       "script": "Script",
@@ -843,8 +1012,25 @@
       "referring_cells": "Referring Cells",
       "capacity_of_deployed_cells": "Capacity of deployed cells",
       "capacity_of_referring_cells": "Capacity of referring cells",
-      "LockScript": "Lock Script",
-      "TypeScript": "Type Script"
+      "lock_script": "Lock Script",
+      "type_script": "Type Script",
+      "deployed_script": "Deployed Script",
+      "open_source_script": "Open-Source Script",
+      "restrict_mode": "Restricted Mode",
+      "restrict_tooltip": "In Restricted Mode, this transaction list will not include transactions that merely reference current script as one of their dependencies.",
+      "timestamp": "Deployment Time",
+      "data_hash": "Data Hash",
+      "type_hash": "Type Hash",
+      "outpoint_tx_hash": "Outpoint Tx Hash",
+      "outpoint_index": "Outpoint Index",
+      "outpoint_dep_type": "Outpoint Dep Type",
+      "deprecated": "Deprecated",
+      "verified": "Verified",
+      "link": {
+        "rfc": "RFC",
+        "code": "Source Code",
+        "website": "Website"
+      }
     },
     "fee_rate_tracker": {
       "title": "Fee Rate Tracker",
@@ -872,8 +1058,12 @@
       "csv_export": "CSV Export",
       "download_data": "Download Data",
       "holders_by_block": "Holders by Block",
+      "holders_allocation": "Holders Allocation",
       "holders_by_block_title": "Holders by Block CSV download",
       "holders_by_block_des": "You can download the record of the amount of xUDT held by addresses in a specific block number on this page.",
+      "select_export_data": "Select export data",
+      "by_owner": "By Owner",
+      "by_ckb_address": "By CKB Address",
       "transactions": "Transactions",
       "description_str": "The information you requested can be downloaded from this page. Before continuing please verify that you are not a robot by completing the captcha below.",
       "select_download_options": "Select download options",
@@ -884,6 +1074,8 @@
       "to_block": "To Block",
       "block_height": "Block Height",
       "note_str": "The earliest 5,000 records within the selected range will be exported",
+      "dao_tx_note_str": "The earliest 5,000 transactions within the selected range will be exported, the number of records may exceed 5,000 because a single transaction can include multiple records.",
+      "dao_depositor_note_str": "The Top 5,000 depositors based on within the selected range will be exported",
       "download": "Download",
       "block_number": "Block Number",
       "please_pick_date": "please pick start date and end date!",
@@ -943,6 +1135,7 @@
       "token-info": "Token Info",
       "xudt-data": "XUDT Data",
       "btc-time-lock": "BTC Time Lock",
+      "spore-cluster": "Spore Cluster",
       "spore": "Spore",
       "json": "JSON",
       "select-x-from-y": "Selected {{x}} chars from {{y}}",
@@ -976,10 +1169,97 @@
       "tx_in_camel_case": "Transaction in Camel Case"
     },
     "node": {
-      "alert": "Currently on the node-connect mode. The explorer data will be fetched from the node, so some features/data cannot be supported. You can <switcher>click here</switcher> to switch",
+      "alert": "Currently on the node-connection mode. The explorer data will be fetched from the node, so some features/data cannot be supported. You can <switcher>click here</switcher> to switch",
       "done": "Done",
+      "default_node": "Default Node",
+      "alias": "Alias",
+      "rpc_url": "RPC URL",
+      "add_node": "Add Node",
+      "modify_node": "Modify Node",
       "node_connect_mode": "Node Connect Mode",
+      "node_existed": "Node Existed",
+      "add_success": "Add Node Success",
+      "modify_success": "Modify Node Success",
+      "alias_required": "Please Input Alias",
+      "url_required": "Please Input RPC URL",
+      "url_invalid": "RPC URL is not valid URL",
+      "invalid_network": "Invalid network. please try switching the mainnet or testnet to connect to this node",
+      "connect_failed": "Node connect failed",
       "node_connect_tooltip": "When the node-connection mode is enabled, the data will be fetched from the node directly, so some features/data will not be supported."
+    },
+    "utxo_graph": {
+      "view_tx": "View Transaction",
+      "tx_hash": "Tx",
+      "view_address": "View Address",
+      "view_btc_utxo": "View BTC UTXO",
+      "view_cell_info": "View Cell Info"
+    },
+    "fiber": {
+      "fiber_node": "Fiber Network Node",
+      "peer": {
+        "peer_id": "ID",
+        "name": "Name",
+        "channels_count": "Channels",
+        "channels": "Channels",
+        "open_time": "First Channel",
+        "update_time": "Last Update",
+        "total_local_balance": "Local Balance",
+        "rpc_addr": "RPC Address",
+        "connect_id": "Connect"
+      },
+      "channel": {
+        "channel_id": "Channel ID",
+        "fiber_peers": "Fiber Peers",
+        "state": "State",
+        "open_time": "Open Time",
+        "update_time": "Last Update Time",
+        "shutdown_time": "Shutdown Time",
+        "balance": "Balance",
+        "local": "Local",
+        "remote": "Remote",
+        "tlc_balance": "TLC Balance",
+        "offered": "Offered",
+        "received": "Received"
+      },
+      "action": {
+        "open": "Open",
+        "close": "Close"
+      },
+      "graph": {
+        "total_capacity": "Total Capacity",
+        "total_liquidity": "Total Liquidity",
+        "total_nodes": "Total Nodes",
+        "total_channels": "Total Channels",
+        "mean": "Mean",
+        "median": "Median",
+        "mean_locked_capacity": "Mean Locked Capacity",
+        "mean_fee_rate": "Mean Fee Rate",
+        "median_locked_capacity": "Median Locked Capacity",
+        "median_fee_rate": "Median Fee Rate",
+        "public_fiber_node_world_map": "Public Fiber Node World Map",
+        "public_fiber_nodes": "Public Fiber Nodes",
+        "node": {
+          "id": "Node ID",
+          "name": "Name",
+          "alias": "Alias",
+          "auto_accept_funding_amount": "Auto-accepting Threshold",
+          "first_seen_last_update": "First Seen/Last Update",
+          "node_id": "Node ID",
+          "chain": "Chain",
+          "chain_hash": "Chain Hash",
+          "addresses": "Addresses",
+          "addresses_and_isp": "Addresses & ISP",
+          "isp": "ISP",
+          "total_capacity": "Capacity",
+          "open_channels": "Open Channels",
+          "total_liquidity": "Total Liquidity",
+          "liquidity_allocation": "Liquidity Allocation",
+          "not_found": "Node not found"
+        },
+        "channel": {
+          "connected_node": "Connected Node"
+        }
+      }
     }
   }
 }

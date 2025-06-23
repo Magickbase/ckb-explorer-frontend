@@ -3,8 +3,7 @@ import { FC, ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import { useCKBNode } from '../../hooks/useCKBNode'
-import { matchTxHash } from '../../utils/util'
+import { explorerService } from '../../services/ExplorerService'
 import Loading from '../AwesomeLoadings/Spinner'
 import HashTag from '../HashTag'
 import { HelpTip } from '../HelpTip'
@@ -23,7 +22,7 @@ const Field = ({
       {title ? (
         <>
           <span>{title}</span>
-          {tooltip && <HelpTip title={tooltip} />}
+          {tooltip && <HelpTip>{tooltip}</HelpTip>}
           <span>:</span>
         </>
       ) : (
@@ -39,7 +38,7 @@ const Field = ({
         ) : (
           value
         )}
-        {valueTooltip && <HelpTip title={valueTooltip} />}
+        {valueTooltip && <HelpTip>{valueTooltip}</HelpTip>}
       </div>
       {tag && <div>{tag}</div>}
     </div>
@@ -48,9 +47,8 @@ const Field = ({
 
 const TransactionParameters: FC<{ hash: string }> = ({ hash }) => {
   const [t] = useTranslation()
-  const { nodeService } = useCKBNode()
 
-  const { data, isLoading } = useQuery(['tx', hash], () => nodeService.getTx(hash))
+  const { data, isLoading } = useQuery(['explorer-tx', hash], () => explorerService.api.fetchTransactionByHash(hash))
   if (isLoading) {
     return (
       <div className={styles.loading}>
@@ -59,9 +57,9 @@ const TransactionParameters: FC<{ hash: string }> = ({ hash }) => {
     )
   }
 
-  if (!data?.result?.transaction) return <div>{`Transaction ${hash} not loaded`}</div>
+  if (!data) return <div>{`Transaction ${hash} not loaded`}</div>
 
-  const { header_deps: headerDeps, cell_deps: cellDeps, witnesses } = data.result.transaction
+  const { headerDeps, cellDeps, witnesses } = data
 
   const parameters = [
     {
@@ -84,10 +82,14 @@ const TransactionParameters: FC<{ hash: string }> = ({ hash }) => {
       content: cellDeps.length ? (
         cellDeps.map(cellDep => {
           const {
-            out_point: { tx_hash: txHash, index },
-            dep_type: depType,
+            outPoint: { txHash, index },
+            depType,
+            script: { codeHash, hashType, name, isLockScript },
           } = cellDep
-          const hashTag = matchTxHash(txHash, Number(index))
+          const hashTag: { tag: string | null; category: 'lock' | 'type' } = {
+            tag: name,
+            category: isLockScript ? 'lock' : 'type',
+          }
           return (
             <div className={styles.fieldSet} key={`${txHash}-${index}`}>
               <Field
@@ -95,7 +97,17 @@ const TransactionParameters: FC<{ hash: string }> = ({ hash }) => {
                 tooltip={t('glossary.out_point_tx_hash')}
                 value={txHash}
                 linkUrl={`/transaction/${txHash}`}
-                tag={hashTag && <HashTag content={hashTag.tag} category={hashTag.category} />}
+                tag={
+                  hashTag.tag &&
+                  codeHash &&
+                  hashType && (
+                    <HashTag
+                      content={hashTag.tag}
+                      category={hashTag.category}
+                      script={{ codeHash, hashType, args: '' }}
+                    />
+                  )
+                }
               />
               <Field
                 title={t('transaction.out_point_index')}
@@ -162,7 +174,7 @@ const TransactionParameters: FC<{ hash: string }> = ({ hash }) => {
         <div className={styles.section} key={item.title}>
           <div className={styles.sectionTitle}>
             <span>{item.title}</span>
-            {item.tooltip && <HelpTip title={item.tooltip} />}
+            {item.tooltip && <HelpTip>{item.tooltip}</HelpTip>}
           </div>
           <div className={styles.sectionValue}>{item.content}</div>
         </div>

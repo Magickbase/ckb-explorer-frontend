@@ -1,7 +1,8 @@
 import BigNumber from 'bignumber.js'
 import { EChartOption } from 'echarts'
+import { ChartColor } from '../constants/common'
 import { SeriesItem } from '../pages/StatisticsChart/common'
-import type { FeeRateTracker } from '../services/ExplorerService/fetcher'
+import type { FeeRateTracker } from '../services/ExplorerService'
 
 export const DATA_ZOOM_CONFIG = [
   {
@@ -115,8 +116,8 @@ export const getFeeRateSamples = (feeRates: FeeRateTracker.TransactionFeeRate[],
   const validSamples = feeRates.filter(i => i.confirmationTime).sort((a, b) => a.feeRate - b.feeRate)
 
   // check if lowest fee rate has ideal confirmation time
-  const lowests = validSamples.slice(0, SAMPLES_MIN_COUNT)
-  const avgOfLowests = lowests.reduce((acc, cur) => acc + cur.confirmationTime, 0) / validSamples.length
+  const lowests = validSamples.slice(0, sampleCount)
+  const avgOfLowests = lowests.reduce((acc, cur) => acc + cur.confirmationTime, 0) / lowests.length
 
   const ACCEPTABLE_CONFIRMATION_TIME = 2 * avgBlockTime
 
@@ -134,7 +135,7 @@ export const getFeeRateSamples = (feeRates: FeeRateTracker.TransactionFeeRate[],
 
   // Calculate the Interquartile Range (IQR)
   const iqr = q3 - q1
-  // // Define the lower and upper bounds for outliers
+  // Define the lower and upper bounds for outliers
   const lowerBound = q1 - 1.5 * iqr
   const upperBound = q3 + 1.5 * iqr
 
@@ -203,12 +204,54 @@ export const assertSerialsDataIsStringArrayOf4: (
   }
 }
 
-export const assertSerialsDataIsStringArrayOf9: (
-  value: EChartOption.Tooltip.Format,
-) => asserts value is { data: [string, string, string, string, string, string, string, string, string] } = (
-  value: EChartOption.Tooltip.Format,
-) => {
-  if (!Array.isArray(value.data) || value.data.length !== 9 || !value.data.every(item => typeof item === 'string')) {
-    throw new Error('invalid SeriesItem length of 9')
+export const assertSerialsDataIsStringArrayOf10: (value: EChartOption.Tooltip.Format) => asserts value is {
+  data: [string, string, string, string, string, string, string, string, string, string]
+} = (value: EChartOption.Tooltip.Format) => {
+  if (!Array.isArray(value.data) || value.data.length !== 10 || !value.data.every(item => typeof item === 'string')) {
+    throw new Error('invalid SeriesItem length of 10')
   }
+}
+
+const BASE_COLORS = [
+  ...ChartColor.colors.slice(0, 2),
+  '#FF5733',
+  '#FFC300',
+  '#DAF7A6',
+  '#33FF57',
+  '#33C1FF',
+  '#8A33FF',
+  '#FF33A8',
+  '#FF33F6',
+  '#FF8C33',
+  '#FFE733',
+]
+
+export const variantColors = (count: number, baseColors: string[] = BASE_COLORS) => {
+  // Helper function to adjust brightness
+  function adjustColor(color: string, factor: number) {
+    const hex = color.replace('#', '')
+    const r = Math.min(255, Math.max(0, parseInt(hex.substring(0, 2), 16) + factor))
+    const g = Math.min(255, Math.max(0, parseInt(hex.substring(2, 4), 16) + factor))
+    const b = Math.min(255, Math.max(0, parseInt(hex.substring(4, 6), 16) + factor))
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  }
+
+  const colors = []
+  let variantIndex = 0
+
+  for (let i = 0; i < count; i++) {
+    const baseColor = baseColors[i % baseColors.length]
+    let adjustmentFactor = 0
+    if (variantIndex % 3 === 1) {
+      adjustmentFactor = 30
+    } else if (variantIndex % 3 === 2) {
+      variantIndex = -30
+    }
+    colors.push(adjustColor(baseColor, adjustmentFactor))
+    if ((i + 1) % baseColors.length === 0) {
+      variantIndex++
+    }
+  }
+
+  return colors
 }

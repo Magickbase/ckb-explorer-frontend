@@ -3,13 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { shannonToCkb } from '../../../utils/util'
 import Capacity from '../../../components/Capacity'
 import { handleBigNumber } from '../../../utils/string'
-import {
-  DepositorRankCardPanel,
-  DepositorRankPanel,
-  DepositorRankTitle,
-  DepositorSeparate,
-  DepositorRankItem,
-} from './styled'
+import { CsvExport } from '../../../components/CsvExport'
 import AddressText from '../../../components/AddressText'
 import styles from './index.module.scss'
 import { useIsMobile } from '../../../hooks'
@@ -74,28 +68,42 @@ export default ({ depositors, filter }: { depositors: NervosDaoDepositor[]; filt
   const filteredDepositors = filter ? rankedDepositors.filter(d => d.addressHash === filter) : rankedDepositors
 
   return useIsMobile() ? (
-    <DepositorRankCardPanel>
-      <DepositorCardGroup depositors={filteredDepositors} />
-    </DepositorRankCardPanel>
+    <>
+      <div className={styles.depositorRankCardPanel}>
+        <DepositorCardGroup depositors={filteredDepositors} />
+      </div>
+      <div className={styles.depositorFooterPanel}>
+        <div style={{ marginLeft: 'auto' }}>
+          <CsvExport link="/nervosdao/depositor/export" />
+        </div>
+      </div>
+    </>
   ) : (
-    <DepositorRankPanel>
-      <DepositorRankTitle>
-        <div>{t('nervos_dao.dao_title_rank')}</div>
-        <div>{t('nervos_dao.dao_title_address')}</div>
-        <div>{t('nervos_dao.dao_title_deposit_capacity')}</div>
-        <div>{t('nervos_dao.dao_title_deposit_time')}</div>
-      </DepositorRankTitle>
-      <DepositorSeparate />
-      {filteredDepositors.map(depositor => (
-        <DepositorRankItem key={depositor.addressHash}>
-          <div>{depositor.rank}</div>
-          <AddressTextCol address={depositor.addressHash} />
-          <div>
-            <Capacity capacity={shannonToCkb(depositor.daoDeposit)} layout="responsive" />
+    <>
+      <div className={styles.depositorRankPanel}>
+        <div className={styles.depositorRankTitle}>
+          <div>{t('nervos_dao.dao_title_rank')}</div>
+          <div>{t('nervos_dao.dao_title_address')}</div>
+          <div>{t('nervos_dao.dao_title_deposit_capacity')}</div>
+          <div>{t('nervos_dao.dao_title_deposit_time')}</div>
+        </div>
+        <div className={styles.depositorSeparate} />
+        {filteredDepositors.map(depositor => (
+          <div className={styles.depositorRankItem} key={depositor.addressHash}>
+            <div>{depositor.rank}</div>
+            <AddressTextCol address={depositor.addressHash} />
+            <div>
+              <Capacity capacity={shannonToCkb(depositor.daoDeposit)} layout="responsive" />
+            </div>
+            <div>{handleBigNumber(depositor.averageDepositTime, 1)}</div>
           </div>
-          <div>{handleBigNumber(depositor.averageDepositTime, 1)}</div>
-        </DepositorRankItem>
-      ))}
-    </DepositorRankPanel>
+        ))}
+      </div>
+      <div className={styles.depositorFooterPanel}>
+        <div style={{ marginLeft: 'auto' }}>
+          <CsvExport link="/nervosdao/depositor/export" />
+        </div>
+      </div>
+    </>
   )
 }

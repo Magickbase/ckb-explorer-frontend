@@ -6,6 +6,12 @@ export interface CellDep {
     index: string
     txHash: string
   }
+  script: {
+    codeHash: string | null
+    hashType: string | null
+    name: string | null
+    isLockScript: boolean
+  }
 }
 
 export interface Transaction {
@@ -35,6 +41,9 @@ export interface Transaction {
   maxCyclesInEpoch: number | null
   maxCycles: number | null
   createTimestamp?: number
+  cellDeps: CellDep[]
+  headerDeps: string[]
+  witnesses: string[]
 }
 
 export interface BtcTx {

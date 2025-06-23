@@ -2,7 +2,6 @@
 import { useState, FC } from 'react'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
-import { Tooltip } from 'antd'
 import { Link } from '../../../components/Link'
 import Capacity from '../../../components/Capacity'
 import SimpleButton from '../../../components/SimpleButton'
@@ -11,7 +10,6 @@ import { LayoutLiteProfessional } from '../../../constants/common'
 import { parseSimpleDate } from '../../../utils/date'
 import { localeNumberString } from '../../../utils/number'
 import { shannonToCkb, useFormatConfirmation } from '../../../utils/util'
-import { TransactionBlockHeightPanel, TransactionOverviewPanel } from './styled'
 import { explorerService, useLatestBlockNumber } from '../../../services/ExplorerService'
 import { Transaction } from '../../../models/Transaction'
 import { Card, CardCellInfo, CardCellsLayout, HashCardHeader } from '../../../components/Card'
@@ -21,16 +19,18 @@ import { useSetToast } from '../../../components/Toast'
 import { useIsMobile } from '../../../hooks'
 import styles from './TransactionOverview.module.scss'
 import TransactionParameters from '../../../components/TransactionParameters'
+import Tooltip from '../../../components/Tooltip'
+import baseStyles from './styles.module.scss'
 
 const showTxStatus = (txStatus: string) => txStatus?.replace(/^\S/, s => s.toUpperCase()) ?? '-'
 const TransactionBlockHeight = ({ blockNumber, txStatus }: { blockNumber: number; txStatus: string }) => (
-  <TransactionBlockHeightPanel>
+  <div className={baseStyles.transactionBlockHeightPanel}>
     {txStatus === 'committed' ? (
       <Link to={`/block/${blockNumber}`}>{localeNumberString(blockNumber)}</Link>
     ) : (
       <span>{showTxStatus(txStatus)}</span>
     )}
-  </TransactionBlockHeightPanel>
+  </div>
 )
 
 export const TransactionOverviewCard: FC<{
@@ -156,45 +156,62 @@ export const TransactionOverviewCard: FC<{
     content: liteTxCyclesDataContent,
   }
   const overviewItems: CardCellInfo<'left' | 'right'>[] = []
-  if (txStatus === 'committed') {
-    overviewItems.push(blockHeightData, timestampData)
-    if (confirmation >= 0) {
-      if (isProfessional) {
-        overviewItems.push(bytes ? feeWithFeeRateData : txFeeData, txStatusData)
-      } else {
-        overviewItems.push(txStatusData)
+  switch (txStatus) {
+    case 'committed': {
+      overviewItems.push(blockHeightData, timestampData)
+      if (confirmation >= 0) {
+        if (isProfessional) {
+          overviewItems.push(bytes ? feeWithFeeRateData : txFeeData, txStatusData)
+        } else {
+          overviewItems.push(txStatusData)
+        }
       }
+      break
     }
-  } else if (txStatus === 'rejected') {
-    overviewItems.push(
-      blockHeightData,
-      {
-        ...timestampData,
-        content: 'Rejected',
-      },
-      {
+    case 'rejected': {
+      overviewItems.push(
+        blockHeightData,
+        {
+          ...timestampData,
+          content: 'Rejected',
+        },
+        {
+          ...txStatusData,
+          content: t('transaction.status_label.rejected.label'),
+          contentTooltip: detailedMessage,
+        },
+      )
+      break
+    }
+    case 'pending': {
+      // pending
+      overviewItems.push(
+        {
+          ...blockHeightData,
+          content: '···',
+        },
+        {
+          ...timestampData,
+          content: '···',
+        },
+        {
+          ...txStatusData,
+          content: t('transaction.status_label.pending.label'),
+          contentTooltip: t('transaction.status_label.pending.tooltip'),
+        },
+      )
+      break
+    }
+    default: {
+      // unknown
+      overviewItems.push({
         ...txStatusData,
-        content: 'Rejected',
-        contentTooltip: detailedMessage,
-      },
-    )
-  } else {
-    // pending
-    overviewItems.push(
-      {
-        ...blockHeightData,
-        content: '···',
-      },
-      {
-        ...timestampData,
-        content: '···',
-      },
-      {
-        ...txStatusData,
-        content: 'Pending',
-      },
-    )
+        content: t('transaction.status_label.untracked.label'),
+        contentTooltip: t('transaction.status_label.untracked.tooltip'),
+      })
+    }
   }
+
   if (isProfessional) {
     overviewItems.push(liteTxSizeData, liteTxCyclesData)
   }
@@ -230,10 +247,15 @@ export const TransactionOverviewCard: FC<{
         title={t('transaction.transaction')}
         hash={txHash}
         customActions={[
-          <Tooltip placement="top" title={t(`transaction.export-transaction`)}>
-            <SimpleButton className={styles.exportTxAction} onClick={handleExportTxClick}>
-              <DownloadIcon />
-            </SimpleButton>
+          <Tooltip
+            trigger={
+              <SimpleButton className={styles.exportTxAction} onClick={handleExportTxClick}>
+                <DownloadIcon />
+              </SimpleButton>
+            }
+            placement="top"
+          >
+            {t(`transaction.export-transaction`)}
           </Tooltip>,
         ]}
         rightContent={
@@ -246,7 +268,7 @@ export const TransactionOverviewCard: FC<{
       />
 
       {(txStatus !== 'committed' || Number(blockTimestamp) > 0) && (
-        <TransactionOverviewPanel>
+        <div className={baseStyles.transactionOverviewPanel}>
           <CardCellsLayout type="left-right" cells={overviewItems} borderTop={!isMobile} />
           {isProfessional && (
             <div>
@@ -270,7 +292,7 @@ export const TransactionOverviewCard: FC<{
               {detailTab === 'raw' ? <RawTransactionView hash={txHash} /> : null}
             </div>
           )}
-        </TransactionOverviewPanel>
+        </div>
       )}
     </Card>
   )

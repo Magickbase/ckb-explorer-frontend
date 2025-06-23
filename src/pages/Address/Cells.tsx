@@ -2,19 +2,21 @@ import { type FC, useState, useRef, useEffect } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
 import BigNumber from 'bignumber.js'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Tooltip } from 'antd'
+import { OpenInNewWindowIcon, SizeIcon, TimerIcon } from '@radix-ui/react-icons'
 import { explorerService, LiveCell } from '../../services/ExplorerService'
-import SUDTTokenIcon from '../../assets/sudt_token.png'
+import FtFallbackIcon from '../../assets/ft_fallback_icon.png'
 import CKBTokenIcon from './ckb_token_icon.png'
 import { ReactComponent as TypeHashIcon } from './type_script.svg'
 import { ReactComponent as DataIcon } from './data.svg'
-import { ReactComponent as SporeCluterIcon } from './spore_cluster.svg'
+import { ReactComponent as SporeClusterIcon } from './spore_cluster.svg'
 import { ReactComponent as SporeCellIcon } from './spore_cell.svg'
 import { ReactComponent as SortIcon } from '../../assets/sort_icon.svg'
 import { ReactComponent as TimeDownIcon } from '../../assets/time_down.svg'
 import { ReactComponent as TimeUpIcon } from '../../assets/time_up.svg'
 import { ReactComponent as ListIcon } from './list.svg'
 import { ReactComponent as GridIcon } from './grid.svg'
+import { ReactComponent as BlockIcon } from './block.svg'
+import { ReactComponent as PinIcon } from './pin.svg'
 import { parseUDTAmount } from '../../utils/number'
 import { shannonToCkb } from '../../utils/util'
 import { parseSimpleDateNoSecond } from '../../utils/date'
@@ -23,6 +25,9 @@ import SmallLoading from '../../components/Loading/SmallLoading'
 import { TransactionCellInfo } from '../Transaction/TransactionCell'
 import { CellBasicInfo } from '../../utils/transformer'
 import { sliceNftName } from '../../utils/string'
+import { Link } from '../../components/Link'
+import { isTypeIdScript } from '../../utils/typeid'
+import Tooltip from '../../components/Tooltip'
 
 enum Sort {
   TimeAsc = 'block_timestamp.asc',
@@ -42,7 +47,8 @@ const fetchCells = async ({
   sort: string
   page: number
 }) => {
-  const res = await explorerService.api.fetchAddressLiveCells(address, page, size, sort)
+  const boundStatus = address.startsWith('ckb') || address.startsWith('ckt') ? undefined : 'bound'
+  const res = await explorerService.api.fetchAddressLiveCells(address, page, size, sort, boundStatus)
   return {
     data: res.data,
     nextPage: page + 1,
@@ -61,9 +67,17 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
   let attribute = null
   let detailInfo = null
   let assetTypeText = assetType
+  let assetLink = null
   switch (assetType) {
     case 'ckb': {
       assetTypeText = 'CKB'
+      if (cell.typeScript && isTypeIdScript(cell.typeScript)) {
+        icon = <TypeHashIcon />
+        assetName = 'Deployed Script'
+        attribute = `TYPE HASH: ${cell.typeHash.slice(0, 10)}...`
+        detailInfo = cell.typeHash
+        break
+      }
       if (cell.typeHash) {
         icon = <TypeHashIcon />
         assetName = 'UNKNOWN ASSET'
@@ -98,27 +112,33 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       break
     }
     case 'udt': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = cell.extraInfo.symbol || 'UDT'
       assetTypeText = 'UDT'
       attribute = cell.extraInfo.decimal
         ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
         : 'Unknown UDT amount'
       detailInfo = cell.extraInfo.amount
+      if (cell.extraInfo.published) {
+        assetLink = `/sudt/${cell.typeHash}`
+      }
       break
     }
     case 'xudt_compatible': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = cell.extraInfo?.symbol || 'xUDT-compatible'
       attribute =
         cell.extraInfo?.decimal && cell.extraInfo?.amount
           ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
           : 'Unknown xUDT amount'
       detailInfo = cell.extraInfo?.amount
+      if (cell.extraInfo.published) {
+        assetLink = `/xudt/${cell.typeHash}`
+      }
       break
     }
     case 'xudt': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = cell.extraInfo?.symbol || 'xUDT'
       assetTypeText = 'xUDT'
       attribute =
@@ -126,19 +146,24 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
           ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
           : 'Unknown xUDT amount'
       detailInfo = cell.extraInfo?.amount
+      if (cell.extraInfo.published) {
+        assetLink = `/xudt/${cell.typeHash}`
+      }
       break
     }
     case 'omiga_inscription': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = cell.extraInfo.symbol || t('udt.inscription')
       assetTypeText = 'xUDT'
       attribute = cell.extraInfo.decimal
         ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
         : 'Unknown amount'
       detailInfo = cell.extraInfo.amount
+      assetLink = `/inscription/${cell.typeHash}`
       break
     }
     case 'did_cell':
+    case 'dob':
     case 'spore_cell': {
       icon = <SporeCellIcon />
       assetName = 'DOB'
@@ -149,10 +174,15 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
         attribute = cell.data
       }
       detailInfo = cell.data
+      if (cell.extraInfo.collection?.typeHash) {
+        assetLink = `/nft-collections/${cell.extraInfo.collection?.typeHash}`
+      } else if (cell.extraInfo.typeHash) {
+        assetLink = `/nft-collections/${cell.extraInfo.typeHash}`
+      }
       break
     }
     case 'spore_cluster': {
-      icon = <SporeCluterIcon />
+      icon = <SporeClusterIcon />
       assetName = 'Spore Cluster'
       assetTypeText = 'NFT'
       if (cell.data.length > ATTRIBUTE_LENGTH) {
@@ -161,10 +191,15 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
         attribute = cell.data
       }
       detailInfo = cell.data
+      if (cell.extraInfo.collection?.typeHash) {
+        assetLink = `/nft-collections/${cell.extraInfo.collection?.typeHash}`
+      } else if (cell.extraInfo.typeHash) {
+        assetLink = `/nft-collections/${cell.extraInfo.typeHash}`
+      }
       break
     }
     case 'nrc_721': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetTypeText = 'NFT'
       assetName = !cell.extraInfo.symbol
         ? '?'
@@ -174,17 +209,27 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       } else {
         attribute = cell.extraInfo.amount
       }
+      if (cell.extraInfo.collection?.typeHash) {
+        assetLink = `/nft-collections/${cell.extraInfo.collection?.typeHash}`
+      } else if (cell.extraInfo.typeHash) {
+        assetLink = `/nft-collections/${cell.extraInfo.typeHash}`
+      }
       break
     }
     case 'm_nft': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetTypeText = 'NFT'
       assetName = cell.extraInfo.className
       attribute = cell.extraInfo.tokenId ? `#${parseInt(cell.extraInfo.tokenId, 16)}` : '/'
+      if (cell.extraInfo.collection?.typeHash) {
+        assetLink = `/nft-collections/${cell.extraInfo.collection?.typeHash}`
+      } else if (cell.extraInfo.typeHash) {
+        assetLink = `/nft-collections/${cell.extraInfo.typeHash}`
+      }
       break
     }
     default: {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetTypeText = 'Unknown Cell'
       assetName = 'UNKNOWN'
       attribute = '-'
@@ -193,14 +238,19 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
 
   const outPointStr = `${cell.txHash.slice(0, 8)}...${cell.txHash.slice(-8)}#${cell.cellIndex}`
   const parsedBlockCreateAt = parseSimpleDateNoSecond(cell.blockTimestamp)
-  const title = `${cell.cellId}: ${ckb} `
+  const title = `${cell.blockNumber}: ${ckb}`
   const cellInfo = {
     ...cell,
     id: Number(cell.cellId),
     isGenesisOutput: Number(cell.blockNumber) === 0,
+    generatedTxHash: cell.txHash,
+    cellIndex: cell.cellIndex.toString(16),
+    status: 'live',
+    consumedTxHash: '',
   } as CellBasicInfo
 
   return {
+    assetLink,
     ckb,
     outPointStr,
     icon,
@@ -214,26 +264,98 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
   }
 }
 
+const HeaderTooltip: FC<{ cell: LiveCell }> = ({ cell }) => {
+  const [t] = useTranslation()
+
+  const ckb = new BigNumber(shannonToCkb(+cell.capacity)).toFormat()
+  const time = parseSimpleDateNoSecond(cell.blockTimestamp)
+  return (
+    <div className={styles.cellHeader}>
+      <dl>
+        <dt>
+          <BlockIcon className={styles.blockIcon} /> {t(`cell.in_block`)}
+        </dt>
+        <dd>
+          {cell.blockNumber}
+          <a href={`/block/${cell.blockNumber}`} target="_blank" rel="noopener noreferrer" title={t('cell.in_block')}>
+            <OpenInNewWindowIcon />
+          </a>
+        </dd>
+      </dl>
+      <dl>
+        <dt>
+          <PinIcon /> {t('cell.out_point')}
+        </dt>
+        <dd>
+          {`${cell.txHash.slice(0, 4)}...${cell.txHash.slice(-4)}#${cell.cellIndex}`}
+          <a
+            href={`/transaction/${cell.txHash}#${cell.cellIndex}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={t('cell.out_point')}
+          >
+            <OpenInNewWindowIcon />
+          </a>
+        </dd>
+      </dl>
+      <dl>
+        <dt>
+          <SizeIcon />
+          {t('cell.capacity')}
+        </dt>
+        <dd>{`${ckb} CKB`}</dd>
+      </dl>
+      <dl>
+        <dt>
+          <TimerIcon /> {t('cell.time')}
+        </dt>
+        <dd>{time}</dd>
+      </dl>
+    </div>
+  )
+}
+
 const Cell: FC<{ cell: LiveCell }> = ({ cell }) => {
   const { t } = useTranslation()
 
-  const { title, parsedBlockCreateAt, icon, assetName, attribute, detailInfo, cellInfo } = getCellDetails(cell, t)
+  const { title, parsedBlockCreateAt, icon, assetName, attribute, detailInfo, cellInfo, assetLink } = getCellDetails(
+    cell,
+    t,
+  )
 
   return (
     <li key={cell.txHash + cell.cellIndex} className={styles.card}>
       <TransactionCellInfo cell={cellInfo} isDefaultStyle={false}>
-        <Tooltip placement="top" title={`${title} CKB (${parsedBlockCreateAt})`}>
-          <h5>
-            <span>{title}</span>
-            <span> CKB ({parsedBlockCreateAt})</span>
-          </h5>
+        <Tooltip
+          trigger={
+            <h5 className={styles.cellTitle}>
+              <span>{title}</span>
+              <span style={{ whiteSpace: 'nowrap' }}>CKB ({parsedBlockCreateAt})</span>
+              <div className={styles.cellTags}>
+                {cell.tags.find(tag => tag === 'fiber') !== undefined && <span className={styles.fiberTag}>Fiber</span>}
+                {cell.tags.find(tag => tag === 'deployment') !== undefined && (
+                  <span className={styles.deploymentTag}>Deployment</span>
+                )}
+              </div>
+            </h5>
+          }
+          placement="top"
+        >
+          <HeaderTooltip cell={cell} />
         </Tooltip>
 
         <div className={styles.cellContent}>
           {typeof icon === 'string' ? <img src={icon} alt={assetName ?? 'sudt'} width="40" height="40" /> : null}
           {icon && typeof icon !== 'string' ? icon : null}
           <div className={styles.fields}>
-            <div className={styles.assetName}>{assetName}</div>
+            {assetLink ? (
+              <Link to={assetLink} className={styles.assetName}>
+                {assetName}
+              </Link>
+            ) : (
+              <div className={styles.assetName}>{assetName}</div>
+            )}
+
             <div className={styles.attribute} title={detailInfo ?? attribute}>
               {attribute}
             </div>
@@ -342,30 +464,45 @@ const Cells: FC<{ address: string; count: number }> = ({ address, count }) => {
       <div className={styles.toolbar}>
         <div>UTXO: {count.toLocaleString('en')}</div>
         <div className={styles.filters}>
-          <Tooltip placement="top" title={t('sort.time')}>
-            <button
-              type="button"
-              data-sort={params.sort === Sort.TimeAsc ? Sort.TimeDesc : Sort.TimeAsc}
-              onClick={handleSortChange}
-              data-is-active={params.sort === Sort.TimeAsc || params.sort === Sort.TimeDesc}
-            >
-              {params.sort === Sort.TimeAsc ? <TimeUpIcon /> : <TimeDownIcon />}
-            </button>
+          <Tooltip
+            trigger={
+              <button
+                type="button"
+                data-sort={params.sort === Sort.TimeAsc ? Sort.TimeDesc : Sort.TimeAsc}
+                onClick={handleSortChange}
+                data-is-active={params.sort === Sort.TimeAsc || params.sort === Sort.TimeDesc}
+              >
+                {params.sort === Sort.TimeAsc ? <TimeUpIcon /> : <TimeDownIcon />}
+              </button>
+            }
+            placement="top"
+          >
+            {t('sort.time')}
           </Tooltip>
-          <Tooltip placement="top" title={t('sort.capacity')}>
-            <button
-              type="button"
-              data-sort={params.sort === Sort.CapacityAsc ? Sort.CapacityDesc : Sort.CapacityAsc}
-              onClick={handleSortChange}
-              title={t('sort.capacity')}
-            >
-              <SortIcon data-current-sort={params.sort} className={styles.capacitySortIcon} />
-            </button>
+          <Tooltip
+            trigger={
+              <button
+                type="button"
+                data-sort={params.sort === Sort.CapacityAsc ? Sort.CapacityDesc : Sort.CapacityAsc}
+                onClick={handleSortChange}
+                title={t('sort.capacity')}
+              >
+                <SortIcon data-current-sort={params.sort} className={styles.capacitySortIcon} />
+              </button>
+            }
+            placement="top"
+          >
+            {t('sort.capacity')}
           </Tooltip>
-          <Tooltip placement="top" title={isDisplayedAsList ? t('sort.card') : t('sort.list')}>
-            <button type="button" onClick={() => setIsDisplayedAsList(i => !i)}>
-              {isDisplayedAsList ? <GridIcon /> : <ListIcon />}
-            </button>
+          <Tooltip
+            trigger={
+              <button type="button" onClick={() => setIsDisplayedAsList(i => !i)}>
+                {isDisplayedAsList ? <GridIcon /> : <ListIcon />}
+              </button>
+            }
+            placement="top"
+          >
+            {isDisplayedAsList ? t('sort.card') : t('sort.list')}
           </Tooltip>
         </div>
       </div>

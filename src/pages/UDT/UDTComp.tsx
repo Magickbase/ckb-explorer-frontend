@@ -1,10 +1,8 @@
-import { Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { FC, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { Link } from '../../components/Link'
 import TransactionItem from '../../components/TransactionItem/index'
-import { UDTTransactionsPagination, UDTTransactionsPanel, TypeScriptController, UDTNoResultPanel } from './styled'
 import { parseUDTAmount } from '../../utils/number'
 import { ReactComponent as OpenInNew } from '../../assets/open_in_new.svg'
 import { deprecatedAddrToNewAddr } from '../../utils/util'
@@ -17,7 +15,7 @@ import { OmigaInscriptionCollection, UDT, isOmigaInscriptionCollection, MintStat
 import { Card, CardCellInfo, CardCellsLayout, HashCardHeader } from '../../components/Card'
 import { SubmitTokenInfo, TokenInfo } from '../../components/SubmitTokenInfo'
 import { useIsMobile } from '../../hooks'
-import SUDTTokenIcon from '../../assets/sudt_token.png'
+import FtFallbackIcon from '../../assets/ft_fallback_icon.png'
 import { isMainnet } from '../../utils/chain'
 // TODO: replaced to svg format
 import ArrowUpIcon from '../../assets/arrow_up.png'
@@ -30,6 +28,8 @@ import { ReactComponent as EditIcon } from '../../assets/edit.svg'
 import { ReactComponent as ViewOriginalIcon } from './view_original.svg'
 import Loading from '../../components/Loading'
 import { RawBtcRPC } from '../../services/ExplorerService'
+import Tooltip from '../../components/Tooltip'
+import SimpleButton from '../../components/SimpleButton'
 
 const typeScriptIcon = (show: boolean) => {
   if (show) {
@@ -56,10 +56,15 @@ const IssuerContent: FC<{ address: string }> = ({ address }) => {
       </AddressText>
 
       {newAddress !== address && (
-        <Tooltip placement="top" title={t(`udt.view-deprecated-address`)}>
-          <Link to={`/address/${address}`} className={styles.openInNew} target="_blank">
-            <OpenInNew />
-          </Link>
+        <Tooltip
+          trigger={
+            <Link to={`/address/${address}`} className={styles.openInNew} target="_blank">
+              <OpenInNew />
+            </Link>
+          }
+          placement="top"
+        >
+          {t(`udt.view-deprecated-address`)}
         </Tooltip>
       )}
     </>
@@ -85,7 +90,7 @@ export const UDTOverviewCard = ({
     ? [
         {
           title: t('udt.name'),
-          content: fullName,
+          content: <div className={styles.symbolWithEllipsis}>fullName</div>,
         },
         {
           title: t('udt.owner'),
@@ -112,7 +117,12 @@ export const UDTOverviewCard = ({
     : [
         {
           title: t('udt.name'),
-          content: fullName || <span className={styles.noneName}>(None)</span>,
+          contentWrapperClass: styles.fullNameCell,
+          content: fullName ? (
+            <div className={styles.symbolWithEllipsis}>{fullName}</div>
+          ) : (
+            <span className={styles.noneName}>(None)</span>
+          ),
         },
         {
           title: t('udt.status'),
@@ -170,10 +180,12 @@ export const UDTOverviewCard = ({
   const cardTitle = (
     <div className={styles.cardTitle}>
       <div className={styles.top}>
-        <img className={styles.icon} src={iconFile || SUDTTokenIcon} alt="hash icon" />
+        <img className={styles.icon} src={iconFile || FtFallbackIcon} alt="hash icon" />
         {isMobile && modifyTokenInfo}
       </div>
-      {symbol ?? t('udt.sudt')}
+      <span title={symbol} className={styles.symbolWithEllipsis}>
+        {symbol ?? t('udt.sudt')}
+      </span>
     </div>
   )
 
@@ -197,15 +209,20 @@ export const UDTOverviewCard = ({
           hash={typeHash}
           customActions={[
             isOmigaInscriptionCollection(udt) && udt.mintStatus === MintStatus.RebaseStart ? (
-              <Tooltip placement="top" title={t('udt.view_original')}>
-                <Link
-                  to={`/inscription/${udt.infoTypeHash}?view=original`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.viewOriginal}
-                >
-                  <ViewOriginalIcon />
-                </Link>
+              <Tooltip
+                trigger={
+                  <Link
+                    to={`/inscription/${udt.infoTypeHash}?view=original`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.viewOriginal}
+                  >
+                    <ViewOriginalIcon />
+                  </Link>
+                }
+                placement="top"
+              >
+                {t('udt.view_original')}
               </Tooltip>
             ) : null,
           ]}
@@ -214,10 +231,10 @@ export const UDTOverviewCard = ({
 
         <CardCellsLayout type="left-right" cells={items} borderTop />
 
-        <TypeScriptController onClick={() => setShowType(!showType)}>
+        <SimpleButton className={styles.typeScriptController} onClick={() => setShowType(!showType)}>
           <div>{t('udt.type_script')}</div>
           <img alt="type script" src={typeScriptIcon(showType)} />
-        </TypeScriptController>
+        </SimpleButton>
         {showType && typeScript && <Script script={typeScript} />}
       </Card>
       {tokenInfo && isModifyTokenInfoModalOpen ? (
@@ -257,14 +274,23 @@ export const UDTComp = ({
 
   if (filterNoResult) {
     return (
-      <UDTNoResultPanel>
+      <div className={styles.udtNoResultPanel}>
         <span>{t('search.udt_filter_no_result')}</span>
-      </UDTNoResultPanel>
+      </div>
     )
   }
+
+  if (transactions.length === 0) {
+    return (
+      <div className={styles.udtNoResultPanel}>
+        <span>{t('transaction.no_records')}</span>
+      </div>
+    )
+  }
+
   return (
     <>
-      <UDTTransactionsPanel>
+      <div className={styles.udtTransactionsPanel}>
         {transactions.map(
           (transaction, index) =>
             transaction && (
@@ -277,8 +303,8 @@ export const UDTComp = ({
               />
             ),
         )}
-      </UDTTransactionsPanel>
-      <UDTTransactionsPagination>
+      </div>
+      <div className={styles.udtTransactionsPagination}>
         <PaginationWithRear
           currentPage={currentPage}
           totalPages={totalPages}
@@ -291,7 +317,7 @@ export const UDTComp = ({
             />
           }
         />
-      </UDTTransactionsPagination>
+      </div>
     </>
   )
 }

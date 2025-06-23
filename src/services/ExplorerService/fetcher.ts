@@ -1,12 +1,12 @@
 import { AxiosResponse } from 'axios'
 import BigNumber from 'bignumber.js'
 import { Dayjs } from 'dayjs'
-import { ReactNode } from 'react'
 import { pick } from '../../utils/object'
-import { toCamelcase } from '../../utils/util'
+import { shannonToCkb, toCamelcase, toSnakeCase } from '../../utils/util'
 import { requesterV1, requesterV2 } from './requester'
 import {
   ChartItem,
+  RGBCells,
   NervosDaoDepositor,
   RGBDigest,
   RawBtcRPC,
@@ -15,17 +15,30 @@ import {
   TransactionRecord,
   LiveCell,
   TokenCollection,
+  BitcoinAddresses,
+  Fiber,
+  UDTQueryResult,
+  RGBTransaction,
+  FeeRateTracker,
+  NFTCollection,
+  NFTItem,
+  ScriptInfo,
+  ScriptDetail,
+  CKBTransactionInScript,
+  CellInScript,
+  TransferListRes,
+  DASAccountMap,
+  SubmitTokenInfoParams,
 } from './types'
 import { assert } from '../../utils/error'
 import { Cell } from '../../models/Cell'
 import { Script } from '../../models/Script'
 import { Block } from '../../models/Block'
 import { BtcTx, Transaction } from '../../models/Transaction'
-import { Address, AddressType } from '../../models/Address'
+import { Address, AddressType, UDTAccount } from '../../models/Address'
 import { OmigaInscriptionCollection, UDT } from '../../models/UDT'
-import { XUDT } from '../../models/Xudt'
-import { HashType } from '../../constants/common'
-import { Dob, getDobs } from '../DobsService'
+import { XUDT, XUDTHolderAllocation } from '../../models/Xudt'
+import { getDobs } from '../DobsService'
 import { isDob0 } from '../../utils/spore'
 
 async function v1Get<T>(...args: Parameters<typeof requesterV1.get>) {
@@ -68,6 +81,7 @@ export enum SearchResultType {
   TokenItem = 'token_item',
   DID = 'did',
   BtcAddress = 'bitcoin_address',
+  FiberGraphNode = 'fiber_graph_node',
 }
 
 enum SearchQueryType {
@@ -110,6 +124,14 @@ export type AggregateSearchResult =
         addressHash: string
       },
       SearchResultType.BtcAddress
+    >
+  | Response.Wrapper<
+      {
+        nodeName: string
+        nodeId: string
+        peerId: string
+      },
+      SearchResultType.FiberGraphNode
     >
 
 export const getBtcTxList = (idList: string[]): Promise<Record<string, RawBtcRPC.BtcTx>> => {
@@ -169,9 +191,16 @@ export const apiFetcher = {
 
   // sort field, block_timestamp, capacity
   // sort type, asc, desc
-  fetchAddressLiveCells: (address: string, page: number, size: number, sort?: string) => {
+  fetchAddressLiveCells: (
+    address: string,
+    page: number,
+    size: number,
+    sort?: string,
+    boundStatus?: 'bound' | 'unbound',
+  ) => {
     return v1GetUnwrappedPagedList<LiveCell>(`address_live_cells/${address}`, {
       params: {
+        bound_status: boundStatus,
         page,
         page_size: size,
         sort,
@@ -201,6 +230,7 @@ export const apiFetcher = {
       transactions,
       pageSize: res.pageSize,
       total: res.total,
+      totalPages: res.totalPages,
     }
   },
 
@@ -234,6 +264,11 @@ export const apiFetcher = {
       .get(`statistics/contract_resource_distributed`)
       .then(res => toCamelcase<ChartItem.ContractResourceDistributed[]>(res.data)),
 
+  fetchStatisticKnowledgeSize: () =>
+    v1GetUnwrappedList<ChartItem.KnowledgeSize>(`/daily_statistics/knowledge_size`).then(res =>
+      res.map(i => ({ ...i, knowledgeSize: +shannonToCkb(i.knowledgeSize) })),
+    ),
+
   fetchTransactionByHash: (hash: string, displayCells: boolean = false) =>
     v1GetUnwrapped<Transaction>(`transactions/${hash}?display_cells=${displayCells}`),
 
@@ -241,6 +276,14 @@ export const apiFetcher = {
     requesterV2
       .get(`ckb_transactions/${hash}/rgb_digest`)
       .then(res => toCamelcase<Response.Response<RGBDigest>>(res.data)),
+
+  fetchBitcoinAddresses: (address: string) =>
+    requesterV2.get(`bitcoin_addresses/${address}`).then(res => toCamelcase<BitcoinAddresses>(res.data)),
+
+  fetchUDTAccountsByBtcAddress: (address: string) =>
+    requesterV2
+      .get(`bitcoin_addresses/${address}/udt_accounts`)
+      .then(res => toCamelcase<{ udtAccounts: UDTAccount[] }>(res.data.data)),
 
   fetchCellsByTxHash: (hash: string, type: 'inputs' | 'outputs', page: Record<'no' | 'size', number>) =>
     requesterV2
@@ -332,6 +375,17 @@ export const apiFetcher = {
   },
 
   fetchBlock: (blockHeightOrHash: string) => v1GetUnwrapped<Block>(`blocks/${blockHeightOrHash}`),
+  fetchBlockByEpoch: (epochNumber: number, epochIndex = 0) => {
+    const res = requesterV2
+      .get(
+        `blocks/by_epoch?${new URLSearchParams({
+          epoch_number: epochNumber.toString(),
+          epoch_index: epochIndex.toString(),
+        })}`,
+      )
+      .then(res => toCamelcase<Response.Response<{ attributes: Block } | null>>(res.data).data?.attributes)
+    return res
+  },
 
   fetchScript: (scriptType: 'lock_scripts' | 'type_scripts', id: string) =>
     v1GetNullableWrapped<Script>(`/cell_output_${scriptType}/${id}`),
@@ -456,6 +510,50 @@ export const apiFetcher = {
     }
   },
 
+  fetchNervosDaoTransactionsCsv: async ({
+    startDate,
+    endDate,
+    startNumber,
+    endNumber,
+  }: {
+    startDate?: number
+    endDate?: number
+    startNumber?: number
+    endNumber?: number
+  }) =>
+    requesterV1
+      .get<string>(`contract_transactions/download_csv`, {
+        params: {
+          start_date: startDate,
+          end_date: endDate,
+          start_number: startNumber,
+          end_number: endNumber,
+        },
+      })
+      .then(res => toCamelcase<string>(res.data)),
+
+  fetchNervosDaoDepositorsCsv: async ({
+    startDate,
+    endDate,
+    startNumber,
+    endNumber,
+  }: {
+    startDate?: number
+    endDate?: number
+    startNumber?: number
+    endNumber?: number
+  }) =>
+    requesterV1
+      .get<string>(`dao_depositors/download_csv`, {
+        params: {
+          start_date: startDate,
+          end_date: endDate,
+          start_number: startNumber,
+          end_number: endNumber,
+        },
+      })
+      .then(res => toCamelcase<string>(res.data)),
+
   fetchNervosDaoDepositors: () => v1GetUnwrappedList<NervosDaoDepositor>(`/dao_depositors`),
 
   fetchStatisticTransactionCount: () =>
@@ -475,6 +573,23 @@ export const apiFetcher = {
 
   fetchStatisticBitcoin: () =>
     requesterV2(`/bitcoin_statistics`).then((res: AxiosResponse) => toCamelcase<ChartItem.Bitcoin[]>(res.data.data)),
+
+  fetchBitcoinAddressesRGBCells: (address: string, page: number, size: number, sort?: string) =>
+    requesterV2(`/bitcoin_addresses/${address}/rgb_cells`, {
+      params: {
+        page,
+        page_size: size,
+        sort,
+      },
+    }).then((res: AxiosResponse) =>
+      toCamelcase<{
+        data: { rgbCells: RGBCells }
+        meta: {
+          total: number
+          pageSize: number
+        }
+      }>(res.data),
+    ),
 
   fetchStatisticNewDaoDeposit: () =>
     v1GetUnwrappedList<ChartItem.NewDaoDeposit>('/daily_statistics/daily_dao_deposit-daily_dao_depositors_count'),
@@ -603,7 +718,7 @@ export const apiFetcher = {
     ).then(res => res.addressBalanceRanking),
 
   fetchStatisticCkbHodlWave: () =>
-    v1GetUnwrappedList<ChartItem.CkbHodlWave>(`/daily_statistics/ckb_hodl_wave`).then(items =>
+    v1GetUnwrappedList<ChartItem.CkbHodlWaveHolderCount>(`/daily_statistics/ckb_hodl_wave-holder_count`).then(items =>
       items.filter(item => item.ckbHodlWave != null),
     ),
 
@@ -726,6 +841,29 @@ export const apiFetcher = {
       }))
     }),
 
+  fetchStatisticActiveAddresses: () =>
+    v1GetUnwrappedList<ChartItem.ActiveAddresses>(`/daily_statistics/activity_address_contract_distribution`).then(
+      items =>
+        items.map<{
+          createdAtUnixtimestamp: string
+          distribution: Record<string, number>
+        }>(({ createdAtUnixtimestamp, ...list }) => ({
+          createdAtUnixtimestamp,
+          distribution: Object.assign({}, ...list.activityAddressContractDistribution),
+        })),
+    ),
+
+  fetchStatisticAssetActivity: async () => {
+    return requesterV2
+      .get('udt_hourly_statistics')
+      .then(res => toCamelcase<ChartItem.AssetActivity[]>(res.data.data))
+      .then(list =>
+        list.sort((a, b) => {
+          return Number(a.createdAtUnixtimestamp) - Number(b.createdAtUnixtimestamp)
+        }),
+      )
+  },
+
   fetchFlushChartCache: () => v1GetUnwrapped<{ flushCacheInfo: string[] }>(`statistics/flush_cache_info`),
 
   fetchSimpleUDT: (typeHash: string) => v1GetUnwrapped<UDT>(`/udts/${typeHash}`),
@@ -768,23 +906,43 @@ export const apiFetcher = {
       },
     }),
 
-  fetchXudtHoders: ({ id, number }: { id: string; number: number }) => {
+  fetchXudtHolders: ({
+    id,
+    number,
+    mergeWithOwner = false,
+  }: {
+    id: string
+    number: number
+    mergeWithOwner?: boolean
+  }) => {
     return requesterV1
       .get(`/xudts/snapshot`, {
-        params: { id, number },
+        params: { id, number, merge_with_owner: mergeWithOwner },
       })
       .then(res => toCamelcase<string>(res.data))
   },
 
-  fetchXudt: (typeHash: string) => v1GetUnwrapped<XUDT>(`/xudts/${typeHash}`),
-
-  fetchXudts: (page: number, size: number, sort?: string, tags?: string) =>
+  fetchXudt: (typeHash: string) => v1GetUnwrapped<XUDT>(`/fungible_tokens/${typeHash}`),
+  fetchXudtHolderAllocation: (typeHash: string) =>
+    requesterV1.get(`/udts/${typeHash}/holder_allocation`).then(res => toCamelcase<XUDTHolderAllocation>(res.data)),
+  fetchXudts: (page: number, size: number, sort?: string, tags?: string, union?: string) =>
     v1GetUnwrappedPagedList<XUDT>(`/xudts`, {
       params: {
         page,
         page_size: size,
         sort,
         tags,
+        union: union ?? 'false',
+      },
+    }),
+  fetchUdts: (page: number, size: number, sort?: string, tags?: string, union?: string) =>
+    v1GetUnwrappedPagedList<XUDT>(`/fungible_tokens`, {
+      params: {
+        page,
+        page_size: size,
+        sort,
+        tags,
+        union: union ?? 'false',
       },
     }),
 
@@ -863,7 +1021,7 @@ export const apiFetcher = {
       .then(res => toCamelcase<string>(res.data))
   },
 
-  fetchNFTCollections: (page: string, sort?: string, type?: string) =>
+  fetchNFTCollections: (page: string, sort?: string, type?: string, tags?: string, union?: string) =>
     requesterV2
       .get<{
         data: NFTCollection[]
@@ -876,9 +1034,11 @@ export const apiFetcher = {
         }
       }>('nft/collections', {
         params: {
+          tags,
           page,
           sort,
           type,
+          union: union ?? 'false',
         },
       })
       .then(res => res.data),
@@ -968,14 +1128,47 @@ export const apiFetcher = {
           hash_type: hashType,
         },
       })
-      .then(res => toCamelcase<Response.Response<ScriptInfo>>(res.data)),
+      .then(res => toCamelcase<Response.Response<ScriptInfo[]>>(res.data)),
 
-  fetchScriptCKBTransactions: async (codeHash: string, hashType: string, page: number, pageSize: number) => {
+  fetchScripts: (page: number, pageSize: number, sort?: string, scriptType?: string) =>
+    requesterV2
+      .get<{
+        data: ScriptDetail[]
+        meta: {
+          total: number
+          pageSize: number
+        }
+      }>('scripts', {
+        params: {
+          page,
+          pageSize,
+          sort,
+          script_type: scriptType,
+        },
+      })
+      .then(res =>
+        toCamelcase<{
+          data: ScriptDetail[]
+          meta: {
+            total: number
+            pageSize: number
+          }
+        }>(res.data),
+      ),
+
+  fetchScriptCKBTransactions: async (
+    codeHash: string,
+    hashType: string,
+    restrict: boolean,
+    page: number,
+    pageSize: number,
+  ) => {
     const res = await requesterV2
       .get('scripts/ckb_transactions', {
         params: {
           code_hash: codeHash,
           hash_type: hashType,
+          restrict,
           page,
           page_size: pageSize,
         },
@@ -1099,6 +1292,197 @@ export const apiFetcher = {
       },
     }),
   getBtcTxList,
+
+  // ==================
+  // Fiber
+  // ==================
+  getFiberPeerList: (page = 1, pageSize = 10) => {
+    return requesterV2
+      .get(
+        `/fiber/peers?${new URLSearchParams({
+          page: page.toString(),
+          page_size: pageSize.toString(),
+        })}`,
+      )
+      .then(res =>
+        toCamelcase<
+          Response.Response<{
+            fiberPeers: Fiber.Peer.ItemInList[]
+            meta: {
+              total: number
+              pageSize: number
+            }
+          }>
+        >(res.data),
+      )
+  },
+
+  getFiberPeerDetail: (id: string) => {
+    return requesterV2
+      .get(`/fiber/peers/${id}`)
+      .then(res => toCamelcase<Response.Response<Fiber.Peer.Detail>>(res.data))
+  },
+
+  getFiberChannel: (id: string) => {
+    return requesterV2
+      .get(`/fiber/channels/${id}`)
+      .then(res => toCamelcase<Response.Response<Fiber.Channel.Detail>>(res.data))
+  },
+
+  addFiberPeer: (params: { rpc: string; id: string; name?: string }) => {
+    return requesterV2
+      .post(`/fiber/peers`, {
+        name: params.name,
+        rpc_listening_addr: params.rpc,
+        peer_id: params.id,
+      })
+      .catch(e => {
+        if (Array.isArray(e.response?.data)) {
+          const res = e.response.data[0]
+          if (res) {
+            throw new Error(res.title)
+          }
+        }
+        throw e
+      })
+  },
+
+  getGraphNodes: ({
+    addressHash,
+    page = 1,
+    pageSize = 10,
+  }: {
+    addressHash?: string
+    page?: number
+    pageSize?: number
+  }) => {
+    return requesterV2
+      .get(
+        `/fiber/graph_nodes?${new URLSearchParams({
+          page: page.toString(),
+          page_size: pageSize.toString(),
+          ...(addressHash
+            ? {
+                address_hash: addressHash,
+              }
+            : {}),
+        })}`,
+      )
+      .then(res =>
+        toCamelcase<
+          Response.Response<{
+            fiberGraphNodes: Fiber.Graph.Node[]
+            meta: {
+              total: number
+              pageSize: number
+            }
+          }>
+        >(res.data),
+      )
+  },
+
+  getGraphNodeDetail: (id: string) => {
+    return requesterV2
+      .get(`/fiber/graph_nodes/${id}`)
+      .then(res => toCamelcase<Response.Response<Fiber.Graph.NodeDetail>>(res.data))
+  },
+  getGraphNodeTransactions: (
+    id: string,
+    query: {
+      page?: string
+      pageSize?: string
+      sort?: 'block_timestamp.desc' | 'block_timestamp.asc'
+      typeHash?: string
+      minTokenAmount?: string
+      maxTokenAmount?: string
+      addressHash?: string
+      status?: 'open' | 'closed'
+      startDate?: string
+      endDate?: string
+    } = {
+      page: '1',
+      pageSize: '10',
+    },
+  ) => {
+    const filteredQuery = Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined))
+    return requesterV2
+      .get(`/fiber/graph_nodes/${id}/transactions?${new URLSearchParams(toSnakeCase({ ...filteredQuery }))}`)
+      .then(res => ({
+        fiberGraphTransactions: toCamelcase<
+          Response.Response<{
+            fiberGraphTransactions: Fiber.Graph.Transaction[]
+          }>
+        >(res.data).data.fiberGraphTransactions,
+        meta: toCamelcase<{ total: number; pageSize: number }>(res.data.meta),
+      }))
+  },
+  getGraphNodeChannels: (
+    id: string,
+    query: {
+      page?: string
+      pageSize?: string
+      sort?: 'position_time.desc' | 'position_time.asc' | 'capacity.desc' | 'capacity.asc'
+      typeHash?: string
+      minTokenAmount?: string
+      maxTokenAmount?: string
+      addressHash?: string
+      status?: 'open' | 'closed'
+      startDate?: string
+      endDate?: string
+    } = {
+      page: '1',
+      pageSize: '10',
+    },
+  ) => {
+    const filteredQuery = Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined))
+    return requesterV2
+      .get(
+        `/fiber/graph_nodes/${id}/graph_channels?${new URLSearchParams(
+          new URLSearchParams(toSnakeCase({ ...filteredQuery })),
+        )}`,
+      )
+      .then(res => ({
+        fiberGraphChannels: toCamelcase<
+          Response.Response<{
+            fiberGraphChannels: Fiber.Graph.Channel[]
+          }>
+        >(res.data).data.fiberGraphChannels,
+        meta: toCamelcase<{ total: number; pageSize: number }>(res.data.meta),
+      }))
+  },
+  getGraphChannels: (page = 1, pageSize = 10) => {
+    return requesterV2
+      .get(
+        `/fiber/graph_channels?${new URLSearchParams({
+          page: page.toString(),
+          page_size: pageSize.toString(),
+          status: 'open',
+        })}`,
+      )
+      .then(res =>
+        toCamelcase<
+          Response.Response<{
+            fiberGraphChannels: Fiber.Graph.Channel[]
+            meta: {
+              total: number
+              pageSize: number
+            }
+          }>
+        >(res.data),
+      )
+  },
+
+  getGraphHistory: () => {
+    return requesterV2
+      .get('/fiber/statistics')
+      .then(res => toCamelcase<Response.Response<Fiber.Graph.Statistics>>(res.data))
+  },
+
+  getGraphNodeIPs: () => {
+    return requesterV2
+      .get('/fiber/graph_nodes/addresses')
+      .then(res => toCamelcase<Response.Response<Fiber.Graph.GraphNodeIps>>(res.data))
+  },
 }
 
 // ====================
@@ -1108,184 +1492,3 @@ export const apiFetcher = {
 export type APIFetcher = typeof apiFetcher
 
 export type APIReturn<T extends keyof APIFetcher> = Awaited<ReturnType<APIFetcher[T]>>
-
-export namespace FeeRateTracker {
-  export interface TransactionFeeRate {
-    id: number
-    timestamp: number
-    feeRate: number
-    confirmationTime: number
-  }
-
-  export interface PendingTransactionFeeRate {
-    id: number
-    feeRate: number
-  }
-
-  export interface LastNDaysTransactionFeeRate {
-    date: string
-    feeRate: string
-  }
-
-  export interface TransactionFeesStatistic {
-    transactionFeeRates: TransactionFeeRate[]
-    pendingTransactionFeeRates: PendingTransactionFeeRate[]
-    lastNDaysTransactionFeeRates: LastNDaysTransactionFeeRate[]
-  }
-
-  export interface FeeRateCard {
-    priority: string
-    icon: ReactNode
-    feeRate?: string
-    priorityClass: string
-    confirmationTime: number
-  }
-}
-
-export interface NFTCollection {
-  id: number
-  standard: string
-  name: string
-  description: string
-  h24_ckb_transactions_count: string
-  creator: string | null
-  icon_url: string | null
-  items_count: number | null
-  holders_count: number | null
-  type_script: { code_hash: string; hash_type: 'data' | 'type'; args: string } | null
-  sn: string
-  timestamp: number
-}
-
-export interface NFTItem {
-  icon_url: string | null
-  id: number
-  token_id: string
-  owner: string | null
-  standard: string | null
-  cell: {
-    cell_index: number
-    data: string | null
-    status: string
-    tx_hash: string
-  } | null
-  collection: NFTCollection
-  name: string | null
-  metadata_url: string | null
-  type_script: Record<'code_hash' | 'hash_type' | 'args' | 'script_hash', string>
-  dob?: Dob
-}
-
-export interface ScriptInfo {
-  id: string
-  scriptName: string
-  scriptType: string
-  codeHash: string
-  hashType: HashType
-  capacityOfDeployedCells: string
-  capacityOfReferringCells: string
-  countOfTransactions: number
-  countOfDeployedCells: number
-  countOfReferringCells: number
-}
-
-export interface CKBTransactionInScript {
-  isBtcTimeLock: boolean
-  isRgbTransaction: boolean
-  rgbTxid: string | null
-  id: number
-  txHash: string
-  blockId: number
-  blockNumber: number
-  blockTimestamp: number
-  transactionFee: number
-  isCellbase: boolean
-  txStatus: string
-  displayInputs: Cell[]
-  displayOutputs: Cell[]
-}
-
-export interface CellInScript {
-  id: number
-  capacity: string
-  data: string
-  ckbTransactionId: number
-  createdAt: string
-  updatedAt: string
-  status: string
-  addressId: number
-  blockId: number
-  txHash: string
-  cellIndex: number
-  generatedById?: number
-  consumedById?: number
-  cellType: string
-  dataSize: number
-  occupiedCapacity: number
-  blockTimestamp: number
-  consumedBlockTimestamp: number
-  typeHash?: string
-  udtAmount: number
-  dao: string
-  lockScriptId?: number
-  typeScriptId?: number
-}
-
-export interface TransferRes {
-  id: number
-  from: string | null
-  to: string | null
-  action: 'mint' | 'normal' | 'destruction'
-  item: NFTItem
-  transaction: {
-    tx_hash: string
-    block_number: number
-    block_timestamp: number
-  }
-}
-
-export interface TransferListRes {
-  data: TransferRes[]
-  pagination: {
-    count: number
-    page: number
-    next: number | null
-    prev: number | null
-    last: number
-  }
-}
-
-export type DASAccount = string
-
-export type DASAccountMap = Record<string, DASAccount | null>
-
-export type UDTQueryResult = {
-  fullName: string
-  symbol: string | null
-  typeHash: string
-  iconFile: string | null
-  udtType: UDT['udtType']
-}
-
-type SubmitTokenInfoParams = {
-  symbol: string
-  email: string
-  operator_website: string
-  total_amount: number
-
-  full_name?: string
-  decimal?: number
-  description?: string
-  icon_file?: string
-  token?: string
-}
-
-export interface RGBTransaction {
-  txHash: string
-  blockId: number
-  blockNumber: number
-  blockTimestamp: number
-  leapDirection: string
-  rgbCellChanges: number
-  rgbTxid: string
-}

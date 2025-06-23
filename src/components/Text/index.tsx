@@ -1,7 +1,7 @@
-import { Tooltip } from 'antd'
 import { Link } from '../Link'
+import Tooltip from '../Tooltip'
 import CopyTooltipText from './CopyTooltipText'
-import { HighLightPanel } from './styled'
+import { HighLightPanel } from './HighLightPanel'
 
 export const HighLightLink = ({
   value,
@@ -15,12 +15,17 @@ export const HighLightLink = ({
   className?: string
 }) =>
   tooltip ? (
-    <Tooltip placement="top" title={<CopyTooltipText content={tooltip} />}>
-      <HighLightPanel>
-        <Link className={`${className} monospace`} to={to}>
-          {value}
-        </Link>
-      </HighLightPanel>
+    <Tooltip
+      trigger={
+        <HighLightPanel>
+          <Link className={`${className} monospace`} to={to}>
+            {value}
+          </Link>
+        </HighLightPanel>
+      }
+      placement="top"
+    >
+      <CopyTooltipText content={tooltip} />
     </Tooltip>
   ) : (
     <HighLightPanel>

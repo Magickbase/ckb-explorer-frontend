@@ -2,7 +2,11 @@
 import { ForwardedRef, forwardRef, useMemo } from 'react'
 import { Link as RouterLink, LinkProps as RouterLinkProps, useLocation, useParams } from 'react-router-dom'
 import * as H from 'history'
+import { useQuery } from '@tanstack/react-query'
 import { SupportedLng, addI18nPrefix, removeI18nPrefix } from '../../utils/i18n'
+import { IS_MAINNET } from '../../constants/common'
+import { getBtcChainIdentify } from '../../services/BTCIdentifier'
+import config from '../../config'
 
 export type LinkProps<S> =
   | (Omit<RouterLinkProps<S>, 'to'> & {
@@ -31,3 +35,43 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps<unknown>>((({ lng, t
   return <RouterLink ref={ref} {...props} to={toWithPrefix} />
   // The `as` here is to allow the generic type to be correctly inferred.
 }) as <S>(props: LinkProps<S>, ref: ForwardedRef<HTMLAnchorElement>) => JSX.Element)
+
+export type BTCExplorerLinkProps<S> =
+  | (Omit<RouterLinkProps<S>, 'to'> & {
+      id?: string
+      address?: string
+      path: string
+      lng: SupportedLng
+      anchor?: string
+    })
+  | {
+      id?: string
+      address?: string
+      path: string
+      lng?: SupportedLng
+      anchor?: string
+    }
+
+export const BTCExplorerLink = forwardRef<HTMLAnchorElement, BTCExplorerLinkProps<unknown>>(((
+  { id, address, lng, path, anchor, ...props },
+  ref,
+) => {
+  const { locale } = useParams<{ locale?: string }>()
+  let { data: identity } = useQuery({
+    queryKey: ['btc-testnet-identity', id, address],
+    queryFn: () => getBtcChainIdentify(id!),
+    enabled: !IS_MAINNET && !!id,
+  })
+  identity = identity ?? 'testnet'
+
+  return (
+    <Link
+      lng={lng ?? (locale as 'en' | 'zh')}
+      ref={ref}
+      {...props}
+      to={`${config.BITCOIN_EXPLORER}${IS_MAINNET ? '' : `/${identity}`}${path}/${address ?? id}${
+        anchor ? `#${anchor}` : ''
+      }`}
+    />
+  )
+}) as <S>(props: BTCExplorerLinkProps<S>, ref: ForwardedRef<HTMLAnchorElement>) => JSX.Element)

@@ -77,76 +77,99 @@
   background: #fff;
   border-radius: 4px;
   overflow: hidden;
+}
 
-  h5 {
+.cellTitle {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  background: var(--primary-color);
+  color: #fff;
+  height: 1.875rem;
+  padding: 8px;
+
+  span {
+    &:first-child {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:last-child {
+      flex-shrink: 0;
+    }
+  }
+}
+
+.cellTags {
+  margin-left: auto;
+}
+
+.fiberTag {
+  color: #333;
+  padding: 2px 4px;
+  background: #4ffff4;
+  border-radius: 32px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.deploymentTag {
+  color: #333;
+  padding: 2px 4px;
+  background: #d5ebff;
+  border-radius: 32px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.cellContent {
+  padding: 8px;
+  display: flex;
+  line-height: 1;
+
+  img,
+  svg {
+    margin-right: 8px;
+  }
+
+  .assetName {
+    color: #666;
+  }
+
+  .attribute {
     display: flex;
-    align-items: center;
-    background: var(--primary-color);
-    color: #fff;
-    height: 1.875rem;
-    padding: 8px;
 
-    span {
-      &:first-child {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      &:last-child {
-        flex-shrink: 0;
-      }
+    &Content {
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
 
-  .cellContent {
-    padding: 8px;
-    display: flex;
-    line-height: 1;
+  .copy {
+    appearance: none;
+    border: none;
+    background: none;
+    width: 14px;
+    cursor: pointer;
 
-    img,
-    svg {
-      margin-right: 8px;
-    }
-
-    .assetName {
-      color: #666;
-    }
-
-    .attribute {
-      display: flex;
-
-      &Content {
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-    }
-
-    .copy {
-      appearance: none;
-      border: none;
-      background: none;
-      width: 14px;
-      cursor: pointer;
-
-      &:hover {
-        svg {
-          stroke: var(--primary-color);
-        }
-      }
-
+    &:hover {
       svg {
-        pointer-events: none;
-        height: 14px;
+        stroke: var(--primary-color);
       }
     }
 
-    .fields {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
+    svg {
+      pointer-events: none;
+      height: 14px;
     }
+  }
+
+  .fields {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
   }
 }
 
@@ -206,5 +229,42 @@
     cursor: pointer;
     appearance: none;
     border: none;
+  }
+}
+
+.cellHeader {
+  display: flex;
+  flex-direction: column;
+
+  a {
+    display: flex;
+    align-items: center;
+  }
+
+  dl,
+  dt,
+  dd {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+  }
+
+  dt {
+    margin-right: 4px;
+
+    svg {
+      width: 18px;
+    }
+  }
+
+  dt::after {
+    content: ':';
+  }
+
+  .blockIcon {
+    path {
+      fill: #fff;
+    }
   }
 }

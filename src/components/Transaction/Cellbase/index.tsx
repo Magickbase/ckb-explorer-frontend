@@ -1,12 +1,12 @@
-import { Tooltip } from 'antd'
 import { Trans } from 'react-i18next'
+import classNames from 'classnames'
 import { Link } from '../../Link'
-import { CellbasePanel } from './styled'
 import { CellInputIcon } from '../TransactionCellArrow'
 import { localeNumberString } from '../../../utils/number'
 import HelpIcon from '../../../assets/qa_help.png'
 import styles from './index.module.scss'
 import { Cell } from '../../../models/Cell'
+import Tooltip from '../../Tooltip'
 
 const Cellbase = ({
   cell,
@@ -17,9 +17,9 @@ const Cellbase = ({
 }) => {
   if (!cell.targetBlockNumber || cell.targetBlockNumber <= 0) {
     return (
-      <CellbasePanel>
+      <div className={styles.cellbasePanel}>
         <div className="cellbaseContent">Cellbase</div>
-      </CellbasePanel>
+      </div>
     )
   }
 
@@ -34,14 +34,18 @@ const Cellbase = ({
   )
 
   return (
-    <CellbasePanel isDetail={isDetail}>
+    <div className={classNames(styles.cellbasePanel, isDetail && styles.isDetail)}>
       <CellInputIcon cell={cell} />
       <div className="cellbaseContent">Cellbase for Block</div>
-      <Tooltip overlayClassName={styles.tooltip} placement="top" title={tooltipContent}>
-        <img className="cellbaseHelpIcon" alt="cellbase help" src={HelpIcon} />
+      <Tooltip
+        trigger={<img className="cellbaseHelpIcon" alt="cellbase help" src={HelpIcon} />}
+        contentClassName={styles.tooltip}
+        placement="top"
+      >
+        {tooltipContent}
       </Tooltip>
       <Link to={`/block/${cell.targetBlockNumber}`}>{localeNumberString(cell.targetBlockNumber)}</Link>
-    </CellbasePanel>
+    </div>
   )
 }
 

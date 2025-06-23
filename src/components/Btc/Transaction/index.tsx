@@ -1,11 +1,8 @@
 import { useMemo, type FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from '@tanstack/react-query'
-import { Tooltip } from 'antd'
 import dayjs from 'dayjs'
-import { type RawBtcRPC } from '../../../services/ExplorerService'
-import config from '../../../config'
 import styles from './styles.module.scss'
+import { type RawBtcRPC } from '../../../services/ExplorerService'
 import AddressText from '../../AddressText'
 import EllipsisMiddle from '../../EllipsisMiddle'
 import { ReactComponent as UsedSeal } from './used-seal.svg'
@@ -14,8 +11,9 @@ import { ReactComponent as ViewNewSeal } from './view-new-seal.svg'
 import { ReactComponent as MoreIcon } from '../../../assets/more-icon.svg'
 import { ReactComponent as BtcIcon } from './btc.svg'
 import { ReactComponent as DirectionIcon } from '../../../assets/direction.svg'
-import { getBtcChainIdentify } from '../../../services/BTCIdentifier'
-import { IS_MAINNET } from '../../../constants/common'
+import { BTCExplorerLink } from '../../Link'
+import { TIME_TEMPLATE } from '../../../constants/common'
+import Tooltip from '../../Tooltip'
 
 const MAX_ITEMS = 10
 
@@ -25,14 +23,6 @@ const BtcTransaction: FC<{
   showId?: boolean
 }> = ({ tx, boundCellIndex, showId = true }) => {
   const { t } = useTranslation()
-
-  const { data: identity } = useQuery({
-    queryKey: ['btc-testnet-identity', tx.txid],
-    queryFn: () => (tx.txid ? getBtcChainIdentify(tx.txid) : null),
-    enabled: !IS_MAINNET && !!tx.txid,
-  })
-
-  const btcExplorer = `${config.BITCOIN_EXPLORER}${IS_MAINNET ? '' : `/${identity}`}`
 
   const time = tx.blocktime ? dayjs(tx.blocktime * 1000) : null
 
@@ -49,13 +39,13 @@ const BtcTransaction: FC<{
       {showId ? (
         <div className={styles.header}>
           <h3 className={styles.txid}>
-            <a href={`${btcExplorer}/tx/${tx.txid}`} title={tx.txid} rel="noopener noreferrer" target="_blank">
+            <BTCExplorerLink id={tx.txid} path="/tx">
               <EllipsisMiddle className="monospace" text={tx.txid} />
-            </a>
+            </BTCExplorerLink>
           </h3>
           {time && tx.confirmations ? (
             <time dateTime={time.toISOString()}>{`${tx.confirmations.toLocaleString('en')} Confirmations (${time.format(
-              'YYYY-MM-DD HH:mm:ss',
+              TIME_TEMPLATE,
             )})`}</time>
           ) : (
             <div>{t('transaction.loading')}</div>
@@ -71,13 +61,9 @@ const BtcTransaction: FC<{
             const boundIndex = boundCellIndex[key]
             return (
               <div key={key} className={styles.input}>
-                <a
-                  href={`${btcExplorer}/address/${input.prevout.scriptPubKey.address}`}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
+                <BTCExplorerLink address={input.prevout.scriptPubKey.address} id={tx.txid} path="/address">
                   <AddressText className="monospace">{input.prevout.scriptPubKey.address}</AddressText>
-                </a>
+                </BTCExplorerLink>
                 <div className={`${styles.btcAttr} monospace`}>
                   <div className={styles.btcValue}>
                     <span>{int}</span>
@@ -85,13 +71,10 @@ const BtcTransaction: FC<{
                   </div>
                   BTC
                   {boundIndex !== undefined ? (
-                    <Tooltip
-                      placement="top"
-                      title={t('transaction.isomorphic-binding-with-index', {
+                    <Tooltip placement="top" trigger={<UsedSeal />}>
+                      {t('transaction.isomorphic-binding-with-index', {
                         index: `Input #${boundIndex}`,
                       })}
-                    >
-                      <UsedSeal />
                     </Tooltip>
                   ) : (
                     <div className={styles.iconPlaceholder} />
@@ -102,9 +85,9 @@ const BtcTransaction: FC<{
           })}
           {viewMoreInputs ? (
             <div style={{ marginTop: 4 }}>
-              <a href={`${btcExplorer}/tx/${tx.txid}`} rel="noopener noreferrer" target="_blank">
+              <BTCExplorerLink id={tx.txid} path="/tx">
                 View more in BTC Explorer
-              </a>
+              </BTCExplorerLink>
             </div>
           ) : null}
         </div>
@@ -117,19 +100,14 @@ const BtcTransaction: FC<{
             return (
               <div key={key} className={styles.output}>
                 {output.scriptPubKey.address ? (
-                  <a
-                    href={`${btcExplorer}/address/${output.scriptPubKey.address}`}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
+                  <BTCExplorerLink address={output.scriptPubKey.address} id={tx.txid} path="/address">
                     <AddressText className="monospace">{output.scriptPubKey.address}</AddressText>
-                  </a>
+                  </BTCExplorerLink>
                 ) : (
                   <div style={{ display: 'flex', gap: 8 }}>
                     OP RETURN
-                    <Tooltip
-                      placement="top"
-                      title={t(
+                    <Tooltip placement="top" trigger={<MoreIcon className={styles.opReturn} />}>
+                      {t(
                         `transaction.${
                           commitment ? 'isomorphic-binding-with-index-commitment' : 'isomorphic-binding-with-index'
                         }`,
@@ -137,8 +115,6 @@ const BtcTransaction: FC<{
                           commitment,
                         },
                       )}
-                    >
-                      <MoreIcon className={styles.opReturn} />
                     </Tooltip>
                   </div>
                 )}
@@ -151,7 +127,14 @@ const BtcTransaction: FC<{
                   {boundIndex !== undefined ? (
                     <Tooltip
                       placement="top"
-                      title={t(
+                      trigger={
+                        <div className={styles.newSeal}>
+                          <NewSeal />
+                          <ViewNewSeal />
+                        </div>
+                      }
+                    >
+                      {t(
                         `transaction.${
                           commitment ? 'isomorphic-binding-with-index-commitment' : 'isomorphic-binding-with-index'
                         }`,
@@ -160,11 +143,6 @@ const BtcTransaction: FC<{
                           commitment,
                         },
                       )}
-                    >
-                      <div className={styles.newSeal}>
-                        <NewSeal />
-                        <ViewNewSeal />
-                      </div>
                     </Tooltip>
                   ) : (
                     <div className={styles.iconPlaceholder} />
@@ -175,9 +153,9 @@ const BtcTransaction: FC<{
           })}
           {viewMoreOutputs ? (
             <div style={{ marginTop: 4 }}>
-              <a href={`${btcExplorer}/tx/${tx.txid}`} rel="noopener noreferrer" target="_blank">
+              <BTCExplorerLink id={tx.txid} path="/tx">
                 View more in BTC Explorer
-              </a>
+              </BTCExplorerLink>
             </div>
           ) : null}
         </div>

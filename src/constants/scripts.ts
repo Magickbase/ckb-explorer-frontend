@@ -3,6 +3,11 @@ import type { ScriptConfigs, Config } from '@ckb-lumos/config-manager'
 import { predefined } from '@ckb-lumos/config-manager'
 import { Script } from '../models/Script'
 
+export const SCRIPT_TAGS = {
+  SECP_MULTISIG: 'SECP256K1 / Multisig',
+  SECP_MULTISIG_LOCKTIME: 'SECP256K1 / Multisig / locktime',
+} as const
+
 export interface ContractHashTag {
   codeHashes: string[] // The code hashes whose hash type are type in mainnet and testnet are different
   txHashes: string[] //  mainnet and testnet contract tx hashes
@@ -15,8 +20,8 @@ export interface ContractHashTag {
 
 export const ScriptTagExtraRules = new Map<string, (s: Script) => string>([
   [
-    'secp256k1 / multisig',
-    script => (script.args.length === 28 * 2 + 2 ? 'secp256k1 / multisig / locktime' : 'secp256k1 / multisig'),
+    SCRIPT_TAGS.SECP_MULTISIG,
+    script => (script.args.length === 28 * 2 + 2 ? SCRIPT_TAGS.SECP_MULTISIG_LOCKTIME : SCRIPT_TAGS.SECP_MULTISIG),
   ],
 ])
 
@@ -31,12 +36,15 @@ export const MainnetContractHashTags: ContractHashTag[] = [
     category: 'lock',
   },
   {
-    codeHashes: ['0x5c5069eb0857efc65e1bca0c07df34c31663b3622fd3876c876320fc9634e2a8'],
+    codeHashes: [
+      '0x5c5069eb0857efc65e1bca0c07df34c31663b3622fd3876c876320fc9634e2a8',
+      '0x36c971b8d41fbd94aabca77dc75e826729ac98447b46f91e00796155dddb0d29',
+    ],
     txHashes: ['0x71a7ba8fc96349fea0ed3a5c47992e3b4084b031a42264a018e0072e8172e46c-1'],
     depType: 'dep_group',
     hashType: 'type',
     lumosConfigName: 'SECP256K1_BLAKE160_MULTISIG',
-    tag: 'secp256k1 / multisig',
+    tag: SCRIPT_TAGS.SECP_MULTISIG,
     category: 'lock',
   },
   {
@@ -268,7 +276,7 @@ export const MainnetContractHashTags: ContractHashTag[] = [
     depType: 'code',
     hashType: 'data1',
     tag: 'xUDT',
-    category: 'lock',
+    category: 'type',
   },
   {
     codeHashes: ['0x4a4dce1df3dffff7f8b2cd7dff7303df3b6150c9788cb75dcf6747247132b9f5'],
@@ -322,6 +330,85 @@ export const MainnetContractHashTags: ContractHashTag[] = [
     tag: 'DID',
     category: 'type',
   },
+  {
+    codeHashes: ['0x641a89ad2f77721b803cd50d01351c1f308444072d5fa20088567196c0574c68'],
+    txHashes: ['0x1911208b136957d5f7c1708a8835edfe8ae1d02700d5cb2c3a6aacf4d5906306-0'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'Nostr',
+    category: 'lock',
+  },
+  {
+    codeHashes: ['0x8290467a512e5b9a6b816469b0edabba1f4ac474e28ffdd604c2a7c76446bbaf'],
+    txHashes: ['0x10d63a996157d32c01078058000052674ca58d15f921bec7f1dcdac2160eb66b-4'],
+    depType: 'code',
+    hashType: 'data1',
+    tag: 'Single Use Lock',
+    category: 'lock',
+  },
+  {
+    codeHashes: ['0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3'],
+    txHashes: ['0x621a6f38de3b9f453016780edac3b26bfcbfa3e2ecb47c2da275471a5d3ed165-0'],
+    depType: 'dep_group',
+    hashType: 'data1',
+    tag: 'iCKB Logic',
+  },
+  {
+    codeHashes: ['0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0'],
+    txHashes: ['0x621a6f38de3b9f453016780edac3b26bfcbfa3e2ecb47c2da275471a5d3ed165-0'],
+    depType: 'dep_group',
+    hashType: 'data1',
+    tag: 'WR Owned-Owner',
+  },
+  {
+    codeHashes: ['0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a'],
+    txHashes: ['0x621a6f38de3b9f453016780edac3b26bfcbfa3e2ecb47c2da275471a5d3ed165-0'],
+    depType: 'dep_group',
+    hashType: 'data1',
+    tag: 'UDT Limit Order',
+  },
+  {
+    codeHashes: ['0x26622198b66240e437e323e0fecf1c26ba3c8c28a45f03ed3ebb9f7f2bdc0055'],
+    txHashes: ['0xb22fd5c56a642f2e8447f7fb2bbd4faa85ce09ec9393113b9bdeec2b17cd4f95-0'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'Stable++ Pool',
+  },
+  {
+    codeHashes: ['0x9376c3b5811942960a846691e16e477cf43d7c7fa654067c9948dfcd09a32137'],
+    txHashes: ['0x715afa97fb02c2ccdddbbc320ce3e92388074a5aee07fdf0b312f0b89ea6d6b7-0'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'DID',
+  },
+  {
+    codeHashes: ['0x56fb632a13abdad7308d2e034baae1cb049e8e8ff23cc7c0b69449f617549733'],
+    txHashes: ['0x8ec1081bd03e5417bb4467e96f4cec841acdd35924538a35e7547fe320118977-1'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'Stable++ Intent Lock',
+  },
+  {
+    codeHashes: ['0x4ed68fcb7eaa4ff78d46a2fad88a32ce9caffd4b96a0a4bba96ff4871f018675'],
+    txHashes: ['0x8dae0c83d77b7349f390d967b254e8329177b5c8c0e6da97c4a51efcca958ef5-1'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'Stable++ Vault Lock',
+  },
+  {
+    codeHashes: ['0x26a33e0815888a4a0614a0b7d09fa951e0993ff21e55905510104a0b1312032b'],
+    txHashes: ['0x8ec1081bd03e5417bb4467e96f4cec841acdd35924538a35e7547fe320118977-0'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'Stable++ Asset',
+  },
+  {
+    codeHashes: ['0xbfa35a9c38a676682b65ade8f02be164d48632281477e36f8dc2f41f79e56bfc'],
+    txHashes: ['0xf6a5eef65101899db9709c8de1cc28f23c1bee90d857ebe176f6647ef109e20d-0'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'USDI Asset',
+  },
 ]
 
 export const TestnetContractHashTags: ContractHashTag[] = [
@@ -335,12 +422,15 @@ export const TestnetContractHashTags: ContractHashTag[] = [
     category: 'lock',
   },
   {
-    codeHashes: ['0x5c5069eb0857efc65e1bca0c07df34c31663b3622fd3876c876320fc9634e2a8'],
+    codeHashes: [
+      '0x5c5069eb0857efc65e1bca0c07df34c31663b3622fd3876c876320fc9634e2a8',
+      '0x36c971b8d41fbd94aabca77dc75e826729ac98447b46f91e00796155dddb0d29',
+    ],
     txHashes: ['0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37-1'],
     depType: 'dep_group',
     hashType: 'type',
     lumosConfigName: 'SECP256K1_BLAKE160_MULTISIG',
-    tag: 'secp256k1 / multisig',
+    tag: SCRIPT_TAGS.SECP_MULTISIG,
     category: 'lock',
   },
   {
@@ -567,10 +657,7 @@ export const TestnetContractHashTags: ContractHashTag[] = [
   },
   {
     codeHashes: ['0xf329effd1c475a2978453c8600e1eaf0bc2087ee093c3ee64cc96ec6847752cb'],
-    txHashes: [
-      '0x3d4296df1bd2cc2bd3f483f61ab7ebeac462a2f336f2b944168fe6ba5d81c014-0',
-      '0x27b62d8be8ed80b9f56ee0fe41355becdb6f6a40aeba82d3900434f43b1c8b60-0',
-    ],
+    txHashes: ['0xec18bf0d857c981c3d1f4e17999b9b90c484b303378e94de1a57b0872f5d4602-0'],
     depType: 'code',
     hashType: 'type',
     lumosConfigName: 'OMNILOCK',
@@ -590,8 +677,16 @@ export const TestnetContractHashTags: ContractHashTag[] = [
     txHashes: ['0xbf6fb538763efec2a70a6a3dcb7242787087e1030c4e7d86585bc63a9d337f5f-0'],
     depType: 'code',
     hashType: 'type',
+    tag: 'xUDT(final_rls)',
+    category: 'type',
+  },
+  {
+    codeHashes: ['0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95'],
+    txHashes: ['0xbf6fb538763efec2a70a6a3dcb7242787087e1030c4e7d86585bc63a9d337f5f-0'],
+    depType: 'code',
+    hashType: 'data1',
     tag: 'xUDT',
-    category: 'lock',
+    category: 'type',
   },
   {
     codeHashes: [
@@ -691,6 +786,59 @@ export const TestnetContractHashTags: ContractHashTag[] = [
     tag: 'DID',
     category: 'type',
   },
+  {
+    codeHashes: ['0x6ae5ee0cb887b2df5a9a18137315b9bdc55be8d52637b2de0624092d5f0c91d5'],
+    txHashes: ['0xa2a434dcdbe280b9ed75bb7d6c7d68186a842456aba0fc506657dc5ed7c01d68-0'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'Nostr',
+    category: 'lock',
+  },
+  {
+    codeHashes: ['0x8290467a512e5b9a6b816469b0edabba1f4ac474e28ffdd604c2a7c76446bbaf'],
+    txHashes: ['0xb4f171c9c9caf7401f54a8e56225ae21d95032150a87a4678eac3f66a3137b93-4'],
+    depType: 'code',
+    hashType: 'data1',
+    tag: 'Single Use Lock',
+    category: 'lock',
+  },
+  {
+    codeHashes: ['0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3'],
+    txHashes: ['0xf7ece4fb33d8378344cab11fcd6a4c6f382fd4207ac921cf5821f30712dcd311-0'],
+    depType: 'dep_group',
+    hashType: 'data1',
+    tag: 'iCKB Logic',
+  },
+  {
+    codeHashes: ['0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0'],
+    txHashes: ['0xf7ece4fb33d8378344cab11fcd6a4c6f382fd4207ac921cf5821f30712dcd311-0'],
+    depType: 'dep_group',
+    hashType: 'data1',
+    tag: 'WR Owned-Owner',
+  },
+  {
+    codeHashes: ['0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a'],
+    txHashes: ['0xf7ece4fb33d8378344cab11fcd6a4c6f382fd4207ac921cf5821f30712dcd311-0'],
+    depType: 'dep_group',
+    hashType: 'data1',
+    tag: 'UDT Limit Order',
+  },
+  {
+    codeHashes: ['0xcc9dc33ef234e14bc788c43a4848556a5fb16401a04662fc55db9bb201987037'],
+    txHashes: ['0x03d029480416c2fc927dfbfe0ed1916ffaf55d1e1f3146c55cf2d3dd5e674e61-0'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'USDI Asset',
+    category: 'type',
+  },
+  {
+    codeHashes: ['0x6c67887fe201ee0c7853f1682c0b77c0e6214044c156c7558269390a8afa6d7c'],
+    txHashes: ['0x89af398edc7ed0054506b33349b031097d94378e11e77bf0690ee69d82623a43-0'],
+    depType: 'code',
+    hashType: 'type',
+    tag: 'Fiber Channel',
+    category: 'lock',
+  },
 ]
 
 const getLumosScripts = (scripts: ContractHashTag[]): ScriptConfigs =>
@@ -721,3 +869,5 @@ export const LUMOS_TESTNET_CONFIG: Config = {
   PREFIX: predefined.AGGRON4.PREFIX,
   SCRIPTS: LUMOS_TESTNET_SCRIPTS,
 }
+
+export const ZERO_LOCK_CODE_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'

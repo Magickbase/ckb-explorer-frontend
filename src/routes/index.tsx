@@ -16,6 +16,7 @@ import { isChainTypeError } from '../utils/chain'
 import { SupportedLngs } from '../utils/i18n'
 import { useSyncEffect } from '../hooks'
 import RGBPPTransactionList from '../pages/RGBPP/TransactionList'
+import { IS_MAINNET } from '../constants/common'
 
 const Home = lazy(() => import('../pages/Home'))
 const Block = lazy(() => import('../pages/BlockDetail'))
@@ -29,6 +30,8 @@ const NftCollections = lazy(() => import('../pages/NftCollections'))
 const NftCollectionInfo = lazy(() => import('../pages/NftCollectionInfo'))
 const NftInfo = lazy(() => import('../pages/NftInfo'))
 const NervosDao = lazy(() => import('../pages/NervosDao'))
+const DaoTransactionExport = lazy(() => import('../pages/NervosDao/DaoTransactionExport'))
+const DaoDepositorsExport = lazy(() => import('../pages/NervosDao/DaoDepositorsExport'))
 const NotFoundPage = lazy(() => import('../pages/404'))
 const ErrorPage = lazy(() => import('../pages/Error'))
 const SearchFail = lazy(() => import('../pages/SearchFail'))
@@ -53,6 +56,9 @@ const CellCountChart = lazy(() => import('../pages/StatisticsChart/activities/Ce
 const ContractResourceDistributedChart = lazy(
   () => import('../pages/StatisticsChart/activities/ContractResourceDistributed'),
 )
+const ActiveAddressesChart = lazy(() => import('../pages/StatisticsChart/activities/ActiveAddressesChart'))
+const AssetActivityChart = lazy(() => import('../pages/StatisticsChart/activities/AssetActivity'))
+const KnowledgeSizeChart = lazy(() => import('../pages/StatisticsChart/activities/KnowledgeSize'))
 const CkbHodlWaveChart = lazy(() => import('../pages/StatisticsChart/activities/CkbHodlWave'))
 const AddressBalanceRankChart = lazy(() => import('../pages/StatisticsChart/activities/AddressBalanceRank'))
 const BalanceDistributionChart = lazy(() => import('../pages/StatisticsChart/activities/BalanceDistribution'))
@@ -78,6 +84,16 @@ const Hasher = lazy(() => import('../pages/Tools/Hasher'))
 const BroadcastTx = lazy(() => import('../pages/Tools/BroadcastTx'))
 const CamelCase = lazy(() => import('../pages/Tools/CamelCase'))
 const MoleculeParser = lazy(() => import('../pages/Tools/MoleculeParser'))
+const HardFork = lazy(() => import('../pages/HardFork'))
+// ======
+const FiberGraph = lazy(() => import('../pages/Fiber/Graph'))
+const FiberPeerList = lazy(() => import('../pages/Fiber/PeerList'))
+const FiberPeer = lazy(() => import('../pages/Fiber/Peer'))
+const FiberChannel = lazy(() => import('../pages/Fiber/Channel'))
+const FiberGraphNodeList = lazy(() => import('../pages/Fiber/GraphNodeList'))
+const FiberGraphNode = lazy(() => import('../pages/Fiber/GraphNode'))
+const FiberGraphChannelList = lazy(() => import('../pages/Fiber/GraphChannelList'))
+// ======
 
 const routes: RouteProps[] = [
   {
@@ -147,6 +163,18 @@ const routes: RouteProps[] = [
   {
     path: '/nervosdao',
     component: NervosDao,
+  },
+  {
+    path: '/nervosdao/transaction/export',
+    component: DaoTransactionExport,
+  },
+  {
+    path: '/nervosdao/depositor/export',
+    component: DaoDepositorsExport,
+  },
+  {
+    path: '/udts',
+    component: Xudts,
   },
   {
     path: '/xudts',
@@ -246,6 +274,18 @@ const routes: RouteProps[] = [
     path: '/charts/contract-resource-distributed',
     component: ContractResourceDistributedChart,
   },
+  {
+    path: '/charts/active-addresses',
+    component: ActiveAddressesChart,
+  },
+  {
+    path: '/charts/asset-activity',
+    component: AssetActivityChart,
+  },
+  {
+    path: '/charts/knowledge-size',
+    component: KnowledgeSizeChart,
+  },
 
   {
     path: '/charts/block-time-distribution',
@@ -331,7 +371,38 @@ const routes: RouteProps[] = [
     path: '/tools/molecule-parser',
     component: MoleculeParser,
   },
+  { path: '/fiber/graph', component: FiberGraph },
+  {
+    path: '/fiber/peers',
+    component: FiberPeerList,
+  },
+  {
+    path: '/fiber/peers/:id',
+    component: FiberPeer,
+  },
+  {
+    path: '/fiber/channels/:id',
+    component: FiberChannel,
+  },
+  {
+    path: '/fiber/graph/nodes',
+    component: FiberGraphNodeList,
+  },
+  {
+    path: '/fiber/graph/node/:id',
+    component: FiberGraphNode,
+  },
+  {
+    path: '/fiber/graph/channels',
+    component: FiberGraphChannelList,
+  },
 ]
+if (IS_MAINNET) {
+  routes.push({
+    path: '/hardfork',
+    component: HardFork,
+  })
+}
 
 type PageErrorBoundaryState = {
   error?: Error | null

@@ -1,17 +1,17 @@
-import { Table } from 'antd'
+import { useHistory, useLocation } from 'react-router'
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { FC, ReactNode, useState } from 'react'
-import { ColumnGroupType, ColumnType } from 'antd/lib/table'
+import { FC, ReactNode, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
+import classNames from 'classnames'
+import { TFunction } from 'i18next'
 import type { XUDT } from '../../models/Xudt'
 import { Link } from '../../components/Link'
 import Content from '../../components/Content'
 import Pagination from '../../components/Pagination'
 import SortButton from '../../components/SortButton'
-import { TokensPanel, TokensContentEmpty, TokensLoadingPanel } from './styled'
+import MultiFilterButton from '../../components/MultiFilterButton'
 import { localeNumberString } from '../../utils/number'
-import Loading from '../../components/Loading'
 import SmallLoading from '../../components/Loading/SmallLoading'
 import styles from './styles.module.scss'
 import { usePaginationParamsInPage, useSearchParams, useSortParam } from '../../hooks'
@@ -19,20 +19,55 @@ import { explorerService } from '../../services/ExplorerService'
 import { QueryResult } from '../../components/QueryResult'
 import { FilterSortContainerOnMobile } from '../../components/FilterSortContainer'
 import { Card } from '../../components/Card'
-import { BooleanT } from '../../utils/array'
 import XUDTTag from '../../components/XUDTTag'
 import { SubmitTokenInfo } from '../../components/SubmitTokenInfo'
-import XUDTTokenIcon from '../../assets/sudt_token.png'
+import { BooleanT } from '../../utils/array'
+import FtFallbackIcon from '../../assets/ft_fallback_icon.png'
+import { ReactComponent as OpenSourceIcon } from '../../assets/open-source.svg'
+import { scripts } from '../ScriptList'
+import Tooltip from '../../components/Tooltip'
+import Loading from '../../components/Loading'
 
 type SortField = 'transactions' | 'addresses_count' | 'created_time' | 'mint_status'
+
+const getfilterList = (t: TFunction) => [
+  // TODO: maybe removed in the future, hold on
+  // {
+  //   key: 'out-of-length-range',
+  //   value: 'out-of-length-range',
+  //   title: <XUDTTag tagName="out-of-length-range" />,
+  //   to: '/xudts',
+  // },
+  {
+    key: 'layer-1-asset',
+    value: t('xudt.tags.layer-1-asset'),
+    title: <XUDTTag tagName="layer-1-asset" />,
+    to: '/xudts',
+  },
+  {
+    key: 'layer-2-asset',
+    value: t('xudt.tags.layer-2-asset'),
+    title: <XUDTTag tagName="layer-2-asset" />,
+    to: '/xudts',
+  },
+  {
+    key: 'supply-limited',
+    value: t('xudt.tags.supply-limited'),
+    title: <XUDTTag tagName="supply-limited" />,
+    to: '/xudts',
+  },
+  {
+    key: 'utility',
+    value: t('xudt.tags.utility'),
+    title: <XUDTTag tagName="utility" />,
+    to: '/xudts',
+  },
+]
 
 const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
   const { t } = useTranslation()
 
   const symbol = token.symbol || `#${token.typeHash.substring(token.typeHash.length - 4)}`
-  const holderCount = token.holderAllocation
-    ? +token.holderAllocation.btcHoldersCount + +token.holderAllocation.ckbHoldersCount
-    : 0
 
   const fields: { name: string; value: ReactNode }[] = [
     {
@@ -41,7 +76,7 @@ const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
     },
     {
       name: t('xudt.unique_addresses'),
-      value: localeNumberString(holderCount),
+      value: localeNumberString(token.addressesCount),
     },
     {
       name: t('xudt.created_time'),
@@ -55,7 +90,7 @@ const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
         <dl className={styles.tokenInfo}>
           <dt className={styles.title}>Name</dt>
           <dd>
-            <img className={styles.icon} src={token.iconFile ? token.iconFile : XUDTTokenIcon} alt="token icon" />
+            <img className={styles.icon} src={token.iconFile ? token.iconFile : FtFallbackIcon} alt="token icon" />
             <Link className={styles.link} to={`/xudt/${token.typeHash}`}>
               {symbol}
             </Link>
@@ -86,6 +121,7 @@ const TokenInfo: FC<{ token: XUDT }> = ({ token }) => {
 export function TokensCard({
   query,
   sortParam,
+  isEmpty,
 }: {
   query: UseQueryResult<
     {
@@ -96,45 +132,54 @@ export function TokensCard({
     unknown
   >
   sortParam?: ReturnType<typeof useSortParam<SortField>>
+  isEmpty: boolean
 }) {
   const { t } = useTranslation()
 
   return (
     <>
       <Card className={styles.filterSortCard} shadow={false}>
-        <FilterSortContainerOnMobile>
+        <FilterSortContainerOnMobile key="xudts-sort">
+          <span className={styles.sortOption}>
+            {t('xudt.title.tags')}
+            <MultiFilterButton filterName="tags" key="" filterList={getfilterList(t)} />
+          </span>
           <span className={styles.sortOption}>
             {t('xudt.transactions')}
             <SortButton field="transactions" sortParam={sortParam} />
           </span>
           <span className={styles.sortOption}>
-            {t('xudt.unique_addresses')}
-            <SortButton field="addresses_count" sortParam={sortParam} />
-          </span>
-          <span className={styles.sortOption}>
             {t('xudt.created_time')}
             <SortButton field="created_time" sortParam={sortParam} />
+          </span>
+          <span className={styles.sortOption}>
+            {t('xudt.unique_addresses')}
+            <SortButton field="addresses_count" sortParam={sortParam} />
           </span>
         </FilterSortContainerOnMobile>
       </Card>
 
-      <QueryResult
-        query={query}
-        errorRender={() => <TokensContentEmpty>{t('xudt.tokens_empty')}</TokensContentEmpty>}
-        loadingRender={() => (
-          <TokensLoadingPanel>
-            <SmallLoading />
-          </TokensLoadingPanel>
-        )}
-      >
-        {data => (
-          <div>
-            {data?.tokens.map(token => (
-              <TokenInfo key={token.typeHash} token={token} />
-            ))}
-          </div>
-        )}
-      </QueryResult>
+      {isEmpty ? (
+        <div className={styles.tokensContentEmpty}>{t('xudt.tokens_empty')}</div>
+      ) : (
+        <QueryResult
+          query={query}
+          errorRender={() => <div className={styles.tokensContentEmpty}>{t('xudt.tokens_empty')}</div>}
+          loadingRender={() => (
+            <div className={styles.tokensLoadingPanel}>
+              <SmallLoading />
+            </div>
+          )}
+        >
+          {data => (
+            <div>
+              {data?.tokens.map(token => (
+                <TokenInfo key={token.typeHash} token={token} />
+              ))}
+            </div>
+          )}
+        </QueryResult>
+      )}
     </>
   )
 }
@@ -149,19 +194,25 @@ const TokenTable: FC<{
     unknown
   >
   sortParam?: ReturnType<typeof useSortParam<SortField>>
-}> = ({ query, sortParam }) => {
+  isEmpty: boolean
+  isXudts: boolean
+}> = ({ query, sortParam, isEmpty, isXudts }) => {
   const { t } = useTranslation()
+  const RGBPP_VIEW = 'rgbpp'
+  const { location } = useHistory()
+  const urlQuery = new URLSearchParams(location.search)
+  const isRgbppView = urlQuery.get('view') === RGBPP_VIEW
 
-  const nullableColumns: (ColumnGroupType<XUDT> | ColumnType<XUDT> | false | undefined)[] = [
+  const nullableColumns = [
     {
       title: `${t('xudt.symbol')}&${t('xudt.name')}`,
       className: styles.colName,
-      render: (_, token) => {
+      key: 'name',
+      render: (token: XUDT) => {
         const symbol = token.symbol || `#${token.typeHash.substring(token.typeHash.length - 4)}`
-        const tags = token.xudtTags ?? []
         return (
           <div className={styles.container}>
-            <img className={styles.icon} src={token.iconFile ? token.iconFile : XUDTTokenIcon} alt="token icon" />
+            <img className={styles.icon} src={token.iconFile ? token.iconFile : FtFallbackIcon} alt="token icon" />
             <div className={styles.right}>
               <div className={styles.symbolAndName}>
                 {token.published ? (
@@ -169,16 +220,11 @@ const TokenTable: FC<{
                     <Link className={styles.link} to={`/xudt/${token.typeHash}`}>
                       {symbol}
                     </Link>
-                    <span className={styles.name}>{token.fullName}</span>
+                    <Tooltip trigger={<span className={styles.name}>{token.fullName}</span>}>{token.fullName}</Tooltip>
                   </>
                 ) : (
                   symbol
                 )}
-              </div>
-              <div className={styles.tags}>
-                {tags.map(tag => (
-                  <XUDTTag tagName={tag} />
-                ))}
               </div>
             </div>
           </div>
@@ -187,76 +233,172 @@ const TokenTable: FC<{
     },
     {
       title: (
-        <>
+        <span>
+          {t('xudt.title.tags')}
+          <MultiFilterButton filterName="tags" key="" filterList={getfilterList(t)} />
+        </span>
+      ),
+      className: styles.colTags,
+      key: 'tags',
+      render: (token: XUDT) => (
+        <div className={styles.tags}>
+          {token.xudtTags?.map(tag => (
+            <XUDTTag tagName={tag} />
+          ))}
+        </div>
+      ),
+    },
+    {
+      title: (
+        <span>
           {t('xudt.transactions')}
           <SortButton field="transactions" sortParam={sortParam} />
-        </>
+        </span>
       ),
       className: styles.colTransactions,
-      render: (_, token) => localeNumberString(token.h24CkbTransactionsCount),
+      key: 'transactions',
+      render: (token: XUDT) => localeNumberString(token.h24CkbTransactionsCount),
     },
+    isRgbppView
+      ? {
+          title: (
+            <Tooltip
+              trigger={
+                <Link
+                  to={`/xudts?${new URLSearchParams({ ...urlQuery, view: 'ckb' })}`}
+                  style={{ color: 'var(--primary-color)' }}
+                >
+                  {t('xudt.rgbpp_holders_count')}
+                </Link>
+              }
+            >
+              {t('xudt.display_rgbpp_holders')}
+            </Tooltip>
+          ),
+          className: styles.colAddressCount,
+          key: 'holders_count',
+          render: (token: XUDT) => localeNumberString(token.holdersCount),
+        }
+      : {
+          title: isXudts ? (
+            <Tooltip
+              trigger={
+                <span>
+                  <Link
+                    to={`/xudts?${new URLSearchParams({ ...urlQuery, view: RGBPP_VIEW })}`}
+                    style={{ color: 'var(--primary-color)' }}
+                  >
+                    {t('xudt.unique_addresses')}
+                  </Link>
+                  <SortButton field="addresses_count" sortParam={sortParam} />
+                </span>
+              }
+            >
+              {t('xudt.display_unique_ckb_addresses')}
+            </Tooltip>
+          ) : (
+            <div>
+              <span>{t('xudt.address_count')}</span>
+              <SortButton field="addresses_count" sortParam={sortParam} />
+            </div>
+          ),
+          className: styles.colAddressCount,
+          key: 'addresses_count',
+          render: (token: XUDT) => localeNumberString(token.addressesCount),
+        },
     {
       title: (
-        <>
-          {t('xudt.unique_addresses')}
-          <SortButton field="addresses_count" sortParam={sortParam} />
-        </>
-      ),
-      className: styles.colAddressCount,
-      render: (_, token) =>
-        token.holderAllocation
-          ? localeNumberString(+token.holderAllocation.btcHoldersCount + +token.holderAllocation.ckbHoldersCount)
-          : 0,
-    },
-    {
-      title: (
-        <>
+        <span>
           {t('xudt.created_time')}
           <SortButton field="created_time" sortParam={sortParam} />
-        </>
+        </span>
       ),
       className: styles.colCreatedTime,
-      render: (_, token) => dayjs(+token.createdAt).format('YYYY-MM-DD'),
+      key: 'created_time',
+      render: (token: XUDT) => dayjs(+token.createdAt).format('YYYY-MM-DD'),
     },
   ]
   const columns = nullableColumns.filter(BooleanT())
 
+  let content: ReactNode = null
+  if (query.isLoading) {
+    content = (
+      <tr>
+        <td colSpan={columns.length}>
+          <Loading className={styles.loading} show />
+        </td>
+      </tr>
+    )
+  } else if (isEmpty) {
+    content = (
+      <tr>
+        <td colSpan={columns.length}>
+          <div className={styles.tokensContentEmpty}>{t('xudt.tokens_empty')}</div>
+        </td>
+      </tr>
+    )
+  } else {
+    content = (
+      <>
+        {(query.data?.tokens ?? []).map(token => (
+          <tr key={token.typeHash}>
+            {columns.map(column => (
+              <td key={column.key} className={column.className} style={{ width: `${100 / columns.length}%` }}>
+                {column.render?.(token)}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </>
+    )
+  }
+
   return (
-    <Table
-      className={styles.tokensTable}
-      columns={columns}
-      dataSource={query.data?.tokens ?? []}
-      pagination={false}
-      loading={
-        query.isLoading
-          ? {
-              indicator: <Loading className={styles.loading} show />,
-            }
-          : false
-      }
-    />
+    <table className={styles.tokensTable}>
+      <thead>
+        <tr>
+          {columns.map(column => (
+            <th key={column.key} style={{ width: `${100 / columns.length}%` }}>
+              {column.title}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>{content}</tbody>
+    </table>
   )
 }
 
+const xudtCodeUrl = scripts.get('xUDT')?.code
+
 const Xudts = () => {
   const { t } = useTranslation()
+  const { pathname } = useLocation()
+  const isXudts = useMemo(() => pathname.includes('xudts'), [pathname])
   const { tags } = useSearchParams('tags')
   const [isSubmitTokenInfoModalOpen, setIsSubmitTokenInfoModalOpen] = useState<boolean>(false)
   const { currentPage, pageSize: _pageSize, setPage } = usePaginationParamsInPage()
   const sortParam = useSortParam<SortField>(undefined, 'transactions.desc')
   const { sort } = sortParam
 
-  const query = useQuery(['xudts', currentPage, _pageSize, sort, tags], async () => {
+  const query = useQuery(['xudts', currentPage, _pageSize, sort, tags, 'true'], async () => {
     const {
       data: tokens,
       total,
       pageSize,
-    } = await explorerService.api.fetchXudts(currentPage, _pageSize, sort ?? undefined, tags)
+    } = isXudts
+      ? await explorerService.api.fetchXudts(currentPage, _pageSize, sort ?? undefined, tags, 'true')
+      : await explorerService.api.fetchUdts(currentPage, _pageSize, sort ?? undefined, tags, 'true')
     if (tokens.length === 0) {
       throw new Error('Tokens empty')
     }
     return {
-      tokens,
+      tokens: tokens.map(token => ({
+        ...token,
+        // FIXME: data should be updated in the backend
+        // issue: https://github.com/Magickbase/ckb-explorer-public-issues/issues/754
+        xudtTags: token.xudtTags?.filter(tag => !['rgb++', 'rgbpp-compatible'].includes(tag)),
+      })),
       total,
       pageSize,
     }
@@ -265,11 +407,33 @@ const Xudts = () => {
   const pageSize = query.data?.pageSize ?? _pageSize
   const totalPages = Math.ceil(total / pageSize)
 
+  const isEmpty = tags === ''
+
   return (
     <Content>
-      <TokensPanel className="container">
-        <div className="tokensTitlePanel">
-          <span>{t('xudt.xudts')}</span>
+      <div className={classNames(styles.tokensPanel, 'container')}>
+        <div className={styles.tokensTitlePanel}>
+          {isXudts ? (
+            <div className={styles.title}>
+              <span className={styles.titleText}>
+                {t('xudt.xudts')}
+                {xudtCodeUrl ? (
+                  <Link to={xudtCodeUrl}>
+                    {t('scripts.open_source_script')}
+                    <OpenSourceIcon />
+                  </Link>
+                ) : null}
+              </span>
+              <span className={styles.currentPath}>
+                {t('udt.udts')} &gt; <span className={styles.currentPage}>{t('xudt.xudts')}</span>
+              </span>
+            </div>
+          ) : (
+            <div className={styles.title}>
+              <span className={styles.titleText}>{t('udt.udts')}</span>
+              <span className={styles.description}>{t('udt.description')}</span>
+            </div>
+          )}
 
           <button
             type="button"
@@ -281,19 +445,19 @@ const Xudts = () => {
         </div>
 
         <div className={styles.cards}>
-          <TokensCard query={query} sortParam={sortParam} />
+          <TokensCard query={query} sortParam={sortParam} isEmpty={isEmpty} />
         </div>
         <div className={styles.table}>
-          <TokenTable query={query} sortParam={sortParam} />
+          <TokenTable query={query} sortParam={sortParam} isEmpty={isEmpty} isXudts={isXudts} />
         </div>
 
         <Pagination
           className={styles.pagination}
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={isEmpty ? 0 : totalPages}
           onChange={setPage}
         />
-      </TokensPanel>
+      </div>
       {isSubmitTokenInfoModalOpen ? (
         <SubmitTokenInfo tagFilters={['xudt']} onClose={() => setIsSubmitTokenInfoModalOpen(false)} />
       ) : null}

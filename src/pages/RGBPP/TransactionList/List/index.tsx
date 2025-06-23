@@ -1,26 +1,17 @@
 import { TFunction, useTranslation } from 'react-i18next'
+import { ReactNode } from 'react'
 import styles from './styles.module.scss'
-import { TransactionLeapDirection } from '../../../../components/RGBPP/types'
-import AddressText from '../../../../components/AddressText'
-import { Link } from '../../../../components/Link'
-import { localeNumberString } from '../../../../utils/number'
 import SortButton from '../../../../components/SortButton'
 import FilterButton from '../../../../components/FilterButton'
-import { useStatistics } from '../../../../services/ExplorerService'
 import { useIsMobile } from '../../../../hooks'
-import { dayjs } from '../../../../utils/date'
-import { ReactComponent as ShareIcon } from './share_icon.svg'
-import config from '../../../../config'
+import Item, { type Transaction } from './item'
+import { HelpTip } from '../../../../components/HelpTip'
 
 const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
   const [t] = useTranslation()
-  const statistics = useStatistics()
-  const tipBlockNumber = parseInt(statistics?.tipBlockNumber ?? '0', 10)
 
   const filterFields = getFilterList(t)
-
   const headers = getTableHeaders(t)
-
   const isMobile = useIsMobile()
 
   return (
@@ -34,9 +25,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                 key % 2 === 0 && (
                   <div>
                     {header.title}
-                    {header.filter && (
-                      <FilterButton filterName="type" key={header.key} filteredList={filterFields} isMobile />
-                    )}
+                    {header.filter && <FilterButton filterName="type" key={header.key} filteredList={filterFields} />}
                     {header.order && <SortButton key={header.key} field={header.order} />}
                   </div>
                 )
@@ -50,9 +39,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
                 key % 2 === 1 && (
                   <div>
                     {header.title}
-                    {header.filter && (
-                      <FilterButton filterName="type" key={header.key} filteredList={filterFields} isMobile />
-                    )}
+                    {header.filter && <FilterButton filterName="type" key={header.key} filteredList={filterFields} />}
                     {header.order && <SortButton key={header.key} field={header.order} />}
                   </div>
                 )
@@ -80,82 +67,7 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
         </thead>
         <tbody>
           {list.length > 0 ? (
-            list.map(item => {
-              let leapDirection = '/'
-              if (item.type === TransactionLeapDirection.IN) {
-                leapDirection = t('address.leap_in')
-              }
-
-              if (item.type === TransactionLeapDirection.OUT) {
-                leapDirection = t('address.leap_out')
-              }
-
-              return (
-                <tr key={item.ckbTxId}>
-                  <td className={styles.hash} title={t('rgbpp.transaction.ckb_txid')}>
-                    <div className={styles.transactionHash}>
-                      <AddressText
-                        disableTooltip
-                        linkProps={{
-                          to: `/transaction/${item.ckbTxId}`,
-                        }}
-                      >
-                        {item.ckbTxId}
-                      </AddressText>
-                    </div>
-                  </td>
-                  <td className={styles.height} title={t('rgbpp.transaction.block_number')}>
-                    <Link className={styles.blockLink} to={`/block/${item.blockNumber}`}>
-                      {localeNumberString(item.blockNumber)}
-                    </Link>
-                  </td>
-                  <td className={styles.confirmation} title={t('rgbpp.transaction.confirmation')}>
-                    {localeNumberString(tipBlockNumber - item.blockNumber)}{' '}
-                    {tipBlockNumber - item.blockNumber === 1
-                      ? t('rgbpp.transaction.confirmation')
-                      : t('rgbpp.transaction.confirmations')}
-                  </td>
-                  <td className={styles.time} title={t('rgbpp.transaction.time')}>
-                    {dayjs(item.time).fromNow()}
-                  </td>
-                  <td className={styles.type} title={t('rgbpp.transaction.type')}>
-                    {leapDirection}
-                  </td>
-                  <td className={styles.cellChange} title={t('rgbpp.transaction.rgbpp_cell_change')}>
-                    {`${item.cellChange > 0 ? '+' : ''}${item.cellChange}`}{' '}
-                    {Math.abs(item.cellChange) === 1 ? t('rgbpp.transaction.cell') : t('rgbpp.transaction.cells')}
-                  </td>
-                  <td className={styles.hash} title={t('rgbpp.transaction.btc_txid')}>
-                    {item.btcTxId ? (
-                      <div
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}
-                        title={t('rgbpp.transaction.view_on_bitcoin_explorer')}
-                      >
-                        <AddressText
-                          style={{ marginLeft: 'auto' }}
-                          disableTooltip
-                          linkProps={{
-                            to: `${config.BITCOIN_EXPLORER}/tx/${item.btcTxId}`,
-                          }}
-                        >
-                          {item.btcTxId}
-                        </AddressText>
-                        <a
-                          href={`${config.BITCOIN_EXPLORER}/tx/${item.btcTxId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ display: 'flex', alignItems: 'center' }}
-                        >
-                          <ShareIcon />
-                        </a>
-                      </div>
-                    ) : (
-                      '/'
-                    )}
-                  </td>
-                </tr>
-              )
-            })
+            list.map(item => <Item key={item.ckbTxId} item={item} />)
           ) : (
             <tr>
               <td colSpan={headers.length} className={styles.noRecords}>
@@ -170,17 +82,11 @@ const RGBTransactionList: React.FC<{ list: Transaction[] }> = ({ list }) => {
 }
 
 export default RGBTransactionList
+export { Transaction }
 
-export type Transaction = {
-  ckbTxId: string
-  blockNumber: number
-  time: number
-  type: TransactionLeapDirection
-  cellChange: number
-  btcTxId: string
-}
-
-const getFilterList = (t: TFunction): Record<'key' | 'title' | 'value' | 'to', string>[] => {
+const getFilterList = (
+  t: TFunction,
+): (Record<'key' | 'value' | 'to', string> & Record<'title', string | ReactNode>)[] => {
   return [
     {
       key: 'leap_in',
@@ -190,14 +96,25 @@ const getFilterList = (t: TFunction): Record<'key' | 'title' | 'value' | 'to', s
     },
     {
       key: 'leap_out',
-      value: 'out',
+      value: 'leapoutBTC',
       title: t('address.leap_out'),
       to: '',
     },
     {
-      key: 'equal',
-      value: 'equal',
-      title: '-',
+      key: 'leap_with_in_btc',
+      value: 'withinBTC',
+      title: t('address.leap_with_in_btc'),
+      to: '',
+    },
+    {
+      key: 'other',
+      value: 'other',
+      title: (
+        <div>
+          <span>{t('rgbpp.transaction.direction.other')}</span>
+          <HelpTip>{t('rgbpp.transaction.direction.description.other')}</HelpTip>
+        </div>
+      ),
       to: '',
     },
   ]

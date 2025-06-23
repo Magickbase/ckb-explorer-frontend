@@ -2,17 +2,18 @@ import { type FC, useState, useRef, useEffect } from 'react'
 import { TFunction, useTranslation } from 'react-i18next'
 import BigNumber from 'bignumber.js'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Tooltip } from 'antd'
 import { ReactComponent as ListIcon } from './list.svg'
 import { ReactComponent as GridIcon } from './grid.svg'
-import { explorerService, LiveCell } from '../../services/ExplorerService'
-import SUDTTokenIcon from '../../assets/sudt_token.png'
+import { explorerService, LiveCell, RGBCells } from '../../services/ExplorerService'
+import FtFallbackIcon from '../../assets/ft_fallback_icon.png'
 import CKBTokenIcon from './ckb_token_icon.png'
 import { ReactComponent as CopyIcon } from './copy.svg'
 import { ReactComponent as TypeHashIcon } from './type_script.svg'
 import { ReactComponent as DataIcon } from './data.svg'
-import { ReactComponent as SporeCluterIcon } from './spore_cluster.svg'
+import { ReactComponent as SporeClusterIcon } from './spore_cluster.svg'
 import { ReactComponent as SporeCellIcon } from './spore_cell.svg'
+import { ReactComponent as RedirectIcon } from '../../assets/redirect-icon.svg'
+import { ReactComponent as AlertIcon } from '../../assets/alert-icon.svg'
 import { ReactComponent as MergedAssetIcon } from './merged_assets.svg'
 import { ReactComponent as AssetItemsIcon } from './asset_items.svg'
 import SmallLoading from '../../components/Loading/SmallLoading'
@@ -25,6 +26,10 @@ import styles from './rgbppAssets.module.scss'
 import MergedAssetList from './MergedAssetList'
 import { UDTAccount } from '../../models/Address'
 import { CellBasicInfo } from '../../utils/transformer'
+import { isTypeIdScript } from '../../utils/typeid'
+import { BTCExplorerLink } from '../../components/Link'
+import InvalidRGBPPAssetList from './InvalidRGBPPAssetList'
+import Tooltip from '../../components/Tooltip'
 
 const fetchCells = async ({
   address,
@@ -38,6 +43,24 @@ const fetchCells = async ({
   page: number
 }) => {
   const res = await explorerService.api.fetchAddressLiveCells(address, page, size, sort)
+  return {
+    data: res.data,
+    nextPage: page + 1,
+  }
+}
+
+const fetchRGBCells = async ({
+  address,
+  size = 10,
+  sort = 'capacity.desc',
+  page = 1,
+}: {
+  address: string
+  size: number
+  sort: string
+  page: number
+}) => {
+  const res = await explorerService.api.fetchBitcoinAddressesRGBCells(address, page, size, sort)
   return {
     data: res.data,
     nextPage: page + 1,
@@ -63,6 +86,13 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
 
   switch (assetType) {
     case 'ckb': {
+      if (cell.typeScript && isTypeIdScript(cell.typeScript)) {
+        icon = <TypeHashIcon />
+        assetName = 'Deployed Script'
+        attribute = `TYPE HASH: ${cell.typeHash.slice(0, 10)}...`
+        detailInfo = cell.typeHash
+        break
+      }
       if (cell.typeHash) {
         icon = <TypeHashIcon />
         assetName = 'UNKNOWN ASSET'
@@ -97,7 +127,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       break
     }
     case 'udt': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = cell.extraInfo.symbol || 'UDT'
       attribute = cell.extraInfo.decimal
         ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
@@ -106,7 +136,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       break
     }
     case 'xudt_compatible': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = cell.extraInfo?.symbol || 'xUDT-compatible'
       attribute =
         cell.extraInfo?.decimal && cell.extraInfo?.amount
@@ -116,7 +146,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       break
     }
     case 'xudt': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = cell.extraInfo?.symbol || 'xUDT'
       attribute =
         cell.extraInfo?.decimal && cell.extraInfo?.amount
@@ -126,7 +156,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       break
     }
     case 'omiga_inscription': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = cell.extraInfo.symbol || t('udt.inscription')
       attribute = cell.extraInfo.decimal
         ? parseUDTAmount(cell.extraInfo.amount, cell.extraInfo.decimal)
@@ -147,7 +177,7 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       break
     }
     case 'spore_cluster': {
-      icon = <SporeCluterIcon />
+      icon = <SporeClusterIcon />
       assetName = 'Spore Cluster'
       if (cell.data.length > ATTRIBUTE_LENGTH) {
         attribute = `${cell.data.slice(0, ATTRIBUTE_LENGTH)}...`
@@ -158,19 +188,19 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
       break
     }
     case 'nrc_721': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = 'NRC 721'
       attribute = '-'
       break
     }
     case 'm_nft': {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = cell.extraInfo.className
       attribute = `#${parseInt(cell.extraInfo.tokenId, 16)}`
       break
     }
     default: {
-      icon = SUDTTokenIcon
+      icon = FtFallbackIcon
       assetName = 'UNKNOWN'
       attribute = '-'
     }
@@ -180,6 +210,10 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
     ...cell,
     id: Number(cell.cellId),
     isGenesisOutput: false,
+    generatedTxHash: cell.txHash,
+    cellIndex: `0x${cell.cellIndex.toString(16)}`,
+    status: 'live',
+    consumedTxHash: '',
   } as CellBasicInfo
 
   return {
@@ -195,10 +229,48 @@ const getCellDetails = (cell: LiveCell, t: TFunction) => {
   }
 }
 
-const AssetItem: FC<{ cell: LiveCell }> = ({ cell }) => {
-  const setToast = useSetToast()
+const AssetItem: FC<{ cells: LiveCell[]; btcTxId: string; vout: number; width: number }> = ({
+  cells,
+  btcTxId,
+  vout,
+  width,
+}) => {
   const { t } = useTranslation()
+  return (
+    <div key={btcTxId + vout} className={styles.card}>
+      <h5
+        style={{
+          background: `linear-gradient(90.24deg,#ffd176 .23%,#ffdb81 6.7%,#84ffcb 99.82%)`,
+          color: '#333',
+        }}
+      >
+        <div className={styles.explorerLink}>
+          <BTCExplorerLink className={styles.action} id={btcTxId} anchor={`vout=${vout}`} path="/tx">
+            {`${btcTxId.slice(0, 4)}...${btcTxId.slice(btcTxId.length - 5, btcTxId.length)}:${vout}`}
+          </BTCExplorerLink>
+          <BTCExplorerLink className={styles.action} id={btcTxId} anchor={`vout=${vout}`} path="/tx">
+            <RedirectIcon />
+          </BTCExplorerLink>
+        </div>
 
+        {cells.length > 1 ? (
+          <div className={styles.multipleAssetsAlert}>
+            <Tooltip trigger={<AlertIcon />}>{t('rgbpp.assets.multiple_warning')}</Tooltip>
+          </div>
+        ) : null}
+      </h5>
+      <div className={styles.itemContentContainer}>
+        {cells.map(cell => (
+          <AssetItemContent cell={cell} width={width} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const AssetItemContent: FC<{ cell: LiveCell; width: number }> = ({ cell, width }) => {
+  const { t } = useTranslation()
+  const setToast = useSetToast()
   const handleCopy = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     e.preventDefault()
@@ -208,37 +280,24 @@ const AssetItem: FC<{ cell: LiveCell }> = ({ cell }) => {
       setToast({ message: t('common.copied') })
     })
   }
-
-  const { link, assetType, ckb, detailInfo, icon, assetName, attribute } = getCellDetails(cell, t)
+  const { detailInfo, icon, assetName, attribute } = getCellDetails(cell, t)
 
   return (
-    <li key={cell.txHash + cell.cellIndex} className={styles.card}>
-      <h5
-        style={{
-          background: `linear-gradient(90.24deg,#ffd176 .23%,#ffdb81 6.7%,#84ffcb 99.82%)`,
-          color: '#333',
-        }}
-      >
-        <a href={link}>{t(`transaction.${assetType}`)}</a>
-
-        <span title={`${ckb} CKB`}>{`${ckb} CKB`}</span>
-      </h5>
-      <div className={styles.itemContent}>
-        {typeof icon === 'string' ? <img src={icon} alt={assetName ?? 'sudt'} width="40" height="40" /> : null}
-        {icon && typeof icon !== 'string' ? icon : null}
-        <div className={styles.fields}>
-          <div className={styles.assetName}>{assetName}</div>
-          <div className={styles.attribute} title={detailInfo ?? attribute}>
-            {attribute}
-            {detailInfo ? (
-              <button type="button" className={styles.copy} data-detail={detailInfo} onClick={handleCopy}>
-                <CopyIcon />
-              </button>
-            ) : null}
-          </div>
+    <div className={styles.itemContent} style={{ width }}>
+      {typeof icon === 'string' ? <img src={icon} alt={assetName ?? 'sudt'} width="40" height="40" /> : null}
+      {icon && typeof icon !== 'string' ? icon : null}
+      <div className={styles.fields}>
+        <div className={styles.assetName}>{assetName}</div>
+        <div className={styles.attribute} title={detailInfo ?? attribute}>
+          {attribute}
+          {detailInfo ? (
+            <button type="button" className={styles.copy} data-detail={detailInfo} onClick={handleCopy}>
+              <CopyIcon />
+            </button>
+          ) : null}
         </div>
       </div>
-    </li>
+    </div>
   )
 }
 
@@ -285,11 +344,87 @@ const CellTable: FC<{ cells: LiveCell[] }> = ({ cells }) => {
   )
 }
 
-const RgbAssetItems: FC<{ address: string; count: number; isDisplayedAsList: boolean }> = ({
-  address,
-  count,
-  isDisplayedAsList,
-}) => {
+const RGBAssetsCellView: FC<{ address: string; count: number; width: number }> = ({ address, count, width }) => {
+  const [params] = useState(initialPageParams)
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<{ data: { rgbCells: RGBCells } }>(
+    ['address bitcoin rgb cells', address, params.size, params.sort],
+    ({ pageParam = 1 }) => fetchRGBCells({ ...params, address, page: pageParam }),
+    {
+      getNextPageParam: (lastPage: any) => {
+        if (Object.keys(lastPage.data.rgbCells).length < params.size) return false
+        return lastPage.nextPage
+      },
+    },
+  )
+
+  const isListDisplayed = count && data
+
+  useEffect(() => {
+    const trigger = loadMoreRef.current
+
+    if (!isListDisplayed) return
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage()
+        }
+      },
+      { threshold: 0.5 },
+    )
+    if (trigger) {
+      observer.observe(trigger)
+    }
+    return () => {
+      if (trigger) {
+        observer.unobserve(trigger)
+      }
+    }
+  }, [isListDisplayed, fetchNextPage])
+
+  const rgbCells =
+    data?.pages.reduce((acc, cur) => {
+      const item = Object.keys(cur.data.rgbCells).map(key => {
+        const cells = cur.data.rgbCells[key].filter(rgbCell => !!rgbCell.data).map(rgbCell => rgbCell.data.attributes)
+        const [btcTxId, vout]: [string, number] = JSON.parse(key)
+
+        return { cells, btcTxId, vout }
+      })
+
+      return [...acc, ...item]
+    }, [] as { cells: LiveCell[]; btcTxId: string; vout: number }[]) ?? []
+
+  return (
+    <>
+      <div className={styles.cardsContainer}>
+        {rgbCells.map(rgbCell => (
+          <AssetItem
+            width={width}
+            cells={rgbCell.cells}
+            btcTxId={rgbCell.btcTxId}
+            vout={rgbCell.vout}
+            key={`${rgbCell.btcTxId}-${rgbCell.vout}`}
+          />
+        ))}
+      </div>
+      {isFetchingNextPage ? (
+        <span className={styles.loading}>
+          <SmallLoading />
+        </span>
+      ) : null}
+      {!hasNextPage || isFetchingNextPage ? null : (
+        <div className={styles.loadMore} ref={loadMoreRef}>
+          <button type="button" onClick={() => fetchNextPage()}>
+            Load more
+          </button>
+        </div>
+      )}
+    </>
+  )
+}
+
+const RGBAssetsTableView: FC<{ address: string; count: number }> = ({ address, count }) => {
   const [params] = useState(initialPageParams)
   const loadMoreRef = useRef<HTMLDivElement | null>(null)
 
@@ -346,15 +481,7 @@ const RgbAssetItems: FC<{ address: string; count: number; isDisplayedAsList: boo
 
   return (
     <>
-      {isDisplayedAsList ? (
-        <CellTable cells={cells} />
-      ) : (
-        <ul>
-          {cells.map(cell => (
-            <AssetItem cell={cell} key={`${cell.txHash}-${cell.cellIndex}`} />
-          ))}
-        </ul>
-      )}
+      <CellTable cells={cells} />
       {isFetchingNextPage ? (
         <span className={styles.loading}>
           <SmallLoading />
@@ -371,55 +498,87 @@ const RgbAssetItems: FC<{ address: string; count: number; isDisplayedAsList: boo
   )
 }
 
-const RgbAssets: FC<{ address: string; count: number; udts: UDTAccount[]; inscriptions: UDTAccount[] }> = ({
-  address,
-  count,
-  udts,
-  inscriptions,
-}) => {
+const RgbAssets: FC<{
+  address: string
+  count: number
+  udts: UDTAccount[]
+  inscriptions: UDTAccount[]
+  isUnBounded?: boolean
+}> = ({ address, count, udts, inscriptions, isUnBounded }) => {
+  const fontSize = 14
+  const minWidth = 250
   const [isMerged, setIsMerged] = useState(true)
   const { t } = useTranslation()
   const [isDisplayedAsList, setIsDisplayedAsList] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(250)
+  useEffect(() => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect()
+      const maxCardAmount = Math.floor(rect.width / minWidth)
+      setWidth((rect.width - maxCardAmount * fontSize) / maxCardAmount)
+    }
+  }, [])
 
   return (
-    <div className={styles.container}>
+    <div ref={ref} className={styles.container}>
       <div className={styles.toolbar}>
-        <div>{t(`address.${isMerged ? 'view-as-merged-assets' : 'view-as-asset-items'}`)}</div>
-        <div className={styles.filters}>
-          <Tooltip placement="top" title={t(`address.${isMerged ? 'view-as-asset-items' : 'view-as-merged-assets'}`)}>
-            <button
-              type="button"
-              onClick={() => {
-                setIsMerged(i => !i)
-                setIsDisplayedAsList(false)
-              }}
-            >
-              {isMerged ? <AssetItemsIcon /> : <MergedAssetIcon />}
-            </button>
-          </Tooltip>
-          <Tooltip placement="top" title={isDisplayedAsList ? t('sort.card') : t('sort.list')}>
-            <button
-              type="button"
-              onClick={() => {
-                setIsDisplayedAsList(i => !i)
-                setIsMerged(false)
-              }}
-            >
-              {isDisplayedAsList ? <GridIcon /> : <ListIcon />}
-            </button>
-          </Tooltip>
-        </div>
+        {!isUnBounded && (
+          <>
+            <div>{t(`address.${isMerged ? 'view-as-merged-assets' : 'view-as-asset-items'}`)}</div>
+            <div className={styles.filters}>
+              <Tooltip
+                placement="top"
+                trigger={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMerged(i => !i)
+                      setIsDisplayedAsList(false)
+                    }}
+                  >
+                    {isMerged ? <AssetItemsIcon /> : <MergedAssetIcon />}
+                  </button>
+                }
+              >
+                {t(`address.${isMerged ? 'view-as-asset-items' : 'view-as-merged-assets'}`)}
+              </Tooltip>
+              <Tooltip
+                trigger={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDisplayedAsList(i => !i)
+                      setIsMerged(false)
+                    }}
+                  >
+                    {isDisplayedAsList ? <GridIcon /> : <ListIcon />}
+                  </button>
+                }
+                placement="top"
+              >
+                {isDisplayedAsList ? t('sort.card') : t('sort.list')}
+              </Tooltip>
+            </div>
+          </>
+        )}
       </div>
 
       <div className={styles.content}>
         {isDisplayedAsList ? (
-          <RgbAssetItems address={address} count={count} isDisplayedAsList={isDisplayedAsList} />
+          <RGBAssetsTableView address={address} count={count} />
         ) : (
           <>
-            {isMerged ? (
+            {isMerged && !isUnBounded ? (
               <MergedAssetList udts={udts} inscriptions={inscriptions} />
             ) : (
-              <RgbAssetItems address={address} count={count} isDisplayedAsList={isDisplayedAsList} />
+              <>
+                {isUnBounded ? (
+                  <InvalidRGBPPAssetList address={address} count={count} />
+                ) : (
+                  <RGBAssetsCellView address={address} count={count} width={width} />
+                )}
+              </>
             )}
           </>
         )}
