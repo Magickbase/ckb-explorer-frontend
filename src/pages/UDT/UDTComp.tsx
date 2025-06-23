@@ -184,7 +184,7 @@ export const UDTOverviewCard = ({
         {isMobile && modifyTokenInfo}
       </div>
       <span title={symbol} className={styles.symbolWithEllipsis}>
-        {symbol ?? t('udt.sudt')}{' '}
+        {symbol ?? t('udt.sudt')}
       </span>
     </div>
   )
