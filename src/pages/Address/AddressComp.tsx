@@ -226,8 +226,8 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
   const hasAssets = udts.length > 0 || (cotaList?.length && cotaList.length > 0)
   const hasInscriptions = inscriptions.length > 0
   const hasCells = +address.liveCellsCount > 0
-  const hasDeploymentCells = Boolean(deploymentCells?.total && deploymentCells?.total > 0)
-  const hasFiberCells = Boolean(fiberCells?.total && fiberCells?.total > 0)
+  const hasDeploymentCells = Boolean(deploymentCells?.total > 0)
+  const hasFiberCells = Boolean(fiberCells?.total > 0)
 
   useEffect(() => {
     if (hasAssets) {
@@ -265,7 +265,7 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                     className={styles.addressAssetsTabPaneTitle}
                     onClick={() => setActiveTab(AssetInfo.FIBER_CELLs)}
                   >
-                    Fiber Channel
+                    Fiber Channel(s)
                   </span>
                 </TabsTrigger>
               )}
@@ -294,7 +294,7 @@ export const AddressOverviewCard: FC<{ address: Address }> = ({ address }) => {
                     className={styles.addressAssetsTabPaneTitle}
                     onClick={() => setActiveTab(AssetInfo.DEPLOYMENT_CELLs)}
                   >
-                    Deployment
+                    Deployment(s)
                   </span>
                 </TabsTrigger>
               )}
