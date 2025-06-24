@@ -3854,10 +3854,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@spore-sdk/core@0.2.0-beta.8":
-  version "0.2.0-beta.8"
-  resolved "https://registry.yarnpkg.com/@spore-sdk/core/-/core-0.2.0-beta.8.tgz#eb528372c6c571f93261c6adda6a6b03e262d963"
-  integrity sha512-2u0e544JDQMVnJOcO3QK9G7yNrbj6nju8PH78k7+/cf9EbOltDudZCpU3YpgffsdMOKhfmpY8xCAq4w/+Jjm1Q==
+"@spore-sdk/core@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@spore-sdk/core/-/core-0.2.1.tgz#726d39045f8b778b4bd80339dbea7f4fef783899"
+  integrity sha512-mNUxoQu4h6H4DIEwBxUzntFf6HFG5xXOsSwnN9jF0+oL+fIjOTNt4erwZeeJo1H7H6AS4S9OkDFikykYVIzZSg==
 
 "@spore-sdk/core@^0.2.0-beta.6":
   version "0.2.0"
