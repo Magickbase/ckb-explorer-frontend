@@ -1,4 +1,4 @@
-FROM node:18.20.3-alpine as builder
+FROM node:18.20.8-alpine as builder
 
 ARG SENTRY_AUTH_TOKEN
 ARG SENTRY_DSN
