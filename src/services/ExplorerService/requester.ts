@@ -3,7 +3,6 @@ import CONFIG from '../../config'
 
 export const networkErrMsgs$ = new BehaviorSubject<string[]>([])
 
-// 定义兼容 axios 的接口类型
 interface AxiosRequestConfig {
   method?: string
   url?: string
@@ -27,7 +26,6 @@ export interface AxiosError<T = any> extends Error {
   isAxiosError: true
 }
 
-// 创建兼容 axios 的 fetch 客户端
 class FetchClient {
   private baseURL: string
   private defaultHeaders: Record<string, string>
@@ -37,7 +35,6 @@ class FetchClient {
     this.defaultHeaders = config.headers || {}
   }
 
-  // 构建完整 URL
   private buildURL(url: string, params?: Record<string, any>): string {
     const fullURL = url.startsWith('http') ? url : `${this.baseURL}${url}`
 
@@ -53,7 +50,6 @@ class FetchClient {
     return urlObj.toString()
   }
 
-  // 处理网络错误
   private handleNetworkError(error: AxiosError<{ message: string }>) {
     if (error && error.response && error.response.data) {
       const { message } = error.response.data
@@ -77,7 +73,6 @@ class FetchClient {
     }
   }
 
-  // 更新网络错误消息
   private updateNetworkError(errMessage = 'toast.invalid_network') {
     if (this.timeout) {
       clearTimeout(this.timeout)
@@ -91,12 +86,10 @@ class FetchClient {
 
   private timeout: ReturnType<typeof setTimeout> | null = null
 
-  // 通用请求方法
   private async request<T = any>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     try {
       const { method = 'GET', url = '', data, params, headers = {} } = config
 
-      // 请求拦截器逻辑：为 GET 请求添加 unused 数据
       let requestData = data
       if (method.toLowerCase() === 'get') {
         requestData = {
@@ -104,7 +97,6 @@ class FetchClient {
         }
       }
 
-      // 构建请求配置
       const requestConfig: RequestInit = {
         method: method.toUpperCase(),
         headers: {
@@ -113,7 +105,6 @@ class FetchClient {
         },
       }
 
-      // 处理请求体
       if (requestData && method.toUpperCase() !== 'GET') {
         if (typeof requestData === 'object') {
           requestConfig.body = JSON.stringify(requestData)
@@ -122,10 +113,8 @@ class FetchClient {
         }
       }
 
-      // 发送请求
       const response = await fetch(this.buildURL(url, params), requestConfig)
 
-      // 解析响应数据
       let responseData: T
       const contentType = response.headers.get('content-type')
       if (
@@ -137,7 +126,6 @@ class FetchClient {
         responseData = (await response.text()) as T
       }
 
-      // 构建 axios 兼容的响应对象
       const axiosResponse: AxiosResponse<T> = {
         data: responseData,
         status: response.status,
@@ -146,7 +134,6 @@ class FetchClient {
         config,
       }
 
-      // 检查响应状态
       if (!response.ok) {
         const error: AxiosError = new Error(`Request failed with status ${response.status}`) as AxiosError
         error.response = axiosResponse
@@ -156,25 +143,21 @@ class FetchClient {
 
       return axiosResponse
     } catch (error) {
-      // 处理错误
       const axiosError = error as AxiosError
       axiosError.isAxiosError = true
       if (!axiosError.response) {
         axiosError.config = config
       }
 
-      // 响应拦截器逻辑：处理网络错误
       this.handleNetworkError(axiosError)
       throw axiosError
     }
   }
 
-  // GET 请求
   async get<T = any>(url: string, config?: Omit<AxiosRequestConfig, 'url' | 'method'>): Promise<AxiosResponse<T>> {
     return this.request<T>({ ...config, url, method: 'GET' })
   }
 
-  // POST 请求
   async post<T = any>(
     url: string,
     data?: any,
@@ -183,7 +166,6 @@ class FetchClient {
     return this.request<T>({ ...config, url, method: 'POST', data })
   }
 
-  // PUT 请求
   async put<T = any>(
     url: string,
     data?: any,
@@ -192,18 +174,15 @@ class FetchClient {
     return this.request<T>({ ...config, url, method: 'PUT', data })
   }
 
-  // DELETE 请求
   async delete<T = any>(url: string, config?: Omit<AxiosRequestConfig, 'url' | 'method'>): Promise<AxiosResponse<T>> {
     return this.request<T>({ ...config, url, method: 'DELETE' })
   }
 
-  // 直接调用方法（兼容某些用法）
   async call<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.request<T>({ ...config, url })
   }
 }
 
-// 创建兼容 axios.create 的函数
 const createFetchClient = (config: { baseURL: string; headers?: Record<string, string>; data?: any }) => {
   return new FetchClient(config)
 }
