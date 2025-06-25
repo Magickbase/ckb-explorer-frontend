@@ -1,6 +1,6 @@
-import { AxiosError } from 'axios'
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
+import { AxiosError } from '../services/ExplorerService/requester'
 
 export function assert(assertion: unknown, msg = 'assertion failed'): asserts assertion {
   if (!assertion) {
