@@ -23,7 +23,7 @@ import {
   REPORT_EMAIL_BODY_ZH,
 } from '../../constants/common'
 import Tooltip from '../Tooltip'
-import { isAxiosError } from '../../utils/error'
+import { isRequestError } from '../../utils/error'
 
 const emptyTokenInfo = {
   tokenType: '',
@@ -164,7 +164,7 @@ export const SubmitTokenInfo = ({
       }
       throw new Error('Fail to get code')
     } catch (e: unknown) {
-      if (isAxiosError(e)) {
+      if (isRequestError(e)) {
         if (e.response?.status === 400) {
           const code = e.response?.data[0]?.code
           setToast({
@@ -275,7 +275,7 @@ export const SubmitTokenInfo = ({
         }
       })
       .catch(e => {
-        if (isAxiosError(e)) {
+        if (isRequestError(e)) {
           const code = e.response?.data[0]?.code
           setToast({
             message: code ? t(`error.codes.${code}`) : e.response?.data[0]?.title,

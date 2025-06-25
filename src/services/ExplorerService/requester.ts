@@ -3,7 +3,7 @@ import CONFIG from '../../config'
 
 export const networkErrMsgs$ = new BehaviorSubject<string[]>([])
 
-interface AxiosRequestConfig {
+interface RequesterRequestConfig {
   method?: string
   url?: string
   baseURL?: string
@@ -12,18 +12,18 @@ interface AxiosRequestConfig {
   params?: Record<string, any>
 }
 
-interface AxiosResponse<T = any> {
+interface RequesterResponse<T = any> {
   data: T
   status: number
   statusText: string
   headers: Record<string, string>
-  config: AxiosRequestConfig
+  config: RequesterRequestConfig
 }
 
-export interface AxiosError<T = any> extends Error {
-  response?: AxiosResponse<T>
-  config: AxiosRequestConfig
-  isAxiosError: true
+export interface RequestError<T = any> extends Error {
+  response?: RequesterResponse<T>
+  config: RequesterRequestConfig
+  isRequestError: true
 }
 
 class FetchClient {
@@ -50,7 +50,7 @@ class FetchClient {
     return urlObj.toString()
   }
 
-  private handleNetworkError(error: AxiosError<{ message: string }>) {
+  private handleNetworkError(error: RequestError<{ message: string }>) {
     if (error && error.response && error.response.data) {
       const { message } = error.response.data
       switch (error.response.status) {
@@ -86,7 +86,7 @@ class FetchClient {
 
   private timeout: ReturnType<typeof setTimeout> | null = null
 
-  private async request<T = any>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  private async request<T = any>(config: RequesterRequestConfig): Promise<RequesterResponse<T>> {
     try {
       const { method = 'GET', url = '', data, params, headers = {} } = config
 
@@ -126,7 +126,7 @@ class FetchClient {
         responseData = (await response.text()) as T
       }
 
-      const axiosResponse: AxiosResponse<T> = {
+      const requesterResponse: RequesterResponse<T> = {
         data: responseData,
         status: response.status,
         statusText: response.statusText,
@@ -135,50 +135,56 @@ class FetchClient {
       }
 
       if (!response.ok) {
-        const error: AxiosError = new Error(`Request failed with status ${response.status}`) as AxiosError
-        error.response = axiosResponse
+        const error: RequestError = new Error(`Request failed with status ${response.status}`) as RequestError
+        error.response = requesterResponse
         error.config = config
         throw error
       }
 
-      return axiosResponse
+      return requesterResponse
     } catch (error) {
-      const axiosError = error as AxiosError
-      axiosError.isAxiosError = true
-      if (!axiosError.response) {
-        axiosError.config = config
+      const requestError = error as RequestError
+      requestError.isRequestError = true
+      if (!requestError.response) {
+        requestError.config = config
       }
 
-      this.handleNetworkError(axiosError)
-      throw axiosError
+      this.handleNetworkError(requestError)
+      throw requestError
     }
   }
 
-  async get<T = any>(url: string, config?: Omit<AxiosRequestConfig, 'url' | 'method'>): Promise<AxiosResponse<T>> {
+  async get<T = any>(
+    url: string,
+    config?: Omit<RequesterRequestConfig, 'url' | 'method'>,
+  ): Promise<RequesterResponse<T>> {
     return this.request<T>({ ...config, url, method: 'GET' })
   }
 
   async post<T = any>(
     url: string,
     data?: any,
-    config?: Omit<AxiosRequestConfig, 'url' | 'method' | 'data'>,
-  ): Promise<AxiosResponse<T>> {
+    config?: Omit<RequesterRequestConfig, 'url' | 'method' | 'data'>,
+  ): Promise<RequesterResponse<T>> {
     return this.request<T>({ ...config, url, method: 'POST', data })
   }
 
   async put<T = any>(
     url: string,
     data?: any,
-    config?: Omit<AxiosRequestConfig, 'url' | 'method' | 'data'>,
-  ): Promise<AxiosResponse<T>> {
+    config?: Omit<RequesterRequestConfig, 'url' | 'method' | 'data'>,
+  ): Promise<RequesterResponse<T>> {
     return this.request<T>({ ...config, url, method: 'PUT', data })
   }
 
-  async delete<T = any>(url: string, config?: Omit<AxiosRequestConfig, 'url' | 'method'>): Promise<AxiosResponse<T>> {
+  async delete<T = any>(
+    url: string,
+    config?: Omit<RequesterRequestConfig, 'url' | 'method'>,
+  ): Promise<RequesterResponse<T>> {
     return this.request<T>({ ...config, url, method: 'DELETE' })
   }
 
-  async call<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  async call<T = any>(url: string, config?: RequesterRequestConfig): Promise<RequesterResponse<T>> {
     return this.request<T>({ ...config, url })
   }
 }
