@@ -251,7 +251,6 @@ const TransactionCellCapacity = ({ cell, ioType }: { cell: Cell; ioType: IOType 
 }
 
 const TransactionCell = ({ cell, address, ioType }: { cell: Cell; address?: string; ioType: IOType }) => {
-  const [showModal, setShowModal] = useState(false)
   const isMobile = useIsMobile()
   const { t } = useTranslation()
   if (cell.fromCellbase) {
@@ -295,15 +294,17 @@ const TransactionCell = ({ cell, address, ioType }: { cell: Cell; address?: stri
           </Tooltip>
         )}
         <TransactionCellCapacity cell={cell} ioType={ioType} />
+
         <Tooltip
-          trigger={<CellInfoIcon className={styles.hoverIconButton} onClick={() => setShowModal(true)} />}
+          trigger={
+            <CellModal cell={cell}>
+              <CellInfoIcon className={styles.hoverIconButton} />
+            </CellModal>
+          }
           placement="top"
         >
           {`${t('transaction.ckb-cell-info')} `}
         </Tooltip>
-        <SimpleModal isShow={showModal} setIsShow={setShowModal}>
-          <CellModal cell={cell} onClose={() => setShowModal(false)} />
-        </SimpleModal>
       </div>
     </div>
   )

@@ -185,25 +185,6 @@ const CellIcon = ({ status }: { status: 'live' | 'dead' | null }) => {
   return <InfoMoreIcon />
 }
 
-export const CellInfo = ({ cell }: { cell: CellBasicInfo }) => {
-  const [showModal, setShowModal] = useState(false)
-  return (
-    <TransactionCellInfoPanel>
-      <SimpleButton
-        className="transactionCellInfoContent"
-        onClick={() => {
-          setShowModal(true)
-        }}
-      >
-        <CellIcon status={cell.status} />
-      </SimpleButton>
-      <SimpleModal isShow={showModal} setIsShow={setShowModal}>
-        <CellModal cell={cell} onClose={() => setShowModal(false)} />
-      </SimpleModal>
-    </TransactionCellInfoPanel>
-  )
-}
-
 export const ScriptCells = ({
   page,
   size,
@@ -298,7 +279,11 @@ export const ScriptCells = ({
                     </td>
                     <td>
                       <div className={styles.cellInfoMore}>
-                        <CellInfo cell={transformToCellBasicInfo(record)} />
+                        <CellModal cell={transformToCellBasicInfo(record)}>
+                          <SimpleButton className="transactionCellInfoContent">
+                            <CellIcon status={transformToCellBasicInfo(record).status} />
+                          </SimpleButton>
+                        </CellModal>
                       </div>
                     </td>
                   </tr>
