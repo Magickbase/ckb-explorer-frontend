@@ -21,6 +21,7 @@ import SmallLoading from '../../components/Loading/SmallLoading'
 import { parseSimpleDate } from '../../utils/date'
 import { shannonToCkb } from '../../utils/util'
 import { ReactComponent as OwnerLessIcon } from '../../assets/ownerless-icon.svg'
+import { ReactComponent as DeprecatedIcon } from '../../assets/deprecated-icon.svg'
 import { ReactComponent as OpenSourceIcon } from '../../assets/open-source.svg'
 import { ReactComponent as RFCIcon } from '../../assets/rfc-icon.svg'
 import { ReactComponent as WebsiteIcon } from '../../assets/website-icon.svg'
@@ -412,6 +413,18 @@ const getNotefilterList = (t: TFunction) => [
     to: '/scripts',
   },
   {
+    key: 'deprecated',
+    value: 'deprecated',
+    title: (
+      <>
+        <DeprecatedIcon />
+        {t('scripts.deprecated')}
+      </>
+    ),
+    to: '/scripts',
+  },
+
+  {
     key: 'rfc',
     value: 'rfc',
     title: (
@@ -475,6 +488,7 @@ const ScriptInfo: FC<{ script: ScriptDetail }> = ({ script }) => {
         <dt className={styles.title}>{t('scripts.script_note')}</dt>
         <dd className={styles.tdNotes}>
           {script.isZeroLock && <OwnerLessIcon />}
+          {script.deprecated && <DeprecatedIcon />}
           {script.rfc && (
             <Link to={script.rfc}>
               <RFCIcon />
@@ -618,6 +632,11 @@ const ScriptTable: FC<{
           {script.isZeroLock === true ? (
             <Tooltip trigger={<OwnerLessIcon />} placement="top">
               {t('scripts.link.ownerless_cell')}
+            </Tooltip>
+          ) : null}
+          {script.deprecated === true ? (
+            <Tooltip trigger={<DeprecatedIcon />} placement="top">
+              {t('scripts.deprecated')}
             </Tooltip>
           ) : null}
           {script.rfc ? (

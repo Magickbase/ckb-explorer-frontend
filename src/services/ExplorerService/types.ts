@@ -519,6 +519,7 @@ export interface ScriptInfo {
   depType: string
   description: string
   isZeroLock: boolean
+  isDeployedCellDead: boolean
 }
 export interface ScriptDetail {
   typeHash: string
