@@ -16,7 +16,7 @@ import { type ScriptInfo, explorerService } from '../../services/ExplorerService
 import { Card, CardCellInfo, CardCellsLayout } from '../../components/Card'
 import { ReactComponent as OpenSourceIcon } from '../../assets/open-source.svg'
 import { ReactComponent as VerifiedIcon } from '../../assets/verified-icon.svg'
-import { ReactComponent as DeprecatedIcon } from '../../assets/deprecated-icon.svg'
+import { ReactComponent as OwnerLessIcon } from '../../assets/ownerless-icon.svg'
 import { ReactComponent as RFCIcon } from '../../assets/rfc-icon.svg'
 import { ReactComponent as WebsiteIcon } from '../../assets/website-icon.svg'
 import { HashType } from '../../constants/common'
@@ -173,13 +173,17 @@ export const ScriptPage = () => {
             verified: false,
             scriptOutPoint: '',
             description: '',
+            isZeroLock: false,
           },
         ]
 
-  const countOfDeployedCells = scriptInfos.length
+  const countOfDeployedCells =
+    scriptInfos[0]?.dataHash === '0x0000000000000000000000000000000000000000000000000000000000000000'
+      ? 0
+      : scriptInfos.length
   const countOfReferringCells = scriptInfos.reduce((sum, item) => sum + item.countOfReferringCells, 0)
   const countOfTransactions = scriptInfos.reduce((sum, item) => sum + item.countOfTransactions, 0)
-  const { name, sourceUrl, rfc, website, deprecated, verified, description } = scriptInfos[0]
+  const { name, sourceUrl, rfc, website, isZeroLock, verified, description } = scriptInfos[0]
 
   return (
     <Content>
@@ -195,9 +199,9 @@ export const ScriptPage = () => {
                   {t('scripts.verified')}
                 </Tooltip>
               ) : null}
-              {deprecated === true ? (
-                <Tooltip trigger={<DeprecatedIcon />} placement="top">
-                  {t('scripts.deprecated')}
+              {isZeroLock === true ? (
+                <Tooltip trigger={<OwnerLessIcon />} placement="top">
+                  {t('scripts.link.ownerless_cell')}
                 </Tooltip>
               ) : null}
               {rfc ? (
