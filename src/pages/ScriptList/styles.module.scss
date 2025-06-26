@@ -59,7 +59,6 @@ dt {
 .link {
   display: flex;
   align-items: center;
-  color: var(--primary-color);
   font-size: 15px;
   font-weight: 500;
 
@@ -205,7 +204,7 @@ dt {
     }
 
     .colCreatedTime {
-      color: #00cc9b;
+      color: var(--primary-color);
       font-size: 14px;
     }
   }

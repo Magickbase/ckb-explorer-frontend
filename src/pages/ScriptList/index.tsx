@@ -20,7 +20,6 @@ import { Link } from '../../components/Link'
 import SmallLoading from '../../components/Loading/SmallLoading'
 import { parseSimpleDate } from '../../utils/date'
 import { shannonToCkb } from '../../utils/util'
-import AddressText from '../../components/AddressText'
 import { ReactComponent as OwnerLessIcon } from '../../assets/ownerless-icon.svg'
 import { ReactComponent as OpenSourceIcon } from '../../assets/open-source.svg'
 import { ReactComponent as RFCIcon } from '../../assets/rfc-icon.svg'
@@ -473,6 +472,27 @@ const ScriptInfo: FC<{ script: ScriptDetail }> = ({ script }) => {
         </dd>
       </dl>
       <dl className={styles.tokenInfo}>
+        <dt className={styles.title}>{t('scripts.script_note')}</dt>
+        <dd className={styles.tdNotes}>
+          {script.isZeroLock && <OwnerLessIcon />}
+          {script.rfc && (
+            <Link to={script.rfc}>
+              <RFCIcon />
+            </Link>
+          )}
+          {script.website && (
+            <Link to={script.website}>
+              <WebsiteIcon />
+            </Link>
+          )}
+          {script.sourceUrl && (
+            <Link to={script.sourceUrl}>
+              <OpenSourceIcon />
+            </Link>
+          )}
+        </dd>
+      </dl>
+      <dl className={styles.tokenInfo}>
         <dt className={styles.title}>{t('scripts.script_type')}</dt>
         {script.isTypeScript && <dd className={styles.value}>{t('scripts.type_script')}</dd>}
         {script.isLockScript && <dd className={styles.value}>{t('scripts.lock_script')}</dd>}
@@ -507,6 +527,10 @@ export function ScriptCard({
       <Card className={styles.filterSortCard} shadow={false}>
         <FilterSortContainerOnMobile key="scripts-sort">
           <span className={styles.sortOption}>{t('scripts.script_name')}</span>
+          <span className={styles.sortOption}>
+            {t('scripts.script_note')}
+            <MultiFilterButton filterName="script_note" key="" filterList={getNotefilterList(t)} />
+          </span>
           <span className={styles.sortOption}>
             {t('scripts.script_type')}
             <MultiFilterButton filterName="script_type" key="" filterList={getfilterList(t)} />
@@ -562,13 +586,18 @@ const ScriptTable: FC<{
       key: 'name',
       render: (script: ScriptDetail) => {
         const codeHash = script.hashType === null ? script.typeHash : script.dataHash
+        const hashType = script.hashType === null ? 'type' : script.hashType
 
         return (
           <div className={styles.container}>
             <div className={styles.right}>
               <div className={styles.symbolAndName}>
-                <span className={styles.name}>{script.name}</span>
-                <AddressText className={styles.codeHash}>{codeHash}</AddressText>
+                <Link className={styles.link} to={`/script/${codeHash}/${hashType}`}>
+                  {script.name}
+                </Link>
+                <div className={styles.codeHash}>
+                  {codeHash.slice(0, 10)}...{codeHash.slice(-8)}
+                </div>
               </div>
             </div>
           </div>
@@ -592,17 +621,38 @@ const ScriptTable: FC<{
             </Tooltip>
           ) : null}
           {script.rfc ? (
-            <Tooltip trigger={<RFCIcon />} placement="top">
+            <Tooltip
+              trigger={
+                <Link to={script.rfc} className={styles.rfcAction}>
+                  <RFCIcon />
+                </Link>
+              }
+              placement="top"
+            >
               {t('scripts.link.rfc')}
             </Tooltip>
           ) : null}
           {script.website ? (
-            <Tooltip trigger={<WebsiteIcon />} placement="top">
+            <Tooltip
+              trigger={
+                <Link to={script.website} className={styles.websiteAction}>
+                  <WebsiteIcon />
+                </Link>
+              }
+              placement="top"
+            >
               {t('scripts.link.website')}
             </Tooltip>
           ) : null}
           {script.sourceUrl ? (
-            <Tooltip trigger={<OpenSourceIcon />} placement="top">
+            <Tooltip
+              trigger={
+                <Link to={script.sourceUrl} className={styles.openSourceAction}>
+                  <OpenSourceIcon />
+                </Link>
+              }
+              placement="top"
+            >
               {t('scripts.link.code')}
             </Tooltip>
           ) : null}
