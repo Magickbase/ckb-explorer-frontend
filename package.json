@@ -30,7 +30,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@rgbpp-sdk/ckb": "0.0.0-snap-20240723160302",
-    "@sentry/react": "7.117.0",
+    "@sentry/react": "9.33.0",
     "@sentry/tracing": "7.114.0",
     "@spore-sdk/core": "0.2.0-beta.8",
     "@tailwindcss/postcss": "^4.1.10",
