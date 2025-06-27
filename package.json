@@ -34,7 +34,7 @@
     "@sentry/tracing": "7.114.0",
     "@spore-sdk/core": "0.2.0-beta.8",
     "@tailwindcss/postcss": "^4.1.10",
-    "@tanstack/react-query": "4.0.5",
+    "@tanstack/react-query": "5.81.5",
     "@types/cytoscape": "^3.21.2",
     "autoprefixer": "^10.4.21",
     "bech32": "2.0.0",
