@@ -45,7 +45,7 @@
     "canvas-confetti": "^1.9.3",
     "classnames": "2.5.1",
     "cytoscape": "^3.29.2",
-    "dayjs": "1.11.11",
+    "dayjs": "1.11.13",
     "default-passive-events": "2.0.0",
     "echarts": "4.9.0",
     "echarts-gl": "1.1.2",
