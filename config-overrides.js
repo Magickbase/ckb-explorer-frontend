@@ -124,6 +124,7 @@ module.exports = {
       const config = configFunction(proxy, allowedHost);
 
       config.client = {
+        ...config.client,
         overlay: process.env.REACT_APP_SHOW_ERROR_OVERLAY !== 'false',
       };
 
