@@ -372,7 +372,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
   const isDob = cell.cellType === 'spore_cell' || cell.cellType === 'did_cell'
   const isZeroLock = lockScript.codeHash === ZERO_LOCK_CODE_HASH
   const hashTag = getContractHashTag(lockScript)
-  const isTimelock = TIMELOCK_KEYWORDS.some(kw => hashTag?.tag?.toLowerCase().includes(kw))
+  const isTimelock = TIMELOCK_KEYWORDS.some(kw => hashTag?.tag?.toLowerCase()?.includes(kw))
   const since = getTimelock(cell.since)
 
   let etaOfTimelock
