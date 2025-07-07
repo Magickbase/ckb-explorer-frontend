@@ -23,6 +23,9 @@ import { Script } from '../models/Script'
 import { Cell } from '../models/Cell'
 import { parseBtcTimeLockArgs } from './rgbpp'
 import FtFallbackIcon from '../assets/ft_fallback_icon.png'
+import nftCover from '../assets/nft_cover.svg'
+import dobMainnetCover from '../assets/dob-mainnet-cover.svg'
+import dobTestnetCover from '../assets/dob-testnet-cover.svg'
 
 export const shannonToCkbDecimal = (value: BigNumber | string | number, decimal?: number) => {
   if (!value) return 0
@@ -223,10 +226,14 @@ export const handleNftImgError = (e: SyntheticEvent<HTMLImageElement, Event>) =>
   const img = e.currentTarget
   const { assetType } = img.dataset
   if (assetType === 'DOB') {
-    e.currentTarget.src = '/images/spore_placeholder.svg'
+    if (IS_MAINNET) {
+      e.currentTarget.src = dobMainnetCover
+    } else {
+      e.currentTarget.src = dobTestnetCover
+    }
     return
   }
-  e.currentTarget.src = '/images/nft_placeholder.png'
+  e.currentTarget.src = nftCover
 }
 
 export const handleFtImgError = (e: SyntheticEvent<HTMLImageElement, Event>) => {

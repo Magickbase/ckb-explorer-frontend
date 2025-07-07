@@ -14,7 +14,11 @@ import Annotation from '../../components/Annotation'
 import Cover from './Cover'
 import { ReactComponent as NameMissing } from './NameMissing.svg'
 import { formatNftDisplayId } from '../../utils/util'
+import { isMainnet } from '../../utils/chain'
 import Tooltip from '../../components/Tooltip'
+import { ReactComponent as DobMainnetCoverIcon } from '../../assets/dob-mainnet-cover.svg'
+import { ReactComponent as DobTestnetCoverIcon } from '../../assets/dob-testnet-cover.svg'
+import { ReactComponent as NftCoverIcon } from '../../assets/nft_cover.svg'
 
 const primaryColor = getPrimaryColor()
 const UNIQUE_ITEM_LABEL = 'Unique Item'
@@ -29,6 +33,8 @@ const NftInfo = () => {
 
   const { page = '1' } = useSearchParams('page')
 
+  const tokenType = history.location.pathname.includes('dob-info') ? 'dob' : 'nft'
+
   const { data } = useQuery(['nft-item-info', collection, id], () =>
     explorerService.api.fetchNFTCollectionItem(collection, id),
   )
@@ -42,15 +48,26 @@ const NftInfo = () => {
     if (pageNo === +page) {
       return
     }
-    history.push(`/${language}/nft-info/${collection}/${id}?page=${pageNo}`)
+    history.push(`/${language}/${tokenType}-info/${collection}/${id}?page=${pageNo}`)
   }
 
   const annotation = DEPRECATED_DOB_COLLECTION.find(item => item.id === collection)
 
+  const defaultCover = (() => {
+    if (tokenType === 'dob' && isMainnet()) {
+      return <DobMainnetCoverIcon className={styles.cover} />
+    }
+    if (tokenType === 'dob' && !isMainnet()) {
+      return <DobTestnetCoverIcon className={styles.cover} />
+    }
+
+    return <NftCoverIcon className={styles.cover} />
+  })()
+
   return (
     <div className={styles.container}>
       <div className={styles.overview}>
-        <Cover item={data ?? null} />
+        <Cover item={data ?? null} defaultCover={defaultCover} />
         <div className={styles.info}>
           <div className={styles.name}>
             {data
@@ -114,7 +131,7 @@ const NftInfo = () => {
             <div className={styles.item}>
               <div>Collection</div>
               <div>
-                <Link to={`/nft-collections/${collection}`} className={styles.collection}>
+                <Link to={`/${tokenType}-collections/${collection}`} className={styles.collection}>
                   {data?.collection.name ?? <NameMissing />}
                 </Link>
               </div>

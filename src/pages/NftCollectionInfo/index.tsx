@@ -47,6 +47,8 @@ const NftCollectionInfo = () => {
   const { tab = tabs[0], page = '1' } = useSearchParams('tab', 'page', 'tx_type')
   const { type, filter, sort } = useSearchParams('type', 'filter', 'sort')
 
+  const tokenType = history.location.pathname.includes('dob') ? 'dob' : 'nft'
+
   const filteredList = getFilterList(t)
   const isFilteredByType = filteredList.some(f => f.value === type)
 
@@ -135,13 +137,13 @@ const NftCollectionInfo = () => {
       <div className={styles.container}>
         <div className={styles.navigation}>
           <div className={styles.tabs}>
-            <Link to={`/nft-collections/${id}?tab=${tabs[0]}`} data-is-active={tab === tabs[0]}>
+            <Link to={`/${tokenType}-collections/${id}?tab=${tabs[0]}`} data-is-active={tab === tabs[0]}>
               {t(`nft.activity`)}
             </Link>
-            <Link to={`/nft-collections/${id}?tab=${tabs[1]}`} data-is-active={tab === tabs[1]}>
+            <Link to={`/${tokenType}-collections/${id}?tab=${tabs[1]}`} data-is-active={tab === tabs[1]}>
               {t(`nft.holder-list`)}
             </Link>
-            <Link to={`/nft-collections/${id}?tab=${tabs[2]}`} data-is-active={tab === tabs[2]}>
+            <Link to={`/${tokenType}-collections/${id}?tab=${tabs[2]}`} data-is-active={tab === tabs[2]}>
               {t(`nft.inventory`)}
             </Link>
           </div>
@@ -153,10 +155,10 @@ const NftCollectionInfo = () => {
                 showReset={!!filter}
                 placeholder={t(tab === tabs[0] ? 'udt.address-or-hash' : 'udt.address')}
                 onFilter={filter => {
-                  history.push(`/${language}/nft-collections/${id}?${new URLSearchParams({ tab, filter })}`)
+                  history.push(`/${language}/${tokenType}-collections/${id}?${new URLSearchParams({ tab, filter })}`)
                 }}
                 onReset={() => {
-                  history.push(`/${language}/nft-collections/${id}?${new URLSearchParams({ tab })}`)
+                  history.push(`/${language}/${tokenType}-collections/${id}?${new URLSearchParams({ tab })}`)
                 }}
               />
             ) : null}
@@ -167,7 +169,7 @@ const NftCollectionInfo = () => {
                     {filteredList.map(f => (
                       <Link
                         key={f.value}
-                        to={`/nft-collections/${id}?${new URLSearchParams({ type: f.value })}`}
+                        to={`/${tokenType}-collections/${id}?${new URLSearchParams({ type: f.value })}`}
                         data-is-active={f.value === type}
                       >
                         {f.title}
