@@ -89,7 +89,10 @@ const NftCollectionInfo = () => {
     }
     const query = Object.fromEntries(new URLSearchParams(history.location.search))
     history.push(
-      `/${language}/nft-collections/${id}?${new URLSearchParams({ ...query, page: pageNo.toString() }).toString()}`,
+      `/${language}/${tokenType}-collections/${id}?${new URLSearchParams({
+        ...query,
+        page: pageNo.toString(),
+      }).toString()}`,
     )
   }
 
