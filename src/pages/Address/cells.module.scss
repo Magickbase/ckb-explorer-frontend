@@ -2,7 +2,7 @@
 
 .container {
   width: 100%;
-  overflow: scroll;
+  overflow: auto;
 
   .toolbar {
     display: flex;
@@ -52,7 +52,7 @@
   }
 
   .content {
-    overflow-x: scroll;
+    overflow-x: auto;
 
     @media (width >= $extraLargeBreakPoint) {
       max-height: 220px;
