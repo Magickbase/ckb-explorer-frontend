@@ -47,7 +47,7 @@ const NftCollectionInfo = () => {
   const { tab = tabs[0], page = '1' } = useSearchParams('tab', 'page', 'tx_type')
   const { type, filter, sort } = useSearchParams('type', 'filter', 'sort')
 
-  const tokenType = history.location.pathname.includes('dob') ? 'dob' : 'nft'
+  const tokenType = history.location.pathname.includes('/dob-collections/') ? 'dob' : 'nft'
 
   const filteredList = getFilterList(t)
   const isFilteredByType = filteredList.some(f => f.value === type)

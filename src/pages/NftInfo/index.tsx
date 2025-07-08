@@ -14,10 +14,9 @@ import Annotation from '../../components/Annotation'
 import Cover from './Cover'
 import { ReactComponent as NameMissing } from './NameMissing.svg'
 import { formatNftDisplayId } from '../../utils/util'
-import { isMainnet } from '../../utils/chain'
+import { cn } from '../../lib/utils'
 import Tooltip from '../../components/Tooltip'
-import { ReactComponent as DobMainnetCoverIcon } from '../../assets/dob-mainnet-cover.svg'
-import { ReactComponent as DobTestnetCoverIcon } from '../../assets/dob-testnet-cover.svg'
+import { ReactComponent as DobCoverIcon } from '../../assets/dob-cover.svg'
 import { ReactComponent as NftCoverIcon } from '../../assets/nft_cover.svg'
 
 const primaryColor = getPrimaryColor()
@@ -33,7 +32,7 @@ const NftInfo = () => {
 
   const { page = '1' } = useSearchParams('page')
 
-  const tokenType = history.location.pathname.includes('dob-info') ? 'dob' : 'nft'
+  const tokenType = history.location.pathname.includes('/dob-info/') ? 'dob' : 'nft'
 
   const { data } = useQuery(['nft-item-info', collection, id], () =>
     explorerService.api.fetchNFTCollectionItem(collection, id),
@@ -54,11 +53,8 @@ const NftInfo = () => {
   const annotation = DEPRECATED_DOB_COLLECTION.find(item => item.id === collection)
 
   const defaultCover = (() => {
-    if (tokenType === 'dob' && isMainnet()) {
-      return <DobMainnetCoverIcon className={styles.cover} />
-    }
-    if (tokenType === 'dob' && !isMainnet()) {
-      return <DobTestnetCoverIcon className={styles.cover} />
+    if (tokenType === 'dob') {
+      return <DobCoverIcon className={cn(styles.cover, 'text-primary')} />
     }
 
     return <NftCoverIcon className={styles.cover} />
