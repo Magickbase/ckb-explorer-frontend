@@ -3,6 +3,7 @@
 .container {
   width: 100%;
   overflow: auto;
+  scrollbar-gutter: stable;
 
   .toolbar {
     display: flex;
@@ -53,6 +54,7 @@
 
   .content {
     overflow-x: auto;
+    scrollbar-gutter: stable;
 
     @media (width >= $extraLargeBreakPoint) {
       max-height: 220px;
