@@ -4,24 +4,12 @@ import { useQuery } from '@tanstack/react-query'
 import { addressToScript } from '@nervosnetwork/ckb-sdk-utils'
 import BigNumber from 'bignumber.js'
 import { Link } from '../../../components/Link'
-import { IOType, IS_MAINNET, DEFAULT_SPORE_IMAGE } from '../../../constants/common'
-import {
-  MainnetContractHashTags,
-  TestnetContractHashTags,
-  SCRIPT_TAGS,
-  ZERO_LOCK_CODE_HASH,
-  TIMELOCK_KEYWORDS,
-} from '../../../constants/scripts'
+import { IOType, DEFAULT_SPORE_IMAGE } from '../../../constants/common'
+import { ZERO_LOCK_CODE_HASH } from '../../../constants/scripts'
 import { parseUDTAmount } from '../../../utils/number'
 import { dayjs } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
-import {
-  shannonToCkb,
-  shannonToCkbDecimal,
-  formatNftDisplayId,
-  handleNftImgError,
-  getContractHashTag,
-} from '../../../utils/util'
+import { shannonToCkb, shannonToCkbDecimal, formatNftDisplayId, handleNftImgError } from '../../../utils/util'
 import { UDT_CELL_TYPES } from '../../../utils/cell'
 import TransactionCellArrow from '../../../components/Transaction/TransactionCellArrow'
 import Capacity from '../../../components/Capacity'
@@ -58,14 +46,7 @@ import { explorerService } from '../../../services/ExplorerService'
 import Skeleton from '../../../components/ui/Skeleton'
 import Tooltip from '../../../components/Tooltip'
 import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/Popover'
-import { scripts } from '../../ScriptList'
 import { getTimelock } from '../../../utils/timelock'
-
-const scriptDataList = IS_MAINNET ? MainnetContractHashTags : TestnetContractHashTags
-const scriptDataMap = scriptDataList.reduce((acc, item) => {
-  acc[item.tag] = item
-  return acc
-}, {} as Record<string, (typeof scriptDataList)[number]>)
 
 export const Addr: FC<{ address: string; isCellBase: boolean }> = ({ address, isCellBase }) => {
   const alias = useDASAccount(address)
@@ -377,17 +358,21 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
   const isDeployment = (cell.tags ?? []).find(tag => tag === 'deployment') !== undefined
   const isDob = cell.cellType === 'spore_cell' || cell.cellType === 'did_cell'
   const isZeroLock = lockScript.codeHash === ZERO_LOCK_CODE_HASH
-  const hashTag = getContractHashTag(lockScript)
-  const isTimelock = TIMELOCK_KEYWORDS.some(kw => hashTag?.tag?.toLowerCase()?.includes(kw))
+  const isTimelock = !!['btc_time_lock', 'multisig_time_lock'].some(tag => cell.tags?.includes(tag))
   const since = getTimelock(cell.since)
 
   let etaOfTimelock
-  if (hashTag?.tag === SCRIPT_TAGS.SECP_MULTISIG_LOCKTIME) {
+  if (cell.tags?.includes('multisig_time_lock')) {
     const sinceInLock = `0x${lockScript.args.slice(42).match(/\w{2}/g)?.reverse().join('')}` // 42 is the normal size of secp256k1 args
     etaOfTimelock = getTimelock({ raw: sinceInLock })
   }
 
-  const multisig = scripts.get(SCRIPT_TAGS.SECP_MULTISIG)!
+  const multisig = {
+    name: 'SECP256K1 / Multisig',
+    description: 'SECP256k1 / Multisig is a script which allows a group of users to sign a single transaction.',
+    rfc: 'https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0024-ckb-genesis-script-list/0024-ckb-genesis-script-list.md#secp256k1multisig',
+    code: 'https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_multisig_all.c',
+  }
 
   const taglists = [
     {
@@ -395,7 +380,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       tag: 'Dob Protocol',
       description: t('transaction.tags.dob.description'),
       display: isDob,
-      link: `/script/${scriptDataMap.Spore.codeHashes[0]}/${scriptDataMap.Spore.hashType}`,
+      link: `/script/${cell.typeScript?.codeHash}/${cell.typeScript?.hashType}`,
       icon: DobIcon,
       iconColor: '#FFFEC1',
       type: 'badge',
