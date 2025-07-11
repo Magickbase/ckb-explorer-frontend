@@ -3,14 +3,16 @@ import { useMemo } from 'react'
 import classNames from 'classnames'
 import { useBlockchainAlerts, useNetworkErrMsgs } from '../../../services/ExplorerService'
 import styles from './index.module.scss'
+import { useCKBNode } from '../../../hooks/useCKBNode'
 
 const Sheet = () => {
+  const { isActivated } = useCKBNode()
   const { t } = useTranslation()
   const networkErrMsgs = useNetworkErrMsgs()
   const chainAlerts = useBlockchainAlerts()
   const messages = useMemo<string[]>(() => [...chainAlerts, ...networkErrMsgs], [chainAlerts, networkErrMsgs])
 
-  return messages.length > 0 ? (
+  return messages.length > 0 && !isActivated ? (
     <div className={styles.sheetPanel}>
       {messages.map((context: string, index: number) => {
         const key = index
