@@ -700,9 +700,15 @@ const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
     const tokenId = BigNumber(`0x${cell.extraInfo?.amount}`, 16).toFixed(0)
 
     return (
-      <Link to={`/nft-info/${cell.extraInfo?.collection.typeHash}/${tokenId}`}>
-        ID: #{tokenId.length > 16 ? `${tokenId.slice(0, 6)}...${tokenId.slice(-6)}` : tokenId}
-      </Link>
+      <Tooltip
+        trigger={
+          <Link to={`/nft-info/${cell.extraInfo?.collection.typeHash}/${tokenId}`}>
+            ID: #{tokenId.length > 16 ? `${tokenId.slice(0, 6)}...${tokenId.slice(-6)}` : tokenId}
+          </Link>
+        }
+      >
+        {tokenId}
+      </Tooltip>
     )
   }
 
@@ -713,9 +719,15 @@ const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
     )}`
 
     return (
-      <Link to={`/dob-info/${cell.extraInfo?.collection.typeHash}/${cell.extraInfo?.tokenId}`}>
-        ID: {tokenIdStr.length > 16 ? `${tokenIdStr.slice(0, 6)}...${tokenIdStr.slice(-6)}` : tokenIdStr}
-      </Link>
+      <Tooltip
+        trigger={
+          <Link to={`/dob-info/${cell.extraInfo?.collection.typeHash}/${cell.extraInfo?.tokenId}`}>
+            ID: {tokenIdStr.length > 16 ? `${tokenIdStr.slice(0, 6)}...${tokenIdStr.slice(-6)}` : tokenIdStr}
+          </Link>
+        }
+      >
+        {tokenIdStr}
+      </Tooltip>
     )
   }
 
