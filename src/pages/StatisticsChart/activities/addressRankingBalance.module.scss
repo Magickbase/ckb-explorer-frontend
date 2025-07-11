@@ -8,12 +8,12 @@
   table {
     background: #fff;
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+    margin-bottom: 30px;
+    width: 100%;
 
     th {
       line-height: 2;
     }
-
-    width: 100%;
 
     th,
     td {
@@ -36,8 +36,6 @@
     td:last-child {
       text-align: right;
     }
-
-    margin-bottom: 30px;
   }
 
   @media (width <= variables.$xxlBreakPoint) {

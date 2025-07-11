@@ -77,7 +77,7 @@ module.exports = {
         if (sassLoader) {
           sassLoader.options = {
             ...sassLoader.options,
-            api: "modern-compiler",
+            api: "modern",
           }
         }
       }
