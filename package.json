@@ -81,7 +81,7 @@
     "@testing-library/react": "12.1.5",
     "@types/canvas-confetti": "^1.9.0",
     "@types/eslint": "8.56.12",
-    "@types/jest": "29.5.14",
+    "@types/jest": "30.0.0",
     "@types/lodash.debounce": "4.0.9",
     "@types/node": "16.18.126",
     "@types/qrcode": "1.5.5",
