@@ -10,9 +10,12 @@ const Sheet = () => {
   const { t } = useTranslation()
   const networkErrMsgs = useNetworkErrMsgs()
   const chainAlerts = useBlockchainAlerts()
-  const messages = useMemo<string[]>(() => [...chainAlerts, ...networkErrMsgs], [chainAlerts, networkErrMsgs])
+  const messages = useMemo<string[]>(
+    () => (isActivated ? chainAlerts : [...chainAlerts, ...networkErrMsgs]),
+    [chainAlerts, networkErrMsgs, isActivated],
+  )
 
-  return messages.length > 0 && !isActivated ? (
+  return messages.length > 0 ? (
     <div className={styles.sheetPanel}>
       {messages.map((context: string, index: number) => {
         const key = index
