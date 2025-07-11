@@ -5,7 +5,7 @@ import { addressToScript } from '@nervosnetwork/ckb-sdk-utils'
 import BigNumber from 'bignumber.js'
 import { Link } from '../../../components/Link'
 import { IOType, DEFAULT_SPORE_IMAGE } from '../../../constants/common'
-import { ZERO_LOCK_CODE_HASH } from '../../../constants/scripts'
+import { ZERO_LOCK_CODE_HASH, scripts, SCRIPT_TAGS } from '../../../constants/scripts'
 import { parseUDTAmount } from '../../../utils/number'
 import { dayjs } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
@@ -367,12 +367,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
     etaOfTimelock = getTimelock({ raw: sinceInLock })
   }
 
-  const multisig = {
-    name: 'SECP256K1 / Multisig',
-    description: 'SECP256k1 / Multisig is a script which allows a group of users to sign a single transaction.',
-    rfc: 'https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0024-ckb-genesis-script-list/0024-ckb-genesis-script-list.md#secp256k1multisig',
-    code: 'https://github.com/nervosnetwork/ckb-system-scripts/blob/master/c/secp256k1_blake160_multisig_all.c',
-  }
+  const multisig = scripts.get(SCRIPT_TAGS.SECP_MULTISIG)!
 
   const taglists = [
     {

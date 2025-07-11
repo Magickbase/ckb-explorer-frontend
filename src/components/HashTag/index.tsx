@@ -12,7 +12,7 @@ export default ({ script }: { script: Script & { category?: 'lock' | 'type' } })
     hashTag = { tag: TYPE_ID_TAG, category: 'type' }
   } else {
     hashTag = {
-      tag: script.tags,
+      tag: script.tags?.[0] ?? '',
       category: scriptType ?? script.category,
     }
   }
