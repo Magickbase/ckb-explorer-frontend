@@ -497,7 +497,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       break
     case 'udt':
       detailTitle = (
-        <Link to={`/udt/${cell.extraInfo.typeHash}`}>{cell.extraInfo?.symbol || t('transaction.udt_cell')}</Link>
+        <Link to={`/sudt/${cell.extraInfo.typeHash}`}>{cell.extraInfo?.symbol || t('transaction.udt_cell')}</Link>
       )
       detailIcon = UDTTokenIcon
       tooltip = `Capacity: ${shannonToCkbDecimal(cell.capacity, 8)} CKB`
