@@ -556,7 +556,7 @@ export const TransactionCellDetail = ({ cell }: { cell: Cell }) => {
       break
     }
     case 'omiga_inscription': {
-      detailTitle = 'xUDT'
+      detailTitle = <Link to={`/inscription/${cell.extraInfo?.typeHash}`}>{cell.extraInfo?.symbol || 'xUDT'}</Link>
       detailIcon = UDTTokenIcon
       tooltip = detailTitle
       break
