@@ -1,7 +1,6 @@
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Loader2 } from 'lucide-react'
-import { ReactNode } from 'react'
 import { KBarPortal, KBarPositioner, KBarAnimator, KBarSearch, KBarResults } from 'kbar'
 import { useSearch } from '../Search/useSearch'
 import { AggregateSearchResult, SearchResultType } from '../../services/ExplorerService'
@@ -25,17 +24,18 @@ const KBar = () => {
     return acc
   }, {} as Record<SearchResultType, AggregateSearchResult[]>)
 
-  let content: ReactNode
-  if (isFetching) {
-    content = (
-      <div className="flex justify-center items-center py-4 text-lg w-full">
-        <Loader2 className="animate-spin text-gray-300" />
-      </div>
-    )
-  } else if (aggregateSearchResults && aggregateSearchResults.length === 0 && !!searchValue) {
-    content = <div className="px-3 py-4 text-sm w-full text-gray-400 text-center">{t('search.no_search_result')}</div>
-  } else {
-    content = (
+  const content = (() => {
+    if (isFetching) {
+      return (
+        <div className="flex justify-center items-center py-4 text-lg w-full">
+          <Loader2 className="animate-spin text-gray-300" />
+        </div>
+      )
+    }
+    if (aggregateSearchResults && aggregateSearchResults.length === 0 && !!searchValue) {
+      return <div className="px-3 py-4 text-sm w-full text-gray-400 text-center">{t('search.no_search_result')}</div>
+    }
+    return (
       <KBarResults
         key={keyword}
         items={Object.entries(categories)
@@ -65,7 +65,7 @@ const KBar = () => {
         }}
       />
     )
-  }
+  })()
 
   return (
     <KBarPortal container={document.body}>
