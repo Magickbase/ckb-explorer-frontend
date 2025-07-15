@@ -23,7 +23,7 @@ const SearchInput: FC<
 
   const onKeyUp: KeyboardEventHandler<HTMLInputElement> = useCallback(
     event => {
-      const isEnter = event.keyCode === 13
+      const isEnter = event.key === 'Enter'
       if (isEnter) {
         onEnter?.()
       }

@@ -6,7 +6,7 @@ import { KBarPortal, KBarPositioner, KBarAnimator, KBarSearch, KBarResults } fro
 import { useSearch } from '../Search/useSearch'
 import { AggregateSearchResult, SearchResultType } from '../../services/ExplorerService'
 import ResultItem from './ResultItem'
-import { getURLByAggregateSearchResult } from '../Search/utils'
+import { getDisplayNameByAggregateSearchResult, getURLByAggregateSearchResult } from '../Search/utils'
 
 const KBar = () => {
   const history = useHistory()
@@ -42,7 +42,9 @@ const KBar = () => {
           .map(([type, items]) => [
             type,
             ...items.map(item => ({
+              name: getDisplayNameByAggregateSearchResult(item) ?? '',
               ...item,
+              id: String(item.id),
               command: {
                 perform: () => {
                   const url = getURLByAggregateSearchResult(item)
@@ -67,11 +69,7 @@ const KBar = () => {
 
   return (
     <KBarPortal container={document.body}>
-      <KBarPositioner
-        style={{
-          zIndex: 1,
-        }}
-      >
+      <KBarPositioner className="z-1">
         <KBarAnimator className="max-w-[600px] w-full bg-white text-foreground rounded-lg overflow-hidden shadow-lg">
           <KBarSearch
             className="px-3 py-4 text-lg w-full"
