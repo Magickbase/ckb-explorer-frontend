@@ -81,7 +81,11 @@ export const AggregateSearchResults: FC<Props> = ({ keyword = '', results, loadi
   )
 }
 
-export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = ({ item, keyword = '' }) => {
+export const SearchResultItem: FC<{
+  keyword?: string
+  item: AggregateSearchResult
+  highlightedWhenHover?: boolean
+}> = ({ item, keyword = '', highlightedWhenHover = true }) => {
   const { t } = useTranslation()
   const displayName = getDisplayNameByAggregateSearchResult(item)?.toString()
   const to = getURLByAggregateSearchResult(item)
@@ -89,7 +93,10 @@ export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResul
 
   if (item.type === SearchResultType.UDT) {
     return (
-      <Link className={styles.searchResult} to={to}>
+      <Link
+        className={classNames(styles.searchResult, { [styles.highlightedWhenHover]: highlightedWhenHover })}
+        to={to}
+      >
         <div className={styles.boxContent}>
           <div style={{ display: 'flex', width: '100%' }}>
             {!item.attributes.symbol ? (
@@ -115,7 +122,10 @@ export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResul
 
   if (item.type === SearchResultType.TokenCollection) {
     return (
-      <Link className={styles.searchResult} to={to}>
+      <Link
+        className={classNames(styles.searchResult, { [styles.highlightedWhenHover]: highlightedWhenHover })}
+        to={to}
+      >
         <div className={styles.content}>
           {item.attributes.iconUrl ? (
             <img
@@ -155,7 +165,10 @@ export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResul
 
   if (item.type === SearchResultType.TokenItem) {
     return (
-      <Link className={styles.searchResult} to={to}>
+      <Link
+        className={classNames(styles.searchResult, { [styles.highlightedWhenHover]: highlightedWhenHover })}
+        to={to}
+      >
         <div className={styles.content}>
           {item.attributes.iconUrl ? (
             <img
@@ -202,7 +215,10 @@ export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResul
 
   if (item.type === SearchResultType.DID) {
     return (
-      <Link className={styles.searchResult} to={to}>
+      <Link
+        className={classNames(styles.searchResult, { [styles.highlightedWhenHover]: highlightedWhenHover })}
+        to={to}
+      >
         <div className={styles.content}>
           <HighlightText
             style={{ maxWidth: 'min(200px, 60%)', marginRight: 8 }}
@@ -224,7 +240,10 @@ export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResul
 
   if (item.type === SearchResultType.BtcTx) {
     return (
-      <Link className={styles.searchResult} to={to}>
+      <Link
+        className={classNames(styles.searchResult, { [styles.highlightedWhenHover]: highlightedWhenHover })}
+        to={to}
+      >
         <div className={styles.boxContent}>
           <div className={classNames(styles.subTitle)}>
             <HighlightText
@@ -245,7 +264,10 @@ export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResul
 
   if (item.type === SearchResultType.Transaction) {
     return (
-      <Link className={styles.searchResult} to={to}>
+      <Link
+        className={classNames(styles.searchResult, { [styles.highlightedWhenHover]: highlightedWhenHover })}
+        to={to}
+      >
         <div className={styles.boxContent}>
           <HighlightText style={{ width: '100%' }} text={item.attributes.transactionHash} keyword={keyword} />
 
@@ -261,7 +283,10 @@ export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResul
 
   if (item.type === SearchResultType.FiberGraphNode) {
     return (
-      <Link className={styles.searchResult} to={to}>
+      <Link
+        className={classNames(styles.searchResult, { [styles.highlightedWhenHover]: highlightedWhenHover })}
+        to={to}
+      >
         <div className={styles.boxContent}>
           <HighlightText style={{ width: '100%' }} text={item.attributes.nodeId} keyword={keyword} />
 
@@ -276,7 +301,7 @@ export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResul
   }
 
   return (
-    <Link className={styles.searchResult} to={to}>
+    <Link className={classNames(styles.searchResult, { [styles.highlightedWhenHover]: highlightedWhenHover })} to={to}>
       <div className={styles.content}>
         {!displayName ? (
           t('udt.unknown_token')

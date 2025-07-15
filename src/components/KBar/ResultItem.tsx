@@ -26,7 +26,7 @@ const ResultItem = forwardRef(
           '[&_*]:bg-inherit!': true,
         })}
       >
-        <SearchResultItem item={result} keyword={keyword} />
+        <SearchResultItem item={result} keyword={keyword} highlightedWhenHover={false} />
       </div>
     )
   },
