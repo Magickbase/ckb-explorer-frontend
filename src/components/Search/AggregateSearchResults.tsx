@@ -81,7 +81,7 @@ export const AggregateSearchResults: FC<Props> = ({ keyword = '', results, loadi
   )
 }
 
-const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = ({ item, keyword = '' }) => {
+export const SearchResultItem: FC<{ keyword?: string; item: AggregateSearchResult }> = ({ item, keyword = '' }) => {
   const { t } = useTranslation()
   const displayName = getDisplayNameByAggregateSearchResult(item)?.toString()
   const to = getURLByAggregateSearchResult(item)

@@ -423,6 +423,10 @@ export const ckbToShannon = (amount: string = '0') => {
   return (BigInt(num) * BigInt(1e8 / decimalLength)).toString()
 }
 
+export const isMac = () => {
+  return navigator.userAgent.includes('Mac')
+}
+
 export default {
   shannonToCkb,
   toCamelcase,
@@ -433,4 +437,5 @@ export default {
   assertIsHashType,
   formatNftDisplayId,
   hexToBase64,
+  isMac,
 }
