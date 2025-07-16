@@ -1,5 +1,5 @@
-import classNames from 'classnames'
 import { forwardRef } from 'react'
+import { cn } from '../../lib/utils'
 import { AggregateSearchResult } from '../../services/ExplorerService'
 import { SearchResultItem } from '../Search/AggregateSearchResults'
 
@@ -19,7 +19,7 @@ const ResultItem = forwardRef(
     return (
       <div
         ref={ref}
-        className={classNames('px-3 py-2 flex justify-between items-center cursor-pointer border-l-4', {
+        className={cn('px-3 py-2 flex justify-between items-center cursor-pointer border-l-4', {
           'border-transparent': !active,
           'border-gray-300': active,
           'bg-gray-100': active,
