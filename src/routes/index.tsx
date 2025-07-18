@@ -96,7 +96,7 @@ const FiberGraphNodeList = lazy(() => import('../pages/Fiber/GraphNodeList'))
 const FiberGraphNode = lazy(() => import('../pages/Fiber/GraphNode'))
 const FiberGraphChannelList = lazy(() => import('../pages/Fiber/GraphChannelList'))
 // ======
-const SystemInfoPage = lazy(() => import('../pages/SyntemInfo'))
+const SystemInfoPage = lazy(() => import('../pages/SystemInfo'))
 
 const routes: RouteProps[] = [
   {
