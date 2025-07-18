@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ReactComponent as RecommendationsIcon } from './recommendations.svg'
 import { ReactComponent as CpuIcon } from './cpu.svg'
 import { ReactComponent as MemoryIcon } from './memory.svg'
@@ -5,55 +6,57 @@ import { ReactComponent as StorageIcon } from './storage.svg'
 import { ReactComponent as NetworkIcon } from './network.svg'
 
 const Recommendations = () => {
+  const { t } = useTranslation()
+
   const data = [
     {
-      title: 'CPU Configuration',
+      title: t('system_info.recommendations.cpu.title'),
       icon: <CpuIcon className="h-5 w-5 text-gray-600 mr-2" />,
       items: [
-        { label: 'Minimum', value: '4 cores (2.4GHz+)' },
-        { label: 'Recommended', value: '8 cores (3.0GHz+)' },
-        { label: 'High Performance', value: '16 cores (3.5GHz+)' },
+        { label: t('system_info.recommendations.cpu.minimum'), value: '4 cores (2.4GHz+)' },
+        { label: t('system_info.recommendations.cpu.recommended'), value: '8 cores (3.0GHz+)' },
+        { label: t('system_info.recommendations.cpu.highPerformance'), value: '16 cores (3.5GHz+)' },
       ],
-      note: 'Initial sync requires more CPU for full node operations',
+      note: t('system_info.recommendations.cpu.note'),
     },
     {
-      title: 'Memory Configuration',
+      title: t('system_info.recommendations.memory.title'),
       icon: <MemoryIcon className="h-5 w-5 text-gray-600 mr-2" />,
       items: [
-        { label: 'Minimum', value: '4GB' },
-        { label: 'Recommended', value: '8GB' },
-        { label: 'High Performance', value: '16GB' },
+        { label: t('system_info.recommendations.memory.minimum'), value: '4GB' },
+        { label: t('system_info.recommendations.memory.recommended'), value: '8GB' },
+        { label: t('system_info.recommendations.memory.highPerformance'), value: '16GB' },
       ],
-      note: 'Memory requirements increase with transaction volume',
+      note: t('system_info.recommendations.memory.note'),
     },
     {
-      title: 'Storage Configuration',
+      title: t('system_info.recommendations.storage.title'),
       icon: <StorageIcon className="h-5 w-5 text-gray-600 mr-2" />,
       items: [
-        { label: 'Current Block Size', value: '~500GB' },
-        { label: 'Annual Growth', value: '~50-100GB' },
-        { label: 'Recommended', value: '1TB+ SSD' },
+        { label: t('system_info.recommendations.storage.current_block_size'), value: '~500GB' },
+        { label: t('system_info.recommendations.storage.annual_growth'), value: '~50-100GB' },
+        { label: t('system_info.recommendations.storage.recommended'), value: '1TB+ SSD' },
       ],
-      note: 'Using SSD significantly improves sync speed and performance',
+      note: t('system_info.recommendations.storage.note'),
     },
     {
-      title: 'Network Configuration',
+      title: t('system_info.recommendations.network.title'),
       icon: <NetworkIcon className="h-5 w-5 text-gray-600 mr-2" />,
       items: [
-        { label: 'Initial Sync', value: '10Mbps+ (Recommend 50Mbps+)' },
-        { label: 'Daily Operation', value: '5Mbps+' },
-        { label: 'High Load API', value: '100Mbps+' },
+        { label: t('system_info.recommendations.network.initial_sync'), value: '10Mbps+ (Recommend 50Mbps+)' },
+        { label: t('system_info.recommendations.network.daily_operation'), value: '5Mbps+' },
+        { label: t('system_info.recommendations.network.high_load_api'), value: '100Mbps+' },
       ],
-      note: 'Higher bandwidth required for initial sync operations',
+      note: t('system_info.recommendations.network.note'),
     },
   ]
   const colors = ['#F2A208', '#00CC9B', '#1CA2FB']
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className="bg-white rounded-sm shadow-sm p-6">
       <div className="flex items-center mb-6 gap-1">
         <RecommendationsIcon className="h-6 w-6" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-0!">Recommended Server Configuration</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-0!">{t('system_info.recommendations.title')}</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

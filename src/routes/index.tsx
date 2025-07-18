@@ -408,7 +408,7 @@ const routes: RouteProps[] = [
     component: FiberGraphChannelList,
   },
   {
-    path: '/system-info',
+    path: '/service-configuration',
     component: SystemInfoPage,
   },
 ]
