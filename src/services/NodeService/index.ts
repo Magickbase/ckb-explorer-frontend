@@ -1,17 +1,72 @@
 import { ccc } from '@ckb-ccc/core'
-import { RPC } from '@ckb-lumos/rpc'
+import { toCamelcase } from '../../utils/util'
 
 export class NodeService {
   nodeEndpoint: string
   public rpc: ccc.Client
-  public lumosRPC: RPC
 
   constructor(nodeEndpoint: string) {
     this.nodeEndpoint = nodeEndpoint
-    this.lumosRPC = new RPC(nodeEndpoint)
     this.rpc = new ccc.ClientPublicMainnet({
       url: nodeEndpoint,
     })
+  }
+
+  async getBlockEconomicState(blockHash: string): Promise<CKBComponents.BlockEconomicState> {
+    const body = {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'get_block_economic_state',
+      params: [blockHash],
+    }
+
+    return fetch(this.rpc.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+      .then(res => res.json())
+      .then(res => toCamelcase(res.result) as CKBComponents.BlockEconomicState)
+  }
+
+  async getBlockchainInfo(): Promise<CKBComponents.BlockchainInfo> {
+    const body = {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'get_blockchain_info',
+      params: [],
+    }
+
+    return fetch(this.rpc.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+      .then(res => res.json())
+      .then(res => toCamelcase(res.result) as CKBComponents.BlockchainInfo)
+  }
+
+  async getConsensus(): Promise<CKBComponents.Consensus> {
+    const body = {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'get_consensus',
+      params: [],
+    }
+
+    return fetch(this.rpc.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+      .then(res => res.json())
+      .then(res => toCamelcase(res.result) as CKBComponents.Consensus)
   }
 
   async getTx(hash: string) {

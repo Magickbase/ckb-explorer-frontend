@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/RadioGroup'
 import { parseMultiVersionAddress, ParseResult } from './parseMultiVersionAddress'
-import { LUMOS_MAINNET_CONFIG, LUMOS_TESTNET_CONFIG } from '../../../constants/scripts'
 import { HashType } from '../../../constants/common'
 import { MultiVersionAddress } from './MultiVersionAddress'
 import { isMultiVersionAddress, isErr } from './types'
@@ -15,9 +14,9 @@ export const ScriptToAddress: React.FC = () => {
   const { t } = useTranslation()
 
   const parsed = useMemo<{ mainnet: ParseResult; testnet: ParseResult }>(() => {
-    const mainnet = parseMultiVersionAddress({ codeHash, hashType, args }, LUMOS_MAINNET_CONFIG)
+    const mainnet = parseMultiVersionAddress({ codeHash, hashType, args }, true)
 
-    const testnet = parseMultiVersionAddress({ codeHash, hashType, args }, LUMOS_TESTNET_CONFIG)
+    const testnet = parseMultiVersionAddress({ codeHash, hashType, args }, false)
 
     return { mainnet, testnet }
   }, [codeHash, hashType, args])
