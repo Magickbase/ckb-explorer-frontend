@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
-import { BytesCodec } from '@ckb-lumos/codec/lib/base'
+import { hexFrom } from '@ckb-ccc/core'
 import { JSONTree } from 'react-json-tree'
 import { Alert, AlertTitle, AlertDescription } from '../../../components/ui/Alert'
+import { CodecLike } from './constants'
 import styles from './styles.module.scss'
 
 export type UnpackType = string | number | undefined | { [property: string]: UnpackType } | UnpackType[]
 
 type Props = {
-  codec: BytesCodec | undefined
+  codec: CodecLike | undefined
 }
 
 const formatInput = (input: string): string => {
@@ -35,7 +36,9 @@ export const DataInput: React.FC<Props> = ({ codec }) => {
       return
     }
     try {
-      const result = codec.unpack(formatInput(inputData))
+      const formattedInput = formatInput(inputData)
+      const hexData = hexFrom(formattedInput)
+      const result = codec.decode(hexData)
       setResult(result)
       setErrorMsg('')
     } catch (error: unknown) {
@@ -43,7 +46,7 @@ export const DataInput: React.FC<Props> = ({ codec }) => {
       setErrorMsg((error as Error).message)
     }
   }
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputData(e.target.value)
   }
   return (
