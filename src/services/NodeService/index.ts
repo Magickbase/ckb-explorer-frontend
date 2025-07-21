@@ -12,61 +12,48 @@ export class NodeService {
     })
   }
 
-  async getBlockEconomicState(blockHash: string): Promise<CKBComponents.BlockEconomicState> {
+  private async callRpc<T>(method: string, params: unknown[]): Promise<T> {
     const body = {
       id: 1,
       jsonrpc: '2.0',
-      method: 'get_block_economic_state',
-      params: [blockHash],
+      method,
+      params,
     }
 
-    return fetch(this.rpc.url, {
+    const res = await fetch(this.rpc.url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
     })
-      .then(res => res.json())
-      .then(res => toCamelcase(res.result) as CKBComponents.BlockEconomicState)
+
+    if (!res.ok) {
+      throw new Error(`RPC request failed with status ${res.status}`)
+    }
+
+    const json = await res.json()
+
+    if (json.error) {
+      throw new Error(`RPC error: ${json.error.code} ${json.error.message}`)
+    }
+
+    return toCamelcase(json.result) as T
   }
 
-  async getBlockchainInfo(): Promise<CKBComponents.BlockchainInfo> {
-    const body = {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'get_blockchain_info',
-      params: [],
-    }
-
-    return fetch(this.rpc.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
-      .then(res => res.json())
-      .then(res => toCamelcase(res.result) as CKBComponents.BlockchainInfo)
+  // TODO: Switch to ccc when ccc supports this rpc.
+  async getBlockEconomicState(blockHash: string) {
+    return this.callRpc<CKBComponents.BlockEconomicState>('get_block_economic_state', [blockHash])
   }
 
-  async getConsensus(): Promise<CKBComponents.Consensus> {
-    const body = {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'get_consensus',
-      params: [],
-    }
+  // TODO: Switch to ccc when ccc supports this rpc.
+  async getBlockchainInfo() {
+    return this.callRpc<CKBComponents.BlockchainInfo>('get_blockchain_info', [])
+  }
 
-    return fetch(this.rpc.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
-      .then(res => res.json())
-      .then(res => toCamelcase(res.result) as CKBComponents.Consensus)
+  // TODO: Switch to ccc when ccc supports this rpc.
+  async getConsensus() {
+    return this.callRpc<CKBComponents.Consensus>('get_consensus', [])
   }
 
   async getTx(hash: string) {

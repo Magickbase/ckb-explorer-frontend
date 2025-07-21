@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
-import { hexFrom } from '@ckb-ccc/core'
+import { mol, hexFrom } from '@ckb-ccc/core'
 import { JSONTree } from 'react-json-tree'
 import { Alert, AlertTitle, AlertDescription } from '../../../components/ui/Alert'
-import { CodecLike } from './constants'
 import styles from './styles.module.scss'
 
 export type UnpackType = string | number | undefined | { [property: string]: UnpackType } | UnpackType[]
 
 type Props = {
-  codec: CodecLike | undefined
+  codec: mol.CodecLike<any> | undefined
 }
 
 const formatInput = (input: string): string => {

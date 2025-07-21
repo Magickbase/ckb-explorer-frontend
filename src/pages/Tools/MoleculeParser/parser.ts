@@ -187,66 +187,61 @@ class MoleculeSchemaParser {
   }
 
   private createCodec(typeName: string, definition: SchemaDefinition) {
-    try {
-      switch (definition.type) {
-        case 'struct':
-          if (definition.fields) {
-            const codecLayout: any = {}
-            for (const [fieldName, fieldType] of Object.entries(definition.fields)) {
-              const codec = this.getCodec(fieldType)
-              if (codec) {
-                codecLayout[fieldName] = codec
-              }
+    switch (definition.type) {
+      case 'struct':
+        if (definition.fields) {
+          const codecLayout: any = {}
+          for (const [fieldName, fieldType] of Object.entries(definition.fields)) {
+            const codec = this.getCodec(fieldType)
+            if (codec) {
+              codecLayout[fieldName] = codec
             }
-            this.codecs[typeName] = mol.struct(codecLayout)
           }
-          break
+          this.codecs[typeName] = mol.struct(codecLayout)
+        }
+        break
 
-        case 'table':
-          if (definition.fields) {
-            const codecLayout: any = {}
-            for (const [fieldName, fieldType] of Object.entries(definition.fields)) {
-              const codec = this.getCodec(fieldType)
-              if (codec) {
-                codecLayout[fieldName] = codec
-              }
+      case 'table':
+        if (definition.fields) {
+          const codecLayout: any = {}
+          for (const [fieldName, fieldType] of Object.entries(definition.fields)) {
+            const codec = this.getCodec(fieldType)
+            if (codec) {
+              codecLayout[fieldName] = codec
             }
-            this.codecs[typeName] = mol.table(codecLayout)
           }
-          break
+          this.codecs[typeName] = mol.table(codecLayout)
+        }
+        break
 
-        case 'vector':
-          if (definition.itemType) {
-            const itemCodec = this.getCodec(definition.itemType)
-            if (itemCodec) {
-              this.codecs[typeName] = mol.vector(itemCodec)
-            }
+      case 'vector':
+        if (definition.itemType) {
+          const itemCodec = this.getCodec(definition.itemType)
+          if (itemCodec) {
+            this.codecs[typeName] = mol.vector(itemCodec)
           }
-          break
+        }
+        break
 
-        case 'option':
-          if (definition.itemType) {
-            const itemCodec = this.getCodec(definition.itemType)
-            if (itemCodec) {
-              this.codecs[typeName] = mol.option(itemCodec)
-            }
+      case 'option':
+        if (definition.itemType) {
+          const itemCodec = this.getCodec(definition.itemType)
+          if (itemCodec) {
+            this.codecs[typeName] = mol.option(itemCodec)
           }
-          break
+        }
+        break
 
-        case 'array':
-          if (definition.itemType && definition.itemCount) {
-            const itemCodec = this.getCodec(definition.itemType)
-            if (itemCodec) {
-              this.codecs[typeName] = mol.array(itemCodec, definition.itemCount)
-            }
+      case 'array':
+        if (definition.itemType && definition.itemCount) {
+          const itemCodec = this.getCodec(definition.itemType)
+          if (itemCodec) {
+            this.codecs[typeName] = mol.array(itemCodec, definition.itemCount)
           }
-          break
-        default:
-          break
-      }
-    } catch (error) {
-      // Silently ignore codec creation errors for now
-      // Could be improved with better error reporting
+        }
+        break
+      default:
+        break
     }
   }
 

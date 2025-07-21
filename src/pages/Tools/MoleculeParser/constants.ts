@@ -1,13 +1,8 @@
 import { mol, BytesLike } from '@ckb-ccc/core'
 
-export type CodecLike = {
-  encode: (data: any) => Uint8Array
-  decode: (data: BytesLike) => any
-}
+export type CodecMap = Record<string, mol.CodecLike<any>>
 
-export type CodecMap = Record<string, CodecLike>
-
-function enhanceCodecWithHumanize(codec: CodecLike) {
+function enhanceCodecWithHumanize(codec: mol.CodecLike<any>) {
   return {
     ...codec,
     decode: (data: BytesLike) => {

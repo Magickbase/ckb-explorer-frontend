@@ -1,12 +1,16 @@
 import { Address, ClientPublicMainnet, ClientPublicTestnet } from '@ckb-ccc/core'
-import { matchScript } from '../../../utils/util'
 import { Err, MultiVersionAddress } from './types'
+import { explorerService } from '../../../services/ExplorerService'
 
 export type ParseResult = MultiVersionAddress | Err
 
-export function parseMultiVersionAddress(script: CKBComponents.Script, isMainnet?: boolean): ParseResult {
+export async function parseMultiVersionAddress(
+  script: CKBComponents.Script,
+  isMainnet?: boolean,
+): Promise<ParseResult> {
   try {
-    const name = matchScript(script.codeHash)?.tag
+    const { data: matchedScripts } = await explorerService.api.fetchScriptInfo(script.codeHash, script.hashType)
+    const { name } = matchedScripts[0]
     const ckb2021 = Address.fromScript(script, isMainnet ? new ClientPublicMainnet() : new ClientPublicTestnet())
 
     if (script.hashType === 'data1' || script.hashType === 'data2') {
