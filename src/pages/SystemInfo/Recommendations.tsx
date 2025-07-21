@@ -34,8 +34,8 @@ const Recommendations = () => {
       icon: <StorageIcon className="h-5 w-5 text-gray-600 mr-2" />,
       items: [
         { label: t('system_info.recommendations.storage.current_block_size'), value: '~126GB' },
-        { label: t('system_info.recommendations.storage.annual_growth'), value: '~5-10 GB' },
-        { label: t('system_info.recommendations.storage.recommended'), value: '500GB' },
+        { label: t('system_info.recommendations.storage.annual_growth'), value: '~5-10GB' },
+        { label: t('system_info.recommendations.storage.recommended'), value: '1TB+' },
       ],
       note: t('system_info.recommendations.storage.note'),
     },
