@@ -1296,31 +1296,32 @@
         "title": "Recommended Server Configuration",
         "cpu": {
           "title": "CPU Configuration",
-          "minimum": "Minimum Configuration",
-          "recommended": "Recommended Configuration",
-          "highPerformance": "High-Load Scenario",
-          "note": "CPU usage will be higher during initial sync, but will significantly decrease after sync is complete"
+          "minimum": "Minimum",
+          "recommended": "Recommended",
+          "highPerformance": "High Load",
+          "note": "CPU usage will be higher during initial sync but decreases significantly afterward"
         },
         "memory": {
           "title": "Memory Configuration",
-          "minimum": "Minimum Configuration",
-          "recommended": "Recommended Configuration",
-          "highPerformance": "High-Load Scenario",
-          "note": "Memory usage increases with transaction volume"
+          "minimum": "Minimum",
+          "recommended": "Recommended",
+          "highPerformance": "High Load",
+          "note": "Memory usage scales with transaction volume"
         },
         "storage": {
           "title": "Storage Configuration",
           "current_block_size": "Current Block Size",
-          "annual_growth": "Annual Growth",
-          "recommended": "Recommended Storage",
-          "note": "Using SSD can significantly improve sync and query performance"
+          "annual_growth": "Annual Growth Estimate",
+          "recommended": "Recommended",
+          "note": "SSD significantly improves syncing and query performance"
         },
         "network": {
           "title": "Network Requirements",
           "initial_sync": "Initial Sync",
+          "initial_sync_note": "Recommended: 50 Mbps minimum",
           "daily_operation": "Daily Operation",
-          "high_load_api": "High-Load API",
-          "note": "Higher bandwidth can shorten initial sync time"
+          "high_load_api": "High-Load / API",
+          "note": "Higher bandwidth reduces initial sync time"
         }
       }
     }

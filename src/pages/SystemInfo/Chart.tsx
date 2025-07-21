@@ -23,12 +23,12 @@ const Chart = () => {
       </div>
       <div className="flex-1 overflow-auto">
         <iframe
-          src="https://grafana.magickbase.com/d-solo/PwMJtdvnt/expolorer-resource?orgId=1&panelId=58&refresh=10s"
+          src="https://grafana.magickbase.com/d-solo/PwMJtdvnt/explorer-resource?orgId=1&refresh=10s&panelId=58"
           title="cpu-chart"
           className={cn('w-full h-[500px] min-w-[800px]', selectedChart === 'CPU' ? 'block' : 'hidden')}
         />
         <iframe
-          src="https://grafana.magickbase.com/d-solo/PwMJtdvnt/expolorer-resource?orgId=1&var-origin_prometheus=&var-Node=All&var-NameSpace=mainnet&var-Container=All&var-Pod=All&panelId=80&refresh=10s"
+          src="https://grafana.magickbase.com/d-solo/PwMJtdvnt/explorer-resource?orgId=1&panelId=80&refresh=10s"
           title="memory-chart"
           className={cn('w-full h-[500px] min-w-[800px]', selectedChart === 'Memory' ? 'block' : 'hidden')}
         />

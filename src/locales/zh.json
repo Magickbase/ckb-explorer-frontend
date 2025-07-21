@@ -1279,6 +1279,7 @@
         "network": {
           "title": "网络需求",
           "initial_sync": "初始同步",
+          "initial_sync_note": "推荐: 最低 50 Mbps",
           "daily_operation": "日常操作",
           "high_load_api": "高负载 API",
           "note": "更高的带宽可缩短初始同步时间"
