@@ -29,7 +29,7 @@
     "@tanstack/react-query": "4.0.5",
     "autoprefixer": "^10.4.21",
     "bech32": "2.0.0",
-    "bignumber.js": "9.3.0",
+    "bignumber.js": "9.3.1",
     "bs58check": "3.0.1",
     "camelcase": "8.0.0",
     "camelcase-keys": "9.1.3",
