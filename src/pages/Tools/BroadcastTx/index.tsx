@@ -1,10 +1,14 @@
 import { type FC, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import formatter from '@nervosnetwork/ckb-sdk-rpc/lib/paramsFormatter'
+import CKBRPC from '@nervosnetwork/ckb-sdk-rpc'
 import ToolsContainer from '../ToolsContainer'
 import CopyableText from '../../../components/CopyableText'
 import styles from './style.module.scss'
 import { useCKBNode } from '../../../hooks/useCKBNode'
+import config from '../../../config'
+
+const { BACKUP_NODES: backupNodes } = config
+const rpc = new CKBRPC(backupNodes[0])
 
 const BroadcastTx: FC = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -29,7 +33,7 @@ const BroadcastTx: FC = () => {
       let tx = JSON.parse(inputted.trim())
       if ('cellDeps' in tx) {
         // should be converted to snake_case
-        tx = formatter.toRawTransaction(tx)
+        tx = rpc.paramsFormatter.toRawTransaction(tx)
       }
       const hash = await nodeService.sendTransaction(tx)
       setResult({ hash })

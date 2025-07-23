@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import paramsFormatter from '@nervosnetwork/ckb-sdk-rpc/lib/paramsFormatter'
-import resultFormatter from '@nervosnetwork/ckb-sdk-rpc/lib/resultFormatter'
+import CKBRPC from '@nervosnetwork/ckb-sdk-rpc'
 import { ReactComponent as CopyIcon } from '../../../assets/copy_icon.svg'
 import styles from './transaction.module.scss'
 import { useSetToast } from '../../../components/Toast'
+import config from '../../../config'
+
+const { BACKUP_NODES: backupNodes } = config
+const rpc = new CKBRPC(backupNodes[0])
 
 const Transaction = () => {
   const [camelCase, setCamelCase] = useState({ value: '', error: '' })
@@ -51,7 +54,7 @@ const Transaction = () => {
             throw new Error('Invalid Object')
           }
           setCamelCase({
-            value: JSON.stringify(resultFormatter.toTransaction(v)),
+            value: JSON.stringify(rpc.resultFormatter.toTransaction(v)),
             error: '',
           })
         } catch (e) {
@@ -72,7 +75,7 @@ const Transaction = () => {
             throw new Error('Invalid Object')
           }
           setSnakeCase({
-            value: JSON.stringify(paramsFormatter.toRawTransaction(v)),
+            value: JSON.stringify(rpc.paramsFormatter.toRawTransaction(v)),
             error: '',
           })
         } catch (e) {
