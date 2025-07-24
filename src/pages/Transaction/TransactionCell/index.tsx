@@ -660,7 +660,13 @@ const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
     const { amount } = udtInfo
 
     if (udtInfo.decimal && udtInfo.symbol) {
-      return <span>{`${parseUDTAmount(amount, udtInfo.decimal)} ${udtInfo.symbol}`}</span>
+      return (
+        <Capacity
+          capacity={parseUDTAmount(amount, udtInfo.decimal).replace(/,/g, '')}
+          unit={udtInfo.symbol}
+          display="short"
+        />
+      )
     }
 
     return (
