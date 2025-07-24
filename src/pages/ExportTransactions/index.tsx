@@ -36,7 +36,7 @@ const ExportTransactions = () => {
 
   return (
     <ExportPage
-      title={t('export_transactions.transactions')}
+      title={`(${t('export_transactions.transactions')})`}
       fetchCSVData={params =>
         explorerService.api.exportTransactions({
           type,

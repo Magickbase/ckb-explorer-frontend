@@ -183,7 +183,7 @@ export const ExportPage: React.FC<ExportPageProps> = ({
       <div className={classNames('container', styles.containerPanel)}>
         <div className={styles.title}>
           <span>{t('export_transactions.download_data')}</span>
-          <span>({title})</span>
+          <span>{title}</span>
         </div>
         <div className={styles.description}>
           <div>{t('export_transactions.description_str')}</div>

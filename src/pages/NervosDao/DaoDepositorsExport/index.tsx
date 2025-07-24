@@ -24,7 +24,7 @@ const DaoDepositorsExport = () => {
 
   return (
     <ExportPage
-      title={t('export_transactions.depositors')}
+      title={`(${t('export_transactions.depositors')})`}
       note={t('export_transactions.dao_depositor_note_str')}
       fetchCSVData={params =>
         explorerService.api.fetchNervosDaoDepositorsCsv(
