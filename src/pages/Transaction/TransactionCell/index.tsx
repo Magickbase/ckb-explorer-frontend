@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js'
 import { Link } from '../../../components/Link'
 import { IOType, DEFAULT_SPORE_IMAGE } from '../../../constants/common'
 import { ZERO_LOCK_CODE_HASH, scripts, SCRIPT_TAGS } from '../../../constants/scripts'
-import { parseUDTAmount } from '../../../utils/number'
+import { parseUDTAmountRaw } from '../../../utils/number'
 import { dayjs } from '../../../utils/date'
 import { sliceNftName } from '../../../utils/string'
 import { shannonToCkb, shannonToCkbDecimal, formatNftDisplayId, handleNftImgError } from '../../../utils/util'
@@ -660,13 +660,7 @@ const TransactionCellCapacityAmount = ({ cell }: { cell: Cell }) => {
     const { amount } = udtInfo
 
     if (udtInfo.decimal && udtInfo.symbol) {
-      return (
-        <Capacity
-          capacity={parseUDTAmount(amount, udtInfo.decimal).replace(/,/g, '')}
-          unit={udtInfo.symbol}
-          display="short"
-        />
-      )
+      return <Capacity capacity={parseUDTAmountRaw(amount, udtInfo.decimal)} unit={udtInfo.symbol} display="short" />
     }
 
     return (

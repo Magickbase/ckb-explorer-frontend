@@ -8,7 +8,7 @@ import NervosDAOWithdrawingIcon from '../../../assets/nervos_dao_withdrawing.png
 import CurrentAddressIcon from '../../../assets/current_address.svg'
 import UDTTokenIcon from '../../../assets/udt_token.png'
 import { useCurrentLanguage } from '../../../utils/i18n'
-import { localeNumberString, parseUDTAmount } from '../../../utils/number'
+import { localeNumberString, parseUDTAmountRaw } from '../../../utils/number'
 import { isDaoCell, isDaoDepositCell, isDaoWithdrawCell, shannonToCkb, shannonToCkbDecimal } from '../../../utils/util'
 import { IOType } from '../../../constants/common'
 import { CellInputIcon, CellOutputIcon } from '../../Transaction/TransactionCellArrow'
@@ -191,7 +191,7 @@ const TransactionCellUDT = ({ cell }: { cell: Cell$UDT }) => {
     <div className={styles.transactionCellUDTPanel}>
       {extraInfo.published ? (
         <Capacity
-          capacity={parseUDTAmount(extraInfo.amount, extraInfo.decimal).replace(/,/g, '')}
+          capacity={parseUDTAmountRaw(extraInfo.amount, extraInfo.decimal)}
           unit={extraInfo.symbol}
           display="short"
         />
@@ -219,11 +219,7 @@ const TransactionCellCapacity = ({ cell, ioType }: { cell: Cell; ioType: IOType 
     if (info?.amount !== undefined && info.decimal && info.symbol) {
       return (
         <div className="transactionCellWithoutIcon">
-          <Capacity
-            capacity={parseUDTAmount(info.amount, info.decimal).replace(/,/g, '')}
-            unit={info.symbol}
-            display="short"
-          />
+          <Capacity capacity={parseUDTAmountRaw(info.amount, info.decimal)} unit={info.symbol} display="short" />
         </div>
       )
     }
@@ -234,11 +230,7 @@ const TransactionCellCapacity = ({ cell, ioType }: { cell: Cell; ioType: IOType 
     if (info?.amount !== undefined && info.decimal && info.symbol) {
       return (
         <div className="transactionCellWithoutIcon">
-          <Capacity
-            capacity={parseUDTAmount(info.amount, info.decimal).replace(/,/g, '')}
-            unit={info.symbol}
-            display="short"
-          />
+          <Capacity capacity={parseUDTAmountRaw(info.amount, info.decimal)} unit={info.symbol} display="short" />
         </div>
       )
     }
