@@ -6656,10 +6656,10 @@ default-gateway@^6.0.3:
   dependencies:
     execa "^5.0.0"
 
-default-passive-events@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/default-passive-events/-/default-passive-events-2.0.0.tgz#79b1aa67becbaab38b718469b5480fef92eda649"
-  integrity sha512-eMtt76GpDVngZQ3ocgvRcNCklUMwID1PaNbCNxfpDXuiOXttSh0HzBbda1HU9SIUsDc02vb7g9+3I5tlqe/qMQ==
+default-passive-events@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/default-passive-events/-/default-passive-events-4.0.0.tgz#abaff820fa1caed250b1ffa298000de5e87b4f22"
+  integrity sha512-0whk/GqfDOjc0AJIpacXUSqX6kV9TjL3GFSXIxFvuXQYcK+bEdJ6rpJnAEfP4YYMYWibM+jhlwmdlVrlifoepg==
 
 define-data-property@^1.0.1:
   version "1.1.1"
