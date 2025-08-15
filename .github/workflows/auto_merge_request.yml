@@ -2,13 +2,16 @@ name: Auto merge
 
 on: push
 
+permissions:
+  pull-requests: write
+
 jobs:
   merge-develop-into-testnet:
     if: ${{ github.ref == 'refs/heads/develop' }}
     name: Merge develop into testnet
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: repo-sync/pull-request@v2
         with:
           source_branch: 'develop'
@@ -23,7 +26,7 @@ jobs:
     name: Merge testnet into mainnet
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: repo-sync/pull-request@v2
         with:
           source_branch: 'testnet'
@@ -38,7 +41,7 @@ jobs:
     name: Merge mainnet back to develop
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: repo-sync/pull-request@v2
         with:
           source_branch: 'master'
@@ -47,4 +50,3 @@ jobs:
           pr_reviewer: 'keith-cy'
           pr_label: 'auto-pr'
           github_token: ${{ secrets.GITHUB_TOKEN }}
-

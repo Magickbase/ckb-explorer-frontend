@@ -1,4 +1,10 @@
-export const defaultTransactionInfo: State.Transaction = {
+import { Transaction } from '../../models/Transaction'
+import { TransactionRecord } from '../../services/ExplorerService'
+
+export const defaultTransactionInfo: Transaction = {
+  isBtcTimeLock: false,
+  isRgbTransaction: false,
+  rgbTxid: null,
   transactionHash: '',
   blockNumber: 0,
   blockTimestamp: 0,
@@ -9,17 +15,25 @@ export const defaultTransactionInfo: State.Transaction = {
   version: 0,
   displayInputs: [],
   displayOutputs: [],
-  cellDeps: [],
-  headerDeps: [],
-  witnesses: [],
   liveCellChanges: '',
   capacityInvolved: '',
   txStatus: '',
   detailedMessage: '',
+  rgbTransferStep: null,
   bytes: 0,
   largestTxInEpoch: 0,
   largestTx: 0,
   cycles: null,
   maxCyclesInEpoch: null,
   maxCycles: null,
+  cellDeps: [],
+  headerDeps: [],
+  witnesses: [],
 }
+
+export const defaultTransactionLiteDetails: TransactionRecord[] = [
+  {
+    address: '',
+    transfers: [],
+  },
+]

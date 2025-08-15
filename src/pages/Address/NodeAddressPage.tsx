@@ -1,0 +1,62 @@
+import classNames from 'classnames'
+import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import Content from '../../components/Content'
+import { NodeAddressOverviewCard, NodeAddressTransactions } from './AddressComp'
+import { useDeprecatedAddr, useNewAddr } from '../../hooks'
+import { Card, HashCardHeader } from '../../components/Card'
+import { ReactComponent as ShareIcon } from './share.svg'
+import styles from './styles.module.scss'
+import { Link } from '../../components/Link'
+import Qrcode from '../../components/Qrcode'
+import { DASInfo } from './AddressPage'
+import Tooltip from '../../components/Tooltip'
+
+export const NodeAddressPage = () => {
+  const { address } = useParams<{ address: string }>()
+  const { t } = useTranslation()
+
+  const newAddr = useNewAddr(address)
+  const deprecatedAddr = useDeprecatedAddr(address)
+  const counterpartAddr = newAddr === address ? deprecatedAddr : newAddr
+
+  return (
+    <Content>
+      <div className={classNames(styles.addressContentPanel, 'container')}>
+        <Card>
+          <HashCardHeader
+            title={t('address.address')}
+            hash={address}
+            customActions={[
+              <Qrcode text={address} />,
+              counterpartAddr ? (
+                <Tooltip
+                  trigger={
+                    <Link
+                      className={styles.openInNew}
+                      to={`/address/${counterpartAddr}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <ShareIcon />
+                    </Link>
+                  }
+                  placement="top"
+                >
+                  {t(`address.${newAddr === address ? 'visit-deprecated-address' : 'view-new-address'}`)}
+                </Tooltip>
+              ) : null,
+            ]}
+            rightContent={<DASInfo address={address} />}
+          />
+        </Card>
+
+        <NodeAddressOverviewCard address={address} />
+
+        <NodeAddressTransactions address={address} />
+      </div>
+    </Content>
+  )
+}
+
+export default NodeAddressPage

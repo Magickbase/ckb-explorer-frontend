@@ -1,8 +1,10 @@
-.HighLightPanel {
+@use '../../styles/variables.module';
+
+.highLightPanel {
   color: var(--primary-color);
   font-size: 14px;
 
-  @media (max-width: 750px) {
+  @media (width <= variables.$mobileBreakPoint) {
     font-size: 13px;
   }
 
@@ -10,12 +12,12 @@
     color: var(--primary-color);
     margin-top: 3px;
 
-    @media (max-width: 750px) {
+    @media (width <= variables.$mobileBreakPoint) {
       margin-top: 1px;
     }
   }
 
   a:hover {
-    color: var(--primary-color);
+    color: var(--primary-color-hover);
   }
 }

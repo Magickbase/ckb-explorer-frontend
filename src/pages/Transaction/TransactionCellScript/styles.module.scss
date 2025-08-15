@@ -1,0 +1,243 @@
+@use '../../../styles/variables.module.scss';
+
+.button {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  color: var(--primary-color);
+  font-size: 1rem;
+  margin: 0 1rem;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  width: 130px;
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid currentcolor;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &:hover {
+    font-weight: bold;
+  }
+
+  &[data-role='copy-script'] {
+    svg {
+      path {
+        fill: currentcolor;
+      }
+    }
+  }
+
+  &[data-role='script-info'] {
+    background: var(--primary-color);
+    color: #fff;
+
+    &:hover {
+      color: #fff;
+    }
+  }
+
+  @media screen and (width < variables.$largeBreakPoint) {
+    height: 30px;
+    font-size: 0.8rem;
+  }
+}
+
+.btcUtxo {
+  display: flex;
+  height: 20px;
+  padding: 0 8px;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  color: var(--btc-primary-color) !important;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  border-radius: 4px;
+  border: 1px solid var(--btc-primary-color);
+  background: var(--btc-secondary-color);
+  cursor: pointer;
+  box-sizing: border-box;
+  line-height: 1;
+
+  a {
+    display: flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  @media screen and (width <= variables.$mobileBreakPoint) {
+    height: 1rem;
+  }
+}
+
+.scriptActions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  width: 100%;
+
+  @media screen and (width <= variables.$mobileBreakPoint) {
+    margin-top: 10px;
+    flex-direction: column;
+    gap: 16px;
+
+    svg {
+      width: 12px;
+      height: 12px;
+      margin-left: 6px;
+    }
+  }
+}
+
+.transactionDetailContainer {
+  :global(.transactionDetailSeparate) {
+    width: auto;
+    height: 1px;
+    background: #eaeaea;
+    margin-top: -3px;
+  }
+}
+
+.transactionCellDetailTitle {
+  font-size: 16px;
+}
+
+.transactionCellDetailPanel {
+  width: 100%;
+  font-weight: 500;
+  display: flex;
+  flex-direction: row;
+
+  @media (max-width: variables.$mobileBreakPoint) {
+    div {
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 1300px) {
+    div {
+      font-size: 15px;
+    }
+  }
+
+  :global(.transactionDetailModalClose) {
+    padding: 17px 0 17px 17px;
+
+    > img {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+    }
+
+    @media (max-width: variables.$mobileBreakPoint) {
+      padding: 15px 0 15px 15px;
+
+      > img {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+}
+
+.transactionDetailPanel {
+  width: 100%;
+  margin-top: 20px;
+
+  @media (max-width: variables.$mobileBreakPoint) {
+    margin-top: 10px;
+  }
+
+  :global(.transactionDetailContent) {
+    border: none;
+    width: 100%;
+    text-align: left;
+    min-height: 120px;
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    word-break: break-all;
+    padding: 20px 6px;
+    margin-top: 5px;
+    font-size: 16px;
+    color: #888;
+    font-weight: bold;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+
+    @media (max-width: variables.$mobileBreakPoint) {
+      font-size: 10px;
+      padding: 10px;
+    }
+
+    &:global(.utxoGraphContent) {
+      max-height: 400px;
+    }
+  }
+
+  :global(.transactionDetailLoading) {
+    padding: 20px 0;
+
+    @media (max-width: variables.$mobileBreakPoint) {
+      padding: 10px 0;
+    }
+  }
+}
+
+.transactionCellInfoValuePanel {
+  &.isData {
+    > div {
+      > div:nth-child(1) {
+        min-width: 80px;
+
+        @media (max-width: variables.$mobileBreakPoint) {
+          min-width: 40px;
+        }
+      }
+    }
+  }
+
+  > div {
+    display: flex;
+    margin: 2px 0 2px 30px;
+
+    @media (max-width: variables.$mobileBreakPoint) {
+      margin: 2px 0 2px 12px;
+    }
+
+    > div:nth-child(1) {
+      min-width: 120px;
+
+      @media (max-width: variables.$mobileBreakPoint) {
+        min-width: 70px;
+      }
+    }
+
+    > div:nth-child(2) {
+      word-wrap: break-word;
+      word-break: break-all;
+    }
+  }
+}
+
+.tabItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}

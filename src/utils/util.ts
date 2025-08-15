@@ -1,30 +1,18 @@
-import { ReactNode } from 'react'
+import { ReactNode, SyntheticEvent } from 'react'
 import camelcaseKeys from 'camelcase-keys'
 import JSBI from 'jsbi'
 import BigNumber from 'bignumber.js'
 import { scriptToAddress, addressToScript } from '@nervosnetwork/ckb-sdk-utils'
+import { useTranslation } from 'react-i18next'
 import { MAX_CONFIRMATION, TOKEN_EMAIL_SUBJECT, TOKEN_EMAIL_BODY, TOKEN_EMAIL_ADDRESS } from '../constants/common'
-import {
-  ContractHashTag,
-  MainnetContractHashTags,
-  ScriptTagExtraRules,
-  TestnetContractHashTags,
-} from '../constants/scripts'
-import i18n from './i18n'
+import { ContractHashTag, MainnetContractHashTags, TestnetContractHashTags } from '../constants/scripts'
 import { isMainnet } from './chain'
-
-export const copyElementValue = (component: any) => {
-  if (!component) return
-  const selection = window.getSelection()
-  if (selection) {
-    const range = document.createRange()
-    range.selectNodeContents(component)
-    selection.removeAllRanges()
-    selection.addRange(range)
-    document.execCommand('Copy')
-    selection.removeAllRanges()
-  }
-}
+import { Script } from '../models/Script'
+import { Cell } from '../models/Cell'
+import { parseBtcTimeLockArgs } from './rgbpp'
+import FtFallbackIcon from '../assets/ft_fallback_icon.png'
+import nftCover from '../assets/nft_cover.svg'
+import dobCover from '../assets/dob-cover.svg'
 
 export const shannonToCkbDecimal = (value: BigNumber | string | number, decimal?: number) => {
   if (!value) return 0
@@ -73,15 +61,50 @@ export const toCamelcase = <T>(object: any): T => {
     ),
   ) as T
 }
+type SnakeCase<S extends string> = S extends `${infer T}${infer U}`
+  ? `${T extends Uppercase<T> ? '_' : ''}${Lowercase<T>}${SnakeCase<U>}`
+  : S
 
-export const formatConfirmation = (confirmation: number) => {
-  if (confirmation > MAX_CONFIRMATION) {
-    return `${MAX_CONFIRMATION}+ ${i18n.t('address.confirmations')}`
+type ToSnakeCaseKeys<T> = T extends object
+  ? {
+      [K in keyof T as SnakeCase<string & K>]: T[K] extends object ? ToSnakeCaseKeys<T[K]> : T[K]
+    }
+  : T
+
+export function toSnakeCase<T>(obj: T): ToSnakeCaseKeys<T> {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj as ToSnakeCaseKeys<T>
   }
-  if (confirmation > 1) {
-    return `${confirmation} ${i18n.t('address.confirmations')}`
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => toSnakeCase(item)) as ToSnakeCaseKeys<T>
   }
-  return `${confirmation} ${i18n.t('address.confirmation')}`
+
+  const result: any = {}
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const snakeKey = key
+        .replace(/([A-Z])/g, '_$1')
+        .toLowerCase()
+        .replace(/^_/, '')
+      result[snakeKey] = toSnakeCase(obj[key])
+    }
+  }
+
+  return result as ToSnakeCaseKeys<T>
+}
+
+export const useFormatConfirmation = () => {
+  const { t } = useTranslation()
+  return (confirmation: number) => {
+    if (confirmation > MAX_CONFIRMATION) {
+      return `${MAX_CONFIRMATION}+ ${t('address.confirmations')}`
+    }
+    if (confirmation > 1) {
+      return `${confirmation} ${t('address.confirmations')}`
+    }
+    return `${confirmation} ${t('address.confirmation')}`
+  }
 }
 
 export const isValidReactNode = (node: ReactNode) => {
@@ -90,35 +113,41 @@ export const isValidReactNode = (node: ReactNode) => {
   }
   return !!node
 }
-
-export const getContractHashTag = (script: State.Script): ContractHashTag | undefined => {
-  if (!script.codeHash || !script.hashType) return undefined
-  const contractHashTag = matchScript(script.codeHash, script.hashType)
-  if (!!contractHashTag && ScriptTagExtraRules.has(contractHashTag.tag)) {
-    return {
-      ...contractHashTag,
-      tag: ScriptTagExtraRules.get(contractHashTag.tag)?.(script as State.Script) || contractHashTag.tag,
-    }
-  }
-  return contractHashTag
-}
-
-export const matchScript = (contractHash: string, hashType: string): ContractHashTag | undefined => {
+export const matchScript = (contractHash: string, hashType?: string): ContractHashTag | undefined => {
   if (isMainnet()) {
     return MainnetContractHashTags.find(
-      scriptTag => scriptTag.codeHashes.find(codeHash => codeHash === contractHash) && scriptTag.hashType === hashType,
+      scriptTag =>
+        scriptTag.codeHashes.find(codeHash => codeHash === contractHash) &&
+        (!hashType || scriptTag.hashType === hashType),
     )
   }
   return TestnetContractHashTags.find(
-    scriptTag => scriptTag.codeHashes.find(codeHash => codeHash === contractHash) && scriptTag.hashType === hashType,
+    scriptTag =>
+      scriptTag.codeHashes.find(codeHash => codeHash === contractHash) &&
+      (!hashType || scriptTag.hashType === hashType),
   )
 }
 
-export const matchTxHash = (txHash: string, index: number | string): ContractHashTag | undefined => {
-  if (isMainnet()) {
-    return MainnetContractHashTags.find(codeHashTag => codeHashTag.txHashes.find(hash => hash === `${txHash}-${index}`))
+// return txid and index of btc utxo, in hex string without 0x
+export const getBtcUtxo = (script: Script) => {
+  if (!script.tags?.includes('rgb++')) return
+
+  const INDEX_BYTE_SIZE = 4
+  const TXID_BYTE_SIZE = 32
+  const d = 2 * INDEX_BYTE_SIZE + 2
+  const [index, txid] = [script.args.slice(2, d), script.args.slice(d, d + TXID_BYTE_SIZE * 2)].map(v =>
+    v.match(/\w{2}/g)?.reverse().join(''),
+  )
+  return { txid, index }
+}
+
+export const getBtcTimeLockInfo = (script: Script) => {
+  if (!script.tags?.includes('btc_time_lock')) return
+  try {
+    return parseBtcTimeLockArgs(script.args)
+  } catch (e) {
+    return null
   }
-  return TestnetContractHashTags.find(codeHashTag => codeHashTag.txHashes.find(hash => hash === `${txHash}-${index}`))
 }
 
 export const udtSubmitEmail = () =>
@@ -149,8 +178,19 @@ export const handleRedirectFromAggron = () => {
   return false
 }
 
-export const handleNftImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-  e.currentTarget.src = '/images/nft_placeholder.png'
+export const handleNftImgError = (e: SyntheticEvent<HTMLImageElement, Event>) => {
+  const img = e.currentTarget
+  const { assetType } = img.dataset
+  if (assetType === 'DOB') {
+    e.currentTarget.src = dobCover
+    e.currentTarget.className = `${img.className} text-primary`
+    return
+  }
+  e.currentTarget.src = nftCover
+}
+
+export const handleFtImgError = (e: SyntheticEvent<HTMLImageElement, Event>) => {
+  e.currentTarget.src = FtFallbackIcon
 }
 
 export const patchMibaoImg = (url: string) => {
@@ -329,12 +369,65 @@ export function randomInt(min: number, max: number) {
   return min + Math.floor(Math.random() * (max - min + 1))
 }
 
+export const isDaoDepositCell = (cellType: Cell['cellType']) => cellType === 'nervos_dao_deposit'
+
+export const isDaoWithdrawCell = (cellType: Cell['cellType']) => cellType === 'nervos_dao_withdrawing'
+
+export const isDaoCell = (cellType: Cell['cellType']) => isDaoDepositCell(cellType) || isDaoWithdrawCell(cellType)
+
+export const isTransactionHash = (hash: string) => {
+  return /^0x([0-9a-fA-F]{64})$/.test(hash)
+}
+
+export const isNumber = (value: string) => {
+  return /^\d+$/.test(value)
+}
+
+export const formatNftDisplayId = (id: string, type: string | null) => {
+  switch (type) {
+    case 'spore': {
+      return `0x${BigNumber(id).toString(16).padStart(64, '0')}`
+    }
+    default: {
+      return id
+    }
+  }
+}
+
+export const hexToBase64 = (hexstring: string) => {
+  const str = hexstring
+    .match(/\w{2}/g)
+    ?.map(a => {
+      return String.fromCharCode(parseInt(a, 16))
+    })
+    .join('')
+  if (!str) return ''
+  return btoa(str)
+}
+
+export const ckbToShannon = (amount: string = '0') => {
+  if (Number.isNaN(+amount)) {
+    return `${amount} ckb`
+  }
+  const [integer = '0', decimal = ''] = amount.split('.')
+  const decimalLength = 10 ** decimal.length
+  const num = integer + decimal
+
+  return (BigInt(num) * BigInt(1e8 / decimalLength)).toString()
+}
+
+export const isMac = () => {
+  return navigator.userAgent.includes('Mac')
+}
+
 export default {
-  copyElementValue,
   shannonToCkb,
   toCamelcase,
-  formatConfirmation,
+  useFormatConfirmation,
   isValidReactNode,
   deprecatedAddrToNewAddr,
   handleRedirectFromAggron,
+  formatNftDisplayId,
+  hexToBase64,
+  isMac,
 }

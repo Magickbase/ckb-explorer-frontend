@@ -1,9 +1,12 @@
+import { useTranslation } from 'react-i18next'
 import TransactionItem from '../../../components/TransactionItem'
-import { TransactionsPagination, DAONoResultPanel } from './styled'
-import Pagination from '../../../components/Pagination'
+import { CsvExport } from '../../../components/CsvExport'
+import PaginationWithRear from '../../../components/PaginationWithRear'
 import { PageParams } from '../../../constants/common'
-import i18n from '../../../utils/i18n'
 import { deprecatedAddrToNewAddr } from '../../../utils/util'
+import { Transaction } from '../../../models/Transaction'
+import { RawBtcRPC } from '../../../services/ExplorerService'
+import styles from './index.module.scss'
 
 export default ({
   currentPage = 1,
@@ -15,18 +18,19 @@ export default ({
 }: {
   currentPage: number
   pageSize: number
-  transactions: State.Transaction[]
+  transactions: (Transaction & { btcTx: RawBtcRPC.BtcTx | null })[]
   total: number
   onPageChange: (page: number) => void
   filterNoResult?: boolean
 }) => {
+  const { t } = useTranslation()
   const totalPages = Math.ceil(total / pageSize)
 
   if (filterNoResult) {
     return (
-      <DAONoResultPanel>
-        <span>{i18n.t('search.dao_filter_no_result')}</span>
-      </DAONoResultPanel>
+      <div className={styles.daoNoResultPanel}>
+        <span>{t('search.dao_filter_no_result')}</span>
+      </div>
     )
   }
   const txList = transactions.map(tx => ({
@@ -44,7 +48,7 @@ export default ({
   return (
     <>
       {txList.map(
-        (transaction: State.Transaction, index: number) =>
+        (transaction, index) =>
           transaction && (
             <TransactionItem
               key={transaction.transactionHash}
@@ -56,9 +60,14 @@ export default ({
           ),
       )}
       {totalPages > 1 && (
-        <TransactionsPagination>
-          <Pagination currentPage={currentPage} totalPages={totalPages} onChange={onPageChange} />
-        </TransactionsPagination>
+        <div className={styles.transactionsPagination}>
+          <PaginationWithRear
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onChange={onPageChange}
+            rear={<CsvExport link="/nervosdao/transaction/export" />}
+          />
+        </div>
       )}
     </>
   )

@@ -1,160 +1,291 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { useParams } from 'react-router-dom'
-import { Tabs } from 'antd'
-import { useQuery } from 'react-query'
-import { AxiosResponse } from 'axios'
+import { useQuery } from '@tanstack/react-query'
+import { TFunction, useTranslation } from 'react-i18next'
+import { Link } from '../../components/Link'
 import Content from '../../components/Content'
-import OverviewCard, { OverviewItemData } from '../../components/Card/OverviewCard'
-import i18n from '../../utils/i18n'
-import { HashCardPanel } from '../../components/Card/HashCard/styled'
+import { useCurrentLanguage } from '../../utils/i18n'
 import { localeNumberString } from '../../utils/number'
 import { CodeHashMessage, ScriptCells, ScriptTransactions } from './ScriptsComp'
-import { MainnetContractHashTags, TestnetContractHashTags } from '../../constants/scripts'
-import { isMainnet } from '../../utils/chain'
-import { scripts as scriptNameList } from '../ScriptList'
-import { usePaginationParamsInPage } from '../../utils/hook'
-import { shannonToCkb, toCamelcase } from '../../utils/util'
-import DecimalCapacity from '../../components/DecimalCapacity'
-import { ScriptInfo, ScriptTabType } from './types'
+import { usePaginationParamsInPage } from '../../hooks'
+import { shannonToCkb } from '../../utils/util'
+import Capacity from '../../components/Capacity'
 import styles from './styles.module.scss'
-import { v2AxiosIns } from '../../service/http/fetcher'
+import { type ScriptInfo, explorerService } from '../../services/ExplorerService'
+import { Card, CardCellInfo, CardCellsLayout } from '../../components/Card'
+import { ReactComponent as OpenSourceIcon } from '../../assets/open-source.svg'
+import { ReactComponent as VerifiedIcon } from '../../assets/verified-icon.svg'
+import { ReactComponent as DeprecatedIcon } from '../../assets/deprecated-icon.svg'
+import { ReactComponent as OwnerLessIcon } from '../../assets/ownerless-icon.svg'
+import { ReactComponent as RFCIcon } from '../../assets/rfc-icon.svg'
+import { ReactComponent as WebsiteIcon } from '../../assets/website-icon.svg'
+import { HashType, GITHUB_ISSUE_URL } from '../../constants/common'
+import Tooltip from '../../components/Tooltip'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs'
 
-const scriptDataList = isMainnet() ? MainnetContractHashTags : TestnetContractHashTags
-
-const scriptHashNameMap = new Map<string, string>(
-  scriptDataList
-    .map(scriptData =>
-      scriptData.codeHashes.map(
-        codeHash =>
-          [
-            `${codeHash}_${scriptData.hashType}`,
-            scriptNameList.has(scriptData.tag)
-              ? scriptNameList.get(scriptData.tag)!.name
-              : i18n.t('scripts.unnamed_script'),
-          ] as [string, string],
-      ),
-    )
-    .flat(),
-)
-
-const getScriptInfo = (scriptInfo: ScriptInfo) => {
-  const { scriptName, scriptType, typeId, codeHash, hashType, capacityOfDeployedCells, capacityOfReferringCells } =
-    scriptInfo
-  const items: OverviewItemData[] = [
+const getScriptInfo = (scriptInfo: ScriptInfo, t: TFunction) => {
+  const {
+    dataHash,
+    typeHash,
+    hashType,
+    depType,
+    isLockScript,
+    isTypeScript,
+    capacityOfDeployedCells,
+    capacityOfReferringCells,
+    scriptOutPoint,
+    verified,
+  } = scriptInfo
+  const [outpointTxHash, outpointIndex] = scriptOutPoint.split('-')
+  const parsedHashType = hashType === null ? 'Type' : hashType
+  const scriptType = `${isTypeScript ? t('scripts.type_script') : ''} ${isLockScript ? t('scripts.lock_script') : ''}`
+  const items: CardCellInfo<'left' | 'right'>[] = [
     {
-      title: i18n.t('scripts.script_name'),
-      content: scriptName,
+      slot: 'left',
+      cell: {
+        title: t('scripts.script_type'),
+        content: scriptType,
+      },
     },
     {
-      title: i18n.t('scripts.hash_type'),
-      content: <span className={styles.hashType}>{hashType}</span>,
+      title: t('scripts.code_hash'),
+      content:
+        parsedHashType === 'Type' ? <CodeHashMessage codeHash={typeHash} /> : <CodeHashMessage codeHash={dataHash} />,
     },
     {
-      title: i18n.t('scripts.script_type'),
-      content: scriptType ? i18n.t(`scripts.${scriptType}`) : '-',
+      slot: 'right',
+      cell: {
+        title: t('scripts.hash_type'),
+        tooltip: t('glossary.hash_type'),
+        content: <span className={styles.hashType}>{parsedHashType}</span>,
+      },
     },
     {
-      title: i18n.t('scripts.type_id'),
-      content: typeId || '-',
+      slot: 'right',
+      cell:
+        parsedHashType === 'Type'
+          ? {
+              title: t('scripts.data_hash'),
+              content: dataHash ? <CodeHashMessage codeHash={dataHash} /> : '-',
+            }
+          : {
+              title: t('scripts.type_hash'),
+              content: typeHash ? <CodeHashMessage codeHash={typeHash} /> : '-',
+            },
     },
     {
-      title: i18n.t('scripts.code_hash'),
-      content: <CodeHashMessage codeHash={codeHash} />,
+      slot: 'left',
+      cell: {
+        title: t('scripts.outpoint_tx_hash'),
+        content: verified ? (
+          <CodeHashMessage codeHash={outpointTxHash} />
+        ) : (
+          <Tooltip
+            trigger={
+              <Link to={GITHUB_ISSUE_URL} className={styles.unverifiedTooltip}>
+                {t('scripts.unverified')}
+              </Link>
+            }
+            placement="top"
+          >
+            {t('scripts.unverified_description')}
+          </Tooltip>
+        ),
+      },
     },
     {
-      title: i18n.t('scripts.capacity_of_deployed_cells'),
-      content: <DecimalCapacity value={localeNumberString(shannonToCkb(capacityOfDeployedCells))} hideZero />,
+      slot: 'left',
+      cell: {
+        title: t('scripts.outpoint_index'),
+        content: outpointIndex,
+      },
     },
     {
-      title: '',
-      content: '',
+      slot: 'left',
+      cell: {
+        title: t('scripts.outpoint_dep_type'),
+        content: depType,
+      },
     },
     {
-      title: i18n.t('scripts.capacity_of_referring_cells'),
-      content: <DecimalCapacity value={localeNumberString(shannonToCkb(capacityOfReferringCells))} hideZero />,
+      title: t('scripts.capacity_of_deployed_cells'),
+      tooltip: t('glossary.capacity_of_deployed_cells'),
+      content: <Capacity capacity={shannonToCkb(capacityOfDeployedCells)} display="short" />,
+    },
+    {
+      slot: 'right',
+      cell: {
+        title: t('scripts.capacity_of_referring_cells'),
+        content: <Capacity capacity={shannonToCkb(capacityOfReferringCells)} display="short" />,
+      },
     },
   ]
 
-  // don't show `referring_cells` temporarily
-  return items.slice(0, 6)
+  return items
 }
 
-const ScriptsTitleOverview = ({ scriptInfo }: { scriptInfo: ScriptInfo }) => {
+type ScriptTabType = 'transactions' | 'deployed_cells' | 'referring_cells' | undefined
+
+export function ScriptInfosCard({ scriptInfos }: { scriptInfos: ScriptInfo[] }) {
+  const { t } = useTranslation()
   return (
-    <div className={styles.scriptsTitleOverviewPanel}>
-      <OverviewCard items={getScriptInfo(scriptInfo)} hideShadow />
-    </div>
+    <>
+      {scriptInfos.map(scriptInfo => (
+        <Card style={{ marginTop: 24 }} key={scriptInfo.scriptOutPoint}>
+          <CardCellsLayout type="left-right" cells={getScriptInfo(scriptInfo, t)} />
+        </Card>
+      ))}
+    </>
   )
 }
 
-const seekScriptName = (codeHash: string, hashType: string): string =>
-  scriptHashNameMap.has(`${codeHash}_${hashType}`)
-    ? scriptHashNameMap.get(`${codeHash}_${hashType}`)!
-    : i18n.t('scripts.unnamed_script')
-
 export const ScriptPage = () => {
   const history = useHistory()
-  const { codeHash, hashType, tab } = useParams<{ codeHash: string; hashType: string; tab: ScriptTabType }>()
-  const { currentPage, pageSize } = usePaginationParamsInPage()
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation()
+  const currentLanguage = useCurrentLanguage()
 
-  const [countOfTransactions, setCountOfTransactions] = useState<number>(0)
-  const [countOfDeployedCells, setCountOfDeployedCells] = useState<number>(0)
-  const [countOfReferringCells, setCountOfReferringCells] = useState<number>(0)
+  const { codeHash, hashType, tab } = useParams<{
+    codeHash: string
+    hashType: HashType
+    tab: ScriptTabType
+  }>()
+  const { currentPage, pageSize } = usePaginationParamsInPage()
 
   const [pageOfTransactions, setPageOfTransactions] = useState<number>(1)
   const [pageOfDeployedCells, setPageOfDeployedCells] = useState<number>(1)
   const [pageOfReferringCells, setPageOfReferringCells] = useState<number>(1)
 
-  const { status, data: resp } = useQuery<AxiosResponse>(['scripts_general_info', codeHash, hashType], () =>
-    v2AxiosIns.get(`scripts/general_info`, {
-      params: {
-        code_hash: codeHash,
-        hash_type: hashType,
-      },
-    }),
+  const { status, data: resp } = useQuery(['scripts_general_info', codeHash, hashType], () =>
+    explorerService.api.fetchScriptInfo(codeHash, hashType),
   )
 
-  const scriptInfo =
+  const scriptInfos: ScriptInfo[] =
     status === 'success' && resp
-      ? toCamelcase<Response.Response<ScriptInfo>>(resp?.data)!.data
-      : ({
-          id: 0,
-          scriptName: '',
-          scriptType: '',
-          typeId: '',
-          codeHash,
-          hashType,
-          capacityOfDeployedCells: '0',
-          capacityOfReferringCells: '0',
-          countOfTransactions: 0,
-          countOfDeployedCells: 0,
-          countOfReferringCells: 0,
-        } as ScriptInfo)
-  scriptInfo.scriptName = seekScriptName(scriptInfo.codeHash, scriptInfo.hashType)
+      ? resp.data
+      : [
+          {
+            name: '',
+            dataHash: '',
+            typeHash: '',
+            depType: '',
+            hashType: hashType as HashType,
+            isTypeScript: false,
+            isLockScript: false,
+            capacityOfDeployedCells: '0',
+            capacityOfReferringCells: '0',
+            countOfTransactions: 0,
+            countOfReferringCells: 0,
+            rfc: '',
+            website: '',
+            sourceUrl: '',
+            deprecated: false,
+            verified: false,
+            scriptOutPoint: '',
+            description: '',
+            isZeroLock: false,
+            isDeployedCellDead: false,
+          },
+        ]
 
-  useEffect(() => {
-    setCountOfTransactions(scriptInfo.countOfTransactions)
-    setCountOfDeployedCells(scriptInfo.countOfDeployedCells)
-    setCountOfReferringCells(scriptInfo.countOfReferringCells)
-  }, [scriptInfo.countOfDeployedCells, scriptInfo.countOfReferringCells, scriptInfo.countOfTransactions])
+  const countOfDeployedCells =
+    scriptInfos[0]?.dataHash === '0x0000000000000000000000000000000000000000000000000000000000000000'
+      ? 0
+      : scriptInfos.length
+  const countOfReferringCells = scriptInfos.reduce((sum, item) => sum + item.countOfReferringCells, 0)
+  const countOfTransactions = scriptInfos.reduce((sum, item) => sum + item.countOfTransactions, 0)
+  const liveScriptInfos = scriptInfos.filter(scriptInfo => !scriptInfo.isDeployedCellDead)
+  const {
+    name = '',
+    sourceUrl = '',
+    rfc = '',
+    website = '',
+    isZeroLock = false,
+    verified = false,
+    description = '',
+    deprecated = false,
+  } = liveScriptInfos[0] || {}
 
   return (
     <Content>
       <div className={`${styles.scriptContentPanel} container`}>
-        <HashCardPanel isColumn={false}>
-          <ScriptsTitleOverview scriptInfo={scriptInfo} />
-        </HashCardPanel>
+        <Card>
+          <div className={styles.headerCard}>
+            <span className={styles.headerTitle}>Script</span>
+            {name ? (
+              <span className={styles.headerSubTitle}>{name}</span>
+            ) : (
+              <span className={styles.headerSubTitle}>{codeHash}</span>
+            )}
+
+            <span className={styles.headerLink}>
+              {verified === true ? (
+                <Tooltip trigger={<VerifiedIcon />} placement="top">
+                  {t('scripts.verified')}
+                </Tooltip>
+              ) : null}
+              {deprecated === true ? (
+                <Tooltip trigger={<DeprecatedIcon />} placement="top">
+                  {t('scripts.deprecated')}
+                </Tooltip>
+              ) : null}
+              {isZeroLock === true ? (
+                <Tooltip trigger={<OwnerLessIcon />} placement="top">
+                  {t('scripts.link.ownerless_cell')}
+                </Tooltip>
+              ) : null}
+              {rfc ? (
+                <Tooltip
+                  trigger={
+                    <Link to={rfc} className={styles.rfcAction}>
+                      <RFCIcon />
+                    </Link>
+                  }
+                  placement="top"
+                >
+                  {t('scripts.link.rfc')}
+                </Tooltip>
+              ) : null}
+              {website ? (
+                <Tooltip
+                  trigger={
+                    <Link to={website} className={styles.websiteAction}>
+                      <WebsiteIcon />
+                    </Link>
+                  }
+                  placement="top"
+                >
+                  {t('scripts.link.website')}
+                </Tooltip>
+              ) : null}
+              {sourceUrl ? (
+                <Link to={sourceUrl} className={styles.openSourceAction}>
+                  {t('scripts.open_source_script')}
+                  <OpenSourceIcon />
+                </Link>
+              ) : null}
+            </span>
+          </div>
+          <div className={styles.headerDescription}>{description}</div>
+        </Card>
+
+        {scriptInfos.length !== 0 && liveScriptInfos.length === 0 ? (
+          <Card className={styles.noInfoCard}>
+            <div>{t('scripts.no_live_cells')}</div>
+          </Card>
+        ) : (
+          <ScriptInfosCard scriptInfos={liveScriptInfos} />
+        )}
         <Tabs
-          key={i18n.language + countOfTransactions + countOfDeployedCells + countOfReferringCells}
+          key={currentLanguage + countOfTransactions + countOfDeployedCells + countOfReferringCells}
           className={styles.scriptTabs}
-          activeKey={tab ?? 'transactions'}
-          animated={{ inkBar: false }}
-          tabBarStyle={{
-            marginBottom: 0,
-            height: 56,
-          }}
-          onTabClick={key => {
+          type="underline"
+          value={tab ?? 'transactions'}
+          style={{ marginTop: 24 }}
+          onValueChange={key => {
             const currentTab = tab ?? 'transactions'
             if (currentTab === key) return
 
@@ -167,36 +298,42 @@ export const ScriptPage = () => {
             }
             if (key === 'deployed_cells') {
               history.push(
-                `/script/${codeHash}/${hashType}/deployed_cells?page=${pageOfDeployedCells}&size=${pageSize}`,
+                `/${language}/script/${codeHash}/${hashType}/deployed_cells?page=${pageOfDeployedCells}&size=${pageSize}`,
               )
             } else if (key === 'referring_cells') {
               history.push(
-                `/script/${codeHash}/${hashType}/referring_cells?page=${pageOfReferringCells}&size=${pageSize}`,
+                `/${language}/script/${codeHash}/${hashType}/referring_cells?page=${pageOfReferringCells}&size=${pageSize}`,
               )
             } else if (key === 'transactions') {
-              history.push(`/script/${codeHash}/${hashType}?page=${pageOfTransactions}&size=${pageSize}`)
+              history.push(`/${language}/script/${codeHash}/${hashType}?page=${pageOfTransactions}&size=${pageSize}`)
             }
           }}
-          items={[
-            {
-              label: `${i18n.t('transaction.transactions')} (${localeNumberString(countOfTransactions!)})`,
-              key: 'transactions',
-              children: <ScriptTransactions page={currentPage} size={pageSize} />,
-            },
-            {
-              label: `${i18n.t('scripts.deployed_cells')} (${localeNumberString(countOfDeployedCells)})`,
-              key: 'deployed_cells',
-              children: <ScriptCells page={currentPage} size={pageSize} cellType="deployed_cells" />,
-            },
-            {
-              label: `${i18n.t('scripts.referring_cells')} (${localeNumberString(countOfReferringCells)})`,
-              key: 'referring_cells',
-              children: <ScriptCells page={currentPage} size={pageSize} cellType="referring_cells" />,
-            },
-          ]
-            // don't show `referring_cells` temporarily
-            .slice(0, 2)}
-        />
+        >
+          <TabsList>
+            <TabsTrigger value="transactions">
+              <span className={styles.scriptTabTitle}>{`${t('transaction.transactions')}`}</span>
+            </TabsTrigger>
+            <TabsTrigger value="deployed_cells">
+              <span className={styles.scriptTabTitle}>
+                {`${t('scripts.deployed_cells')} (${localeNumberString(countOfDeployedCells)})`}
+              </span>
+            </TabsTrigger>
+            <TabsTrigger value="referring_cells">
+              <span className={styles.scriptTabTitle}>
+                {`${t('scripts.referring_cells')} (${localeNumberString(countOfReferringCells)})`}
+              </span>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="transactions" style={{ width: '100%' }}>
+            <ScriptTransactions page={currentPage} size={pageSize} countOfTransactions={countOfTransactions} />
+          </TabsContent>
+          <TabsContent value="deployed_cells" style={{ width: '100%' }}>
+            <ScriptCells page={currentPage} size={pageSize} cellType="deployed_cells" />
+          </TabsContent>
+          <TabsContent value="referring_cells" style={{ width: '100%' }}>
+            <ScriptCells page={currentPage} size={100} cellType="referring_cells" />
+          </TabsContent>
+        </Tabs>
       </div>
     </Content>
   )

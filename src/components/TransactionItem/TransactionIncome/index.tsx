@@ -1,37 +1,36 @@
 import BigNumber from 'bignumber.js'
-import { Tooltip } from 'antd'
-import i18n from '../../../utils/i18n'
-import { TransactionIncomePanel, TransactionCapacityValuePanel } from './styled'
+import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
 import { shannonToCkb } from '../../../utils/util'
-import { localeNumberString } from '../../../utils/number'
-import DecimalCapacity from '../../DecimalCapacity'
-import { useIsMobile } from '../../../utils/hook'
+import Capacity from '../../Capacity'
+import { useIsMobile } from '../../../hooks'
 import CurrentAddressIcon from '../../../assets/current_address.svg'
+import Tooltip from '../../Tooltip'
+import styles from './index.module.scss'
 
 export default ({ income }: { income: string }) => {
   const isMobile = useIsMobile()
+  const { t } = useTranslation()
   let bigIncome = new BigNumber(income)
   if (bigIncome.isNaN()) {
     bigIncome = new BigNumber(0)
   }
+  const isIncome = bigIncome.isGreaterThanOrEqualTo(0)
   return (
-    <TransactionIncomePanel>
-      <TransactionCapacityValuePanel increased={bigIncome.isGreaterThanOrEqualTo(0)}>
+    <div className={styles.transactionIncomePanel}>
+      <div className={classNames(styles.transactionCapacityValuePanel, isIncome && styles.increased)}>
         {isMobile && (
-          <Tooltip placement="top" title={`${i18n.t('address.current-address')} `}>
-            <img src={CurrentAddressIcon} alt="current Address" />
+          <Tooltip trigger={<img src={CurrentAddressIcon} alt="current Address" />} placement="top">
+            {`${t('address.current-address')} `}
           </Tooltip>
         )}
-        <DecimalCapacity
-          value={`${bigIncome.isPositive() ? '+' : ''}${localeNumberString(shannonToCkb(bigIncome))}`}
-          color="inherit"
-        />
+        <Capacity capacity={shannonToCkb(bigIncome)} type="diff" />
         {!isMobile && (
-          <Tooltip placement="top" title={`${i18n.t('address.current-address')} `}>
-            <img src={CurrentAddressIcon} alt="current Address" />
+          <Tooltip trigger={<img src={CurrentAddressIcon} alt="current Address" />} placement="top">
+            {`${t('address.current-address')} `}
           </Tooltip>
         )}
-      </TransactionCapacityValuePanel>
-    </TransactionIncomePanel>
+      </div>
+    </div>
   )
 }

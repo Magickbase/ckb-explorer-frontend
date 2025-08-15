@@ -1,0 +1,328 @@
+@use '../../styles/variables.module';
+
+.containerPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    margin: 0;
+  }
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    margin-top: 20px;
+    width: calc(100% - 32px);
+    justify-content: start;
+  }
+
+  > span {
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 28px;
+
+    @media (width <= variables.$mobileBreakPoint) {
+      font-size: 20px;
+      line-height: normal;
+    }
+  }
+
+  > span:first-child {
+    color: #333;
+  }
+
+  > span:last-child {
+    color: #999;
+  }
+}
+
+.description {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+
+  > div {
+    width: 60%;
+    text-align: center;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #333;
+  }
+
+  @media (width <= variables.$mobileBreakPoint) {
+    > div {
+      text-align: left;
+      width: calc(100% - 32px);
+    }
+  }
+}
+
+.exportPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 24px;
+  margin-bottom: 80px;
+  width: 70%;
+  min-width: 342px;
+  border-radius: 4px;
+  background: white;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    margin-top: 16px;
+    margin-bottom: 24px;
+    width: calc(100% - 32px);
+  }
+
+  > div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .exportHeader {
+    flex-direction: column;
+
+    > div:first-child {
+      padding-top: 24px;
+      padding-bottom: 4px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: #333;
+
+      @media (width <= variables.$mobileBreakPoint) {
+        padding: 16px 0;
+      }
+    }
+
+    .exportDescription {
+      font-weight: 400;
+      text-align: center;
+    }
+
+    @media (width <= variables.$mobileBreakPoint) {
+      margin-top: 12px;
+    }
+  }
+
+  .dateOrBlockPanel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+    color: #666;
+
+    @media (width <= variables.$mobileBreakPoint) {
+      flex-direction: column;
+      border-top: 1px solid #e5e5e5;
+      margin-top: 24px;
+      padding: 24px 12px 0;
+    }
+
+    .datePickerPanel,
+    .heightInputPanel {
+      padding-left: 24px;
+      padding-right: 24px;
+      display: flex;
+      flex-direction: column;
+      width: 40%;
+
+      @media (width <= variables.$mobileBreakPoint) {
+        width: 100%;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      > div:first-child {
+        margin-bottom: 12px;
+
+        @media (width <= variables.$mobileBreakPoint) {
+          margin-bottom: 8px;
+        }
+      }
+
+      > div:last-child {
+        width: 100%;
+
+        input {
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  .note {
+    display: flex;
+    justify-content: center;
+    color: #999;
+    line-height: 24px;
+
+    > div {
+      background: white;
+      text-align: center;
+      padding-top: 56px;
+      padding-bottom: 40px;
+
+      @media (width <= variables.$mobileBreakPoint) {
+        padding: 24px 8px 16px;
+        max-width: 312px;
+      }
+    }
+  }
+
+  .hint {
+    margin-top: 16px;
+    padding: 0 12px;
+
+    > div {
+      padding: 12px;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 16px;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+
+      > svg {
+        min-width: 14px;
+        min-height: 14px;
+        margin-right: 8px;
+        margin-top: 3px;
+      }
+
+      &.noHint {
+        visibility: hidden;
+      }
+
+      &.successHint,
+      &.errorHint {
+        width: 100%;
+        border-radius: 8px;
+        max-width: 560px;
+        font-size: 14px;
+      }
+
+      &.successHint {
+        border: 1px solid rgb(0 204 155 / 100%);
+        background: rgb(230 252 247 / 100%);
+        color: rgb(0 204 155 / 100%);
+
+        path {
+          fill: rgb(0 204 155 / 100%);
+        }
+      }
+
+      .hintText {
+        line-height: 20px;
+        word-break: break-all;
+      }
+
+      &.errorHint {
+        border: 1px solid #ffa6a6;
+        background: #fff2f2;
+        color: #fa504f;
+      }
+    }
+  }
+
+  .downloadButton {
+    > button {
+      text-align: center;
+      margin-top: 32px;
+      margin-bottom: 56px;
+      width: 152px;
+      height: 48px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 14px 40px;
+      cursor: pointer;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 19px;
+
+      &[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      @media (width <= variables.$mobileBreakPoint) {
+        margin-top: 20px;
+        margin-bottom: 24px;
+      }
+    }
+  }
+}
+
+.blockHeightText {
+  text-align: center;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    text-align: left;
+  }
+}
+
+.inputPanel {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  align-items: center;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  @media (width > variables.$mobileBreakPoint) {
+    .inputLabel {
+      width: 40%;
+      text-align: end;
+    }
+
+    .inputContainer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 8px;
+    }
+
+    .inputContent {
+      flex: 1;
+      max-width: 256px;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 16px;
+      line-height: 19px;
+      color: #333;
+      padding: 0;
+      margin: 0;
+    }
+  }
+}
+
+.radioGroup {
+  display: flex !important;
+  gap: 1rem !important;
+}
+
+.radioItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}

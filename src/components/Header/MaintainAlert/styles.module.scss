@@ -1,0 +1,22 @@
+@use '../../../styles/variables.module';
+
+.container {
+  position: sticky;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 450;
+  line-height: 1.2;
+  text-align: center;
+  padding: 1rem;
+  background-color: #fa8f00;
+  z-index: 9;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    text-align: left;
+  }
+
+  .clickable {
+    color: var(--primary-color);
+    cursor: pointer;
+  }
+}

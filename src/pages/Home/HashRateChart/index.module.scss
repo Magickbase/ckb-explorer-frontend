@@ -1,0 +1,23 @@
+@use '../../../styles/variables.module';
+
+.chartLoadingPanel {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  :global(.chartNoData) {
+    width: 105px;
+    height: auto;
+
+    @media (max-width: variables.$extraLargeBreakPoint) {
+      width: 90px;
+    }
+  }
+}
+
+.homeChartLink {
+  canvas {
+    cursor: pointer;
+  }
+}

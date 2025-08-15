@@ -1,36 +1,42 @@
 import { ReactNode } from 'react'
-import { ScriptItemPanel, ScriptPanel } from './styled'
-import i18n from '../../utils/i18n'
+import { useTranslation } from 'react-i18next'
 import HashTag from '../HashTag'
-import { getContractHashTag } from '../../utils/util'
+import { HelpTip } from '../HelpTip'
+import { Script } from '../../models/Script'
+import styles from './index.module.scss'
 
-const ScriptItem = ({ title, children }: { title: string; children?: ReactNode }) => (
-  <ScriptItemPanel>
-    <div className="script__title">
+const ScriptItem = ({ title, tooltip, children }: { title: string; tooltip?: string; children?: ReactNode }) => (
+  <div className={styles.scriptItemPanel}>
+    <div className="scriptTitle">
       <span>{title}</span>
+      {tooltip && <HelpTip>{tooltip}</HelpTip>}
+      <span>:</span>
     </div>
-    <div className="script__content">{children}</div>
-  </ScriptItemPanel>
+    <div className="scriptContent">{children}</div>
+  </div>
 )
 
-const Script = ({ script }: { script: State.Script }) => {
-  const contractHashTag = getContractHashTag(script)
+const ScriptComp = ({ script }: { script: Script }) => {
+  const { t } = useTranslation()
+
   return (
-    <ScriptPanel>
-      <ScriptItem title={i18n.t('address.code_hash')}>
-        <div className="script__code_hash">
+    <div className={styles.scriptPanel}>
+      <ScriptItem title={t('address.code_hash')}>
+        <div className="scriptCodeHash">
           <span className="monospace">{script.codeHash}</span>
-          {contractHashTag && <HashTag content={contractHashTag.tag} />}
+          <HashTag script={script} />
         </div>
       </ScriptItem>
-      <ScriptItem title={i18n.t('address.hash_type')}>
+      <ScriptItem title={t('address.hash_type')}>
         <code>{script.hashType}</code>
       </ScriptItem>
-      <ScriptItem title={i18n.t('address.args')}>
-        <span className="monospace">{script.args}</span>
+      <ScriptItem title={t('address.args')} tooltip={t('glossary.args')}>
+        <span className="monospace" data-is-decodable="true">
+          {script.args}
+        </span>
       </ScriptItem>
-    </ScriptPanel>
+    </div>
   )
 }
 
-export default Script
+export default ScriptComp

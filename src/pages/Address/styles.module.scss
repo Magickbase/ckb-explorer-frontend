@@ -1,60 +1,134 @@
+@use '../../styles/variables.module';
+
+.inscriptions {
+  overflow-x: auto;
+  width: 100%;
+  scrollbar-gutter: stable;
+
+  @media (width >= variables.$extraLargeBreakPoint) {
+    max-height: 220px;
+  }
+
+  @media (width <= variables.$extraLargeBreakPoint) {
+    max-height: 310px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+    gap: 1rem;
+  }
+}
+
+.addressOverviewCard:not(
+    [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.']
+  ) {
+  margin-top: 24px;
+  padding-bottom: 40px;
+
+  .cardTitle {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  @media (width <= variables.$mobileBreakPoint) {
+    margin-top: 20px;
+    padding-bottom: 16px;
+  }
+}
+
+.addressUDTAssetsPanel + .addressLockScriptPanel {
+  margin-top: 24px;
+}
+
 .addressWidthModify {
   max-width: 80%;
 
-  @media (max-width: 1200px) {
+  @media (width <= variables.$extraLargeBreakPoint) {
     max-width: 40%;
   }
 
-  @media (max-width: 750px) {
+  @media (width <= variables.$mobileBreakPoint) {
     max-width: 100%;
   }
 }
 
-.transactionTitleCard {
+.txHeaderLabels {
   height: 80px;
+  display: flex;
+  align-items: stretch;
 
-  @media (max-width: 750px) {
-    height: 152px;
-    flex-direction: column;
-    align-items: flex-start;
+  @media (width <= variables.$mobileBreakPoint) {
+    height: 50px;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 100%;
+    font-size: 20px;
+    font-weight: 400;
+    white-space: nowrap;
+
+    &[data-is-active='true'] {
+      font-weight: 600;
+    }
+
+    &:hover {
+      color: var(--primary-color-hover);
+    }
+  }
+}
+
+.transactionListOptionsCard:not(
+    [_='This `:not` selector is used to increase the specificity of the selector and serves no other purpose.']
+  ) {
+  margin-top: 24px;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    padding-bottom: 16px;
+  }
+
+  .cardHeader {
     padding: 0;
-    > div {
-      display: flex;
-      align-items: center;
-      padding: 0 12px;
+    overflow: auto;
+    scrollbar-gutter: stable;
+
+    &::-webkit-scrollbar {
+      display: none;
     }
-    > div:first-child {
-      margin: 0;
-      height: 56px;
-    }
-    > div:last-child {
-      width: 100%;
-      order: 3;
-      height: 92px;
-      > div {
-        width: 100%;
-        > label {
-          width: 50%;
-        }
-      }
-    }
-    &:after {
-      content: ' ';
-      order: 2;
-      background: #ededed;
-      height: 4px;
-      width: 100%;
-    }
+  }
+}
+
+.searchOptionsAndModeSwitch {
+  display: flex;
+  gap: 40px;
+
+  @media (width <= variables.$extraLargeBreakPoint) {
+    gap: 1rem;
+  }
+
+  @media (width <= variables.$mobileBreakPoint) {
+    flex-direction: column-reverse;
+    align-items: flex-end;
   }
 }
 
 .sortAndFilter {
   display: flex;
   align-items: center;
-  padding-right: 2.6rem;
+
   svg {
     cursor: pointer;
   }
+
   &[data-is-active='true'] {
     svg {
       path {
@@ -65,43 +139,17 @@
 }
 
 .layoutButtons {
-  > label {
-    height: 40px;
-    width: 120px;
-    text-align: center;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 38px;
-    color: #333333;
-    border: 1px solid #e5e5e5;
-    box-shadow: none !important;
-    &::before {
-      content: none !important;
-    }
-    &:hover {
-      color: #333333;
-      background: #ffffff;
-    }
-    &:first-child {
-      border-radius: 4px 0 0 4px;
-    }
-    &:last-child {
-      border-radius: 0 4px 4px 0;
-    }
-    &:global(.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)) {
-      background: #333333;
-      border-color: #333333 !important;
-      &:hover {
-        background: #333333;
-      }
-    }
+  width: 240px;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    width: 100%;
   }
 }
 
 .liteTransactionHeader {
   display: flex;
   width: 100%;
-  background-color: #ffffff;
+  background-color: #fff;
   margin-top: 4px;
   padding: 23px 40px 22px;
   flex-direction: row;
@@ -109,24 +157,300 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 19px;
-  color: #333333;
+  color: #333;
+
   > div {
     &:first-child {
       width: 28%;
     }
+
     &:nth-child(2) {
       width: 13%;
     }
+
     &:nth-child(3) {
       width: 20%;
     }
+
     &:nth-child(4) {
       width: 20%;
     }
+
     &:last-child {
       width: 19%;
       text-align: right;
       padding: 0;
     }
+  }
+}
+
+.openInNew {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+
+  &:hover {
+    color: var(--primary-color-hover);
+  }
+}
+
+.dasAccount {
+  display: flex;
+  align-items: center;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  height: 32px;
+  border-radius: 4px;
+  padding: 0 4px;
+  margin-left: 20px;
+  max-width: 152px;
+  font-size: 16px;
+  font-weight: 500;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    max-width: 90px;
+    font-size: 13px;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+    margin-right: 2px;
+    border-radius: 50%;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+  }
+}
+
+.noRecords {
+  display: flex;
+  background: #fff;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  font-size: 1rem;
+}
+
+.assetCardList {
+  margin-top: 10px;
+  background-color: #f1f1f1;
+  padding: 6px 25px;
+  border-radius: 4px;
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 1rem;
+}
+
+.scriptToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scriptHash {
+  margin-top: 12px;
+  padding: 12px 24px;
+  background: #f7f7f7;
+  word-break: break-all;
+}
+
+.cardFooterPanel {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  background: white;
+  flex-direction: row;
+  justify-content: center;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 2px 6px 0 rgb(0 0 0 / 12%);
+}
+
+.cardFooterButton {
+  height: 30px;
+  line-height: 30px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: rgb(245 245 245);
+  letter-spacing: 1px;
+  color: rgb(0 0 0);
+  pointer-events: auto;
+}
+
+.notice {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #ffb21e;
+  border: 1px solid #ffdba6;
+  background-color: #fffcf2;
+}
+
+.professionalLiteBox {
+  margin-left: 10px;
+
+  @media (width <= variables.$mobileBreakPoint) {
+    width: 100%;
+  }
+
+  .button {
+    height: 40px;
+    width: 120px;
+    text-align: center;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 38px;
+    color: #333;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    cursor: pointer;
+    box-shadow: none !important;
+
+    &:first-child {
+      border-radius: 4px 0 0 4px;
+    }
+
+    &:last-child {
+      border-radius: 0 4px 4px 0;
+    }
+
+    @media (width <= variables.$mobileBreakPoint) {
+      height: 40px;
+      width: 50%;
+    }
+  }
+
+  .selected {
+    color: #fff;
+    background: #333;
+    border-color: #333 !important;
+
+    &:hover {
+      background: #333;
+    }
+  }
+
+  @media (width <= variables.$mobileBreakPoint) {
+    border-top: 1px solid #e5e5e5;
+    padding-top: 16px;
+    margin: 0;
+  }
+}
+
+.copyCodeHash {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #e5e5e5;
+  margin-top: 4px;
+  padding-top: 4px;
+}
+
+.copyIcon {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  margin-left: auto;
+  color: #f1f1f1;
+  transition: color 0.1s ease;
+
+  &:hover {
+    color: var(--primary-color-hover) !important;
+  }
+}
+
+.addressLockScriptPanel {
+  display: flex;
+  flex-direction: column;
+}
+
+.addressContentPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 25px;
+  margin-bottom: 40px;
+
+  @media (max-width: variables.$mobileBreakPoint) {
+    margin: 0;
+    padding: 20px;
+  }
+}
+
+.addressLockScriptController {
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+
+  > img {
+    width: 12px;
+    height: 12px;
+    margin: 2px 0 0 5px;
+  }
+
+  @media (max-width: variables.$mobileBreakPoint) {
+    font-size: 14px;
+    margin-top: 0;
+
+    > img {
+      margin: 0 0 0 5px;
+    }
+  }
+}
+
+.addressTransactionsPanel {
+  width: 100%;
+  margin-top: 4px;
+
+  @media (max-width: variables.$mobileBreakPoint) {
+    :global(.transactionPanel):first-child {
+      margin-top: 0;
+      box-shadow: none;
+    }
+  }
+}
+
+.addressAssetsTabPaneTitle {
+  font-family: Roboto, sans-serif;
+  color: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: 0;
+  text-align: left;
+}
+
+.addressUDTAssetsPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  @media (max-width: variables.$mobileBreakPoint) {
+    padding-top: 16px;
+    border-top: 1px solid #f5f5f5;
+  }
+}
+
+.scriptIcon {
+  display: flex;
+  white-space: nowrap;
+  gap: 1ch;
+
+  svg {
+    fill: #666;
   }
 }

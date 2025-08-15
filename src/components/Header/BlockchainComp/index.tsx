@@ -1,23 +1,12 @@
-import { useState, useLayoutEffect, FC, memo } from 'react'
-import { useQuery } from 'react-query'
-import { isMainnet } from '../../../utils/chain'
-import WhiteDropdownIcon from '../../../assets/white_dropdown.png'
-import BlueDropUpIcon from '../../../assets/blue_drop_up.png'
-import GreenDropUpIcon from '../../../assets/green_drop_up.png'
-import { useAppState } from '../../../contexts/providers'
-import { HeaderBlockchainPanel, MobileSubMenuPanel } from './styled'
-import SimpleButton from '../../SimpleButton'
-import ChainDropdown from '../../Dropdown/ChainType'
-import { useIsMobile } from '../../../utils/hook'
-import { ChainName, MAINNET_URL, TESTNET_URL } from '../../../constants/common'
-import { fetchNodeVersion } from '../../../service/http/fetcher'
-import { AppCachedKeys } from '../../../constants/cache'
-import { fetchCachedData, storeCachedData } from '../../../utils/cache'
-
-const getDropdownIcon = (showDropdown: boolean) => {
-  if (!showDropdown) return WhiteDropdownIcon
-  return isMainnet() ? GreenDropUpIcon : BlueDropUpIcon
-}
+import { useState, memo } from 'react'
+import classNames from 'classnames'
+import { useQuery } from '@tanstack/react-query'
+import { ChainName, MAINNET_URL, ONE_DAY_MILLISECOND, TESTNET_URL } from '../../../constants/common'
+import { explorerService } from '../../../services/ExplorerService'
+import { cacheService } from '../../../services/CacheService'
+import { useChainName } from '../../../hooks/useCKBNode'
+import Popover from '../../Popover'
+import { ReactComponent as ArrowIcon } from '../MenusComp/arrow.svg'
 
 const handleVersion = (nodeVersion: string) => {
   if (nodeVersion && nodeVersion.indexOf('(') !== -1) {
@@ -26,129 +15,52 @@ const handleVersion = (nodeVersion: string) => {
   return nodeVersion
 }
 
-const BlockchainDropdown: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
-  const {
-    app: { language },
-  } = useAppState()
-  const [showChainType, setShowChainType] = useState(false)
-  const [chainTypeLeft, setChainTypeLeft] = useState(0)
-  const [chainTypeTop, setChainTypeTop] = useState(0)
-
-  useLayoutEffect(() => {
-    if (showChainType && language) {
-      const chainDropdownComp = document.getElementById('header__blockchain__panel')
-      if (chainDropdownComp) {
-        const chainDropdownReact = chainDropdownComp.getBoundingClientRect()
-        if (chainDropdownReact) {
-          setChainTypeLeft(chainDropdownReact.left - (isMainnet() ? 40 : 30))
-          setChainTypeTop(chainDropdownReact.bottom - 6)
-        }
-      }
-    }
-  }, [showChainType, language])
-  return (
-    <HeaderBlockchainPanel
-      id="header__blockchain__panel"
-      onMouseLeave={() => {
-        setShowChainType(false)
-      }}
-    >
-      <SimpleButton
-        className="header__blockchain__flag"
-        onMouseOver={() => {
-          setShowChainType(true)
-        }}
-      >
-        <div className="header__blockchain__content_panel">
-          <div
-            className="header__blockchain__content"
-            style={{
-              textTransform: 'uppercase',
-            }}
-          >
-            {isMainnet() ? ChainName.Mainnet : ChainName.Testnet}
-          </div>
-          <img src={getDropdownIcon(showChainType)} alt="dropdown icon" />
-        </div>
-        <div className="header__blockchain__node__version">{handleVersion(nodeVersion)}</div>
-      </SimpleButton>
-      {showChainType && <ChainDropdown setShow={setShowChainType} left={chainTypeLeft} top={chainTypeTop} />}
-    </HeaderBlockchainPanel>
-  )
-}
-
-const BlockchainMenu: FC<{ nodeVersion: string }> = ({ nodeVersion }) => {
-  const [showSubMenu, setShowSubMenu] = useState(false)
-
-  const chainTypeIcon = () => {
-    if (!showSubMenu) {
-      return WhiteDropdownIcon
-    }
-    return isMainnet() ? GreenDropUpIcon : BlueDropUpIcon
-  }
-
-  return (
-    <MobileSubMenuPanel showSubMenu={false}>
-      <SimpleButton
-        className="mobile__menus__main__item"
-        onClick={() => {
-          setShowSubMenu(!showSubMenu)
-        }}
-      >
-        <div
-          className="mobile__menus__main__item__content__highlight"
-          style={{
-            textTransform: 'uppercase',
-          }}
-        >
-          {isMainnet() ? ChainName.Mainnet : ChainName.Testnet}
-        </div>
-        <img className="mobile__menus__main__item__icon" alt="mobile chain type icon" src={chainTypeIcon()} />
-      </SimpleButton>
-      <div className="blockchain__mobile__node__version">{handleVersion(nodeVersion)}</div>
-      {showSubMenu && (
-        <>
-          <a className="mobile__menus__sub__item" href={MAINNET_URL}>
-            {`${ChainName.Mainnet} mainnet`}
-          </a>
-          <a className="mobile__menus__sub__item" href={TESTNET_URL}>
-            {`${ChainName.Testnet} testnet`}
-          </a>
-        </>
-      )}
-    </MobileSubMenuPanel>
-  )
-}
-
 export default memo(() => {
-  const isMobile = useIsMobile()
-
   const query = useQuery(
     ['node_version'],
     async () => {
-      const wrapper = await fetchNodeVersion()
-      const nodeVersion = wrapper.attributes.version
-      storeCachedData(AppCachedKeys.Version, `${nodeVersion}&${new Date().getTime()}`)
-      return nodeVersion
+      const { version } = await explorerService.api.fetchNodeVersion()
+      cacheService.set<string>('node_version', version, { expireTime: ONE_DAY_MILLISECOND })
+      return version
     },
     {
       keepPreviousData: true,
-      initialData: () => {
-        // version cache format: version&timestamp
-        const data = fetchCachedData<string>(AppCachedKeys.Version)
-        if (!data?.includes('&')) return undefined
-
-        const timestamp = Number(data.substring(data.indexOf('&') + 1))
-        const DAY_TIMESTAMP = 24 * 60 * 60 * 1000
-        const isStale = Date.now() - timestamp > DAY_TIMESTAMP
-        if (isStale) return undefined
-
-        const nodeVersion = data.substring(0, data.indexOf('&'))
-        return nodeVersion
-      },
+      initialData: () => cacheService.get<string>('node_version'),
     },
   )
   const nodeVersion = query.data ?? ''
+  const [open, setOpen] = useState(false)
 
-  return isMobile ? <BlockchainMenu nodeVersion={nodeVersion} /> : <BlockchainDropdown nodeVersion={nodeVersion} />
+  const chainName = useChainName()
+
+  return (
+    <Popover
+      onOpenChange={setOpen}
+      open={open}
+      showArrow={false}
+      contentStyle={{
+        padding: 4,
+        minWidth: 'var(--radix-popper-anchor-width)',
+        width: 'fit-content',
+      }}
+      trigger={
+        <div className="flex flex-col md:mx-0 md:mt-0 md:mr-[50px] mx-[56px] mt-[22px]">
+          <div className="flex items-center justify-between text-primary uppercase">
+            <span className="leading-[1]">{chainName}</span>
+            <ArrowIcon className={classNames('h-[10px] ml-1 rotate-180')} />
+          </div>
+          <div className="text-[8px] text-primary">{handleVersion(nodeVersion)}</div>
+        </div>
+      }
+    >
+      <div className="flex flex-col gap-1 capitalize">
+        <a className="py-1 px-2 hover:bg-[#f4f4f5]! rounded-sm" href={MAINNET_URL}>
+          {`${ChainName.Mainnet} Mainnet`}
+        </a>
+        <a className="py-1 px-2 hover:bg-[#f4f4f5]! rounded-sm" href={TESTNET_URL}>
+          {`${ChainName.Testnet} Testnet`}
+        </a>
+      </div>
+    </Popover>
+  )
 })

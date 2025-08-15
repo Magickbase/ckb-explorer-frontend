@@ -1,33 +1,33 @@
 import { Fragment, useMemo, FC } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from '../../components/Link'
 import { parseSimpleDate } from '../../utils/date'
-import { BlockListPanel, ContentTable, HighLightValue, BlockRewardContainer, BlockRewardPanel } from './styled'
 import Content from '../../components/Content'
 import { TableContentItem, TableMinerContentItem } from '../../components/Table'
-import { TableTitleRow, TableContentRow, TableTitleRowItem } from '../../components/Table/styled'
+import { TableTitleRow, TableContentRow, TableTitleRowItem } from '../../components/Table/TableComp'
 import { deprecatedAddrToNewAddr, shannonToCkb } from '../../utils/util'
 import { DELAY_BLOCK_NUMBER } from '../../constants/common'
 import { localeNumberString } from '../../utils/number'
-import i18n from '../../utils/i18n'
-import DecimalCapacity from '../../components/DecimalCapacity'
-import { ItemCardData, ItemCardGroup } from '../../components/Card/ItemCard'
+import Capacity from '../../components/Capacity'
 import AddressText from '../../components/AddressText'
-import { useIsMobile, useMediaQuery, usePaginationParamsInListPage, useSortParam } from '../../utils/hook'
-import { fetchBlocks } from '../../service/http/fetcher'
+import { useIsMobile, useMediaQuery, usePaginationParamsInListPage, useSortParam } from '../../hooks'
+import { explorerService } from '../../services/ExplorerService'
 import { RouteState } from '../../routes/state'
 import { ReactComponent as SortIcon } from '../../assets/sort_icon.svg'
 import { CsvExport } from '../../components/CsvExport'
 import PaginationWithRear from '../../components/PaginationWithRear'
 import styles from './styles.module.scss'
+import { Block } from '../../models/Block'
+import { CardCellFactory, CardListWithCellsList } from '../../components/CardList'
 
 const BlockValueItem = ({ value, to }: { value: string; to: string }) => (
-  <HighLightValue>
+  <div className={styles.highLightValue}>
     <Link to={to}>
       <span>{value}</span>
     </Link>
-  </HighLightValue>
+  </div>
 )
 
 type BlockListSortByType = 'height' | 'transactions' | 'reward'
@@ -40,22 +40,22 @@ interface TableTitleData {
 
 interface TableContentData {
   width: string
-  to?: any
+  to?: string
   content: string
 }
 
 const LoadingSection = () => <div className={styles.loadingSection}>Loading...</div>
 
-const getTableContentDataList = (block: State.Block, index: number, page: number, isMaxW: boolean) => {
+const getTableContentDataList = (block: Block, index: number, page: number, isMaxW: boolean) => {
   const blockReward =
     index < DELAY_BLOCK_NUMBER && page === 1 ? (
-      <BlockRewardContainer>
-        <DecimalCapacity value={localeNumberString(shannonToCkb(block.reward))} hideUnit />
-      </BlockRewardContainer>
+      <div className={styles.blockRewardContainer}>
+        <Capacity capacity={shannonToCkb(block.reward)} unit={null} />
+      </div>
     ) : (
-      <BlockRewardPanel>
-        <DecimalCapacity value={localeNumberString(shannonToCkb(block.reward))} hideUnit />
-      </BlockRewardPanel>
+      <div className={styles.blockRewardPanel}>
+        <Capacity capacity={shannonToCkb(block.reward)} unit={null} />
+      </div>
     )
 
   return [
@@ -83,33 +83,34 @@ const getTableContentDataList = (block: State.Block, index: number, page: number
   ] as TableContentData[]
 }
 
-const BlockCardGroup: FC<{ blocks: State.Block[]; isFirstPage: boolean }> = ({ blocks, isFirstPage }) => {
-  const items: ItemCardData<State.Block>[] = [
+const BlockCardGroup: FC<{ blocks: Block[]; isFirstPage: boolean }> = ({ blocks, isFirstPage }) => {
+  const { t } = useTranslation()
+  const items: CardCellFactory<Block>[] = [
     {
-      title: i18n.t('home.height'),
-      render: block => <BlockValueItem value={localeNumberString(block.number)} to={`/block/${block.number}`} />,
+      title: t('home.height'),
+      content: block => <BlockValueItem value={localeNumberString(block.number)} to={`/block/${block.number}`} />,
     },
     {
-      title: i18n.t('home.transactions'),
-      render: block => localeNumberString(block.transactionsCount),
+      title: t('home.transactions'),
+      content: block => localeNumberString(block.transactionsCount),
     },
     {
-      title: i18n.t('home.block_reward'),
-      render: (block, index) =>
+      title: t('home.block_reward'),
+      content: (block, index) =>
         index < DELAY_BLOCK_NUMBER && isFirstPage ? (
-          <BlockRewardContainer>
-            <DecimalCapacity value={localeNumberString(shannonToCkb(block.reward))} hideUnit />
-          </BlockRewardContainer>
+          <div className={styles.blockRewardContainer}>
+            <Capacity capacity={shannonToCkb(block.reward)} unit={null} />
+          </div>
         ) : (
-          <BlockRewardPanel>
-            <DecimalCapacity value={localeNumberString(shannonToCkb(block.reward))} hideUnit />
-          </BlockRewardPanel>
+          <div className={styles.blockRewardPanel}>
+            <Capacity capacity={shannonToCkb(block.reward)} unit={null} />
+          </div>
         ),
     },
     {
-      title: i18n.t('block.miner'),
-      render: block => (
-        <HighLightValue>
+      title: t('block.miner'),
+      content: block => (
+        <div className={styles.highLightValue}>
           <AddressText
             disableTooltip
             monospace={false}
@@ -119,16 +120,23 @@ const BlockCardGroup: FC<{ blocks: State.Block[]; isFirstPage: boolean }> = ({ b
           >
             {block.minerHash}
           </AddressText>
-        </HighLightValue>
+        </div>
       ),
     },
     {
-      title: i18n.t('home.time'),
-      render: block => parseSimpleDate(block.timestamp),
+      title: t('home.time'),
+      content: block => parseSimpleDate(block.timestamp),
     },
   ]
 
-  return <ItemCardGroup items={items} dataSource={blocks} getDataKey={block => block.number} />
+  return (
+    <CardListWithCellsList
+      className={styles.blockCardGroup}
+      dataSource={blocks}
+      getDataKey={block => block.number}
+      cells={items}
+    />
+  )
 }
 
 export default () => {
@@ -176,7 +184,7 @@ export default () => {
   const query = useQuery(
     ['blocks', currentPage, pageSize, sort],
     async () => {
-      const { data, meta } = await fetchBlocks(currentPage, pageSize, sort)
+      const { data, meta } = await explorerService.api.fetchBlocks(currentPage, pageSize, sort)
       return {
         blocks: data.map(wrapper => wrapper.attributes),
         total: meta?.total ?? 0,
@@ -194,17 +202,18 @@ export default () => {
   const total = data?.total ?? 0
   const totalPages = Math.ceil(total / pageSize)
 
-  const blockList = blocks.map(b => ({
+  // FIXME: remove the any type
+  const blockList = blocks.map((b: any) => ({
     ...b,
     minerHash: deprecatedAddrToNewAddr(b.minerHash),
   }))
 
   return (
     <Content>
-      <BlockListPanel className="container">
-        <div className="block__green__background" />
+      <div className={`${styles.blockListPanel} container`}>
+        <div className="blockGreenBackground" />
         {isMobile ? (
-          <ContentTable>
+          <div className={styles.contentTable}>
             <TableTitleRow>
               {TableTitles.filter(data => data.sortRule).map((data: TableTitleData) => (
                 <TableTitleRowItem width="fit-content" key={data.title}>
@@ -221,9 +230,9 @@ export default () => {
               ))}
             </TableTitleRow>
             {isLoading ? <LoadingSection /> : <BlockCardGroup blocks={blockList} isFirstPage={currentPage === 1} />}
-          </ContentTable>
+          </div>
         ) : (
-          <ContentTable>
+          <div className={styles.contentTable}>
             <TableTitleRow>
               {TableTitles.map((data: TableTitleData) => (
                 <TableTitleRowItem width={data.width} key={data.title}>
@@ -245,7 +254,7 @@ export default () => {
               <LoadingSection />
             ) : (
               blockList.map(
-                (block: State.Block, blockIndex: number) =>
+                (block: Block, blockIndex: number) =>
                   block && (
                     <TableContentRow key={block.number}>
                       {getTableContentDataList(block, blockIndex, currentPage, isMaxW).map(
@@ -266,15 +275,15 @@ export default () => {
                   ),
               )
             )}
-          </ContentTable>
+          </div>
         )}
         <PaginationWithRear
           currentPage={currentPage}
           totalPages={totalPages}
           onChange={setPage}
-          rear={<CsvExport type="blocks" />}
+          rear={<CsvExport link="/export-transactions?type=blocks" />}
         />
-      </BlockListPanel>
+      </div>
     </Content>
   )
 }
