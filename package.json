@@ -43,7 +43,7 @@
     "echarts-gl": "2.0.9",
     "framer-motion": "6",
     "history": "5.3.0",
-    "i18next": "20.6.1",
+    "i18next": "25.10.10",
     "jsbi": "3.2.5",
     "kbar": "^0.1.0-beta.45",
     "lint-staged": "^13.2.3",
