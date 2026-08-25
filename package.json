@@ -117,7 +117,7 @@
     "webpack": "5.100.2"
   },
   "resolutions": {
-    "caniuse-lite": "1.0.30001727",
+    "caniuse-lite": "1.0.30001810",
     "@types/react": "17.0.87",
     "@types/react-dom": "17.0.26"
   },
